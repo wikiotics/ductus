@@ -44,12 +44,12 @@ class sequence_contains_only(object):
     True
     """
 
-    def __init__(self, allowed_characters):
-        self.character_list = list(frozenset(allowed_characters))
-        self.character_list.sort()
-        self.allowed_characters = allowed_characters
+    def __init__(self, allowed_elements):
+        self.element_list = list(frozenset(allowed_elements))
+        self.element_list.sort()
+        self.allowed_elements = allowed_elements
 
     def __call__(self, x):
-        x = list(frozenset(x + self.allowed_characters))
+        x = list(frozenset(x + self.allowed_elements))
         x.sort()
-        return (x == self.character_list)
+        return (x == self.element_list)
