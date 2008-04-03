@@ -30,9 +30,10 @@ def iterate_file(filename):
 class sequence_contains_only(object):
     """This callable object returns True if a sequence is composed entirely of elements from a given set.
 
-    Call constructor with a sequence of allowed elements.  When the resulting
-    object is called with one argument, it will return True if the argument
-    contains only elements from that sequence used during initialization.
+    Initialize the object with a sequence of allowed elements.  When the
+    resulting object is called with one argument, it will return True if the
+    argument contains only elements from the sequence used during
+    initialization.
 
     Perfect for use with strings!
 
