@@ -54,8 +54,9 @@ class LocalStorageBackend(object):
                 if x1 == '':
                     return # files have been fully examined and they are equal
 
-            # Wow, we actually found a hash collision.  Save the file aside and
-            # raise an exception.
+            # Wow, we actually found a hash collision.  Actually, the key or
+            # the existing file probably has the wrong name.  But we will save
+            # the file aside just in case, and raise an exception.
             copyfile(tmpfile, self.__storage_location('%s-collision' % key))
             raise Exception("Hash collision for %s" % key)
 
