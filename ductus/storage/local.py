@@ -68,13 +68,13 @@ class LocalStorageBackend(object):
     def __getitem__(self, key):
         pathname = self.__storage_location(key)
         if not os.access(pathname, os.R_OK):
-            raise KeyError
+            raise KeyError(key)
         return ductus.util.iterate_file(pathname)
 
     def __delitem__(self, key):
         pathname = self.__storage_location(key)
         if not os.access(pathname, os.R_OK):
-            raise KeyError
+            raise KeyError(key)
         os.remove(pathname) # may raise OSError
 
     def __len__(self):
