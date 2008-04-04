@@ -54,11 +54,13 @@ class UnionStorageBackend(object):
         # Sadly, this seems like the only way to do it.
         all_keys = set()
         for backend in self.__backends:
-            all_keys.update(backend.iterkeys())
+            all_keys.update(backend)
         return list(all_keys)
 
     def iterkeys(self):
-        return self.keys()
+        return iter(self.keys())
+
+    __iter__ = iterkeys
 
     def __len__(self):
         # Horrible, horrible!

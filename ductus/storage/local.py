@@ -104,3 +104,5 @@ class LocalStorageBackend(object):
                             yield possible_urn
                     except ductus.urn.UnsupportedURN:
                         pass
+
+    __iter__ = iterkeys
