@@ -41,6 +41,8 @@ def is_class_A_urn(urn):
     more liberal.  That's what Class-B will be for.
     """
 
+    if not isinstance(urn, basestring):
+        raise ValueError("urn must be a string")
     urn_split = urn.split(':')
     if len(urn_split) != 3:
         return False
