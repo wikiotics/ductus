@@ -31,9 +31,8 @@ class LocalStorageBackend(object):
     def __storage_location(self, urn):
         ductus.urn.verify_class_A_urn(urn)
         urn_str, hash_type, digest = urn.split(':')
-        path = filter(lambda x: x, (self.__storage_directory, hash_type,
-                                    digest[0:2], digest[2:4], digest))
-        return os.path.join(*path)
+        return os.path.join(self.__storage_directory, hash_type,
+                            digest[0:2], (digest[2:4] or digest[0:2]), digest)
 
     def __contains__(self, key):
         # does file exist, and can we read it?
