@@ -65,7 +65,8 @@ class CacheStorageBackend(object):
         try:
             del self.__cache[key]
         except KeyError:
-            pass # fixme: warning
+            from logging import warning
+            warning("Error while removing %s from cache." % key)
 
     def keys(self):
         # Assume all items in cache are in backing_store
