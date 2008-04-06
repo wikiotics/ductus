@@ -71,7 +71,7 @@ def __check_xml_and_prepare_update(urn, filename):
 
     # validate DTD and find all URN links
     links = set()
-    for event, element in etree.iterwalk(filename, dtd_validation=True):
+    for event, element in etree.iterwalk(tree, dtd_validation=True):
         if '{http://www.w3.org/1999/xlink}href' in element.attrib:
             links.add(element.attrib['{http://www.w3.org/1999/xlink}href'])
     links = [x for x in links if x[:4] == 'urn:']
