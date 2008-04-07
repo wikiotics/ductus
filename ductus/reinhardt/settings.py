@@ -55,6 +55,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
 ROOT_URLCONF = 'ductus.reinhardt.urls'
@@ -68,10 +69,12 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'django.contrib.auth',
-    'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
-    'ductus.reinhardt.apps.urn',
+    'django.contrib.admin',
+    'django.contrib.sites', # needed for flatpages
+    'django.contrib.flatpages',
+    'django.contrib.markup',
+#    'ductus.reinhardt.apps.urn',
 )
 
 try:
