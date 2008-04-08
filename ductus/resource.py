@@ -22,7 +22,6 @@ import logging
 import os
 from tempfile import mkstemp
 
-import elixir, sqlalchemy
 from lxml import etree
 
 hash_name = "sha384"
@@ -48,66 +47,11 @@ class SizeTooLargeError(Exception):
     def __repr__(self):
         return self.value
 
-# store public or system DTD in database?  or both?  need a policy decision here
-
-# we could just store public DTD's and only allow them... and have a
-# database of what they are supposed to mean sitting around locally.
-
-class DtdInfo(elixir.Entity):
-    dtd = elixir.Field(elixir.String, required=True, unique=True)
-
-class ResourceInfo(elixir.Entity):
-    urn = elixir.Field(elixir.String(75), required=True, unique=True)
-    dtd = elixir.ManyToOne('DtdInfo') # None <=> blob
-    links = elixir.ManyToMany('ResourceInfo')
-
-def __check_xml_and_prepare_update(urn, filename):
-    ""
-    # option: allow import of files with DTDs we don't recognize?
-
-    # Parse file and determine DTD
-    tree = etree.parse(filename)
-    dtd = tree.docinfo.system_url, tree.docinfo.public_id
-
-    # validate DTD and find all URN links
-    links = set()
-    for event, element in etree.iterwalk(tree, dtd_validation=True):
-        if '{http://www.w3.org/1999/xlink}href' in element.attrib:
-            links.add(element.attrib['{http://www.w3.org/1999/xlink}href'])
-    links = [x for x in links if x[:4] == 'urn:']
-
-    # get primary key of each link destination; raise exception if
-    # one is unknown/broken
-    q = ResourceInfo.query.filter(sqlalchemy.or_(*[ResourceInfo.urn == u
-                                                   for u in links]))
-    link_destinations = list(q)
-    if len(link_destinations) != len(links):
-        # fixme: say which one is broken
-        raise Exception("Broken link in XML document")
-
-    # prepare update function/transaction
-    def update_database_for_xml():
-        ri = ResourceInfo(urn=urn, dtd=dtdi, links=link_destinations)
-        elixir.session.flush()
-    return update_database_for_xml
-
-def __check_blob_and_prepare_update(urn, filename):
-    def update_database_for_blob():
-        ri = ResourceInfo(urn=urn)
-        elixir.session.flush()
-    return update_database_for_blob
-
-__check_and_prepare_update = {
-    'xml': __check_xml_and_prepare_update,
-    'blob': __check_blob_and_prepare_update,
-}
-
 class ResourceDatabase(object):
     """
     Main resource database.
 
-    Keep track of what resources reference each other.  Make sure XML
-    is well-formed.  Verify hashes.
+    Make sure XML is well-formed.  Verify hashes.
 
     This module should keep everything consistent as long as the
     backend storage module doesn't mess things up.
@@ -116,14 +60,15 @@ class ResourceDatabase(object):
 
     * backend storage module to use.
 
-    * whether to allow documents with DTDs we don't know/support
+    * whether to allow XML document types we don't know/support
     """
 
-    def __init__(self, storage_backend):
+    def __init__(self, storage_backend, max_resource_size=(20*1024*1024)):
         self.storage_backend = storage_backend
+        self.max_resource_size = max_resource_size
 
     def __contains__(self, key):
-        return ResourceInfo.query.filter_by(urn=key).one() is not None
+        return key in self.storage_backend
 
     @staticmethod
     def supported_key(key):
@@ -143,15 +88,8 @@ class ResourceDatabase(object):
 
         Returns the urn or could raise some exceptions."""
 
-        # Issue a warning if data_iterator is a string in disguise.  Such a
-        # condition is relatively harmless, but it would slow things down since
-        # hash.update() would be called once for each byte.
-        if isinstance(data_iterator, str):
-            logging.warning("String passed as data_iterator.")
-
         intended_urn = urn
 
-        # Determine header
         header, data_iterator = determine_header(data_iterator)
 
         # Calculate hash and save to temporary file
@@ -159,7 +97,7 @@ class ResourceDatabase(object):
         fd, tmpfile = mkstemp()
         try:
             try:
-                data_iterator = __check_size(data_iterator)
+                data_iterator = self.__check_size(data_iterator)
                 for data in data_iterator:
                     hash_obj.update(data)
                     os.write(fd, data)
@@ -171,9 +109,8 @@ class ResourceDatabase(object):
             if intended_urn and intended_urn != urn:
                 raise "URN given does not match content." # valueerror
 
-            # Do we already have this urn in the DB?
-            existing_entry = ResourceInfo.query.filter_by(urn=urn).one()
-            if existing_entry:
+            # Do we already have this urn in the DB? (fixme)
+            if urn in self.storage_backend:
                 # compare with what we have
                 with file(tmpfile, 'rb') as f:
                     for d in self.storage_backend[urn]:
@@ -183,17 +120,43 @@ class ResourceDatabase(object):
                             self.storage_backend[urn + '-collision'] = tmpfile
                 return urn # new resource equals old one
 
-            db_update_func = __check_and_prepare_update[header](urn, tmpfile)
+            # If it is an XML file, check it
+            if header == 'xml':
+                self.__check_xml(urn, tmpfile)
+
             self.storage_backend[urn] = tmpfile
 
         finally:
             os.remove(tmpfile)
 
-        db_update_func() # Maybe this raises an exception if the row
-                         # already exists in the database?  We should
-                         # handle this...
-
         return urn
+
+    def __check_xml(self, urn, filename):
+        with file(filename, 'rb') as f:
+            f.read(len('xml\0'))
+            tree = etree.parse(f)
+
+        # Make sure we recognize the root node and the document is valid
+        # wrt DTD or relaxng (fixme)
+
+        # Find all urn:hash_type:hash_value links and ensure they are not broken
+        links = set()
+        for event, element in etree.iterwalk(tree):
+            if '{http://www.w3.org/1999/xlink}href' in element.attrib:
+                links.add(element.attrib['{http://www.w3.org/1999/xlink}href'])
+        for link in links:
+            if x.startswith('urn:%s:' % hash_name) and link not in self:
+                raise Exception("Broken link from %s to %s"
+                                % (urn, link))
+
+    def __check_size(self, data_iterator):
+        cumulative_size = 0
+        while True:
+            data = data_iterator.next()
+            cumulative_size += len(data)
+            if cumulative_size > self.max_resource_size:
+                raise SizeTooLargeError("Resource is greater than limit of %d bytes." % self.max_resource_size)
+            yield data
 
     def store_blob(self, x, urn=None):
         return self.store(itertools.chain(("blob\0",), x), urn)
@@ -205,7 +168,6 @@ class ResourceDatabase(object):
         "This will be easy... just query the database."
 
     def __getitem__(self, key):
-        # fixme: query database to make sure it is known (if not raise KeyError)
         return self.storage_backend[key]
 
     def __setitem__(self, key, value):
@@ -224,7 +186,7 @@ def determine_header(data_iterator, replace_header=True):
         header = buf[:buf.index("\0")]
     except ValueError:
         raise InvalidHeader("Invalid resource: No header or header too long")
-    if header not in __check.keys():
+    if header not in ('xml', 'blob'):
         raise InvalidHeader("Invalid or unknown header")
 
     if not replace_header:
@@ -232,12 +194,3 @@ def determine_header(data_iterator, replace_header=True):
     data_iterator = itertools.chain((buf,), data_iterator) # replace header
         
     return header, data_iterator
-
-def __check_size(data_iterator):
-    cumulative_size = 0
-    while True:
-        data = data_iterator.next()
-        cumulative_size += len(data)
-        if cumulative_size > MAX_RESOURCE_SIZE:
-            raise SizeTooLargeError("Resource is greater than MAX_RESOURCE_SIZE (%d bytes)." % MAX_RESOURCE_SIZE)
-        yield data
