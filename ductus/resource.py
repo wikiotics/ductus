@@ -164,6 +164,24 @@ class ResourceDatabase(object):
     def store_xml(self, x, urn=None):
         return self.store(itertools.chain(("xml\0",), x), urn)
 
+    def get_blob(self, urn):
+        header, data_iterator = determine_header(self[urn], False)
+        if header != 'blob':
+            raise Exception()
+        return data_iterator
+
+    def get_xml(self, urn):
+        header, data_iterator = determine_header(self[urn], False)
+        if header != 'xml':
+            raise Exception()
+        return data_iterator
+
+    def get_xml_tree(self, urn):
+        from StringIO import StringIO
+        # following line could be simplified if the data_iterator had
+        # a "read" method instead ...
+        return etree.parse(StringIO(''.join(self.get_xml(urn))))
+
     def keys(self):
         "This will be easy... just query the database."
 
