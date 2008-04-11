@@ -79,6 +79,6 @@ INSTALLED_APPS = (
 )
 
 try:
-    from reinhardt_local_settings import *
+    from ductus_local_settings import *
 except ImportError:
     pass
