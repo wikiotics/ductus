@@ -12,36 +12,35 @@ def view_urn(request, hash_type, hash_digest):
         raise Http404
     header, data_iterator = determine_header(data_iterator)
 
-    # raw view
-    try:
-        if request.GET['view'] == 'raw':
-            return HttpResponse(data_iterator,
-                                content_type='application/octet-stream')
-    except KeyError:
-        pass
+    requested_view = request.GET.get('view', None)
 
-    # content-specific view
+    if requested_view == 'raw':
+        return HttpResponse(data_iterator,
+                            content_type='application/octet-stream')
+
+    if header == 'blob':
+        header, data_iterator = determine_header(data_iterator, False)
+        return HttpResponse(data_iterator,
+                            content_type='application/octet-stream')
+
     if header == 'xml':
         del data_iterator
         tree = resource_database.get_xml_tree(urn)
         root_tag_name = tree.getroot().tag
         try:
-            f = __registered_applets[root_tag_name]
-            return f(request, urn, tree)
+            f = __registered_applets[(root_tag_name, requested_view)]
+            return f(request, requested_view, urn, tree)
         except KeyError:
             raise Http404
-    elif header == 'blob':
-        if 'view' in request.GET:
-            return HttpResponse("'view' not implemented for blobs")
-        header, data_iterator = determine_header(data_iterator, False)
-        return HttpResponse(data_iterator,
-                            content_type='application/octet-stream')
 
     raise Http404
 
-def register_applet(root_tag_name):
+def register_applet(root_tag_name, *args):
+    if len(args) == 0:
+        raise TypeError("function requires at least two arguments")
     def _register_applet(func):
-        __registered_applets[root_tag_name] = func
+        for arg in args:
+            __registered_applets[(root_tag_name, arg)] = func
         return func
     return _register_applet
 
