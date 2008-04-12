@@ -1,4 +1,4 @@
-# Django settings for reinhardt project.
+# Django settings for ductus.example project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -58,13 +58,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
-ROOT_URLCONF = 'ductus.reinhardt.urls'
+ROOT_URLCONF = 'ductus.example.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".
     # Always use forward slashes, even on Windows.
 
-#    '/path/to/ductus/ductus/reinhardt/templates',
+#    '/path/to/ductus/ductus/templates',
 )
 
 INSTALLED_APPS = (
@@ -75,7 +75,7 @@ INSTALLED_APPS = (
     'django.contrib.sites', # needed for flatpages
     'django.contrib.flatpages',
     'django.contrib.markup',
-#    'ductus.reinhardt.apps.urn',
+#    'ductus.apps.urn',
 )
 
 try:
