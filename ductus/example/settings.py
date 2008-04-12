@@ -78,6 +78,8 @@ INSTALLED_APPS = (
 #    'ductus.apps.urn',
 )
 
+DUCTUS_STORAGE_BACKEND = 'ductus.example.urls.resource_database'
+
 try:
     from ductus_local_settings import *
 except ImportError:

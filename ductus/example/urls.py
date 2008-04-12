@@ -7,3 +7,6 @@ urlpatterns = patterns('',
 #    (r'^user/', include('ductus.reinhardt.apps.user.urls')),
 #    (r'^wiki/', include('ductus.reinhardt.apps.wiki.urls')),
 )
+
+from ductus.resource.storage import LocalStorageBackend
+resource_database = LocalStorageBackend('/tmp/ductus')
