@@ -11,10 +11,17 @@ def view_urn(request, hash_type, hash_digest):
     except KeyError:
         raise Http404
     header, data_iterator = determine_header(data_iterator)
-    if request.GET['view'] == 'raw':
-        return HttpResponse(data_iterator,
-                            content_type='application/octet-stream')
-    elif header == 'xml':
+
+    # raw view
+    try:
+        if request.GET['view'] == 'raw':
+            return HttpResponse(data_iterator,
+                                content_type='application/octet-stream')
+    except KeyError:
+        pass
+
+    # content-specific view
+    if header == 'xml':
         del data_iterator
         tree = resource_database.get_xml_tree(urn)
         root_tag_name = tree.getroot().tag
