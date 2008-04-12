@@ -78,7 +78,7 @@ INSTALLED_APPS = (
 #    'ductus.apps.urn',
 )
 
-DUCTUS_STORAGE_BACKEND = 'ductus.example.urls.resource_database'
+DUCTUS_STORAGE_BACKEND = 'ductus.example.urls.storage_backend'
 
 try:
     from ductus_local_settings import *

@@ -9,4 +9,4 @@ urlpatterns = patterns('',
 )
 
 from ductus.resource.storage import LocalStorageBackend
-resource_database = LocalStorageBackend('/tmp/ductus')
+storage_backend = LocalStorageBackend('/tmp/ductus')
