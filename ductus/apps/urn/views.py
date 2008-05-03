@@ -47,7 +47,7 @@ def view_urn(request, hash_type, hash_digest):
             f = __registered_applets[(root_tag_name, requested_view)]
         except KeyError:
             try:
-                f = __registered_xml_views[requested_view]
+                f = __registered_applets[(None, requested_view)]
             except:
                 raise Http404
         return f(request, requested_view, urn, tree)
@@ -76,15 +76,7 @@ def __register_installed_applets():
 __register_installed_applets()
 
 def register_xml_view(*args):
-    if len(args) == 0:
-        raise TypeError("function requires at least one argument")
-    def _register_xml_view(func):
-        for arg in args:
-            __registered_xml_views[arg] = func
-        return func
-    return _register_xml_view
-
-__registered_xml_views = {}
+    return register_applet(None, *args)
 
 @register_xml_view('xml_as_text')
 def view_xml_as_text(request, requested_view, urn, tree):
