@@ -61,3 +61,13 @@ def register_applet(root_tag_name, *args):
     return _register_applet
 
 __registered_applets = {}
+
+def __register_installed_applets():
+    from django.conf import settings
+    for applet in settings.DUCTUS_INSTALLED_APPLETS:
+        try:
+            __import__('%s.views' % applet, {}, {}, [''])
+        except ImportError:
+            raise "Could not import applet '%s'" % applet
+
+__register_installed_applets()

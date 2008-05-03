@@ -75,7 +75,12 @@ INSTALLED_APPS = (
     'django.contrib.sites', # needed for flatpages
     'django.contrib.flatpages',
     'django.contrib.markup',
-#    'ductus.apps.urn',
+    'ductus.apps.urn',
+)
+
+DUCTUS_INSTALLED_APPLETS = (
+    'ductus.applets.picture',
+#    'ductus.applets.picture_choice',
 )
 
 DUCTUS_STORAGE_BACKEND = 'ductus.example.urls.storage_backend'
