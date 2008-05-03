@@ -48,7 +48,7 @@ def view_urn(request, hash_type, hash_digest):
         except KeyError:
             try:
                 f = __registered_views[None][requested_view]
-            except:
+            except KeyError:
                 raise Http404
         return f(request, requested_view, urn, tree)
 
