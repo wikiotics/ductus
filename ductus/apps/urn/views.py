@@ -44,26 +44,26 @@ def view_urn(request, hash_type, hash_digest):
         tree = resource_database.get_xml_tree(urn)
         root_tag_name = tree.getroot().tag
         try:
-            f = __registered_applets[(root_tag_name, requested_view)]
+            f = __registered_views[(root_tag_name, requested_view)]
         except KeyError:
             try:
-                f = __registered_applets[(None, requested_view)]
+                f = __registered_views[(None, requested_view)]
             except:
                 raise Http404
         return f(request, requested_view, urn, tree)
 
     raise Http404
 
-def register_applet(root_tag_name, *args):
+def register_view(root_tag_name, *args):
     if len(args) == 0:
         raise TypeError("function requires at least two arguments")
-    def _register_applet(func):
+    def _register_view(func):
         for arg in args:
-            __registered_applets[(root_tag_name, arg)] = func
+            __registered_views[(root_tag_name, arg)] = func
         return func
-    return _register_applet
+    return _register_view
 
-__registered_applets = {}
+__registered_views = {}
 
 def __register_installed_applets():
     from django.conf import settings
@@ -75,10 +75,7 @@ def __register_installed_applets():
 
 __register_installed_applets()
 
-def register_xml_view(*args):
-    return register_applet(None, *args)
-
-@register_xml_view('xml_as_text')
+@register_view(None, 'xml_as_text')
 def view_xml_as_text(request, requested_view, urn, tree):
     return HttpResponse(get_resource_database().get_xml(urn),
                         content_type='text/plain')
