@@ -145,7 +145,7 @@ class ResourceDatabase(object):
             if '{http://www.w3.org/1999/xlink}href' in element.attrib:
                 links.add(element.attrib['{http://www.w3.org/1999/xlink}href'])
         for link in links:
-            if x.startswith('urn:%s:' % hash_name) and link not in self:
+            if link.startswith('urn:%s:' % hash_name) and link not in self:
                 raise Exception("Broken link from %s to %s"
                                 % (urn, link))
 
