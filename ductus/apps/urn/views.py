@@ -79,3 +79,16 @@ __register_installed_applets()
 def view_xml_as_text(request, requested_view, urn, tree):
     return HttpResponse(get_resource_database().get_xml(urn),
                         content_type='text/plain')
+
+@register_view(None, 'view_index')
+def view_view_index(request, requested_view, urn, tree):
+    root_tag_name = tree.getroot().tag
+
+    tag_specific_views = list(__registered_views[root_tag_name])
+    generic_views = set(__registered_views[None])
+    generic_views = list(generic_views.difference(set(tag_specific_views)))
+
+    tag_specific_views.sort()
+    generic_views.sort()
+
+    return HttpResponse(str([tag_specific_views, generic_views]))
