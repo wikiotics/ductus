@@ -1,0 +1,23 @@
+{% extends "ductus_base.html" %}
+
+{% block content %}
+<h4>Special views</h4>
+<ul>
+{% for view in special_views %}
+<li>
+  {% if view %}
+    <a href="?view={{ view }}">{{ view }}</a>
+  {% else %}
+    <a href="./"><em>(default)</em></a>
+  {% endif %}
+</li>
+{% endfor %}
+</ul>
+
+<h4>Generic views</h4>
+<ul>
+{% for view in generic_views %}
+<li><a href="?view={{ view }}">{{ view }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

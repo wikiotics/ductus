@@ -84,11 +84,14 @@ def view_xml_as_text(request, requested_view, urn, tree):
 def view_view_index(request, requested_view, urn, tree):
     root_tag_name = tree.getroot().tag
 
-    tag_specific_views = list(__registered_views[root_tag_name])
+    special_views = list(__registered_views[root_tag_name])
     generic_views = set(__registered_views[None])
-    generic_views = list(generic_views.difference(set(tag_specific_views)))
+    generic_views = list(generic_views.difference(set(special_views)))
 
-    tag_specific_views.sort()
+    special_views.sort()
     generic_views.sort()
 
-    return HttpResponse(str([tag_specific_views, generic_views]))
+    from django.shortcuts import render_to_response
+    return render_to_response('urn_view_index.html',
+                              {'special_views': special_views,
+                               'generic_views': generic_views})
