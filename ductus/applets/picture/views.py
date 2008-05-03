@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
 
-@register_applet('{http://wikiotics.org/ns/2008/picture}picture', None)
+@register_view('{http://wikiotics.org/ns/2008/picture}picture', None)
 def view_picture(request, requested_view, urn, tree):
     blob = tree.getroot().find('{http://wikiotics.org/ns/2008/picture}blob')
     blob_urn = blob.get('{http://www.w3.org/1999/xlink}href')
