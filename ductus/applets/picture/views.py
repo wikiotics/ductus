@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from ductus.apps.urn.views import register_applet
+from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
 
 @register_applet('{http://wikiotics.org/ns/2008/picture}picture', None)
