@@ -44,10 +44,10 @@ def view_urn(request, hash_type, hash_digest):
         tree = resource_database.get_xml_tree(urn)
         root_tag_name = tree.getroot().tag
         try:
-            f = __registered_views[(root_tag_name, requested_view)]
+            f = __registered_views[root_tag_name][requested_view]
         except KeyError:
             try:
-                f = __registered_views[(None, requested_view)]
+                f = __registered_views[None][requested_view]
             except:
                 raise Http404
         return f(request, requested_view, urn, tree)
@@ -59,7 +59,7 @@ def register_view(root_tag_name, *args):
         raise TypeError("function requires at least two arguments")
     def _register_view(func):
         for arg in args:
-            __registered_views[(root_tag_name, arg)] = func
+            __registered_views.setdefault(root_tag_name, dict())[arg] = func
         return func
     return _register_view
 
