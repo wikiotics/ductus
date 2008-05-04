@@ -94,7 +94,7 @@ else:
 
         html = '<html><head><style type="text/css">%s</style></head><body>%s</body></html>' % (formatter.get_style_defs('.highlight'), highlighted_xml)
 
-        return HttpResponse(html, content_type='text/html')
+        return HttpResponse(html)
 
 @register_view(None, 'view_index')
 def view_view_index(request, requested_view, urn, tree):
