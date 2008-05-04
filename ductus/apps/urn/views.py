@@ -80,6 +80,21 @@ def view_xml_as_text(request, requested_view, urn, tree):
     return HttpResponse(get_resource_database().get_xml(urn),
                         content_type='text/plain')
 
+try:
+    import pygments, pygments.lexers, pygments.formatters
+except ImportError:
+    pass
+else:
+    @register_view(None, 'xml_as_html')
+    def view_xml_as_html(request, requested_view, urn, tree):
+        xml = ''.join(get_resource_database().get_xml(urn))
+        lexer = pygments.lexers.XmlLexer()
+        formatter = pygments.formatters.HtmlFormatter()
+        highlighted_xml = pygments.highlight(xml, lexer, formatter)
+
+        return HttpResponse(highlighted_xml,
+                            content_type='text/html')
+
 @register_view(None, 'view_index')
 def view_view_index(request, requested_view, urn, tree):
     root_tag_name = tree.getroot().tag
