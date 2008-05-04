@@ -100,8 +100,8 @@ else:
 def view_view_index(request, requested_view, urn, tree):
     root_tag_name = tree.getroot().tag
 
-    special_views = list(__registered_views[root_tag_name])
-    generic_views = set(__registered_views[None])
+    special_views = list(__registered_views.get(root_tag_name, ()))
+    generic_views = set(__registered_views.get(None, ()))
     generic_views = list(generic_views.difference(set(special_views)))
 
     special_views.sort()
