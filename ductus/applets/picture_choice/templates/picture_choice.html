@@ -1,0 +1,9 @@
+{% load urn %}
+<div class="ductus-picture-choice">
+  <h2>{{ object.phrase }}</h2>
+  <table>
+    <tr><td><img src="{{ object.pictures.0|resolve }}?max_size=250,250"/></td><td></td><td><img src="{{ object.pictures.1|resolve }}?max_size=250,250"/></td>
+    <tr><td></td><td></td><td></td>
+    <tr><td><img src="{{ object.pictures.2|resolve }}?max_size=250,250"/></td><td></td><td><img src="{{ object.pictures.3|resolve }}?max_size=250,250"/></td>
+  </table>
+</div>
