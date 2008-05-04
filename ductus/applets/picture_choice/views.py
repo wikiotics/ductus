@@ -20,6 +20,8 @@ from ductus.apps.urn import get_resource_database
 
 from random import shuffle
 
+factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
+
 @register_view('{http://wikiotics.org/ns/2008/picture_choice}picture_choice', None)
 def view_picture_choice(request, requested_view, urn, tree):
     root = tree.getroot()
@@ -28,7 +30,19 @@ def view_picture_choice(request, requested_view, urn, tree):
     pictures = root.findall('.//{http://wikiotics.org/ns/2008/picture_choice}picture')
     pictures = [picture.get('{http://www.w3.org/1999/xlink}href')
                 for picture in pictures]
-    shuffle(pictures)
+
+    if 'order' in request.GET:
+        pictures.sort()
+        order = int(request.GET['order']) % factorial(len(pictures))
+        new_pictures = []
+        for n in range(len(pictures), 0, -1):
+            i = order % n
+            order /= n
+            new_pictures.append(pictures[i])
+            del pictures[i]
+        pictures = new_pictures
+    else:
+        shuffle(pictures)
 
     object = {
         'pictures': pictures,
