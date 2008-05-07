@@ -21,11 +21,13 @@ from ductus.apps.urn import get_resource_database
 from PIL import Image, ImageFile
 from cStringIO import StringIO
 
+ns = lambda s: ('{http://wikiotics.org/ns/2008/picture}%s' % s)
+
 __allowed_thumbnail_sizes = set([(250, 250)])
 
-@register_view('{http://wikiotics.org/ns/2008/picture}picture', None)
+@register_view(ns('picture'), None)
 def view_picture(request, requested_view, urn, tree):
-    blob = tree.getroot().find('{http://wikiotics.org/ns/2008/picture}blob')
+    blob = tree.getroot().find(ns('blob'))
     blob_urn = blob.get('{http://www.w3.org/1999/xlink}href')
     mime_type = blob.get('type') # lxml does not seem to set the
                                  # namespace correctly on this element

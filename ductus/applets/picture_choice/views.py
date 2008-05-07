@@ -20,14 +20,16 @@ from ductus.apps.urn import get_resource_database
 
 from random import shuffle
 
+ns = lambda s: ('{http://wikiotics.org/ns/2008/picture_choice}%s' % s)
+
 factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
 
-@register_view('{http://wikiotics.org/ns/2008/picture_choice}picture_choice', None)
+@register_view(ns('picture_choice'), None)
 def view_picture_choice(request, requested_view, urn, tree):
     root = tree.getroot()
-    phrase = root.find('{http://wikiotics.org/ns/2008/picture_choice}phrase').text
+    phrase = root.find(ns('phrase')).text
 
-    pictures = root.findall('.//{http://wikiotics.org/ns/2008/picture_choice}picture')
+    pictures = root.findall('.//' + ns('picture'))
     pictures = [picture.get('{http://www.w3.org/1999/xlink}href')
                 for picture in pictures]
 
