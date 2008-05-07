@@ -39,7 +39,7 @@ def view_picture_choice(request, requested_view, urn, tree):
         new_pictures = []
         for n in range(len(pictures), 0, -1):
             i = order % n
-            order /= n
+            order //= n
             new_pictures.append(pictures[i])
             del pictures[i]
         pictures = new_pictures
