@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.shortcuts import render_to_response
+from django.template.loader import render_to_string
+
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
 
@@ -56,6 +58,6 @@ def general_picture_choice(urn, tree, options_dict):
     }
 
     return {
-        'html_block': render_to_response('picture_choice_element.html',
-                                         {'object': object}),
+        'html_block': render_to_string('picture_choice_element.html',
+                                       {'object': object}),
     }
