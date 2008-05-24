@@ -1,9 +1,30 @@
+{% extends "ductus_base.html" %}
 {% load urn %}
+
+{% block javascript %}
+{{ block.super }}
+$(function () {
+    picture_urns = [{% for urn in object.pictures %}'{{ urn }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+    clickfunc = function(n) {
+        return function() {
+            $('#result').html('you chose picture ' + n + ' (aka ' + picture_urns[n] + ')')
+        };
+    };
+    $("#picture0").click(clickfunc(0));
+    $("#picture1").click(clickfunc(1));
+    $("#picture2").click(clickfunc(2));
+    $("#picture3").click(clickfunc(3));
+})
+{% endblock %}
+
+{% block content %}
 <div class="ductus-picture-choice">
   <h2>{{ object.phrase|escape }}</h2>
   <table>
-    <tr><td><img src="{{ object.pictures.0|resolve }}?max_size=250,250"/></td><td></td><td><img src="{{ object.pictures.1|resolve }}?max_size=250,250"/></td></tr>
+    <tr><td><img alt="" id="picture0" src="{{ object.pictures.0|resolve }}?max_size=250,250"/></td><td></td><td><img alt="" id="picture1" src="{{ object.pictures.1|resolve }}?max_size=250,250"/></td></tr>
     <tr><td></td><td></td><td></td></tr>
-    <tr><td><img src="{{ object.pictures.2|resolve }}?max_size=250,250"/></td><td></td><td><img src="{{ object.pictures.3|resolve }}?max_size=250,250"/></td></tr>
+    <tr><td><img alt="" id="picture2" src="{{ object.pictures.2|resolve }}?max_size=250,250"/></td><td></td><td><img alt="" id="picture3" src="{{ object.pictures.3|resolve }}?max_size=250,250"/></td></tr>
   </table>
 </div>
+<div id="result"></div>
+{% endblock %}

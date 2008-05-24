@@ -26,6 +26,10 @@ factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
 
 @register_view(ns('picture_choice'), None)
 def view_picture_choice(request, requested_view, urn, tree):
+    element = general_picture_choice(urn, tree, request.GET)
+    return render_to_response('picture_choice.html', {'element': element})
+
+def general_picture_choice(urn, tree, options_dict):
     root = tree.getroot()
     phrase = root.find(ns('phrase')).text
 
@@ -33,9 +37,9 @@ def view_picture_choice(request, requested_view, urn, tree):
     pictures = [picture.get('{http://www.w3.org/1999/xlink}href')
                 for picture in pictures]
 
-    if 'order' in request.GET:
+    if 'order' in options_dict:
         pictures.sort()
-        order = int(request.GET['order']) % factorial(len(pictures))
+        order = int(options_dict['order']) % factorial(len(pictures))
         new_pictures = []
         for n in range(len(pictures), 0, -1):
             i = order % n
@@ -51,5 +55,7 @@ def view_picture_choice(request, requested_view, urn, tree):
         'phrase': phrase,
     }
 
-    return render_to_response('picture_choice.html',
-                              {'object': object})
+    return {
+        'html_block': render_to_response('picture_choice_element.html',
+                                         {'object': object}),
+    }

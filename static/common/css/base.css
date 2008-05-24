@@ -1,0 +1,16 @@
+body { margin: 0; }
+#ductus_content { margin: 1em; }
+
+#ductus_header hr, #ductus_footer hr { display: none; }
+
+#ductus_header * { margin: 0; padding: 0; }
+div#ductus_header { background: #6b497e; border-bottom: 1px solid #39005a; 
+                    padding: 0 1em; }
+#ductus_header h1 { display: inline; font-size: 1em; }
+#ductus_header ul { list-style: none; }
+#ductus_header ul li { display: inline; float: right; }
+#ductus_header, #ductus_header a { color: #eee; }
+#ductus_header a { text-decoration: none; font-weight: bold; }
+
+#ductus_footer { border-top: 1px solid #ddd; padding: 0 1em; }
+#ductus_footer p { text-align: center; }

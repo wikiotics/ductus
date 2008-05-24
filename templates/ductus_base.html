@@ -1,15 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>{% load ductus_settings %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <title></title>
+    <title>{% block title %}{% endblock %} - {% ductus_site_name %}</title>
     <meta http-equiv="content-type" content="application/xhtml+xml;charset=utf-8" />
     <meta http-equiv="content-style-type" content="text/css" />
+    <link rel="stylesheet" type="text/css" media="screen, projection" href="{% ductus_media_prefix %}common/css/base.css" />
+    {# include local (site-specific) css #}
+    <script type="text/javascript" src="{% ductus_media_prefix %}common/js/jquery.min.js"></script>
+    <script type="text/javascript">
+      {% block javascript %}{% endblock %}
+    </script>
     {% block head %}{% endblock %}
   </head>
   <body>
-    <div id="ductus_header"></div>
-    <div>{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
-    <div id="ductus_footer"></div>
+    <div id="ductus_header">
+      <ul class="ductus_header_tabs">
+        {# main page, talk, fork/edit, history #}
+        {# my page, my groups #}
+        {# community, contribute, help #}
+        <li>Log in control</li>
+      </ul>
+      <h1><a href="/">{% ductus_site_name %}</a></h1>
+    <hr/>
+    </div>
+    <div id="ductus_content">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
+    <div id="ductus_footer">
+      <hr/>
+      <p>{% ductus_site_name %} is powered by <a href="http://ductus.us/">Ductus</a>.</p>
+    </div>
   </body>
 </html>

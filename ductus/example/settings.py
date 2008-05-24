@@ -75,6 +75,7 @@ INSTALLED_APPS = (
     'django.contrib.sites', # needed for flatpages
     'django.contrib.flatpages',
     'django.contrib.markup',
+    'ductus.apps.base',
     'ductus.apps.urn',
     'ductus.applets.picture_choice',
 )
@@ -85,6 +86,9 @@ DUCTUS_INSTALLED_APPLETS = (
 )
 
 DUCTUS_STORAGE_BACKEND = 'ductus.example.urls.storage_backend'
+
+DUCTUS_MEDIA_PREFIX = '/static/ductus/'
+DUCTUS_SITE_NAME = 'Example Ductus Site'
 
 try:
     from ductus_local_settings import *
