@@ -2,8 +2,8 @@
 
 {% block javascript %}
 {{ block.super }}
+{{ element.js }}
 $(function () {
-    picture_urns = [{% for urn in object.pictures %}'{{ urn }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     clickfunc = function(n) {
         return function() {
             $('#result').html('you chose picture ' + n + ' (aka ' + picture_urns[n] + ')')

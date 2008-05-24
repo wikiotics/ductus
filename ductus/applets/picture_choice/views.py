@@ -60,4 +60,6 @@ def general_picture_choice(urn, tree, options_dict):
     return {
         'html_block': render_to_string('picture_choice_element.html',
                                        {'object': object}),
+        'js': render_to_string('picture_choice_element.js',
+                               {'object': object}),
     }
