@@ -54,6 +54,7 @@ def general_picture_choice(urn, tree, options_dict):
 
     object = {
         'pictures': pictures,
+        'correct_picture': root.find('.//%s/%s' % (ns('correct'), ns('picture'))).get('{http://www.w3.org/1999/xlink}href'),
         'phrase': phrase,
     }
 

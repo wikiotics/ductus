@@ -6,7 +6,15 @@
 $(function () {
     clickfunc = function(n) {
         return function() {
-            $('#result').html('you chose picture ' + n + ' (aka ' + picture_urns[n] + ')')
+            //$('#result').html('you chose picture ' + n + ' (aka ' + picture_urns[n] + ')')
+            if (picture_urns[n] == correct_urn) {
+                message = 'correct';
+                $('#picture' + n).addClass('picture_choice_correct');
+            } else {
+                message = 'incorrect';
+                $('#picture' + n).addClass('picture_choice_incorrect');
+            }
+            $('#result').html(message);
         };
     };
     $("#picture0").click(clickfunc(0));
@@ -14,6 +22,13 @@ $(function () {
     $("#picture2").click(clickfunc(2));
     $("#picture3").click(clickfunc(3));
 })
+{% endblock %}
+
+{% block head %}
+<style type="text/css">
+.picture_choice_correct { border: 2px solid green; }
+.picture_choice_incorrect { border: 2px solid red; }
+</style>
 {% endblock %}
 
 {% block content %}
