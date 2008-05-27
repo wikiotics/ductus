@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
 
@@ -27,7 +28,7 @@ __allowed_thumbnail_sizes = set([(250, 250)])
 
 @register_view(ns('picture'), None)
 def view_picture_info(request, requested_view, urn, tree):
-    return HttpResponse('<img alt="" src="?view=image"/>')
+    return render_to_response('picture/display.html', {'urn': urn})
 
 @register_view(ns('picture'), 'image')
 def view_picture(request, requested_view, urn, tree):

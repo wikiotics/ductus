@@ -77,6 +77,7 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'ductus.apps.base',
     'ductus.apps.urn',
+    'ductus.applets.picture',
     'ductus.applets.picture_choice',
 )
 

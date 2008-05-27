@@ -1,0 +1,6 @@
+{% extends "ductus_base.html" %}
+{% load urn %}
+
+{% block content %}
+<img alt="{{ urn }}" src="{{ urn|resolve }}?view=image" style="display: block; margin-left: auto; margin-right: auto;" />
+{% endblock %}
