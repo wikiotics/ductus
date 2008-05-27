@@ -16,6 +16,17 @@
 
 from __future__ import with_statement
 
+def iterate_file_object(file_object):
+    """
+    """
+
+    while True:
+        x = file_object.read(4096)
+        if x == '':
+            file_object.close()
+            return
+        yield x
+
 def iterate_file(filename):
     """This generator function reads a binary file in chunks.
     """
