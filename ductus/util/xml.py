@@ -15,10 +15,34 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 def add_simple_xlink(element, uri):
-    element.attrib[ns('xlink', 'type')] = 'simple'
-    element.attrib[ns('xlink', 'href')] = uri
+    """Makes the XML element into an xlink that points to the given URI.
+
+    >>> from lxml import etree
+    >>> elt = etree.Element("root")
+    >>> add_simple_xlink(elt, "http://example.com/")
+    >>> etree.tostring(elt)
+    '<root xmlns:ns0="http://www.w3.org/1999/xlink" ns0:type="simple" ns0:href="http://example.com/"/>'
+
+    """
+
+    element.attrib['{http://www.w3.org/1999/xlink}type'] = 'simple'
+    element.attrib['{http://www.w3.org/1999/xlink}href'] = uri
 
 def make_ns_func(nsmap):
+    """Creates a convenience function for dealing with XML namespaces.
+
+    >>> nsmap = { 
+    ...     None: 'http://wikiotics.org/ns/2008/picture',
+    ...     'xlink': 'http://www.w3.org/1999/xlink',
+    ... }
+    >>> ns = make_ns_func(nsmap)
+    >>> ns('root')
+    '{http://wikiotics.org/ns/2008/picture}root'
+    >>> ns('xlink', 'href')
+    '{http://www.w3.org/1999/xlink}href'
+
+    """
+
     def ns_func(*args):
         n = len(args)
         if n == 1:

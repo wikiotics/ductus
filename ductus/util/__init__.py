@@ -17,7 +17,7 @@
 from __future__ import with_statement
 
 def iterate_file_object(file_object):
-    """
+    """This generator function iterates a file-like object, then closes it.
     """
 
     while True:
