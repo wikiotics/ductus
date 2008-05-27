@@ -26,6 +26,10 @@ ns = lambda s: ('{http://wikiotics.org/ns/2008/picture}%s' % s)
 __allowed_thumbnail_sizes = set([(250, 250)])
 
 @register_view(ns('picture'), None)
+def view_picture_info(request, requested_view, urn, tree):
+    return HttpResponse('<img alt="" src="?view=image"/>')
+
+@register_view(ns('picture'), 'image')
 def view_picture(request, requested_view, urn, tree):
     blob = tree.getroot().find(ns('blob'))
     blob_urn = blob.get('{http://www.w3.org/1999/xlink}href')
