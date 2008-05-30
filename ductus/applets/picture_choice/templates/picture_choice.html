@@ -9,25 +9,27 @@ $(function () {
             //$('#result').html('you chose picture ' + n + ' (aka ' + picture_urns[n] + ')')
             if (picture_urns[n] == correct_urn) {
                 message = 'correct';
-                $('#picture' + n).addClass('picture_choice_correct');
+                $('.ductus_picture_choice table tr td').not('#picture' + n).hide(500);
             } else {
                 message = 'incorrect';
-                $('#picture' + n).addClass('picture_choice_incorrect');
+                $('#picture' + n + ' * img').fadeTo(200, .25);
             }
             $('#result').html(message);
         };
     };
-    $("#picture0").click(clickfunc(0));
-    $("#picture1").click(clickfunc(1));
-    $("#picture2").click(clickfunc(2));
-    $("#picture3").click(clickfunc(3));
+    $("#picture0 * img").click(clickfunc(0));
+    $("#picture1 * img").click(clickfunc(1));
+    $("#picture2 * img").click(clickfunc(2));
+    $("#picture3 * img").click(clickfunc(3));
 })
 {% endblock %}
 
 {% block head %}
 <style type="text/css">
-.picture_choice_correct { border: 2px solid green; }
-.picture_choice_incorrect { border: 2px solid red; }
+.ductus_picture_choice h2 { text-align: center; }
+.ductus_picture_choice * td div { height: 250px; width: 250px; display: table-cell; vertical-align: middle; }
+.ductus_picture_choice * td div img { display: block; margin-left: auto; margin-right: auto; }
+.ductus_picture_choice table { margin-left: auto; margin-right: auto; }
 </style>
 {% endblock %}
 

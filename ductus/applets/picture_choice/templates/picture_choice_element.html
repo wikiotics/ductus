@@ -1,10 +1,10 @@
 {% load urn %}
-<div class="ductus-picture-choice">
+<div class="ductus_picture_choice">
   <h2>{{ object.phrase|escape }}</h2>
   <table>
-    <tr><td><img alt="" id="picture0" src="{{ object.pictures.0|resolve }}?view=image&max_size=250,250"/></td><td></td><td><img alt="" id="picture1" src="{{ object.pictures.1|resolve }}?view=image&max_size=250,250"/></td></tr>
+    <tr><td id="picture0"><div><img alt="" src="{{ object.pictures.0|resolve }}?view=image&max_size=250,250"/></div></td><td></td><td id="picture1"><div><img alt="" src="{{ object.pictures.1|resolve }}?view=image&max_size=250,250"/></div></td></tr>
     <tr><td></td><td></td><td></td></tr>
-    <tr><td><img alt="" id="picture2" src="{{ object.pictures.2|resolve }}?view=image&max_size=250,250"/></td><td></td><td><img alt="" id="picture3" src="{{ object.pictures.3|resolve }}?view=image&max_size=250,250"/></td></tr>
+    <tr><td id="picture2"><div><img alt="" src="{{ object.pictures.2|resolve }}?view=image&max_size=250,250"/></div></td><td></td><td id="picture3"><div><img alt="" src="{{ object.pictures.3|resolve }}?view=image&max_size=250,250"/></div></td></tr>
   </table>
 </div>
 <div id="result"></div>
