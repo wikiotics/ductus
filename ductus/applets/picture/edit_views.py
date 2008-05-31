@@ -91,7 +91,6 @@ def save_picture(request, picture_info):
         raise "License not allowed (%s)" % picture_info['license']
 
     # save authorship/copyright XML
-    from lxml import etree
     root = etree.Element(ns('picture'), nsmap=nsmap)
     blob = etree.SubElement(root, ns('blob'))
     add_simple_xlink(blob, picture_info['blob_urn'])
