@@ -6,13 +6,12 @@
 $(function () {
     clickfunc = function(n) {
         return function() {
-            //$('#result').html('you chose picture ' + n + ' (aka ' + picture_urns[n] + ')')
             if (picture_urns[n] == correct_urn) {
                 message = 'correct';
                 $('.ductus_picture_choice table tr td').not('#picture' + n).hide(500);
             } else {
                 message = 'incorrect';
-                $('#picture' + n + ' * img').fadeTo(200, .25);
+                $(this).fadeTo(200, .25);
             }
             $('#result').html(message);
         };
