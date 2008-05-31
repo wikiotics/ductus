@@ -18,18 +18,22 @@ from django import newforms as forms
 from django.shortcuts import render_to_response
 from ductus.apps.urn import get_resource_database
 from ductus.util.xml import add_simple_xlink, make_ns_func
+from ductus.urn import UnsupportedURN
 
 from lxml import etree
 
 class PictureUrnField(forms.CharField):
     def clean(self, value):
-        # Does it exist, and is it a picture?
         value = super(PictureUrnField, self).clean(value)
-        # fixme: catch UnsupportedURN exception on next line
-        elt_tag = get_resource_database().get_xml_tree(value).getroot().tag
-        if elt_tag != '{http://wikiotics.org/ns/2008/picture}picture':
-            raise forms.ValidationError('Not a valid picture in the system')
-        return value
+
+        # Does it exist, and is it a picture?
+        try:
+            elt_tag = get_resource_database().get_xml_tree(value).getroot().tag
+            if elt_tag == '{http://wikiotics.org/ns/2008/picture}picture':
+                return value
+        except UnsupportedURN:
+            pass
+        raise forms.ValidationError('Not a valid picture in the system')
 
 class PictureChoiceForm(forms.Form):
     phrase0 = forms.CharField(required=False)
