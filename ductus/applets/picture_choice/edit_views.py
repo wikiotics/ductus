@@ -35,6 +35,12 @@ class PictureUrnField(forms.CharField):
             pass
         raise forms.ValidationError('Not a valid picture in the system')
 
+def get_phrases(d):
+    return (d['phrase0'], d['phrase1'], d['phrase2'], d['phrase3'])
+
+def get_pictures(d):
+    return (d['picture0'], d['picture1'], d['picture2'], d['picture3'])
+
 class PictureChoiceForm(forms.Form):
     phrase0 = forms.CharField(required=False)
     picture0 = PictureUrnField()
@@ -46,13 +52,13 @@ class PictureChoiceForm(forms.Form):
     picture3 = PictureUrnField()
 
     def clean(self):
-        d = self.data
-
-        if not (d['phrase0'] or d['phrase1'] or d['phrase2'] or d['phrase3']):
+        phrases = [p for p in get_phrases(self.data) if p]
+        if not phrases:
             raise forms.ValidationError("Need at least one phrase")
+        if len(set(phrases)) != len(phrases):
+            raise forms.ValidationError("Phrases must be unique")
 
-        pictures = [d['picture0'], d['picture1'], d['picture2'], d['picture3']]
-        pictures = [p for p in pictures if p]
+        pictures = [p for p in get_pictures(self.data) if p]
         if len(set(pictures)) != len(pictures):
             raise forms.ValidationError("Pictures must be unique")
 
@@ -65,11 +71,8 @@ def new_picture_choice(request):
         form = PictureChoiceForm(request.POST)
 
         if form.is_valid():
-            cd = form.cleaned_data
-            phrases = [cd['phrase0'], cd['phrase1'], cd['phrase2'],
-                       cd['phrase3']]
-            pictures = [cd['picture0'], cd['picture1'], cd['picture2'],
-                        cd['picture3']]
+            phrases = get_phrases(form.cleaned_data)
+            pictures = get_pictures(form.cleaned_data)
             npictures = len(pictures)
 
             for n in range(len(phrases)):
