@@ -75,6 +75,11 @@ def __register_installed_applets():
 
 __register_installed_applets()
 
+@register_view(None, 'xml')
+def view_xml_as_text(request, requested_view, urn, tree):
+    return HttpResponse(get_resource_database().get_xml(urn),
+                        content_type='application/xml')
+
 @register_view(None, 'xml_as_text')
 def view_xml_as_text(request, requested_view, urn, tree):
     return HttpResponse(get_resource_database().get_xml(urn),
