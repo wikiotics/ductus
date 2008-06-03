@@ -18,22 +18,9 @@ from django import newforms as forms
 from django.shortcuts import render_to_response
 from ductus.apps.urn import get_resource_database
 from ductus.util.xml import add_simple_xlink, make_ns_func
-from ductus.urn import UnsupportedURN
+from ductus.applets.picture.forms import PictureUrnField
 
 from lxml import etree
-
-class PictureUrnField(forms.CharField):
-    def clean(self, value):
-        value = super(PictureUrnField, self).clean(value)
-
-        # Does it exist, and is it a picture?
-        try:
-            elt_tag = get_resource_database().get_xml_tree(value).getroot().tag
-            if elt_tag == '{http://wikiotics.org/ns/2008/picture}picture':
-                return value
-        except UnsupportedURN:
-            pass
-        raise forms.ValidationError('Not a valid picture in the system')
 
 def get_phrases(d):
     return (d['phrase0'], d['phrase1'], d['phrase2'], d['phrase3'])
