@@ -45,7 +45,7 @@ class PictureChoiceForm(forms.Form):
         if len(set(phrases)) != len(phrases):
             raise forms.ValidationError("Phrases must be unique")
 
-        pictures = [p for p in get_pictures(self.data) if p]
+        pictures = [p for p in get_pictures(self.data)]
         if len(set(pictures)) != len(pictures):
             raise forms.ValidationError("Pictures must be unique")
 
