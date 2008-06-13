@@ -15,9 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.http import HttpResponse, Http404
+from django.shortcuts import render_to_response
+from django.utils.safestring import mark_safe
 
 from ductus.resource import determine_header
 from ductus.apps.urn import get_resource_database
+from ductus.util import remove_adjacent_duplicates
 
 def view_urn(request, hash_type, hash_digest):
     urn = 'urn:%s:%s' % (hash_type, hash_digest)
@@ -95,11 +98,21 @@ else:
         xml = ''.join(get_resource_database().get_xml(urn))
         lexer = pygments.lexers.XmlLexer()
         formatter = pygments.formatters.HtmlFormatter()
-        highlighted_xml = pygments.highlight(xml, lexer, formatter)
+        html = mark_safe(pygments.highlight(xml, lexer, formatter))
+        css = mark_safe(formatter.get_style_defs('.highlight'))
 
-        html = '<html><head><style type="text/css">%s</style></head><body>%s</body></html>' % (formatter.get_style_defs('.highlight'), highlighted_xml)
+        return render_to_response('urn_xml.html', {'html': html, 'css': css})
 
-        return HttpResponse(html)
+@register_view(None, 'xlink_index')
+def view_xlink_index(request, requested_view, urn, tree):
+    links = tree.getroot().findall('.//*[@{http://www.w3.org/1999/xlink}href]')
+    links = (link.get('{http://www.w3.org/1999/xlink}href') for link in links
+             if link.get('{http://www.w3.org/1999/xlink}type') == 'simple')
+    links = [urn for urn in links if urn.startswith('urn:')]
+    links.sort()
+    remove_adjacent_duplicates(links)
+    return render_to_response('urn_xlink_index.html',
+                              {'urn': urn, 'links': links})
 
 @register_view(None, 'view_index')
 def view_view_index(request, requested_view, urn, tree):
@@ -112,7 +125,6 @@ def view_view_index(request, requested_view, urn, tree):
     special_views.sort()
     generic_views.sort()
 
-    from django.shortcuts import render_to_response
     return render_to_response('urn_view_index.html',
                               {'special_views': special_views,
                                'generic_views': generic_views})

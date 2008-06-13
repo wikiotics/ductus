@@ -64,3 +64,17 @@ class sequence_contains_only(object):
         x = list(frozenset(x + self.allowed_elements))
         x.sort()
         return (x == self.element_list)
+
+def remove_adjacent_duplicates(list_):
+    """Removes adjacent duplicates from a list.
+
+    Operates on the list in place.  If the list is sorted, all duplicates will
+    be removed.
+    """
+
+    last = list_[-1]
+    for i in range(len(list_) - 2, -1, -1):
+        if last == list_[i]:
+            del list_[i]
+        else:
+            last = list_[i]
