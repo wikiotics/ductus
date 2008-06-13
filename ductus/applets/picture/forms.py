@@ -29,10 +29,7 @@ class PictureUrnField(forms.CharField):
             elt_tag = get_resource_database().get_xml_tree(value).getroot().tag
             if elt_tag == '{http://wikiotics.org/ns/2008/picture}picture':
                 return value
-        except UnsupportedURN:
-            pass
         except KeyError:
             pass
         # Fixme: we should probably give more specific error responses
         raise forms.ValidationError('Not a valid picture in the system')
-

@@ -17,7 +17,8 @@
 import os, os.path
 from shutil import copyfile
 
-import ductus.util, ductus.urn
+from ductus.urn import UnsupportedURN, verify_class_A_urn
+from ductus.util import iterate_file
 
 class LocalStorageBackend(object):
     """Local storage backend.
@@ -29,14 +30,20 @@ class LocalStorageBackend(object):
         self.__storage_directory = storage_directory
 
     def __storage_location(self, urn):
-        ductus.urn.verify_class_A_urn(urn)
+        verify_class_A_urn(urn)
         urn_str, hash_type, digest = urn.split(':')
         return os.path.join(self.__storage_directory, hash_type,
                             digest[0:2], (digest[2:4] or digest[0:2]), digest)
 
+    def __storage_location_else_keyerror(self, urn):
+        try:
+            return self.__storage_location(urn)
+        except UnsupportedURN:
+            raise KeyError(urn)
+
     def __contains__(self, key):
         # does file exist, and can we read it?
-        return os.access(self.__storage_location(key), os.R_OK)
+        return os.access(self.__storage_location_else_keyerror(key), os.R_OK)
 
     def __setitem__(self, key, tmpfile):
         pathname = self.__storage_location(key)
@@ -56,7 +63,7 @@ class LocalStorageBackend(object):
             # Wow, we actually found a hash collision.  Actually, the key or
             # the existing file probably has the wrong name.  But we will save
             # the file aside just in case, and raise an exception.
-            copyfile(tmpfile, self.__storage_location('%s-collision' % key))
+            copyfile(tmpfile, '%s-collision' % pathname)
             raise Exception("Hash collision for %s" % key)
 
         dirname = os.path.dirname(pathname)
@@ -65,13 +72,13 @@ class LocalStorageBackend(object):
         copyfile(tmpfile, pathname)
 
     def __getitem__(self, key):
-        pathname = self.__storage_location(key)
+        pathname = self.__storage_location_else_keyerror(key)
         if not os.access(pathname, os.R_OK):
             raise KeyError(key)
-        return ductus.util.iterate_file(pathname)
+        return iterate_file(pathname)
 
     def __delitem__(self, key):
-        pathname = self.__storage_location(key)
+        pathname = self.__storage_location_else_keyerror(key)
         if not os.access(pathname, os.R_OK):
             raise KeyError(key)
         os.remove(pathname) # may raise OSError
@@ -101,7 +108,7 @@ class LocalStorageBackend(object):
                     try:
                         if pathname == self.__storage_location(possible_urn):
                             yield possible_urn
-                    except ductus.urn.UnsupportedURN:
+                    except UnsupportedURN:
                         pass
 
     __iter__ = iterkeys
