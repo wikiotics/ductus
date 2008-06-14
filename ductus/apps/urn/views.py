@@ -20,9 +20,13 @@ from django.utils.safestring import mark_safe
 
 from ductus.resource import determine_header
 from ductus.apps.urn import get_resource_database
+from ductus.apps.urn.util import urn_linkify
 from ductus.util import remove_adjacent_duplicates
 
 def view_urn(request, hash_type, hash_digest):
+    """Dispatches the appropriate view for a resource
+    """
+
     urn = 'urn:%s:%s' % (hash_type, hash_digest)
     resource_database = get_resource_database()
     try:
@@ -58,6 +62,13 @@ def view_urn(request, hash_type, hash_digest):
     raise Http404
 
 def register_view(root_tag_name, *args):
+    """Registers a URN view function.
+
+    root_tag_name should include the namespace information.  Additional
+    arguments specify which views are defined.  The default view is specified
+    by passing 'None' as an argument.
+    """
+
     if len(args) == 0:
         raise TypeError("function requires at least two arguments")
     def _register_view(func):
@@ -79,12 +90,18 @@ def __register_installed_applets():
 __register_installed_applets()
 
 @register_view(None, 'xml')
-def view_xml_as_text(request, requested_view, urn, tree):
+def view_xml(request, requested_view, urn, tree):
+    """Displays XML representation of resource.
+    """
+
     return HttpResponse(get_resource_database().get_xml(urn),
                         content_type='application/xml')
 
 @register_view(None, 'xml_as_text')
 def view_xml_as_text(request, requested_view, urn, tree):
+    """Displays XML representation of resource in text/plain format.
+    """
+
     return HttpResponse(get_resource_database().get_xml(urn),
                         content_type='text/plain')
 
@@ -95,27 +112,24 @@ except ImportError:
 else:
     @register_view(None, 'xml_as_html')
     def view_xml_as_html(request, requested_view, urn, tree):
+        """Displays HTML-formatted XML representation of resource.
+        """
+
         xml = ''.join(get_resource_database().get_xml(urn))
+
         lexer = pygments.lexers.XmlLexer()
         formatter = pygments.formatters.HtmlFormatter()
-        html = mark_safe(pygments.highlight(xml, lexer, formatter))
-        css = mark_safe(formatter.get_style_defs('.highlight'))
+        html = urn_linkify(pygments.highlight(xml, lexer, formatter))
+        css = formatter.get_style_defs('.highlight')
 
-        return render_to_response('urn_xml.html', {'html': html, 'css': css})
-
-@register_view(None, 'xlink_index')
-def view_xlink_index(request, requested_view, urn, tree):
-    links = tree.getroot().findall('.//*[@{http://www.w3.org/1999/xlink}href]')
-    links = (link.get('{http://www.w3.org/1999/xlink}href') for link in links
-             if link.get('{http://www.w3.org/1999/xlink}type') == 'simple')
-    links = [urn for urn in links if urn.startswith('urn:')]
-    links.sort()
-    remove_adjacent_duplicates(links)
-    return render_to_response('urn_xlink_index.html',
-                              {'urn': urn, 'links': links})
+        return render_to_response('urn_xml.html', {'html': mark_safe(html),
+                                                   'css': mark_safe(css)})
 
 @register_view(None, 'view_index')
 def view_view_index(request, requested_view, urn, tree):
+    """Display the index of available views for the resource.
+    """
+
     root_tag_name = tree.getroot().tag
 
     special_views = list(__registered_views.get(root_tag_name, ()))

@@ -57,3 +57,7 @@ def verify_class_A_urn(urn):
     "Raise UnsupportedURN if argument is not a Class-A URN."
     if not is_class_A_urn(urn):
         raise UnsupportedURN(urn)
+
+def verify_valid_urn(urn):
+    "Raise UnsupportedURN if argument is not a valid URN in the current system"
+    verify_class_A_urn(urn)

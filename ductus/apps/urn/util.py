@@ -14,17 +14,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.apps.urn.util import resolve_urn
+from ductus.urn import verify_valid_urn
+import re
 
-from django.template.defaultfilters import stringfilter
-from django.template import Library
+def resolve_urn(urn):
+    """Resolves a URN, returning its absolute URL on the server"""
 
-register = Library()
+    verify_valid_urn(urn)
+    return u'/%s/' % u'/'.join(urn.split(':'))
 
-@register.filter
-@stringfilter
-def resolve(value):
-    """Resolves a URN, returning its absolute URL on the server
+def urn_linkify(html):
+    """linkifies URNs
+
+    This function assumes no URNs occur inside HTML tags, as it will attempt to
+    linkify them anyway.
     """
 
-    return resolve_urn(value)
+    def repl(matchobj):
+        urn = matchobj.group(0)
+        return u'<a href="%s">%s</a>' % (resolve_urn(urn), urn)
+
+    return re.sub(r'urn:[_\-A-Za-z0-9\:]*', repl, html)
