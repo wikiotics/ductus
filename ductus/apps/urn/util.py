@@ -15,13 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from ductus.resource import ResourceDatabase
+from ductus.urn import UnsupportedURN
 import re
 
 def resolve_urn(urn):
     """Resolves a URN, returning its absolute URL on the server"""
 
     if not ResourceDatabase.is_valid_urn(urn):
-        raise ValueError("Argument must be a valid URN.")
+        raise UnsupportedURN(urn)
     return u'/%s/' % u'/'.join(urn.split(':'))
 
 def urn_linkify(html):
