@@ -17,8 +17,8 @@
 import os, os.path
 from shutil import copyfile
 
-from ductus.urn import UnsupportedURN, verify_class_A_urn
-from ductus.util import iterate_file
+from ductus.urn import UnsupportedURN
+from ductus.util import iterate_file, sequence_contains_only
 
 class LocalStorageBackend(object):
     """Local storage backend.
@@ -30,8 +30,7 @@ class LocalStorageBackend(object):
         self.__storage_directory = storage_directory
 
     def __storage_location(self, urn):
-        verify_class_A_urn(urn)
-        urn_str, hash_type, digest = urn.split(':')
+        hash_type, digest = split_urn(urn)
         return os.path.join(self.__storage_directory, hash_type,
                             digest[0:2], (digest[2:4] or digest[0:2]), digest)
 
@@ -112,3 +111,30 @@ class LocalStorageBackend(object):
                         pass
 
     __iter__ = iterkeys
+
+
+__b64_chrs = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+__contains_only_base64_chrs = sequence_contains_only(__b64_chrs)
+
+def split_urn(urn):
+    """Checks to make sure it is a URN we can support
+
+    URN must be in form 'urn:hash_type:hash_value' with base64 characters
+    """
+
+    if not isinstance(urn, basestring):
+        raise UnsupportedURN(urn)
+
+    urn_split = urn.split(':')
+    if len(urn_split) != 3:
+        raise UnsupportedURN(urn)
+
+    urn_str, hash_type, digest = urn_split
+    if not (urn_str == 'urn'
+            and hash_type != ''
+            and digest != ''
+            and __contains_only_base64_chrs(hash_type)
+            and __contains_only_base64_chrs(digest)):
+        raise UnsupportedURN(urn)
+
+    return hash_type, digest
