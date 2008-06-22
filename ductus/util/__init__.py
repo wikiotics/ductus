@@ -56,13 +56,11 @@ class sequence_contains_only(object):
     """
 
     def __init__(self, allowed_elements):
-        self.element_list = list(frozenset(allowed_elements))
-        self.element_list.sort()
+        self.element_list = sorted(frozenset(allowed_elements))
         self.allowed_elements = allowed_elements
 
     def __call__(self, x):
-        x = list(frozenset(x + self.allowed_elements))
-        x.sort()
+        x = sorted(frozenset(x + self.allowed_elements))
         return (x == self.element_list)
 
 def remove_adjacent_duplicates(list_):
