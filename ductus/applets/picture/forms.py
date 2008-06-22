@@ -16,9 +16,6 @@
 
 from django import newforms as forms
 from ductus.apps.urn import get_resource_database
-from ductus.urn import UnsupportedURN
-
-# should UnsupportedURN in the lower level just really return a KeyError?
 
 class PictureUrnField(forms.CharField):
     def clean(self, value):
