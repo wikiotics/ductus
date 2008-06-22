@@ -7,7 +7,7 @@ class NullStorageBackend(object):
 
     def __contains__(self, key):
         return False
-    def __setitem__(self, key, value):
+    def put_file(self, key, filename):
         raise Exception("Can't save anything to the null storage backend")
     def __getitem__(self, key):
         raise KeyError(key)

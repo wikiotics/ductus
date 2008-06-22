@@ -35,9 +35,9 @@ class UnionStorageBackend(object):
                 return True
         return False
 
-    def __setitem__(self, key, value):
+    def put_file(self, key, filename):
         primary_backend = self.__backends[0]
-        primary_backend[key] = value
+        primary_backend.put_file(key, filename)
 
     def __getitem__(self, key):
         for backend in self.__backends:

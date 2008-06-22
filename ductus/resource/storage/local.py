@@ -44,7 +44,7 @@ class LocalStorageBackend(object):
         # does file exist, and can we read it?
         return os.access(self.__storage_location_else_keyerror(key), os.R_OK)
 
-    def __setitem__(self, key, tmpfile):
+    def put_file(self, key, tmpfile):
         pathname = self.__storage_location(key)
 
         if os.path.exists(pathname):

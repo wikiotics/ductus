@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import with_statement
+from ductus.strutil import *
 
 import base64, hashlib
 import itertools
@@ -58,9 +59,11 @@ class ResourceDatabase(object):
 
     Arguments/attributes:
 
-    * backend storage module to use.
+    * backend storage module to use
 
-    * whether to allow XML document types we don't know/support
+    * maximum size allowed for a resource
+
+    * whether to allow XML document types we don't know/support (fixme)
     """
 
     def __init__(self, storage_backend, max_resource_size=(20*1024*1024)):
@@ -109,7 +112,7 @@ class ResourceDatabase(object):
             if intended_urn and intended_urn != urn:
                 raise "URN given does not match content." # valueerror
 
-            # Do we already have this urn in the DB? (fixme)
+            # Do we already have this urn in the DB?
             if urn in self.storage_backend:
                 # compare with what we have
                 with file(tmpfile, 'rb') as f:
@@ -117,14 +120,16 @@ class ResourceDatabase(object):
                         dd = f.read(len(d))
                         if dd != d:
                             # Collision!?  Save aside and raise exception
-                            self.storage_backend[urn + '-collision'] = tmpfile
+                            self.storage_backend.put_file('%s-collision' % urn,
+                                                          tmpfile)
+                            raise Exception("hash collision")
                 return urn # new resource equals old one
 
             # If it is an XML file, check it
             if header == 'xml':
                 self.__check_xml(urn, tmpfile)
 
-            self.storage_backend[urn] = tmpfile
+            self.storage_backend.put_file(urn, tmpfile)
 
         finally:
             os.remove(tmpfile)
@@ -133,7 +138,7 @@ class ResourceDatabase(object):
 
     def __check_xml(self, urn, filename):
         with file(filename, 'rb') as f:
-            f.read(len('xml\0'))
+            f.read(len(bytes('xml\0')))
             tree = etree.parse(f)
 
         # Make sure we recognize the root node and the document is valid
@@ -159,10 +164,10 @@ class ResourceDatabase(object):
             yield data
 
     def store_blob(self, x, urn=None):
-        return self.store(itertools.chain(("blob\0",), x), urn)
+        return self.store(itertools.chain((bytes("blob\0"),), x), urn)
 
     def store_xml(self, x, urn=None):
-        return self.store(itertools.chain(("xml\0",), x), urn)
+        return self.store(itertools.chain((bytes("xml\0"),), x), urn)
 
     def get_blob(self, urn):
         header, data_iterator = determine_header(self[urn], False)
@@ -189,13 +194,13 @@ class ResourceDatabase(object):
         return self.storage_backend[key]
 
 def determine_header(data_iterator, replace_header=True):
-    buf = str() # explicitly not unicode
+    buf = bytes()
 
     try:
-        while ("\0" not in buf and len(buf) < 256):
+        while (bytes("\0") not in buf and len(buf) < 256):
             buf += data_iterator.next()
     except StopIteration:
-        data_iterator = []
+        data_iterator = iter(())
 
     try:
         header = buf[:buf.index("\0")]
@@ -206,6 +211,6 @@ def determine_header(data_iterator, replace_header=True):
 
     if not replace_header:
         buf = buf[buf.index("\0")+1:]
-    data_iterator = itertools.chain((buf,), data_iterator) # replace header
-        
-    return header, data_iterator
+    data_iterator = itertools.chain((buf,), data_iterator)
+
+    return unicode(header), data_iterator

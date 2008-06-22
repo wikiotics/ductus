@@ -24,8 +24,8 @@ class SafeStorageBackend(object):
     def __contains__(self, key):
         return key in self.__backend
 
-    def __setitem__(self, key, value):
-        self.__backend[key] = value
+    def put_file(self, key, tmpfile):
+        self.__backend.put_file(key, tmpfile)
 
     def __getitem__(self, key):
         return self.__backend[key]

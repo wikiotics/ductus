@@ -29,9 +29,9 @@ class CacheStorageBackend(object):
         self.__backing_store = backing_store
         self.__cache = cache
 
-    def __attempt_cache_save(self, key, value):
+    def __attempt_cache_save(self, key, filename):
         try:
-            self.__cache[key] = value
+            self.__cache.put_file(key, filename)
             return True
         except Exception:
             return False
@@ -39,9 +39,9 @@ class CacheStorageBackend(object):
     def __contains__(self, key):
         return key in self.__cache or key in self.__backing_store
 
-    def __setitem__(self, key, value):
-        self.__backing_store[key] = value
-        self.__attempt_cache_save(key, value)
+    def put_file(self, key, filename):
+        self.__backing_store.put_file(key, filename)
+        self.__attempt_cache_save(key, filename)
 
     def __getitem__(self, key):
         try:
