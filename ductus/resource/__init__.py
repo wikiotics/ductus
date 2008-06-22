@@ -188,9 +188,6 @@ class ResourceDatabase(object):
     def __getitem__(self, key):
         return self.storage_backend[key]
 
-    def __setitem__(self, key, value):
-        self.store(value, key)
-
 def determine_header(data_iterator, replace_header=True):
     buf = str() # explicitly not unicode
 
