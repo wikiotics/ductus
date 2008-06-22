@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os, tempfile
-import ductus.util
+from ductus.util import iterate_file_then_delete
 
 class CacheStorageBackend(object):
     """
@@ -58,7 +58,7 @@ class CacheStorageBackend(object):
                 os.close(fd)
             self.__attempt_cache_save(key, tmpfile)
 
-            return ductus.util.iterate_file(tmpfile)
+            return iterate_file_then_delete(tmpfile)
 
     def __delitem__(self, key):
         del self.__backing_store[key]

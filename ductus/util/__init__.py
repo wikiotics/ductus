@@ -38,6 +38,34 @@ def iterate_file(filename):
                 return
             yield x
 
+def iterate_file_then_delete(filename):
+    """Reads a binary file in chunks and then deletes it.
+
+    Delete occurs when the iterator is garbage-collected or if an exception
+    occurs while reading the file.
+    """
+
+    def gen():
+        try:
+            data_iterator = iterate_file(filename)
+            yield # see comment below
+            while True:
+                data = data_iterator.next()
+                yield data
+        finally:
+            del data_iterator
+            try:
+                os.remove(filename)
+            except OSError:
+                pass
+
+    retval = gen()
+    retval.next() # Execute the generator until the first yield statement.
+                  # This elaborate scheme is necessary so the "finally" block
+                  # is always executed, even if the iterator is
+                  # garbage-collected before it is used.
+    return retval
+
 class sequence_contains_only(object):
     """This callable object returns True if a sequence is composed entirely of elements from a given set.
 
