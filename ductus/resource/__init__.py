@@ -71,7 +71,7 @@ class ResourceDatabase(object):
         return key in self.storage_backend
 
     @staticmethod
-    def supported_key(key):
+    def is_valid_urn(key):
         if isinstance(key, str):
             urn_str, hash_type, digest = key.split(':')
             if urn_str == 'urn' and hash_type == hash_name:
