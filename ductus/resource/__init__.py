@@ -75,11 +75,14 @@ class ResourceDatabase(object):
 
     @staticmethod
     def is_valid_urn(key):
-        if isinstance(key, str):
-            urn_str, hash_type, digest = key.split(':')
+        if isinstance(key, basestring):
+            try:
+                urn_str, hash_type, digest = key.split(':')
+            except ValueError:
+                return False
             if urn_str == 'urn' and hash_type == hash_name:
                 try:
-                    decoded = hash_decode(digest)
+                    decoded = hash_decode(bytes(digest))
                     if len(decoded) == hash_digest_size:
                         return True
                 except TypeError:
