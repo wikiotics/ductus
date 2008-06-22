@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import with_statement
+import os
 
 def iterate_file_object(file_object):
     """This generator function iterates a file-like object, then closes it.
