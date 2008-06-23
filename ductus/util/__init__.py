@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import with_statement
+from contextlib import contextmanager
 import os
 
 def iterate_file_object(file_object):
@@ -55,10 +56,8 @@ def iterate_file_then_delete(filename):
                 yield data
         finally:
             del data_iterator
-            try:
+            with ignore(OSError):
                 os.remove(filename)
-            except OSError:
-                pass
 
     retval = gen()
     retval.next() # Execute the generator until the first yield statement.
@@ -104,3 +103,20 @@ def remove_adjacent_duplicates(list_):
             del list_[i]
         else:
             last = list_[i]
+
+@contextmanager
+def ignore(*exceptions):
+    """Ignore given exceptions in a block of code
+
+    with ignore(OSError):
+        import os
+        os.remove('/tmp/ductus_foo')
+    """
+
+    try:
+        yield
+    except exceptions:
+        pass
+    except:
+        if exceptions != ():
+            raise
