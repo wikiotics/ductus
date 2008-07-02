@@ -22,6 +22,9 @@ from ductus.applets.picture.forms import PictureUrnField
 
 from lxml import etree
 
+def all_unique(iterable):
+    return len(frozenset(iterable)) == len(iterable)
+
 def get_phrases(d):
     return (d['phrase0'], d['phrase1'], d['phrase2'], d['phrase3'])
 
@@ -39,14 +42,14 @@ class PictureChoiceForm(forms.Form):
     picture3 = PictureUrnField()
 
     def clean(self):
-        phrases = [p for p in get_phrases(self.data) if p]
+        phrases = tuple(p for p in get_phrases(self.data) if p)
         if not phrases:
             raise forms.ValidationError("Need at least one phrase")
-        if len(set(phrases)) != len(phrases):
+        if not all_unique(phrases):
             raise forms.ValidationError("Phrases must be unique")
 
-        pictures = [p for p in get_pictures(self.data)]
-        if len(set(pictures)) != len(pictures):
+        pictures = get_pictures(self.data)
+        if not all_unique(pictures):
             raise forms.ValidationError("Pictures must be unique")
 
         return self.cleaned_data
@@ -60,16 +63,13 @@ def new_picture_choice(request):
         if form.is_valid():
             phrases = get_phrases(form.cleaned_data)
             pictures = get_pictures(form.cleaned_data)
-            npictures = len(pictures)
 
             for n in range(len(phrases)):
                 phrase = phrases[n]
                 if phrase:
-                    correct_picture = pictures[n]
-                    incorrect_pictures = [pictures[m] for m in range(npictures)
-                                          if m != n]
-                    urn = save_picture_choice(phrase, correct_picture,
-                                              incorrect_pictures)
+                    incorrect = list(pictures)
+                    correct = incorrect.pop(n)
+                    urn = save_picture_choice(phrase, correct, incorrect)
                     new_urns.append(urn)
 
             form = PictureChoiceForm() # just do it all again!
