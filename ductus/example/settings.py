@@ -96,6 +96,9 @@ DUCTUS_SITE_NAME = 'Example Ductus Site'
 
 CACHE_BACKEND = 'dummy:///'
 
+LOGIN_URL = '/login/'
+LOGOUT_URL= '/logout/'
+
 try:
     from ductus_local_settings import *
 except ImportError:
