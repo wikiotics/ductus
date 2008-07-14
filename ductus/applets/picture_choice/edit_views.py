@@ -16,6 +16,7 @@
 
 from django import newforms as forms
 from django.shortcuts import render_to_response
+from django.template import RequestContext
 from ductus.apps.urn import get_resource_database
 from ductus.util.xml import add_simple_xlink, make_ns_func
 from ductus.applets.picture.forms import PictureUrnField
@@ -79,7 +80,8 @@ def new_picture_choice(request):
 
     return render_to_response('picture_choice/new.html',
                               {'form': form,
-                               'new_urns': new_urns})
+                               'new_urns': new_urns},
+                              context_instance=RequestContext(request))
 
 nsmap = {
     None: 'http://wikiotics.org/ns/2008/picture_choice',

@@ -16,6 +16,7 @@
 
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
+from django.template import RequestContext
 
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
@@ -29,7 +30,8 @@ factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
 @register_view(ns('picture_choice'), None)
 def view_picture_choice(request, requested_view, urn, tree):
     element = general_picture_choice(urn, tree, request.GET)
-    return render_to_response('picture_choice.html', {'element': element})
+    return render_to_response('picture_choice.html', {'element': element},
+                              context_instance=RequestContext(request))
 
 def general_picture_choice(urn, tree, options_dict):
     root = tree.getroot()

@@ -16,6 +16,7 @@
 
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.utils.safestring import mark_safe
 
 from ductus.resource import determine_header
@@ -122,8 +123,10 @@ else:
         html = urn_linkify(pygments.highlight(xml, lexer, formatter))
         css = formatter.get_style_defs('.highlight')
 
-        return render_to_response('urn_xml.html', {'html': mark_safe(html),
-                                                   'css': mark_safe(css)})
+        return render_to_response('urn_xml.html',
+                                  {'html': mark_safe(html),
+                                   'css': mark_safe(css)},
+                                  context_instance=RequestContext(request))
 
 @register_view(None, 'view_index')
 def view_view_index(request, requested_view, urn, tree):
@@ -140,4 +143,5 @@ def view_view_index(request, requested_view, urn, tree):
 
     return render_to_response('urn_view_index.html',
                               {'special_views': special_views,
-                               'generic_views': generic_views})
+                               'generic_views': generic_views},
+                              context_instance=RequestContext(request))
