@@ -51,11 +51,11 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'ductus.middleware.cache.CacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'ductus.middleware.cache.CacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
@@ -95,6 +95,7 @@ DUCTUS_MEDIA_PREFIX = '/static/ductus/'
 DUCTUS_SITE_NAME = 'Example Ductus Site'
 
 CACHE_BACKEND = 'dummy:///'
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
 LOGIN_URL = '/login/'
 LOGOUT_URL= '/logout/'
