@@ -66,5 +66,5 @@ def view_picture(request, requested_view, urn, tree):
         data_iterator = iter([output.getvalue()])
         mime_type = 'image/jpeg'
 
-    return HttpResponse(data_iterator,
+    return HttpResponse(list(data_iterator), # see django #6527
                         content_type=mime_type)

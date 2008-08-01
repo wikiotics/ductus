@@ -39,12 +39,12 @@ def view_urn(request, hash_type, hash_digest):
     requested_view = request.GET.get('view', None)
 
     if requested_view == 'raw':
-        return HttpResponse(data_iterator,
+        return HttpResponse(list(data_iterator), # see django #6527
                             content_type='application/octet-stream')
 
     if header == 'blob':
         header, data_iterator = determine_header(data_iterator, False)
-        return HttpResponse(data_iterator,
+        return HttpResponse(list(data_iterator), # see django #6527
                             content_type='application/octet-stream')
 
     if header == 'xml':
@@ -95,7 +95,7 @@ def view_xml(request, requested_view, urn, tree):
     """Displays XML representation of resource.
     """
 
-    return HttpResponse(get_resource_database().get_xml(urn),
+    return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
                         content_type='application/xml')
 
 @register_view(None, 'xml_as_text')
@@ -103,7 +103,7 @@ def view_xml_as_text(request, requested_view, urn, tree):
     """Displays XML representation of resource in text/plain format.
     """
 
-    return HttpResponse(get_resource_database().get_xml(urn),
+    return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
                         content_type='text/plain')
 
 try:
