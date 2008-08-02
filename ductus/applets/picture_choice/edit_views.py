@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django import newforms as forms
+from django import forms
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from ductus.apps.urn import get_resource_database
