@@ -87,6 +87,7 @@ INSTALLED_APPS = (
 DUCTUS_INSTALLED_APPLETS = (
     'ductus.applets.picture',
     'ductus.applets.picture_choice',
+    'ductus.applets.textwiki',
 )
 
 DUCTUS_STORAGE_BACKEND = 'ductus.example.urls.storage_backend'
