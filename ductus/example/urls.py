@@ -1,7 +1,10 @@
 from django.conf.urls.defaults import *
+from django.contrib import admin
+
+admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^admin/', include('django.contrib.admin.urls')),
+    (r'^admin/(.*)', admin.site.root),
 #    (r'^group/', include('ductus.apps.group.urls')),
     (r'^urn/', include('ductus.apps.urn.urls')),
 #    (r'^user/', include('ductus.apps.user.urls')),
