@@ -69,6 +69,14 @@ TEMPLATE_DIRS = (
 #    '/path/to/ductus/ductus/templates',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'ductus.context_processors.site_settings',
+)
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,7 +85,6 @@ INSTALLED_APPS = (
     'django.contrib.sites', # needed for flatpages
     'django.contrib.flatpages',
     'django.contrib.markup',
-    'ductus.apps.base',
     'ductus.apps.urn',
     'ductus.applets.picture',
     'ductus.applets.picture_choice',

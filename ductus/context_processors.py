@@ -14,15 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.template import Library
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
-register = Library()
-
-@register.simple_tag
-def ductus_media_prefix():
-    return settings.DUCTUS_MEDIA_PREFIX
-
-@register.simple_tag
-def ductus_site_name():
-    return settings.DUCTUS_SITE_NAME
+def site_settings(request):
+    return dict(ductus_media_prefix=mark_safe(settings.DUCTUS_MEDIA_PREFIX),
+                ductus_site_name=mark_safe(settings.DUCTUS_SITE_NAME))
