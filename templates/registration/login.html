@@ -13,6 +13,6 @@
 <tr><td><label for="id_password">Password:</label></td><td>{{ form.password }}</td></tr>
 </table>
 <input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
+{% ifnotequal next "/logout/" %}<input type="hidden" name="next" value="{{ next }}" />{% endifnotequal %}
 </form>
 {% endblock %}
