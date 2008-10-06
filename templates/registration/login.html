@@ -16,3 +16,8 @@
 {% ifnotequal next "/logout/" %}<input type="hidden" name="next" value="{{ next }}" />{% endifnotequal %}
 </form>
 {% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+$(function () { $("#id_username").focus(); });
+{% endblock %}
