@@ -23,7 +23,9 @@
         <li><a href="/user/{{ user.username }}/">{{ user.username }}</a>
           &mdash; <a href="/logout/">Log&nbsp;out</a></li>
 {% else %}
-        <li><a href="/login/">Log&nbsp;in</a></li>
+        {% block login_button %}
+          <li><a href="/login/?next={{ request.path|urlencode }}{% if request.GET %}%3F{{ request.GET.urlencode }}{% endif %}">Log&nbsp;in</a></li>
+        {% endblock %}
 {% endif %}
       </ul>
       <h1><a href="/">{{ ductus_site_name }}</a></h1>
