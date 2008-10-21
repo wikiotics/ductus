@@ -29,8 +29,9 @@
 {% endif %}
       </ul>
       <h1><a href="/">{{ ductus_site_name }}</a></h1>
-    <hr/>
+      <hr/>
     </div>
+    {% block document_header %}{% endblock %}
     <div id="ductus_content">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
     <div id="ductus_footer">
       <hr/>
