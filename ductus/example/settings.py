@@ -29,7 +29,7 @@ SITE_ID = 1
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = '/static/'
 
 # URL that handles the media served from MEDIA_ROOT.
 # Example: "http://media.lawrence.com"
@@ -57,7 +57,6 @@ MIDDLEWARE_CLASSES = (
     'ductus.middleware.cache.CacheMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
 ROOT_URLCONF = 'ductus.example.urls'
@@ -83,10 +82,9 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.admin',
-    'django.contrib.sites', # needed for flatpages
-    'django.contrib.flatpages',
     'django.contrib.markup',
     'ductus.apps.urn',
+    'ductus.apps.wiki',
     'ductus.applets.picture',
     'ductus.applets.picture_choice',
     'ductus.applets.textwiki',
