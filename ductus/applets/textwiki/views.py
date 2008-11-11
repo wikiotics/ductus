@@ -16,11 +16,11 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django import forms, http
+from django import forms
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
 from ductus.util.xml import make_ns_func
-from ductus.apps.urn.util import resolve_urn
+from ductus.apps.urn.util import resolve_urn, SuccessfulEditRedirect
 from lxml import etree
 
 nsmap = {None: 'http://wikiotics.org/ns/2008/wikitext'}
@@ -46,7 +46,7 @@ def edit_picture(request, requested_view, urn, tree):
             root = tree.getroot()
             root.find(ns('text')).text = form.cleaned_data['text']
             urn = get_resource_database().store_xml(etree.tostring(root))
-            return http.HttpResponseRedirect(resolve_urn(urn))
+            return SuccessfulEditRedirect(urn)
 
     else:
         form = WikiEditForm({'text': tree.getroot().find(ns('text')).text})

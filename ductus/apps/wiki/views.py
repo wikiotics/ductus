@@ -19,9 +19,21 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from ductus.apps.wiki.models import WikiPage, WikiRevision
 from ductus.apps.urn.views import view_urn
+from ductus.apps.urn.util import SuccessfulEditRedirect
 
 def view_wikipage(request, pagename):
     page = get_object_or_404(WikiPage, name=pagename)
     revision = page.get_latest_revision() # what if none?
     hash_type, hash_digest = revision.urn.split(':')
-    return view_urn(request, hash_type, hash_digest)
+
+    retval = view_urn(request, hash_type, hash_digest)
+
+    if isinstance(retval, SuccessfulEditRedirect):
+        # the underlying page has been modified, so we should take note of that
+        # and save its new location
+        WikiRevision(page=page, urn=retval.urn[4:]).save()
+
+        # fixme: we want to direct to ourselves... but how do we force a reload?
+        return HttpResponse(['now would be a good time to redirect'])
+
+    return retval

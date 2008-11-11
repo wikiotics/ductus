@@ -17,6 +17,7 @@
 from ductus.resource import ResourceDatabase
 from ductus.urn import UnsupportedURN
 import re
+from django.http import HttpResponseRedirect
 
 def resolve_urn(urn):
     """Resolves a URN, returning its absolute URL on the server"""
@@ -37,3 +38,11 @@ def urn_linkify(html):
         return u'<a href="%s">%s</a>' % (resolve_urn(urn), urn)
 
     return re.sub(r'urn:[_\-A-Za-z0-9\:]*', repl, html)
+
+class SuccessfulEditRedirect(HttpResponseRedirect):
+    """Used by 'edit' views to say that an edit or fork has led to a new URN
+    """
+
+    def __init__(self, urn):
+        self.urn = urn
+        return HttpResponseRedirect.__init__(self, resolve_urn(urn))

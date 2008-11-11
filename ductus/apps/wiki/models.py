@@ -27,7 +27,7 @@ class WikiPage(models.Model):
 
 class WikiRevision(models.Model):
     page = models.ForeignKey(WikiPage)
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
     urn = models.CharField(max_length=100) # not ideal to have a fixed max
                                            # length... is there a way we can
                                            # infer this from the urn subsystem?
