@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from ductus.apps.wiki.models import WikiPage, WikiRevision
@@ -34,6 +34,6 @@ def view_wikipage(request, pagename):
         WikiRevision(page=page, urn=retval.urn[4:]).save()
 
         # fixme: we want to direct to ourselves... but how do we force a reload?
-        return HttpResponse(['now would be a good time to redirect'])
+        return HttpResponseRedirect(request.path)
 
     return retval
