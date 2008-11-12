@@ -25,6 +25,9 @@ class WikiPage(models.Model):
     def get_latest_revision(self): # what to do if no revisions exist?
         return WikiRevision.objects.filter(page=self).order_by('-timestamp')[0]
 
+    def __unicode__(self):
+        return self.name
+
 class WikiRevision(models.Model):
     page = models.ForeignKey(WikiPage)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -39,6 +42,9 @@ class WikiRevision(models.Model):
     class Meta:
         ordering = ('-timestamp',)
         get_latest_by = 'timestamp'
+
+    def __unicode__(self):
+        return unicode(self.page)
 
 # admin interface -- for debugging only
 
