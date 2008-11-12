@@ -14,3 +14,8 @@ div#ductus_header { background: #6b497e; border-bottom: 1px solid #39005a;
 
 #ductus_footer { border-top: 1px solid #ddd; padding: 0 1em; }
 #ductus_footer p { text-align: center; }
+
+#ductus_document_header ul { list-style: none; }
+#ductus_document_header ul li { display: inline; float: right; margin-right: 1em; }
+
+.clear { clear: both; }
