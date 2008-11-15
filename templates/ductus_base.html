@@ -16,9 +16,19 @@
   <body>
     <div id="ductus_header">
       <ul class="ductus_header_tabs">
-        {# main page, talk, fork/edit, history #}
-        {# my page, my groups #}
-        {# community, contribute, help #}
+{% if 0 %}
+        <li>Community
+          <ul>
+{% if user.is_authenticated %}
+            <li>My Page</li>
+            <li>My Groups</li>
+            <li></li>
+{% endif %}
+            <li>Contribute</li>
+            <li>Help</li>
+          </ul>
+        </li>
+{% endif %}
 {% if user.is_authenticated %}
         <li><a href="/user/{{ user.username }}/">{{ user.username }}</a>
           &mdash; <a href="/logout/">Log&nbsp;out</a></li>
@@ -27,7 +37,9 @@
           <li><a href="/login/?next={{ request.path|urlencode }}{% if request.GET %}%3F{{ request.GET.urlencode }}{% endif %}">Log&nbsp;in</a></li>
         {% endblock %}
 {% endif %}
+        <li>{{ LANGUAGE_CODE }}</li>
       </ul>
+      {#{% block document_header %}{% endblock %}#}
       <h1><a href="/">{{ ductus_site_name }}</a></h1>
       <hr/>
     </div>
