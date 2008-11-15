@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
+from django.contrib.auth.models import User
 
 class WikiPage(models.Model):
     name = models.CharField(max_length=512)
@@ -37,15 +38,18 @@ class WikiRevision(models.Model):
 
     # always be sure to remove 'urn:' prefix for urn field
 
+    author = models.ForeignKey(User, blank=True, null=True)
+    author_ip = models.IPAddressField(blank=True, null=True)
+
     #def get_absolute_url(self):
 
     class Meta:
         ordering = ('-timestamp',)
         get_latest_by = 'timestamp'
+        # fixme: force either username or IP to be given for a revision
 
     def __unicode__(self):
-        return u'%s (%s)' % (unicode(self.page),
-                             self.timestamp.strftime("%Y-%m-%d %H:%M:%S"))
+        return u'%s (%s)' % (unicode(self.page), self.timestamp)
 
 # admin interface -- for debugging only
 

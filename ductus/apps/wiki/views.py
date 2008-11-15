@@ -36,7 +36,12 @@ def view_wikipage(request, pagename):
     if isinstance(retval, SuccessfulEditRedirect):
         # the underlying page has been modified, so we should take note of that
         # and save its new location
-        WikiRevision(page=page, urn=retval.urn[4:]).save()
+        revision = WikiRevision(page=page, urn=retval.urn[4:])
+        if request.user:
+            revision.author = request.user
+        else:
+            revision.author_ip = request.META['REMOTE_ADDR']
+        revision.save()
 
         # fixme: we want to direct to ourselves... but how do we force a reload?
         return HttpResponseRedirect(request.path)
