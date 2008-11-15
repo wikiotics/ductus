@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+{% load i18n %}<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
@@ -31,10 +31,10 @@
 {% endif %}
 {% if user.is_authenticated %}
         <li><a href="/user/{{ user.username }}/">{{ user.username }}</a>
-          &mdash; <a href="/logout/">Log&nbsp;out</a></li>
+          &mdash; <a href="/logout/">{% trans "Log&nbsp;out" %}</a></li>
 {% else %}
         {% block login_button %}
-          <li><a href="/login/?next={{ request.path|urlencode }}{% if request.GET %}%3F{{ request.GET.urlencode }}{% endif %}">Log&nbsp;in</a></li>
+          <li><a href="/login/?next={{ request.path|urlencode }}{% if request.GET %}%3F{{ request.GET.urlencode }}{% endif %}">{% trans "Log&nbsp;in" %}</a></li>
         {% endblock %}
 {% endif %}
         <li>{{ LANGUAGE_CODE }}</li>
@@ -47,7 +47,7 @@
     <div id="ductus_content">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
     <div id="ductus_footer">
       <hr/>
-      <p>{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.</p>
+      <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
     </div>
   </body>
 </html>
