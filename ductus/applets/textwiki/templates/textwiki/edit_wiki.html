@@ -2,9 +2,8 @@
 
 {% block content %}
 <form method="POST" action="">
-<table>
-{{ form }}
-</table>
-<input type="submit" />
+<p>{{ form.text.errors }}</p>
+<p>{{ form.text }}</p>
+<p><input type="submit" value="Save" /></p>
 </form>
 {% endblock %}

@@ -35,7 +35,8 @@ def view_picture(request, requested_view, urn, tree):
                               context_instance=RequestContext(request))
 
 class WikiEditForm(forms.Form):
-    text = forms.CharField(widget=forms.Textarea)
+    textarea_attrs = {'cols': '80', 'rows': '30'}
+    text = forms.CharField(widget=forms.Textarea(attrs=textarea_attrs))
 
 @register_view(ns('wikitext'), 'edit')
 def edit_picture(request, requested_view, urn, tree):
