@@ -44,7 +44,8 @@ class WikiRevision(models.Model):
         get_latest_by = 'timestamp'
 
     def __unicode__(self):
-        return unicode(self.page)
+        return u'%s (%s)' % (unicode(self.page),
+                             self.timestamp.strftime("%Y-%m-%d %H:%M:%S"))
 
 # admin interface -- for debugging only
 

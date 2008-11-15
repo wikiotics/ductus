@@ -23,6 +23,11 @@ from ductus.apps.urn.util import SuccessfulEditRedirect
 
 def view_wikipage(request, pagename):
     page = get_object_or_404(WikiPage, name=pagename)
+
+    if request.GET.get('view', None) == 'location_history':
+        return render_to_response('wiki/location_history.html', {'page': page},
+                                  context_instance=RequestContext(request))
+
     revision = page.get_latest_revision() # what if none?
     hash_type, hash_digest = revision.urn.split(':')
 

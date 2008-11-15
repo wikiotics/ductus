@@ -1,0 +1,8 @@
+{% extends "ductus_document.html" %}
+{% block content %}
+<ol>
+{% for revision in page.wikirevision_set.all %}
+<li>{{ revision }}</li>
+{% endfor %}
+</ol>
+{% endblock %}
