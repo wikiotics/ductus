@@ -37,7 +37,7 @@ def view_wikipage(request, pagename):
         # the underlying page has been modified, so we should take note of that
         # and save its new location
         revision = WikiRevision(page=page, urn=retval.urn[4:])
-        if request.user:
+        if request.user.is_authenticated():
             revision.author = request.user
         else:
             revision.author_ip = request.META['REMOTE_ADDR']
