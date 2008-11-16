@@ -48,6 +48,16 @@
     <div id="ductus_footer">
       <hr/>
       <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
+      <form action="/setlang/" method="post">
+        <p>
+          <input name="next" type="hidden" value="{{ request.path }}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" />
+          <select name="language">
+            {% for lang in LANGUAGES %}
+            <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.1 }}</option>{% endfor %}
+          </select>
+        <input type="submit" value="Go" />
+        </p>
+      </form>
     </div>
   </body>
 </html>

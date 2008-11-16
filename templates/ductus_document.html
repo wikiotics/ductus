@@ -1,4 +1,5 @@
 {% extends "ductus_base.html" %}
+{% load i18n %}
 
 {% block document_header %}
   <div id="ductus_document_header">
@@ -9,7 +10,7 @@
       {# <li>Talk (location)</li> #}
       {# <li>Talk (document)</li> #}
       <li>Fork/Copy/Duplicate</li> {# only if it's an editable document #}
-      <li><a href="?view=edit"{# do we need anything else from the query_string? #}>Edit</a></li> {# only if it is an editable document and it's a 'wikiurl' and we have permission at this location #}
+      <li><a href="?view=edit"{# do we need anything else from the query_string? #}>{% trans "Edit" %}</a></li> {# only if it is an editable document and it's a 'wikiurl' and we have permission at this location #}
       <li><a href="?view=location_history">Location History</a></li> {# only if it's a 'wikiurl' #}
       <li>Document History</li> {# always #}
     </ul>

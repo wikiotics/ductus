@@ -1,9 +1,10 @@
 {% extends "ductus_document.html" %}
+{% load i18n %}
 
 {% block content %}
 <form method="POST" action="">
 <p>{{ form.text.errors }}</p>
 <p>{{ form.text }}</p>
-<p><input type="submit" value="Save"/> {#<input type="submit" value="Preview" name="preview"/>#}</p>
+<p><input type="submit" value="{% trans "Save" %}"/> {#<input type="submit" value="{% trans "Preview" %}" name="preview"/>#}</p>
 </form>
 {% endblock %}
