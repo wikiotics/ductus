@@ -37,7 +37,7 @@
           <li><a href="/login/?next={{ request.path|urlencode }}{% if request.GET %}%3F{{ request.GET.urlencode }}{% endif %}">{% trans "Log&nbsp;in" %}</a></li>
         {% endblock %}
 {% endif %}
-        <li>{{ LANGUAGE_CODE }}</li>
+        <li>{% for lang in LANGUAGES %}{# This is a stupid loop.  It should not be necessary to loop through all languages to determine the name of the current one. #}{% ifequal lang.0 LANGUAGE_CODE %}{% trans lang.1 %}{% endifequal %}{% endfor %}</li>
       </ul>
       {#{% block document_header %}{% endblock %}#}
       <h1><a href="/">{{ ductus_site_name }}</a></h1>
