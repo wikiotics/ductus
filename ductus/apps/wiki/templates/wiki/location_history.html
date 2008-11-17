@@ -2,7 +2,7 @@
 {% block content %}
 <ol>
 {% for revision in page.wikirevision_set.all %}
-<li>{{ revision.page }} {% if revision.author %}{{ revision.author }}{% else %}{{ revision.author_ip }}{% endif %} {{ revision.timestamp }}</li>
+<li>{{ revision.timestamp }} {% if revision.author %}{{ revision.author }}{% else %}{{ revision.author_ip }}{% endif %}</li>
 {% endfor %}
 </ol>
 {% endblock %}
