@@ -27,7 +27,7 @@ nsmap = {None: 'http://wikiotics.org/ns/2008/wikitext'}
 ns = make_ns_func(nsmap)
 
 @register_view(ns('wikitext'), None)
-def view_picture(request, requested_view, urn, tree):
+def view_textwiki(request, requested_view, urn, tree):
     text = tree.getroot().find(ns('text')).text
 
     return render_to_response('textwiki/display_wiki.html',
@@ -39,7 +39,7 @@ class WikiEditForm(forms.Form):
     text = forms.CharField(widget=forms.Textarea(attrs=textarea_attrs))
 
 @register_view(ns('wikitext'), 'edit')
-def edit_picture(request, requested_view, urn, tree):
+def edit_textwiki(request, requested_view, urn, tree):
     if request.method == 'POST':
         form = WikiEditForm(request.POST)
 
