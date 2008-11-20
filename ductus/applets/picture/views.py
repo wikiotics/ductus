@@ -20,11 +20,16 @@ from django.template import RequestContext
 from django.views.decorators.vary import vary_on_headers
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
+from ductus.util.xml import make_ns_func
 
 from PIL import Image, ImageFile
 from cStringIO import StringIO
 
-ns = lambda s: ('{http://wikiotics.org/ns/2008/picture}%s' % s)
+nsmap = {
+    None: 'http://wikiotics.org/ns/2008/picture',
+    'xlink': 'http://www.w3.org/1999/xlink',
+}
+ns = make_ns_func(nsmap)
 
 __allowed_thumbnail_sizes = set([(250, 250)])
 
@@ -37,11 +42,11 @@ def view_picture_info(request, requested_view, urn, tree):
 @register_view(ns('picture'), 'image')
 def view_picture(request, requested_view, urn, tree):
     blob = tree.getroot().find(ns('blob'))
-    blob_urn = blob.get('{http://www.w3.org/1999/xlink}href')
+    blob_urn = blob.get(ns('xlink', 'href'))
     mime_type = blob.get('type') # lxml does not seem to set the
                                  # namespace correctly on this element
                                  # when parsing.  Investigation is
-                                 # needed.
+                                 # needed.  My bad: it's not supposed to.
 
     # fixme: set X-License header
 

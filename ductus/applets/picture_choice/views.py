@@ -21,10 +21,15 @@ from django.template import RequestContext
 
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
+from ductus.util.xml import make_ns_func
 
 from random import shuffle
 
-ns = lambda s: ('{http://wikiotics.org/ns/2008/picture_choice}%s' % s)
+nsmap = {
+    None: 'http://wikiotics.org/ns/2008/picture_choice',
+    'xlink': 'http://www.w3.org/1999/xlink',
+}
+ns = make_ns_func(nsmap)
 
 factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
 
@@ -40,7 +45,7 @@ def general_picture_choice(urn, tree, options_dict):
     phrase = root.find(ns('phrase')).text
 
     pictures = root.findall('.//' + ns('picture'))
-    pictures = [picture.get('{http://www.w3.org/1999/xlink}href')
+    pictures = [picture.get(ns('xlink', 'href'))
                 for picture in pictures]
 
     if 'order' in options_dict:
