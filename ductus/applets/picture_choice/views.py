@@ -37,7 +37,7 @@ factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
 @vary_on_headers('Cookie', 'Accept-language')
 def view_picture_choice(request, requested_view, urn, tree):
     element = general_picture_choice(urn, tree, request.GET)
-    return render_to_response('picture_choice.html', {'element': element},
+    return render_to_response('picture_choice/choice.html', {'element': element},
                               context_instance=RequestContext(request))
 
 def general_picture_choice(urn, tree, options_dict):
@@ -68,8 +68,8 @@ def general_picture_choice(urn, tree, options_dict):
     }
 
     return {
-        'html_block': render_to_string('picture_choice_element.html',
+        'html_block': render_to_string('picture_choice/element.html',
                                        {'object': object}),
-        'js': render_to_string('picture_choice_element.js',
+        'js': render_to_string('picture_choice/element.js',
                                {'object': object}),
     }
