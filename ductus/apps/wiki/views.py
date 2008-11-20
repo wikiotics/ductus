@@ -17,6 +17,7 @@
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+from django.utils.cache import patch_vary_headers
 from ductus.apps.wiki.models import WikiPage, WikiRevision
 from ductus.apps.urn.views import view_urn
 from ductus.apps.urn.util import SuccessfulEditRedirect
@@ -25,8 +26,11 @@ def view_wikipage(request, pagename):
     page = get_object_or_404(WikiPage, name=pagename)
 
     if request.GET.get('view', None) == 'location_history':
-        return render_to_response('wiki/location_history.html', {'page': page},
-                                  context_instance=RequestContext(request))
+        response = render_to_response('wiki/location_history.html',
+                                      {'page': page},
+                                      context_instance=RequestContext(request))
+        patch_vary_headers(response, ['Cookie', 'Accept-language'])
+        return response
 
     revision = page.get_latest_revision() # what if none?
     hash_type, hash_digest = revision.urn.split(':')

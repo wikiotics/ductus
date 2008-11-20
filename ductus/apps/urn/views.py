@@ -17,6 +17,7 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.views.decorators.vary import vary_on_headers
 from django.utils.safestring import mark_safe
 
 from ductus.resource import determine_header
@@ -112,6 +113,7 @@ except ImportError:
     pass
 else:
     @register_view(None, 'xml_as_html')
+    @vary_on_headers('Cookie', 'Accept-language')
     def view_xml_as_html(request, requested_view, urn, tree):
         """Displays HTML-formatted XML representation of resource.
         """
@@ -129,6 +131,7 @@ else:
                                   context_instance=RequestContext(request))
 
 @register_view(None, 'view_index')
+@vary_on_headers('Cookie', 'Accept-language')
 def view_view_index(request, requested_view, urn, tree):
     """Display the index of available views for the resource.
     """

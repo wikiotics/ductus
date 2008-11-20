@@ -17,6 +17,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.views.decorators.vary import vary_on_headers
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
 
@@ -28,6 +29,7 @@ ns = lambda s: ('{http://wikiotics.org/ns/2008/picture}%s' % s)
 __allowed_thumbnail_sizes = set([(250, 250)])
 
 @register_view(ns('picture'), None)
+@vary_on_headers('Cookie', 'Accept-language')
 def view_picture_info(request, requested_view, urn, tree):
     return render_to_response('picture/display.html', {'urn': urn},
                               context_instance=RequestContext(request))
