@@ -87,12 +87,14 @@ INSTALLED_APPS = (
     'ductus.apps.wiki',
     'ductus.applets.picture',
     'ductus.applets.picture_choice',
+    'ductus.applets.picture_choice_lesson',
     'ductus.applets.textwiki',
 )
 
 DUCTUS_INSTALLED_APPLETS = (
     'ductus.applets.picture',
     'ductus.applets.picture_choice',
+    'ductus.applets.picture_choice_lesson',
     'ductus.applets.textwiki',
 )
 
