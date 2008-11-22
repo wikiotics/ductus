@@ -14,8 +14,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django import newforms as forms
+from django import forms
+from django.utils.safestring import mark_safe
 from ductus.apps.urn import get_resource_database
+
+class PictureSelector(forms.TextInput):
+    input_type = 'hidden';
+
+    def render(self, name, value, attrs=None):
+        if attrs is None:
+            attrs = {}
+        attrs = dict(attrs)
+        if 'class' in attrs:
+            attrs['class'] += u' %s' % 'ductus_picture_selector'
+        else:
+            attrs['class'] = 'ductus_picture_selector'
+        form_field = super(PictureSelector, self).render(name, value, attrs)
+        div_attrs = {'class': 'ductus_picture_selector',
+                     'id': u'%s_selector' % attrs['id']}
+        return mark_safe(u'<div%s></div>%s'
+                         % (forms.util.flatatt(div_attrs), form_field))
 
 class PictureUrnField(forms.CharField):
     def clean(self, value):
