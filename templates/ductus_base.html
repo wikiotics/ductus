@@ -53,7 +53,7 @@
           <input name="next" type="hidden" value="{{ request.path }}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" />
           <select name="language">
             {% for lang in LANGUAGES %}
-            <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.1 }}</option>{% endfor %}
+            <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.0 }} {{ lang.1 }}</option>{% endfor %}
           </select>
         <input type="submit" value="Go" />
         </p>
