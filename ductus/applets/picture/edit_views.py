@@ -51,7 +51,6 @@ allowed_licenses = (
 )
 allowed_licenses = set(allowed_licenses)
 
-# fixme: http://flickr.com/photos/65439930@N00/3051434843/
 base_url_re = re.compile(r'(http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.@]+/[0-9]+/)')
 rdf_re = re.compile(r'(\<rdf\:RDF.*\</rdf\:RDF\>)', re.DOTALL)
 huge_re = re.compile(r'(http\://farm.*?_o_d.jpg)')
