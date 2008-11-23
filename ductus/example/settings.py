@@ -114,3 +114,5 @@ try:
     from ductus_local_settings import *
 except ImportError:
     pass
+
+# to make default settings elsewhere: getattr(settings, 'DUCTUS_SETTING', False)
