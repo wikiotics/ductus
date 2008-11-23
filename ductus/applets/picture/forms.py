@@ -19,6 +19,11 @@ from django.utils.safestring import mark_safe
 from ductus.apps.urn import get_resource_database
 
 class PictureSelector(forms.TextInput):
+    """Picture selection widget
+
+    Depends on static/applets/picture/js/picture_selector.js
+    """
+
     def render(self, name, value, attrs=None):
         if attrs is None:
             attrs = {}
@@ -34,7 +39,7 @@ class PictureSelector(forms.TextInput):
                          % (forms.util.flatatt(div_attrs), form_field))
 
 class PictureUrnField(forms.CharField):
-    """
+    """Field for a Picture URN
     """
 
     widget = PictureSelector
