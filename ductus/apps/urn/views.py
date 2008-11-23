@@ -58,7 +58,13 @@ def view_urn(request, hash_type, hash_digest):
             try:
                 f = __registered_views[None][requested_view]
             except KeyError:
-                raise Http404
+                raise Http404 # fixme: should show a page saying the view
+                              # doesn't exist.  But what is the correct http
+                              # status code in this case?
+        # maybe we should pass a RequestContext here too, loaded with stuff
+        # ... but we already have the current urn in theory ... or, we could
+        # have a function somewhere that returns a DocumentRequestContext,
+        # based on arguments like the urn, and call that in each view
         return f(request, requested_view, urn, tree)
 
     raise Http404
