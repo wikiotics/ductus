@@ -25,6 +25,7 @@ from django.http import HttpResponse
 from ductus.apps.urn import get_resource_database
 from ductus.util import iterate_file_object
 from ductus.util.xml import add_simple_xlink, make_ns_func
+from ductus.util.http import render_json_response
 
 import re
 from urllib2 import urlopen
@@ -50,7 +51,8 @@ allowed_licenses = (
 )
 allowed_licenses = set(allowed_licenses)
 
-base_url_re = re.compile(r'(http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.]+/[0-9]+/)')
+# fixme: http://flickr.com/photos/65439930@N00/3051434843/
+base_url_re = re.compile(r'(http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.@]+/[0-9]+/)')
 rdf_re = re.compile(r'(\<rdf\:RDF.*\</rdf\:RDF\>)', re.DOTALL)
 huge_re = re.compile(r'(http\://farm.*?_o_d.jpg)')
 
@@ -118,8 +120,7 @@ def new_picture(request):
 
         view = request.GET.get('view', None)
         if view == 'json':
-            from django.utils import simplejson
-            return HttpResponse([simplejson.dumps({'urn': urn})])
+            return render_json_response({'urn': urn})
         return HttpResponse(urn)
 
     else:
