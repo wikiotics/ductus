@@ -31,7 +31,7 @@ nsmap = {
 }
 ns = make_ns_func(nsmap)
 
-__allowed_thumbnail_sizes = set([(250, 250)])
+__allowed_thumbnail_sizes = set([(250, 250), (50, 50)])
 
 @register_view(ns('picture'), None)
 @vary_on_headers('Cookie', 'Accept-language')

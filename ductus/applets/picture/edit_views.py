@@ -86,8 +86,9 @@ def download_flickr(url):
             'blob_urn': blob_urn,
             'original_url': base_url}
 
-def save_picture(request, picture_info):
+def save_picture(picture_info):
     if picture_info['license'] not in allowed_licenses:
+        # fixme: fix string exception
         raise "License not allowed (%s)" % picture_info['license']
 
     # save authorship/copyright XML
@@ -106,12 +107,20 @@ def save_picture(request, picture_info):
 
     # save log of what we just did ?
 
-    return HttpResponse(urn)
+    return urn
 
 def new_picture(request):
     if request.method == 'POST':
-        picture_info = download_flickr(request.POST['flickr_url'])
-        return save_picture(request, picture_info)
+        # fixme: make it auto-detect uri style
+        picture_info = download_flickr(request.POST['uri'])
+        urn = save_picture(picture_info) # could combine this and previous line
+                                         # into a single call
+
+        view = request.GET.get('view', None)
+        if view == 'json':
+            from django.utils import simplejson
+            return HttpResponse([simplejson.dumps({'urn': urn})])
+        return HttpResponse(urn)
 
     else:
-        return HttpResponse('<form method="post">Enter a Flickr url: <input name="flickr_url"/><input type="submit" /></form>')
+        return HttpResponse('<form method="post">Enter a URI: <input name="uri"/><input type="submit" /></form>')
