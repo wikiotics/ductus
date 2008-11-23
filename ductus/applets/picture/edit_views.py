@@ -112,10 +112,14 @@ def save_picture(picture_info):
 
 def new_picture(request):
     if request.method == 'POST':
-        # fixme: make it auto-detect uri style
-        picture_info = download_flickr(request.POST['uri'])
-        urn = save_picture(picture_info) # could combine this and previous line
-                                         # into a single call
+        # TODO: plugin system to recognize URI style and fetch image
+        uri = request.POST['uri']
+        if uri.startswith('urn:'):
+            urn = uri # fixme: we should verify it exists and is a picture!
+        else:
+            # could combine these lines into a single call
+            picture_info = download_flickr(uri)
+            urn = save_picture(picture_info)
 
         view = request.GET.get('view', None)
         if view == 'json':
