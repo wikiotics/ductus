@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.http import HttpResponse
-from django.util import simplejson
+from django.utils import simplejson
 
 def render_json_response(d):
     return HttpResponse([simplejson.dumps(d)], mimetype='application/json')
