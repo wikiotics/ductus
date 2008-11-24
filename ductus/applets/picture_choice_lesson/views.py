@@ -21,7 +21,10 @@ from django.template import RequestContext
 
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
-from ductus.util.xml import make_ns_func
+from ductus.util.xml import add_simple_xlink, make_ns_func
+from ductus.apps.urn.util import SuccessfulEditRedirect
+
+from lxml import etree
 
 nsmap = {
     None: 'http://wikiotics.org/ns/2008/picture_choice_lesson',
@@ -51,6 +54,26 @@ def view_picture_choice_lesson(request, requested_view, urn, tree):
 def edit_picture_choice_lesson(request, requested_view, urn, tree):
     from ductus.apps.urn import get_resource_database
     resource_database = get_resource_database()
+
+    if request.method == 'POST':
+        # right now we only allow appending of elements through a single form
+        # field...
+        from django.utils import simplejson
+        try:
+            append_list = request.POST['append_list'].replace("'", '"')
+            urns = simplejson.loads(append_list)
+        except ValueError:
+            raise
+        else:
+            # now we append each element of this list with an xlink in the
+            # document tree, save the new tree, and return the new urn
+            root = tree.getroot()
+            quiz = root.find('.//' + ns('quiz'))
+            for u in urns:
+                add_simple_xlink(etree.SubElement(quiz, ns('picture_choice')),
+                                 u)
+            urn = get_resource_database().store_xml(etree.tostring(root))
+            return SuccessfulEditRedirect(urn)
 
     questions = question_urns(tree)
     quiz = [tmp_general_picture_choice(resource_database.get_xml_tree(q))
