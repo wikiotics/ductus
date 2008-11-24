@@ -21,7 +21,7 @@ from django import forms
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
 from ductus.util.xml import make_ns_func
-from ductus.apps.urn.util import resolve_urn, SuccessfulEditRedirect
+from ductus.apps.urn.util import SuccessfulEditRedirect
 from lxml import etree
 
 nsmap = {None: 'http://wikiotics.org/ns/2008/wikitext'}
