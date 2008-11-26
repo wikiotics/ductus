@@ -1,0 +1,9 @@
+{% extends "ductus_base_error.html" %}
+{% block page_title %}Not Found (?){% endblock %}
+{% block content %}
+<h2>Found but not found</h2>
+<p>The requested resource was found, but not with the options
+specified.  Maybe you would like to try
+<a href="{{ request.path|escape }}">viewing it without any options or
+restrictions</a>.</p>
+{% endblock %}

@@ -24,6 +24,7 @@ from ductus.resource import determine_header
 from ductus.apps.urn import get_resource_database
 from ductus.apps.urn.util import urn_linkify
 from ductus.util import remove_adjacent_duplicates
+from ductus.util.http import query_string_not_found
 
 def view_urn(request, hash_type, hash_digest):
     """Dispatches the appropriate view for a resource
@@ -58,9 +59,7 @@ def view_urn(request, hash_type, hash_digest):
             try:
                 f = __registered_views[None][requested_view]
             except KeyError:
-                raise Http404 # fixme: should show a page saying the view
-                              # doesn't exist.  But what is the correct http
-                              # status code in this case?
+                return query_string_not_found(request)
         # maybe we should pass a RequestContext here too, loaded with stuff
         # ... but we already have the current urn in theory ... or, we could
         # have a function somewhere that returns a DocumentRequestContext,

@@ -14,8 +14,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.http import HttpResponse
 from django.utils import simplejson
+from django.http import HttpResponse
+from django.template import RequestContext, loader
 
 def render_json_response(d):
     return HttpResponse([simplejson.dumps(d)], mimetype='application/json')
+
+def query_string_not_found(request):
+    """Used instead of Http404 if the query string causes nothing to be found.
+    """
+
+    t = loader.get_template('query_string_404.html')
+    c = RequestContext(request)
+    return HttpResponse(t.render(c), status=404)

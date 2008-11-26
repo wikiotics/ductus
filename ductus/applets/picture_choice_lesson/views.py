@@ -19,6 +19,7 @@ from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 from django.template import RequestContext
 
+from ductus.util.http import query_string_not_found
 from ductus.apps.urn.views import register_view
 from ductus.apps.urn import get_resource_database
 from ductus.util.xml import add_simple_xlink, make_ns_func
@@ -42,10 +43,11 @@ def question_urns(tree):
 @vary_on_headers('Cookie', 'Accept-language')
 def view_picture_choice_lesson(request, requested_view, urn, tree):
     questions = question_urns(tree)
-    question = questions[int(request.GET.get('frame', 0)) % len(questions)]
-    # re above line, should probably just error out on overflow
+    frame = int(request.GET.get('frame', 0))
+    if frame >= len(questions):
+        return query_string_not_found(request)
+    question = questions[frame]
     from ductus.applets.picture_choice.views import view_picture_choice
-    from ductus.apps.urn import get_resource_database
     qtree = get_resource_database().get_xml_tree(question)
     return view_picture_choice(request, requested_view, question, qtree)
 
