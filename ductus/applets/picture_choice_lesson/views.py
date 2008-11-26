@@ -54,7 +54,6 @@ def view_picture_choice_lesson(request, requested_view, urn, tree):
 @register_view(ns('picture_choice_lesson'), 'edit')
 @vary_on_headers('Cookie', 'Accept-language')
 def edit_picture_choice_lesson(request, requested_view, urn, tree):
-    from ductus.apps.urn import get_resource_database
     resource_database = get_resource_database()
 
     if request.method == 'POST':
