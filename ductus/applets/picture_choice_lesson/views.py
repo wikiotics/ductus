@@ -104,3 +104,11 @@ def tmp_general_picture_choice(tree):
     }
 
     return object
+
+@register_view(ns('picture_choice_lesson'), 'tmp_json')
+@vary_on_headers('Cookie', 'Accept-language')
+def tmp_json_picture_choice_lesson(request, requested_view, urn, tree):
+    questions = question_urns(tree)
+    return render_to_response('picture_choice_lesson/tmp_json.html',
+                              {'questions': questions},
+                              context_instance=RequestContext(request))
