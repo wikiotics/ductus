@@ -55,6 +55,11 @@ base_url_re = re.compile(r'(http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\
 rdf_re = re.compile(r'(\<rdf\:RDF.*\</rdf\:RDF\>)', re.DOTALL)
 huge_re = re.compile(r'(http\://farm.*?_o_d.jpg)')
 
+# Failed flickr urls:
+#
+# http://www.flickr.com/photos/kelleyboone/2021418216/
+#     sizes/o/ redirects to sizes/m/
+
 def download_flickr(url):
     # verify it is a flickr url and modify url in whatever ways we
     # need ... make sure only allowed characters are there (what are
