@@ -14,12 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils import simplejson
+try:
+    import json # added in python 2.6
+except ImportError:
+    from django.utils import simplejson as json
+
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 
 def render_json_response(d):
-    return HttpResponse([simplejson.dumps(d)], mimetype='application/json')
+    return HttpResponse([json.dumps(d)], mimetype='application/json')
 
 def query_string_not_found(request):
     """Used instead of Http404 if the query string causes nothing to be found.

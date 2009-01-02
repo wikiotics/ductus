@@ -59,10 +59,10 @@ def edit_picture_choice_lesson(request, requested_view, urn, tree):
     if request.method == 'POST':
         # right now we only allow appending of elements through a single form
         # field...
-        from django.utils import simplejson
+        from django.utils import simplejson as json
         try:
             append_list = request.POST['append_list'].replace("'", '"')
-            urns = simplejson.loads(append_list)
+            urns = json.loads(append_list)
         except ValueError:
             raise
         else:
