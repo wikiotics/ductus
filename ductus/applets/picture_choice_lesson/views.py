@@ -112,3 +112,13 @@ def tmp_json_picture_choice_lesson(request, requested_view, urn, tree):
     return render_to_response('picture_choice_lesson/tmp_json.html',
                               {'questions': questions},
                               context_instance=RequestContext(request))
+
+@register_view(ns('picture_choice_lesson'), 'html_flashcards')
+def html_flashcards(request, requested_view, urn, tree):
+    resource_database = get_resource_database()
+    questions = question_urns(tree)
+    quiz = [tmp_general_picture_choice(resource_database.get_xml_tree(q))
+            for q in questions]
+    return render_to_response('picture_choice_lesson/flashcards.html',
+                              {'quiz': quiz},
+                              context_instance=RequestContext(request))
