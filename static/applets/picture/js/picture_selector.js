@@ -8,7 +8,7 @@ function resolve_urn(urn) {
 $(function () {
     function show_thumbnail(div, urn) {
         div.html('<img src="' + resolve_urn(urn)
-                 + '?view=image&amp;max_size=50,50">');
+                 + '?view=image&amp;max_size=100,100">');
     }
 
     $("div.ductus_picture_selector input").hide();
