@@ -21,8 +21,12 @@ from ductus.apps.urn import get_resource_database
 class PictureSelector(forms.TextInput):
     """Picture selection widget
 
-    Depends on static/applets/picture/js/picture_selector.js
+    Requires static/applets/picture/js/picture_selector.js
     """
+
+    # fixme: we should set some element of this class to make it clear it
+    # depends on picture_selector.js.  And hopefully we can make including an
+    # automatic phenomenon.
 
     def render(self, name, value, attrs=None):
         if attrs is None:
@@ -35,7 +39,7 @@ class PictureSelector(forms.TextInput):
         form_field = super(PictureSelector, self).render(name, value, attrs)
         div_attrs = {'class': 'ductus_picture_selector',
                      'id': u'%s_selector' % attrs['id']}
-        return mark_safe(u'<div%s></div>%s'
+        return mark_safe(u'<div%s><div>%s</div></div>'
                          % (forms.util.flatatt(div_attrs), form_field))
 
 class PictureUrnField(forms.CharField):
