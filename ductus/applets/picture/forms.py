@@ -39,7 +39,7 @@ class PictureSelector(forms.TextInput):
         form_field = super(PictureSelector, self).render(name, value, attrs)
         div_attrs = {'class': 'ductus_picture_selector',
                      'id': u'%s_selector' % attrs['id']}
-        return mark_safe(u'<div%s><div>%s</div></div>'
+        return mark_safe(u'<div%s>%s<div></div></div>'
                          % (forms.util.flatatt(div_attrs), form_field))
 
 class PictureUrnField(forms.CharField):
