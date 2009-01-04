@@ -19,3 +19,6 @@ div#ductus_header { background: #6b497e; border-bottom: 1px solid #39005a;
 #ductus_document_header ul li { display: inline; float: left; margin-right: 1em; }
 
 .clear { clear: both; }
+
+/* for jquery */
+.ui-effects-transfer { border: 2px solid black; }

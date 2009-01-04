@@ -16,7 +16,15 @@
 
 from django import forms
 from django.utils.safestring import mark_safe
+from ductus.apps.urn.util import resolve_urn
 from ductus.apps.urn import get_resource_database
+from ductus.urn import UnsupportedURN
+
+def urn_to_img_url(urn):
+    try:
+        return u'%s?view=image&amp;max_size=100,100' % resolve_urn(urn)
+    except UnsupportedURN:
+        return None
 
 class PictureSelector(forms.TextInput):
     """Picture selection widget
@@ -27,6 +35,10 @@ class PictureSelector(forms.TextInput):
     # fixme: we should set some element of this class to make it clear it
     # depends on picture_selector.js.  And hopefully we can make including an
     # automatic phenomenon.
+
+    # or we could just move the static js file to a string here...
+
+    # also, we should do the same thing for CSS
 
     def render(self, name, value, attrs=None):
         if attrs is None:
@@ -39,8 +51,11 @@ class PictureSelector(forms.TextInput):
         form_field = super(PictureSelector, self).render(name, value, attrs)
         div_attrs = {'class': 'ductus_picture_selector',
                      'id': u'%s_selector' % attrs['id']}
-        return mark_safe(u'<div%s>%s<div></div></div>'
-                         % (forms.util.flatatt(div_attrs), form_field))
+        img = u'<img src="%s"/>' % (urn_to_img_url(value) or '/broken.png')
+        return mark_safe(u'<div%s>%s%s<div></div></div>'
+                         % (forms.util.flatatt(div_attrs), img, form_field))
+
+        # img fixmes: put it in a 100x100 container; get a blank image
 
 class PictureUrnField(forms.CharField):
     """Field for a Picture URN
