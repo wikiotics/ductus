@@ -1,16 +1,23 @@
 {% extends "ductus_document.html" %}
 {% load urn %}
+
+{% block javascript %}
+$(function () {
+    $("ul.picture_choice_lesson").sortable({});
+});
+{% endblock %}
+
 {% block content %}
-<table>
+<ul class="picture_choice_lesson">
 {% for q in quiz %}
-<tr>
+<li>
 <td>{{ q.phrase }}</td>
 {% for p in q.pictures %}
-<td><img alt="" src="{{ p|resolve }}?view=image&amp;max_size=50,50"/></td>
+<img alt="" src="{{ p|resolve }}?view=image&amp;max_size=50,50"/>
 {% endfor %}
-</tr>
+</li>
 {% endfor %}
-</table>
+</ul>
 
 <h4>Hacked-together form for appending picture_choice's to this lesson</h4>
 <form method="POST">
