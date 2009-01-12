@@ -34,7 +34,7 @@ $(function () {
         $(this).siblings("input").hide();
         // fixme: what about error, or somebody pushing twice?
         var div = $(this).parent().parent();
-        $.post('/new/picture/?view=json',
+        $.post('/new/picture/',
                {'uri': $(this).siblings("input").val()},
                function (data) { set_urn(div, data.urn); },
                'json');

@@ -126,8 +126,7 @@ def new_picture(request):
             picture_info = download_flickr(uri)
             urn = save_picture(picture_info)
 
-        view = request.GET.get('view', None)
-        if view == 'json':
+        if request.is_ajax():
             return render_json_response({'urn': urn})
         return HttpResponse(urn)
 
