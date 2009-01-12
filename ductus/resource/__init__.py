@@ -172,6 +172,9 @@ class ResourceDatabase(object):
     def store_xml(self, x, urn=None):
         return self.store(itertools.chain((bytes("xml\0"),), x), urn)
 
+    def store_xml_tree(self, root, urn=None):
+        return self.store_xml((etree.tostring(root),), urn)
+
     def get_blob(self, urn):
         header, data_iterator = determine_header(self[urn], False)
         if header != 'blob':

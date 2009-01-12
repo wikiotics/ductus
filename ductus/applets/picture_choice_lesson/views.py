@@ -73,7 +73,7 @@ def edit_picture_choice_lesson(request, requested_view, urn, tree):
             for u in urns:
                 add_simple_xlink(etree.SubElement(quiz, ns('picture_choice')),
                                  u)
-            urn = get_resource_database().store_xml([etree.tostring(root)])
+            urn = get_resource_database().store_xml_tree(root)
             return SuccessfulEditRedirect(urn)
 
     questions = question_urns(tree)
