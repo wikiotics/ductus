@@ -25,10 +25,20 @@ register = template.Library()
 @stringfilter
 def creole(value):
     try:
-        from creoleparser import creole2html
+        from creoleparser.core import Parser
+        from creoleparser.dialects import Creole10
     except ImportError:
         if settings.TEMPLATE_DEBUG:
             raise template.TemplateSyntaxError, "Error in {% creole %} filter: The Python creoleparser library isn't installed."
         return value
+
+    def wiki_links_path_func(page_name):
+        return 'wiki/%s/%s%s' % page_name.partition('?')
+
+    c = Creole10(use_additions=False,
+                 no_wiki_monospace=True,
+                 wiki_links_base_url='/',
+                 wiki_links_path_func=wiki_links_path_func)
+    creole2html = Parser(c)
 
     return mark_safe(creole2html(value))
