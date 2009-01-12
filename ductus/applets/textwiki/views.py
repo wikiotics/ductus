@@ -29,8 +29,8 @@ ns = make_ns_func(nsmap)
 
 @register_view(ns('wikitext'), None)
 @vary_on_headers('Cookie', 'Accept-language')
-def view_textwiki(request, requested_view, urn, tree):
-    text = tree.getroot().find(ns('text')).text
+def view_textwiki(request):
+    text = request.ductus.xml_tree.getroot().find(ns('text')).text
 
     return render_to_response('textwiki/display_wiki.html',
                               {'text': text},
@@ -42,20 +42,21 @@ class WikiEditForm(forms.Form):
 
 @register_view(ns('wikitext'), 'edit')
 @vary_on_headers('Cookie', 'Accept-language')
-def edit_textwiki(request, requested_view, urn, tree):
+def edit_textwiki(request):
     if request.method == 'POST':
         form = WikiEditForm(request.POST)
 
         if form.is_valid():
             if 'preview' in request.GET:
                 pass # fixme
-            root = tree.getroot()
+            root = request.ductus.xml_tree.getroot()
             root.find(ns('text')).text = form.cleaned_data['text'].replace('\r', '')
             urn = get_resource_database().store_xml_tree(root)
             return SuccessfulEditRedirect(urn)
 
     else:
-        form = WikiEditForm({'text': tree.getroot().find(ns('text')).text})
+        textnode = request.ductus.xml_tree.getroot().find(ns('text'))
+        form = WikiEditForm({'text': textnode.text})
 
     return render_to_response('textwiki/edit_wiki.html',
                               {'form': form},

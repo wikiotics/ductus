@@ -26,6 +26,12 @@ from ductus.apps.urn.util import urn_linkify
 from ductus.util import remove_adjacent_duplicates
 from ductus.util.http import query_string_not_found
 
+class DuctusRequestInfo(object):
+    def __init__(self, urn, requested_view, xml_tree):
+        self.urn = urn
+        self.requested_view = requested_view
+        self.xml_tree = xml_tree
+
 def view_urn(request, hash_type, hash_digest):
     """Dispatches the appropriate view for a resource
     """
@@ -60,11 +66,9 @@ def view_urn(request, hash_type, hash_digest):
                 f = __registered_views[None][requested_view]
             except KeyError:
                 return query_string_not_found(request)
-        # maybe we should pass a RequestContext here too, loaded with stuff
-        # ... but we already have the current urn in theory ... or, we could
-        # have a function somewhere that returns a DocumentRequestContext,
-        # based on arguments like the urn, and call that in each view
-        return f(request, requested_view, urn, tree)
+
+        request.ductus = DuctusRequestInfo(urn, requested_view, tree)
+        return f(request)
 
     raise Http404
 
@@ -97,18 +101,20 @@ def __register_installed_applets():
 __register_installed_applets()
 
 @register_view(None, 'xml')
-def view_xml(request, requested_view, urn, tree):
+def view_xml(request):
     """Displays XML representation of resource.
     """
 
+    urn = request.ductus.urn
     return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
                         content_type='application/xml')
 
 @register_view(None, 'xml_as_text')
-def view_xml_as_text(request, requested_view, urn, tree):
+def view_xml_as_text(request):
     """Displays XML representation of resource in text/plain format.
     """
 
+    urn = request.ductus.urn
     return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
                         content_type='text/plain')
 
@@ -119,11 +125,11 @@ except ImportError:
 else:
     @register_view(None, 'xml_as_html')
     @vary_on_headers('Cookie', 'Accept-language')
-    def view_xml_as_html(request, requested_view, urn, tree):
+    def view_xml_as_html(request):
         """Displays HTML-formatted XML representation of resource.
         """
 
-        xml = ''.join(get_resource_database().get_xml(urn))
+        xml = ''.join(get_resource_database().get_xml(request.ductus.urn))
 
         lexer = pygments.lexers.XmlLexer()
         formatter = pygments.formatters.HtmlFormatter()
@@ -137,11 +143,11 @@ else:
 
 @register_view(None, 'view_index')
 @vary_on_headers('Cookie', 'Accept-language')
-def view_view_index(request, requested_view, urn, tree):
+def view_view_index(request):
     """Display the index of available views for the resource.
     """
 
-    root_tag_name = tree.getroot().tag
+    root_tag_name = request.ductus.xml_tree.getroot().tag
 
     def get_views(tag):
         return __registered_views.get(tag, ())

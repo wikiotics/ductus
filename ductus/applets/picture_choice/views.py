@@ -35,12 +35,12 @@ factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
 
 @register_view(ns('picture_choice'), None)
 @vary_on_headers('Cookie', 'Accept-language')
-def view_picture_choice(request, requested_view, urn, tree):
-    element = general_picture_choice(urn, tree, request.GET)
+def view_picture_choice(request):
+    element = general_picture_choice(request.ductus.xml_tree, request.GET)
     return render_to_response('picture_choice/choice.html', {'element': element},
                               context_instance=RequestContext(request))
 
-def general_picture_choice(urn, tree, options_dict):
+def general_picture_choice(tree, options_dict):
     root = tree.getroot()
     phrase = root.find(ns('phrase')).text
 

@@ -35,13 +35,14 @@ __allowed_thumbnail_sizes = set([(250, 250), (100, 100), (50, 50)])
 
 @register_view(ns('picture'), None)
 @vary_on_headers('Cookie', 'Accept-language')
-def view_picture_info(request, requested_view, urn, tree):
-    return render_to_response('picture/display.html', {'urn': urn},
+def view_picture_info(request):
+    return render_to_response('picture/display.html',
+                              {'urn': request.ductus.urn},
                               context_instance=RequestContext(request))
 
 @register_view(ns('picture'), 'image')
-def view_picture(request, requested_view, urn, tree):
-    blob = tree.getroot().find(ns('blob'))
+def view_picture(request):
+    blob = request.ductus.xml_tree.getroot().find(ns('blob'))
     blob_urn = blob.get(ns('xlink', 'href'))
     mime_type = blob.get('type') # lxml does not seem to set the
                                  # namespace correctly on this element
