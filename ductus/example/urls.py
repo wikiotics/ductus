@@ -19,3 +19,8 @@ urlpatterns = patterns('',
 
 from ductus.resource.storage import LocalStorageBackend
 storage_backend = LocalStorageBackend('/tmp/ductus')
+
+try:
+    from ductus_local_urls import *
+except ImportError:
+    pass
