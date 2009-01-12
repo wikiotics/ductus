@@ -109,7 +109,7 @@ def save_picture(picture_info):
     add_simple_xlink(etree.SubElement(root, ns('original_url')),
                      picture_info['original_url'])
 
-    urn = get_resource_database().store_xml(etree.tostring(root))
+    urn = get_resource_database().store_xml([etree.tostring(root)])
 
     # save log of what we just did ?
 

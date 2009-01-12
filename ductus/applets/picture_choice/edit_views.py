@@ -109,4 +109,4 @@ def save_picture_choice(phrase, correct_picture, incorrect_pictures):
 
     # save log of what we just did?
 
-    return get_resource_database().store_xml(etree.tostring(root))
+    return get_resource_database().store_xml([etree.tostring(root)])
