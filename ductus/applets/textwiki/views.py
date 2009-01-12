@@ -50,7 +50,7 @@ def edit_textwiki(request, requested_view, urn, tree):
             if 'preview' in request.GET:
                 pass # fixme
             root = tree.getroot()
-            root.find(ns('text')).text = form.cleaned_data['text']
+            root.find(ns('text')).text = form.cleaned_data['text'].replace('\r', '')
             urn = get_resource_database().store_xml(etree.tostring(root))
             return SuccessfulEditRedirect(urn)
 
