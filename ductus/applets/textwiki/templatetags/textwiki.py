@@ -33,12 +33,22 @@ def creole(value):
         return value
 
     def wiki_links_path_func(page_name):
-        return 'wiki/%s/%s%s' % page_name.partition('?')
+        # append slash, allowing for query_string
+        page_name = '%s/%s%s' % page_name.partition('?')
+
+        # handle special pages
+        if not page_name.startswith(('user/', 'group/', 'urn/')):
+            page_name = 'wiki/' + page_name
+
+        return page_name
+
+    interwiki_links_base_urls = dict(enWP='http://en.wikipedia.org/wiki/')
 
     c = Creole10(use_additions=False,
                  no_wiki_monospace=True,
                  wiki_links_base_url='/',
-                 wiki_links_path_func=wiki_links_path_func)
+                 wiki_links_path_func=wiki_links_path_func,
+                 interwiki_links_base_urls=interwiki_links_base_urls)
     creole2html = Parser(c)
 
     return mark_safe(creole2html(value))
