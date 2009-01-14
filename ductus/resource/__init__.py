@@ -178,13 +178,13 @@ class ResourceDatabase(object):
     def get_blob(self, urn):
         header, data_iterator = determine_header(self[urn], False)
         if header != 'blob':
-            raise Exception()
+            raise Exception("Expecting 'blob', but received '%s'" % header)
         return data_iterator
 
     def get_xml(self, urn):
         header, data_iterator = determine_header(self[urn], False)
         if header != 'xml':
-            raise Exception()
+            raise Exception("Expecting 'xml', but received '%s'" % header)
         return data_iterator
 
     def get_xml_tree(self, urn):
