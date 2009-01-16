@@ -17,7 +17,11 @@
 from django.conf import settings
 
 class RemoteAddrMiddleware(object):
-    """
+    """Sets request.remote_addr, taking into account proxy servers
+
+    DUCTUS_TRUSTED_PROXY_SERVERS should be a tuple of IP addresses.  We must be
+    able to trust all incoming requests from these IP addresses in the sense
+    that they do not spoof the X-Forwarded-For header.
     """
 
     def __init__(self, trusted_proxy_servers=None):
