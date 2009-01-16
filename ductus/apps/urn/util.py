@@ -19,10 +19,12 @@ from ductus.urn import UnsupportedURN
 import re
 from django.http import HttpResponseRedirect
 
+is_valid_urn = ResourceDatabase.is_valid_urn
+
 def resolve_urn(urn):
     """Resolves a URN, returning its absolute URL on the server"""
 
-    if not ResourceDatabase.is_valid_urn(urn):
+    if not is_valid_urn(urn):
         raise UnsupportedURN(urn)
     return u'/%s/' % u'/'.join(urn.split(':'))
 
