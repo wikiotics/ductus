@@ -7,13 +7,12 @@ $(function () {
     clickfunc = function(n) {
         return function() {
             if (picture_urns[n] == correct_urn) {
-                message = 'correct';
+                //correct
                 $('.ductus_picture_choice table tr td').not('#picture' + n).hide(500);
             } else {
-                message = 'incorrect';
-                $(this).fadeTo(200, .25);
+                //incorrect
+                $(this).parent().fadeTo(200, .25);
             }
-            $('#result').html(message);
         };
     };
     $("#picture0 * img").click(clickfunc(0));
@@ -26,7 +25,7 @@ $(function () {
 {% block head %}
 <style type="text/css">
 .ductus_picture_choice h2 { text-align: center; }
-.ductus_picture_choice * td div { height: 250px; width: 250px; display: table-cell; vertical-align: middle; }
+.ductus_picture_choice * td div { height: 250px; width: 250px; display: table-cell; vertical-align: middle; background: #ccc; }
 .ductus_picture_choice * td div img { display: block; margin-left: auto; margin-right: auto; }
 .ductus_picture_choice table { margin-left: auto; margin-right: auto; }
 </style>

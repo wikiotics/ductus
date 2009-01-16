@@ -7,6 +7,7 @@ $(function () {
         div.children("input").val(urn);
         var qs = '?view=image&amp;max_size=100,100';
         div.children("img").attr("src", resolve_urn(urn) + qs);
+        // if on drop we clone instead, it will be quicker (but we can't do this for a new image)
     }
 
     $("div.ductus_picture_selector input").hide();
