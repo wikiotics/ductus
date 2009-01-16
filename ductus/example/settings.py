@@ -103,9 +103,6 @@ DUCTUS_STORAGE_BACKEND = 'ductus.example.urls.storage_backend'
 
 DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 
-DUCTUS_MEDIA_PREFIX = '/static/ductus/'
-DUCTUS_SITE_NAME = 'Example Ductus Site'
-
 CACHE_BACKEND = 'dummy:///'
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
@@ -117,5 +114,3 @@ try:
     from ductus_local_settings import *
 except ImportError:
     pass
-
-# to make default settings elsewhere: getattr(settings, 'DUCTUS_SETTING', False)

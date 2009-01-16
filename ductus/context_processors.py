@@ -18,5 +18,7 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 
 def site_settings(request):
-    return dict(ductus_media_prefix=mark_safe(settings.DUCTUS_MEDIA_PREFIX),
-                ductus_site_name=mark_safe(settings.DUCTUS_SITE_NAME))
+    dmp = getattr(settings, "DUCTUS_MEDIA_PREFIX", "/static/ductus/")
+    dsn = getattr(settings, "DUCTUS_SITE_NAME", "Example Ductus Site")
+    return dict(ductus_media_prefix=mark_safe(dmp),
+                ductus_site_name=mark_safe(dsn))
