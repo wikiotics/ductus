@@ -20,10 +20,10 @@ from django.template.loader import render_to_string
 from django.template import RequestContext
 
 from ductus.util.http import query_string_not_found
-from ductus.apps.urn.views import register_view
-from ductus.apps.urn import get_resource_database
+from ductus.urn.views import register_view
+from ductus.urn import get_resource_database
 from ductus.util.xml import add_simple_xlink, make_ns_func
-from ductus.apps.urn.util import SuccessfulEditRedirect
+from ductus.urn.util import SuccessfulEditRedirect
 
 from lxml import etree
 

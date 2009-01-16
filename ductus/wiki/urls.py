@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class UnsupportedURN(ValueError):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+from django.conf.urls.defaults import *
+
+urlpatterns = patterns('ductus.wiki.views',
+   (r'^(.*)/$', 'view_wikipage'),
+)

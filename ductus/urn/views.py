@@ -21,8 +21,8 @@ from django.views.decorators.vary import vary_on_headers
 from django.utils.safestring import mark_safe
 
 from ductus.resource import determine_header
-from ductus.apps.urn import get_resource_database
-from ductus.apps.urn.util import urn_linkify
+from ductus.urn import get_resource_database
+from ductus.urn.util import urn_linkify
 from ductus.util import remove_adjacent_duplicates
 from ductus.util.http import query_string_not_found
 

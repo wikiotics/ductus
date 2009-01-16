@@ -14,16 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def get_resource_database():
-    global __resource_database
-    if __resource_database is None:
-        from django.conf import settings
-        backend = settings.DUCTUS_STORAGE_BACKEND
-        mod_name, junk, var_name = backend.rpartition('.')
-        storage_backend = getattr(__import__(mod_name, {}, {}, ['']),
-                                      var_name)
-        from ductus.resource import ResourceDatabase
-        __resource_database = ResourceDatabase(storage_backend)
-    return __resource_database
+from django.conf.urls.defaults import *
 
-__resource_database = None
+urlpatterns = patterns('ductus.urn.views',
+   (r'^(?P<hash_type>[-_\w]+)/(?P<hash_digest>[-_\w]+)/$', 'view_urn'),
+)

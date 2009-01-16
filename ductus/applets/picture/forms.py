@@ -16,8 +16,8 @@
 
 from django import forms
 from django.utils.safestring import mark_safe
-from ductus.apps.urn.util import resolve_urn
-from ductus.apps.urn import get_resource_database
+from ductus.urn.util import resolve_urn
+from ductus.urn import get_resource_database
 from ductus.urn import UnsupportedURN
 
 def urn_to_img_url(urn):

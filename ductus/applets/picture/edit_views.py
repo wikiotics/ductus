@@ -22,7 +22,7 @@
 #       allowed licenses
 
 from django.http import HttpResponse
-from ductus.apps.urn import get_resource_database
+from ductus.urn import get_resource_database
 from ductus.util import iterate_file_object
 from ductus.util.xml import add_simple_xlink, make_ns_func
 from ductus.util.http import render_json_response

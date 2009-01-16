@@ -18,9 +18,9 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.cache import patch_vary_headers
-from ductus.apps.wiki.models import WikiPage, WikiRevision
-from ductus.apps.urn.views import view_urn
-from ductus.apps.urn.util import SuccessfulEditRedirect
+from ductus.wiki.models import WikiPage, WikiRevision
+from ductus.urn.views import view_urn
+from ductus.urn.util import SuccessfulEditRedirect
 
 def view_wikipage(request, pagename):
     page = get_object_or_404(WikiPage, name=pagename)
