@@ -51,6 +51,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'ductus.middleware.remote_addr.RemoteAddrMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -99,6 +100,8 @@ DUCTUS_INSTALLED_APPLETS = (
 )
 
 DUCTUS_STORAGE_BACKEND = 'ductus.example.urls.storage_backend'
+
+DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 
 DUCTUS_MEDIA_PREFIX = '/static/ductus/'
 DUCTUS_SITE_NAME = 'Example Ductus Site'

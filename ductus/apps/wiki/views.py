@@ -44,7 +44,7 @@ def view_wikipage(request, pagename):
         if request.user.is_authenticated():
             revision.author = request.user
         else:
-            revision.author_ip = request.META['REMOTE_ADDR']
+            revision.author_ip = request.remote_addr
         revision.save()
 
         # fixme: we want to direct to ourselves... but how do we force a reload?
