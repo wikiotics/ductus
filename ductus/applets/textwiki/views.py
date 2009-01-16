@@ -19,9 +19,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django import forms
 from ductus.urn.views import register_view
-from ductus.urn import get_resource_database
+from ductus.urn import get_resource_database, SuccessfulEditRedirect
 from ductus.util.xml import make_ns_func
-from ductus.urn.util import SuccessfulEditRedirect
 from lxml import etree
 
 nsmap = {None: 'http://wikiotics.org/ns/2008/wikitext'}

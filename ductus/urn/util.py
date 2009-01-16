@@ -14,19 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.resource import ResourceDatabase
-from ductus.urn import UnsupportedURN
 import re
-from django.http import HttpResponseRedirect
-
-is_valid_urn = ResourceDatabase.is_valid_urn
-
-def resolve_urn(urn):
-    """Resolves a URN, returning its absolute URL on the server"""
-
-    if not is_valid_urn(urn):
-        raise UnsupportedURN(urn)
-    return u'/%s/' % u'/'.join(urn.split(':'))
+from ductus.urn import resolve_urn
 
 def urn_linkify(html):
     """linkifies URNs
@@ -40,11 +29,3 @@ def urn_linkify(html):
         return u'<a href="%s">%s</a>' % (resolve_urn(urn), urn)
 
     return re.sub(r'urn:[_\-A-Za-z0-9\:]*', repl, html)
-
-class SuccessfulEditRedirect(HttpResponseRedirect):
-    """Used by 'edit' views to say that an edit or fork has led to a new URN
-    """
-
-    def __init__(self, urn):
-        self.urn = urn
-        return HttpResponseRedirect.__init__(self, resolve_urn(urn))

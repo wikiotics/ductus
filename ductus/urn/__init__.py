@@ -14,6 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from ductus.resource import ResourceDatabase
+
 class UnsupportedURN(ValueError):
     def __init__(self, value):
         self.value = value
@@ -23,13 +27,33 @@ class UnsupportedURN(ValueError):
 def get_resource_database():
     global __resource_database
     if __resource_database is None:
-        from django.conf import settings
         backend = settings.DUCTUS_STORAGE_BACKEND
         mod_name, junk, var_name = backend.rpartition('.')
         storage_backend = getattr(__import__(mod_name, {}, {}, ['']),
                                       var_name)
-        from ductus.resource import ResourceDatabase
         __resource_database = ResourceDatabase(storage_backend)
     return __resource_database
 
 __resource_database = None
+
+is_valid_urn = ResourceDatabase.is_valid_urn
+
+def verify_valid_urn(urn):
+    """Raises UnsupportedURN if invalid"""
+
+    if not is_valid_urn(urn):
+        raise UnsupportedURN(urn)
+
+def resolve_urn(urn):
+    """Resolves a URN, returning its absolute URL on the server"""
+
+    verify_valid_urn(urn)
+    return u'/%s/' % u'/'.join(urn.split(':'))
+
+class SuccessfulEditRedirect(HttpResponseRedirect):
+    """Used by 'edit' views to say that an edit or fork has led to a new URN
+    """
+
+    def __init__(self, urn):
+        self.urn = urn
+        return HttpResponseRedirect.__init__(self, resolve_urn(urn))

@@ -21,9 +21,8 @@ from django.template import RequestContext
 
 from ductus.util.http import query_string_not_found
 from ductus.urn.views import register_view
-from ductus.urn import get_resource_database
+from ductus.urn import get_resource_database, SuccessfulEditRedirect
 from ductus.util.xml import add_simple_xlink, make_ns_func
-from ductus.urn.util import SuccessfulEditRedirect
 
 from lxml import etree
 

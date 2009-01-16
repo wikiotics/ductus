@@ -20,7 +20,7 @@ from django.template import RequestContext
 from django.utils.cache import patch_vary_headers
 from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.urn.views import view_urn
-from ductus.urn.util import SuccessfulEditRedirect
+from ductus.urn import SuccessfulEditRedirect
 
 def view_wikipage(request, pagename):
     page = get_object_or_404(WikiPage, name=pagename)
