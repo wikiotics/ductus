@@ -17,14 +17,8 @@
 from __future__ import with_statement
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from ductus.resource import ResourceDatabase
+from ductus.resource import ResourceDatabase, UnsupportedURN
 from ductus.util import ignore
-
-class UnsupportedURN(ValueError):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
 def get_resource_database():
     global __resource_database

@@ -37,16 +37,20 @@ max_urn_length = len('urn:%s:%s' % (hash_name,
 class InvalidHeader(ValueError):
     def __init__(self, value):
         self.value = value
-
     def __repr__(self):
         return self.value
 
 class SizeTooLargeError(Exception):
     def __init__(self, value):
         self.value = value
-
     def __repr__(self):
         return self.value
+
+class UnsupportedURN(ValueError):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
 
 class ResourceDatabase(object):
     """

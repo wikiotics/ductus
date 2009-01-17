@@ -17,7 +17,7 @@
 import os, os.path
 from shutil import copyfile
 
-from ductus.urn import UnsupportedURN
+from ductus.resource import UnsupportedURN
 from ductus.util import iterate_file, sequence_contains_only
 
 class LocalStorageBackend(object):
