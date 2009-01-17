@@ -89,16 +89,6 @@ def register_view(root_tag_name, *args):
 
 __registered_views = {}
 
-def __register_installed_applets():
-    from django.conf import settings
-    for applet in settings.DUCTUS_INSTALLED_APPLETS:
-        try:
-            __import__('%s.views' % applet, {}, {}, [''])
-        except ImportError:
-            raise "Could not import applet '%s'" % applet
-
-__register_installed_applets()
-
 @register_view(None, 'xml')
 def view_xml(request):
     """Displays XML representation of resource.

@@ -14,9 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import with_statement
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from ductus.resource import ResourceDatabase
+from ductus.util import ignore
 
 class UnsupportedURN(ValueError):
     def __init__(self, value):
@@ -32,6 +34,7 @@ def get_resource_database():
         storage_backend = getattr(__import__(mod_name, {}, {}, ['']),
                                       var_name)
         __resource_database = ResourceDatabase(storage_backend)
+        __register_installed_applets()
     return __resource_database
 
 __resource_database = None
@@ -57,3 +60,21 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
     def __init__(self, urn):
         self.urn = urn
         return HttpResponseRedirect.__init__(self, resolve_urn(urn))
+
+def __register_installed_applets():
+    global __applets_registered
+    if __applets_registered:
+        return
+
+    for applet in getattr(settings, "DUCTUS_INSTALLED_APPLETS", ()):
+        try:
+            __import__('%s.views' % applet, {}, {}, [''])
+        except ImportError:
+            raise "Could not import applet '%s'" % applet
+        for submod in ('edit_views',):
+            with ignore(ImportError):
+                __import__((applet + '.' + submod), {}, {}, [''])
+
+    __applets_registered = True
+
+__applets_registered = False
