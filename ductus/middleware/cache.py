@@ -1,6 +1,6 @@
 # This code is lifted almost verbatim from django.middleware.cache.
 # The only difference is that we allow the upstream caching of pages
-# requested with non-empty query_strings.
+# requested with non-empty query_strings.  (See Django #4992)
 
 __license__ = """
 Copyright (c) Django Software Foundation.
