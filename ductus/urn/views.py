@@ -110,7 +110,10 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
 
         if request.method == "GET" and not response.has_header("ETag"):
             if response.has_header("Vary"):
-                pass
+                vary_headers = set([h.strip().lower()
+                                    for h in response["Vary"].split(',')])
+                if vary_headers.issubset(set(['cookie', 'accept-language'])):
+                    response["ETag"] = varied_etag
             else:
                 response["ETag"] = unvaried_etag
         return response
