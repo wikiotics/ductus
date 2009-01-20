@@ -41,7 +41,7 @@ def __handle_etag(request, key):
     if etag == request.META.get('HTTP_IF_NONE_MATCH', None):
         raise __Http304
     return etag
-    # fixme: we may also want to set last-modified and expires headers
+    # fixme: we may also want to set last-modified, expires, max-age
 
 def __catch_http304(func):
     def new_func(*args, **kwargs):
@@ -61,7 +61,7 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
 
     if requested_view == 'raw':
         etag = __handle_etag(request, ['raw', urn])
-        # fixme: we may also want to set last-modified and expires headers
+        # fixme: we may also want to set last-modified, expires, max-age
 
     resource_database = get_resource_database()
     try:
@@ -89,9 +89,9 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
 
         etag = None
         if request.method == "GET":
-            unvaried_etag = [urn, wikipage, request.META["QUERY_STRING"]]
-            varied_etag = unvaried_etag + [request.META["HTTP_ACCEPT_LANGUAGE"],
-                                           request.META["HTTP_COOKIE"]]
+            unvaried_etag = [urn, wikipage, request.META.get("QUERY_STRING", "")]
+            varied_etag = unvaried_etag + [request.META.get("HTTP_ACCEPT_LANGUAGE", ""),
+                                           request.META.get("HTTP_COOKIE", "")]
             unvaried_etag = __handle_etag(request, unvaried_etag)
             varied_etag = __handle_etag(request, varied_etag)
 
