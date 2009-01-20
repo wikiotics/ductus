@@ -23,7 +23,7 @@ from django.utils.safestring import mark_safe
 from ductus.resource import determine_header
 from ductus.urn import get_resource_database
 from ductus.urn.util import urn_linkify
-from ductus.util.http import query_string_not_found
+from ductus.util.http import query_string_not_found, Http304
 
 class DuctusRequestInfo(object):
     def __init__(self, urn, requested_view, xml_tree):
@@ -31,11 +31,25 @@ class DuctusRequestInfo(object):
         self.requested_view = requested_view
         self.xml_tree = xml_tree
 
+def handle_etag(request, key):
+    from django.utils.hashcompat import md5_constructor
+    etag = '"%s"' % md5_constructor(repr(key)).hexdigest()
+    if etag == request.META.get('HTTP_IF_NONE_MATCH', None):
+        raise Http304
+    return etag
+    # fixme: we may also want to set last-modified and expires headers
+
 def view_urn(request, hash_type, hash_digest):
     """Dispatches the appropriate view for a resource
     """
 
     urn = 'urn:%s:%s' % (hash_type, hash_digest)
+    requested_view = request.GET.get('view', None)
+
+    if requested_view == 'raw':
+        etag = handle_etag(request, ['raw', urn])
+        # fixme: we may also want to set last-modified and expires headers
+
     resource_database = get_resource_database()
     try:
         data_iterator = resource_database[urn]
@@ -43,16 +57,19 @@ def view_urn(request, hash_type, hash_digest):
         raise Http404
     header, data_iterator = determine_header(data_iterator)
 
-    requested_view = request.GET.get('view', None)
-
     if requested_view == 'raw':
-        return HttpResponse(list(data_iterator), # see django #6527
-                            content_type='application/octet-stream')
+        response = HttpResponse(list(data_iterator), # see django #6527
+                                content_type='application/octet-stream')
+        response["ETag"] = etag
+        return response
 
     if header == 'blob':
+        etag = handle_etag(request, ['blob', urn])
         header, data_iterator = determine_header(data_iterator, False)
-        return HttpResponse(list(data_iterator), # see django #6527
-                            content_type='application/octet-stream')
+        response = HttpResponse(list(data_iterator), # see django #6527
+                                content_type='application/octet-stream')
+        response["Etag"] = etag
+        return response
 
     if header == 'xml':
         del data_iterator
