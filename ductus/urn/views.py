@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseNotModified
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.vary import vary_on_headers
@@ -43,6 +43,15 @@ def __handle_etag(request, key):
     return etag
     # fixme: we may also want to set last-modified and expires headers
 
+def __catch_http304(func):
+    def new_func(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except __Http304:
+            return HttpResponseNotModified()
+    return new_func
+
+@__catch_http304
 def view_urn(request, hash_type, hash_digest, wikipage=False):
     """Dispatches the appropriate view for a resource
     """
