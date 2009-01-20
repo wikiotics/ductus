@@ -109,7 +109,6 @@ DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 #DUCTUS_SITE_NAME = 'Example Ductus Site'
 
 CACHE_BACKEND = 'dummy:///'
-CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
 LOGIN_URL = '/login/'
 LOGOUT_URL= '/logout/'

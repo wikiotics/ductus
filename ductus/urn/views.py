@@ -77,6 +77,15 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
 
     if header == 'xml':
         del data_iterator
+
+        etag = None
+        if request.method == "GET":
+            unvaried_etag = [urn, wikipage, request.META["QUERY_STRING"]]
+            varied_etag = unvaried_etag + [request.META["HTTP_ACCEPT_LANGUAGE"],
+                                           request.META["HTTP_COOKIE"]]
+            unvaried_etag = __handle_etag(request, unvaried_etag)
+            varied_etag = __handle_etag(request, varied_etag)
+
         tree = resource_database.get_xml_tree(urn)
         root_tag_name = tree.getroot().tag
         try:
@@ -88,7 +97,14 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
                 return query_string_not_found(request)
 
         request.ductus = DuctusRequestInfo(urn, requested_view, tree, wikipage)
-        return f(request)
+        response = f(request)
+
+        if request.method == "GET" and not response.has_header("ETag"):
+            if response.has_header("Vary"):
+                pass
+            else:
+                response["ETag"] = unvaried_etag
+        return response
 
     raise Http404
 
