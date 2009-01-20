@@ -4,7 +4,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/(.*)', admin.site.root), # Should be changed in Django 1.1
 #    (r'^group/', include('ductus.group.urls')),
     (r'^urn/', include('ductus.urn.urls')),
 #    (r'^user/', include('ductus.user.urls')),
