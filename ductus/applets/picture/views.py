@@ -18,7 +18,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.vary import vary_on_headers
-from ductus.urn.views import register_view
+from ductus.urn.views import register_view, unvarying
 from ductus.urn import get_resource_database
 from ductus.util.xml import make_ns_func
 
@@ -41,6 +41,7 @@ def view_picture_info(request):
                               context_instance=RequestContext(request))
 
 @register_view(ns('picture'), 'image')
+@unvarying
 def view_picture(request):
     blob = request.ductus.xml_tree.getroot().find(ns('blob'))
     blob_urn = blob.get(ns('xlink', 'href'))
@@ -48,8 +49,6 @@ def view_picture(request):
                                  # namespace correctly on this element
                                  # when parsing.  Investigation is
                                  # needed.  My bad: it's not supposed to.
-
-    # fixme: set X-License header
 
     # prepare original image
     data_iterator = get_resource_database().get_blob(blob_urn)

@@ -53,6 +53,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.http.ConditionalGetMiddleware',
     'ductus.middleware.cache.UpdateCacheMiddleware',
+    'ductus.middleware.unvarying.UnvaryingResponseMiddleware',
     'ductus.middleware.remote_addr.RemoteAddrMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -109,6 +110,7 @@ DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 #DUCTUS_SITE_NAME = 'Example Ductus Site'
 
 CACHE_BACKEND = 'dummy:///'
+CACHE_MIDDLEWARE_SECONDS = 86400
 
 LOGIN_URL = '/login/'
 LOGOUT_URL= '/logout/'

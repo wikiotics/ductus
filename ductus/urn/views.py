@@ -90,7 +90,7 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
         etag = None
         if request.method == "GET":
             unvaried_etag = [urn, wikipage, request.META.get("QUERY_STRING", "")]
-            varied_etag = unvaried_etag + [request.META.get("HTTP_ACCEPT_LANGUAGE", ""),
+            varied_etag = unvaried_etag + [request.LANGUAGE_CODE,
                                            request.META.get("HTTP_COOKIE", "")]
             unvaried_etag = __handle_etag(request, unvaried_etag)
             varied_etag = __handle_etag(request, varied_etag)
@@ -108,14 +108,18 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
         request.ductus = DuctusRequestInfo(urn, requested_view, tree, wikipage)
         response = f(request)
 
+        # fixme: set X-License header
+
         if request.method == "GET" and not response.has_header("ETag"):
-            if response.has_header("Vary"):
+            if getattr(response, "_unvarying", False):
+                response["ETag"] = unvaried_etag
+            else:
                 vary_headers = set([h.strip().lower()
                                     for h in response["Vary"].split(',')])
                 if vary_headers.issubset(set(['cookie', 'accept-language'])):
                     response["ETag"] = varied_etag
-            else:
-                response["ETag"] = unvaried_etag
+                # fixme: we don't need to with the current middleware setup,
+                # but we may wish to explicitly patch the vary headers here
         return response
 
     raise Http404
@@ -138,7 +142,15 @@ def register_view(root_tag_name, *args):
 
 __registered_views = {}
 
+def unvarying(func):
+    def new_func(*args, **kwargs):
+        response = func(*args, **kwargs)
+        response._unvarying = True
+        return response
+    return new_func
+
 @register_view(None, 'xml')
+@unvarying
 def view_xml(request):
     """Displays XML representation of resource.
     """
@@ -148,6 +160,7 @@ def view_xml(request):
                         content_type='application/xml')
 
 @register_view(None, 'xml_as_text')
+@unvarying
 def view_xml_as_text(request):
     """Displays XML representation of resource in text/plain format.
     """
