@@ -53,7 +53,6 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.http.ConditionalGetMiddleware',
     'ductus.middleware.cache.UpdateCacheMiddleware',
-    'ductus.middleware.http304.Http304ExceptionHandlerMiddleware',
     'ductus.middleware.remote_addr.RemoteAddrMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

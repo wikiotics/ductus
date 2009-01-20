@@ -23,23 +23,27 @@ from django.utils.safestring import mark_safe
 from ductus.resource import determine_header
 from ductus.urn import get_resource_database
 from ductus.urn.util import urn_linkify
-from ductus.util.http import query_string_not_found, Http304
+from ductus.util.http import query_string_not_found
 
 class DuctusRequestInfo(object):
-    def __init__(self, urn, requested_view, xml_tree):
+    def __init__(self, urn, requested_view, xml_tree, wikipage):
         self.urn = urn
         self.requested_view = requested_view
         self.xml_tree = xml_tree
+        self.wikipage = wikipage
 
-def handle_etag(request, key):
+class __Http304(Exception):
+    pass
+
+def __handle_etag(request, key):
     from django.utils.hashcompat import md5_constructor
     etag = '"%s"' % md5_constructor(repr(key)).hexdigest()
     if etag == request.META.get('HTTP_IF_NONE_MATCH', None):
-        raise Http304
+        raise __Http304
     return etag
     # fixme: we may also want to set last-modified and expires headers
 
-def view_urn(request, hash_type, hash_digest):
+def view_urn(request, hash_type, hash_digest, wikipage=False):
     """Dispatches the appropriate view for a resource
     """
 
@@ -47,7 +51,7 @@ def view_urn(request, hash_type, hash_digest):
     requested_view = request.GET.get('view', None)
 
     if requested_view == 'raw':
-        etag = handle_etag(request, ['raw', urn])
+        etag = __handle_etag(request, ['raw', urn])
         # fixme: we may also want to set last-modified and expires headers
 
     resource_database = get_resource_database()
@@ -64,7 +68,7 @@ def view_urn(request, hash_type, hash_digest):
         return response
 
     if header == 'blob':
-        etag = handle_etag(request, ['blob', urn])
+        etag = __handle_etag(request, ['blob', urn])
         header, data_iterator = determine_header(data_iterator, False)
         response = HttpResponse(list(data_iterator), # see django #6527
                                 content_type='application/octet-stream')
@@ -83,7 +87,7 @@ def view_urn(request, hash_type, hash_digest):
             except KeyError:
                 return query_string_not_found(request)
 
-        request.ductus = DuctusRequestInfo(urn, requested_view, tree)
+        request.ductus = DuctusRequestInfo(urn, requested_view, tree, wikipage)
         return f(request)
 
     raise Http404
