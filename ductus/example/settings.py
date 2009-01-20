@@ -51,13 +51,15 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.http.ConditionalGetMiddleware',
+    'ductus.middleware.cache.UpdateCacheMiddleware',
     'ductus.middleware.remote_addr.RemoteAddrMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'ductus.middleware.cache.CacheMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
+    'ductus.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'ductus.example.urls'
