@@ -69,7 +69,7 @@ def view_picture(request):
         im = p.close()
         im.thumbnail((max_width, max_height), Image.ANTIALIAS)
         output = StringIO()
-        im.save(output, 'JPEG')
+        im.save(output, 'JPEG', quality=90) # PIL manual: avoid quality > 95
         data_iterator = iter([output.getvalue()])
         mime_type = 'image/jpeg'
 
