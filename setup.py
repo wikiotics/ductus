@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# this file is much out of date
+
 try:
     from setuptools import setup
 except ImportError:
@@ -15,6 +17,5 @@ setup(name='Ductus',
       packages=['ductus',
                 'ductus.resource',
                 'ductus.resource.storage',
-                'ductus.example',
                 ],
      )

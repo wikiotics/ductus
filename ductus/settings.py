@@ -1,4 +1,4 @@
-# Django settings for ductus.example project.
+# Django settings for ductus project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -63,7 +63,7 @@ MIDDLEWARE_CLASSES = (
     'ductus.middleware.cache.FetchFromCacheMiddleware',
 )
 
-ROOT_URLCONF = 'ductus.example.urls'
+ROOT_URLCONF = 'ductus.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".
@@ -102,7 +102,7 @@ DUCTUS_INSTALLED_APPLETS = (
     'ductus.applets.textwiki',
 )
 
-DUCTUS_STORAGE_BACKEND = 'ductus.example.urls.storage_backend'
+DUCTUS_STORAGE_BACKEND = 'ductus.urls.storage_backend'
 
 DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 
