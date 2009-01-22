@@ -1,10 +1,6 @@
 {% extends "ductus_base.html" %}
 {% load i18n %}
 
-{% if form.has_errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
-
 {% block login_button %}{% endblock %}
 
 {% block content %}
@@ -14,7 +10,7 @@
 <form method="post" action=".">
 <table>
 <tr><td><label for="id_username">{% trans "Username" %}:</label></td><td>{{ form.username }}</td></tr>
-<tr><td><label for="id_password">{% trans "Password" %}:</label></td><td>{{ form.password }}</td></tr>
+<tr><td><label for="id_password">{% trans "Password" %}:</label></td><td>{{ form.password }} <a href="/reset-password/">Forget your password</a>?</td></tr>
 </table>
 <input type="submit" value="{% trans "Log in" %}" />
 {% ifnotequal next "/logout/" %}<input type="hidden" name="next" value="{{ next }}" />{% endifnotequal %}
