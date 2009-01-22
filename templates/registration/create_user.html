@@ -1,10 +1,11 @@
 {% extends "ductus_base.html" %}
+{% load i18n %}
 
 {% block content %}
 <form method="POST" action=".">
 <table>
 {{ form }}
-<tr><td></td><td><input type="submit" value="Create Account"/></td></tr>
+<tr><td></td><td><input type="submit" value="{% trans "Create Account" %}"/></td></tr>
 </table>
 </form>
 {% endblock %}
