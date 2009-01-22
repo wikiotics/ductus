@@ -112,6 +112,8 @@ LOGIN_URL = '/login/'
 LOGOUT_URL= '/logout/'
 LOGIN_REDIRECT_URL = '/'
 
+#DEFAULT_FROM_EMAIL = "no-reply@example.com"
+
 try:
     from ductus_local_settings import *
 except ImportError:
