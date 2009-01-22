@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+from ductus.util import iterate_file_then_delete, iterator_to_tempfile
+
 class UnionStorageBackend(object):
     """
     Union of two or more resource libraries.
@@ -25,9 +28,10 @@ class UnionStorageBackend(object):
 
     """
 
-    def __init__(self, *backends):
+    def __init__(self, backends, collect_resources=False):
         assert len(backends) > 0
         self.__backends = backends
+        self.collect_resources = collect_resources
 
     def __contains__(self, key):
         for backend in self.__backends:
@@ -40,11 +44,22 @@ class UnionStorageBackend(object):
         primary_backend.put_file(key, filename)
 
     def __getitem__(self, key):
-        for backend in self.__backends:
+        for i, backend in enumerate(self.__backends):
             try:
-                return backend[key]
+                data_iterator = backend[key]
             except KeyError:
                 pass
+            else:
+                if self.collect_resources and i > 0:
+                    # Save a copy to the primary backend
+                    tmpfile = iterator_to_tempfile(data_iterator)
+                    try:
+                        primary_backend = self.__backends[0]
+                        primary_backend.put_file(key, tmpfile)
+                    except Exception:
+                        pass
+                    data_iterator = iterate_file_then_delete(tmpfile)
+                return data_iterator
         raise KeyError(key)
 
     def __delitem__(self, key):

@@ -16,6 +16,7 @@
 
 from __future__ import with_statement
 from contextlib import contextmanager
+from tempfile import mkstemp
 import os
 
 def iterate_file_object(file_object):
@@ -65,6 +66,17 @@ def iterate_file_then_delete(filename):
                   # is always executed, even if the iterator is
                   # garbage-collected before it is used.
     return retval
+
+def iterator_to_tempfile(data_iterator):
+    """Returns the filename of a new temporary file
+    """
+    fd, tmpfile = mkstemp()
+    try:
+        for data in data_iterator:
+            os.write(fd, data)
+    finally:
+        os.close(fd)
+    return tmpfile
 
 class sequence_contains_only(object):
     """This callable object returns True if a sequence is composed entirely of elements from a given set.

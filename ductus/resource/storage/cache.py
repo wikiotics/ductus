@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, tempfile
-from ductus.util import iterate_file_then_delete
+import os
+from ductus.util import iterate_file_then_delete, iterator_to_tempfile
 
 class CacheStorageBackend(object):
     """
@@ -48,16 +48,9 @@ class CacheStorageBackend(object):
             return self.__cache[key]
         except Exception:
             data_iterator = self.__backing_store[key]
-
             # Cache it
-            fd, tmpfile = tempfile.mkstemp()
-            try:
-                for data in data_iterator:
-                    os.write(fd, data)
-            finally:
-                os.close(fd)
+            tmpfile = iterator_to_tempfile(data_iterator)
             self.__attempt_cache_save(key, tmpfile)
-
             return iterate_file_then_delete(tmpfile)
 
     def __delitem__(self, key):
