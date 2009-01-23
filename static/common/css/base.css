@@ -20,6 +20,9 @@ div#ductus_header { background: #6b497e; border-bottom: 1px solid #39005a;
 
 hr { border: 0; height: 1px; color: #aaa; background-color: #aaa; }
 
+a.internal { color: #061; }
+a.broken { color: #c00; }
+
 .clear { clear: both; }
 
 /* for jquery */

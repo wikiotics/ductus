@@ -19,6 +19,8 @@ from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.conf import settings
 
+from ductus.wiki.models import WikiPage
+
 register = template.Library()
 
 @register.filter
@@ -39,12 +41,22 @@ def creole(value):
 
         return page_name
 
+    def wiki_links_class_func(page_name):
+        page_name = page_name.partition('#')[0].partition('?')[0]
+        try:
+            if WikiPage.objects.get(name=page_name).get_latest_revision().urn:
+                return "internal"
+        except Exception:
+            pass
+        return "internal broken"
+
     interwiki_links_base_urls = dict(enWP='http://en.wikipedia.org/wiki/')
 
     c = Creole10(use_additions=False,
                  no_wiki_monospace=True,
                  wiki_links_base_url='/',
                  wiki_links_path_func=wiki_links_path_func,
+                 wiki_links_class_func=wiki_links_class_func,
                  interwiki_links_base_urls=interwiki_links_base_urls)
     creole2html = Parser(c)
 
