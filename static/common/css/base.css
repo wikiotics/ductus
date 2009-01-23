@@ -18,6 +18,8 @@ div#ductus_header { background: #6b497e; border-bottom: 1px solid #39005a;
 #ductus_document_header ul { list-style: none; }
 #ductus_document_header ul li { display: inline; float: left; margin-right: 1em; }
 
+hr { border: 0; height: 1px; color: #aaa; background-color: #aaa; }
+
 .clear { clear: both; }
 
 /* for jquery */
