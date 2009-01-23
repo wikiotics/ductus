@@ -33,11 +33,6 @@ def creole(value):
         return value
 
     def wiki_links_path_func(page_name):
-        # append slash, allowing for query_string and fragment
-        fragment_split = page_name.partition('#')
-        page_name = ('%s/%s%s' % fragment_split[0].partition('?')
-                     + '%s%s' % fragment_split[1:])
-
         # handle special pages
         if not page_name.startswith(('user/', 'group/', 'urn/')):
             page_name = 'wiki/' + page_name

@@ -17,5 +17,5 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('ductus.wiki.views',
-   (r'^(.*)/$', 'view_wikipage'),
+   (r'^(.*)$', 'view_wikipage'),
 )
