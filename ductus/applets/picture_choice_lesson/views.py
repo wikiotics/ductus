@@ -117,6 +117,7 @@ def tmp_json_picture_choice_lesson(request):
                               context_instance=RequestContext(request))
 
 @register_view(ns('picture_choice_lesson'), 'html_flashcards')
+@vary_on_headers('Cookie', 'Accept-language')
 def html_flashcards(request):
     resource_database = get_resource_database()
     questions = question_urns(request.ductus.xml_tree)

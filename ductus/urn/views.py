@@ -114,8 +114,7 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
             if getattr(response, "_unvarying", False):
                 response["ETag"] = unvaried_etag
             else:
-                vary_headers = set([h.strip().lower()
-                                    for h in response["Vary"].split(',')])
+                vary_headers = set([h.strip().lower() for h in response.get("Vary", "").split(',') if h])
                 if vary_headers.issubset(set(['cookie', 'accept-language'])):
                     response["ETag"] = varied_etag
                 # fixme: we don't need to with the current middleware setup,
