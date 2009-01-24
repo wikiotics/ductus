@@ -25,7 +25,7 @@ from ductus.urn import SuccessfulEditRedirect
 def view_wikipage(request, pagename):
     page = get_object_or_404(WikiPage, name=pagename)
 
-    if request.GET.get('view', None) == 'location_history':
+    if request.GET.get('view', None) in ('location_history', 'hybrid_history'):
         response = render_to_response('wiki/location_history.html',
                                       {'page': page},
                                       context_instance=RequestContext(request))
