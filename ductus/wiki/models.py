@@ -21,7 +21,7 @@ class WikiPage(models.Model):
     name = models.CharField(max_length=512)
 
     def get_absolute_url(self):
-        return u'/%s/' % self.urn
+        return u'/wiki/%s' % self.name # fixme: reverse resolve? user/group?
 
     def get_latest_revision(self): # what to do if no revisions exist?
         return WikiRevision.objects.filter(page=self).order_by('-timestamp')[0]
