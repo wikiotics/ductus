@@ -26,6 +26,8 @@ from lxml import etree
 nsmap = {None: 'http://wikiotics.org/ns/2008/wikitext'}
 ns = make_ns_func(nsmap)
 
+# fixme: in this default view, lower the cache time for when links changed from
+# broken to unbroken and back
 @register_view(ns('wikitext'), None)
 @vary_on_headers('Cookie', 'Accept-language')
 def view_textwiki(request):
