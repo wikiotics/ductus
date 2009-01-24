@@ -17,7 +17,7 @@
 from django import forms
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from ductus.urn import get_resource_database
+from ductus.wiki import get_resource_database
 from ductus.util.xml import add_simple_xlink, make_ns_func
 from ductus.util.http import render_json_response
 from ductus.applets.picture.forms import PictureUrnField

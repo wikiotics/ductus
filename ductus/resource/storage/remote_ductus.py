@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from ductus.util import iterate_file_object
-from ductus.urn import resolve_urn
+from ductus.wiki import resolve_urn # fixme: bad to import a much higher layer
 from urllib2 import urlopen, HTTPError
 
 class RemoteDuctusStorageBackend(object):

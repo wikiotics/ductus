@@ -18,8 +18,8 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.vary import vary_on_headers
-from ductus.urn.views import register_view, unvarying
-from ductus.urn import get_resource_database
+from ductus.wiki.decorators import register_view, unvarying
+from ductus.wiki import get_resource_database
 from ductus.util.xml import make_ns_func
 
 from PIL import Image, ImageFile

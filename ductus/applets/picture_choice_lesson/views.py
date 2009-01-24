@@ -20,8 +20,8 @@ from django.template.loader import render_to_string
 from django.template import RequestContext
 
 from ductus.util.http import query_string_not_found
-from ductus.urn.views import register_view
-from ductus.urn import get_resource_database, SuccessfulEditRedirect
+from ductus.wiki.decorators import register_view
+from ductus.wiki import get_resource_database, SuccessfulEditRedirect
 from ductus.util.xml import add_simple_xlink, make_ns_func
 
 from lxml import etree
