@@ -209,3 +209,9 @@ def view_view_index(request):
                               {'special_views': special_views,
                                'generic_views': generic_views},
                               context_instance=RequestContext(request))
+
+@register_view(None, 'document_history')
+@vary_on_headers('Cookie', 'Accept-language')
+def view_document_history(request):
+    return render_to_response('urn/document_history.html',
+                              context_instance=RequestContext(request))
