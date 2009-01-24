@@ -8,7 +8,7 @@
   {% if view %}
     <a href="?view={{ view }}">{{ view }}</a>
   {% else %}
-    <a href="?"><em>(default)</em></a>
+    <a href="{{ request.path }}"><em>(default)</em></a>
   {% endif %}
 </li>
 {% endfor %}
