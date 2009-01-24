@@ -88,7 +88,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.markup',
-    'ductus.urn',
     'ductus.wiki',
 )
 
