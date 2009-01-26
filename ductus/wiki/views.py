@@ -207,7 +207,7 @@ else:
         html = urn_linkify(pygments.highlight(xml, lexer, formatter))
         css = formatter.get_style_defs('.highlight')
 
-        return render_to_response('urn/xml_display.html',
+        return render_to_response('wiki/xml_display.html',
                                   {'html': mark_safe(html),
                                    'css': mark_safe(css)},
                                   context_instance=RequestContext(request))
@@ -226,7 +226,7 @@ def view_view_index(request):
     special_views = sorted(get_views(root_tag_name))
     generic_views = sorted(set(get_views(None)) - set(special_views))
 
-    return render_to_response('urn/view_index.html',
+    return render_to_response('wiki/view_index.html',
                               {'special_views': special_views,
                                'generic_views': generic_views},
                               context_instance=RequestContext(request))
@@ -234,5 +234,5 @@ def view_view_index(request):
 @register_view(None, 'document_history')
 @vary_on_headers('Cookie', 'Accept-language')
 def view_document_history(request):
-    return render_to_response('urn/document_history.html',
+    return render_to_response('wiki/document_history.html',
                               context_instance=RequestContext(request))
