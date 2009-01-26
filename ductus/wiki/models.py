@@ -40,8 +40,10 @@ class WikiRevision(models.Model):
 
     author = models.ForeignKey(User, blank=True, null=True)
     author_ip = models.IPAddressField(blank=True, null=True)
+    log_message = models.CharField(max_length=400)
 
-    #def get_absolute_url(self):
+    def get_absolute_url(self):
+        return u'%s?oldid=%d' % (self.page.get_absolute_url(), self.id)
 
     class Meta:
         ordering = ('-timestamp',)
