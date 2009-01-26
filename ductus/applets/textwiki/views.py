@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.views.decorators.vary import vary_on_headers
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django import forms
@@ -29,7 +28,6 @@ ns = make_ns_func(nsmap)
 # fixme: in this default view, lower the cache time for when links changed from
 # broken to unbroken and back
 @register_view(ns('wikitext'), None)
-@vary_on_headers('Cookie', 'Accept-language')
 def view_textwiki(request):
     text = request.ductus.xml_tree.getroot().find(ns('text')).text
 
@@ -42,7 +40,6 @@ class WikiEditForm(forms.Form):
     text = forms.CharField(widget=forms.Textarea(attrs=textarea_attrs))
 
 @register_view(ns('wikitext'), 'edit')
-@vary_on_headers('Cookie', 'Accept-language')
 def edit_textwiki(request):
     if request.method == 'POST':
         form = WikiEditForm(request.POST)

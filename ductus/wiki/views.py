@@ -54,6 +54,7 @@ def __catch_http304(func):
     return new_func
 
 @__catch_http304
+@vary_on_headers('Cookie', 'Accept-language')
 def view_urn(request, hash_type, hash_digest, wikipage=False):
     """Dispatches the appropriate view for a resource
     """
@@ -195,7 +196,6 @@ except ImportError:
     pass
 else:
     @register_view(None, 'xml_as_html')
-    @vary_on_headers('Cookie', 'Accept-language')
     def view_xml_as_html(request):
         """Displays HTML-formatted XML representation of resource.
         """
@@ -213,7 +213,6 @@ else:
                                   context_instance=RequestContext(request))
 
 @register_view(None, 'view_index')
-@vary_on_headers('Cookie', 'Accept-language')
 def view_view_index(request):
     """Display the index of available views for the resource.
     """
@@ -232,7 +231,6 @@ def view_view_index(request):
                               context_instance=RequestContext(request))
 
 @register_view(None, 'document_history')
-@vary_on_headers('Cookie', 'Accept-language')
 def view_document_history(request):
     return render_to_response('wiki/document_history.html',
                               context_instance=RequestContext(request))

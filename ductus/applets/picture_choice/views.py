@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.views.decorators.vary import vary_on_headers
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 from django.template import RequestContext
@@ -34,7 +33,6 @@ ns = make_ns_func(nsmap)
 factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
 
 @register_view(ns('picture_choice'), None)
-@vary_on_headers('Cookie', 'Accept-language')
 def view_picture_choice(request):
     element = general_picture_choice(request.ductus.xml_tree, request.GET)
     return render_to_response('picture_choice/choice.html', {'element': element},

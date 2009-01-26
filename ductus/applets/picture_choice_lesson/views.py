@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.views.decorators.vary import vary_on_headers
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 from django.template import RequestContext
@@ -39,7 +38,6 @@ def question_urns(tree):
     return [question.get(ns('xlink', 'href')) for question in questions]
 
 @register_view(ns('picture_choice_lesson'), None)
-@vary_on_headers('Cookie', 'Accept-language')
 def view_picture_choice_lesson(request):
     questions = question_urns(request.ductus.xml_tree)
     frame = int(request.GET.get('frame', 0))
@@ -54,7 +52,6 @@ def view_picture_choice_lesson(request):
     return view_picture_choice(request)
 
 @register_view(ns('picture_choice_lesson'), 'edit')
-@vary_on_headers('Cookie', 'Accept-language')
 def edit_picture_choice_lesson(request):
     resource_database = get_resource_database()
     tree = request.ductus.xml_tree
@@ -109,7 +106,6 @@ def tmp_general_picture_choice(tree):
     return object
 
 @register_view(ns('picture_choice_lesson'), 'tmp_json')
-@vary_on_headers('Cookie', 'Accept-language')
 def tmp_json_picture_choice_lesson(request):
     questions = question_urns(request.ductus.xml_tree)
     return render_to_response('picture_choice_lesson/tmp_json.html',
@@ -117,7 +113,6 @@ def tmp_json_picture_choice_lesson(request):
                               context_instance=RequestContext(request))
 
 @register_view(ns('picture_choice_lesson'), 'html_flashcards')
-@vary_on_headers('Cookie', 'Accept-language')
 def html_flashcards(request):
     resource_database = get_resource_database()
     questions = question_urns(request.ductus.xml_tree)

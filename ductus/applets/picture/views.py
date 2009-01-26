@@ -17,7 +17,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.views.decorators.vary import vary_on_headers
 from ductus.wiki.decorators import register_view, unvarying
 from ductus.wiki import get_resource_database
 from ductus.util.xml import make_ns_func
@@ -34,7 +33,6 @@ ns = make_ns_func(nsmap)
 __allowed_thumbnail_sizes = set([(250, 250), (100, 100), (50, 50)])
 
 @register_view(ns('picture'), None)
-@vary_on_headers('Cookie', 'Accept-language')
 def view_picture_info(request):
     return render_to_response('picture/display.html',
                               {'urn': request.ductus.urn},
