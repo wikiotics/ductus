@@ -120,14 +120,15 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
                 vary_headers = set([h.strip().lower() for h in response.get("Vary", "").split(',') if h])
                 if vary_headers.issubset(set(['cookie', 'accept-language'])):
                     response["ETag"] = varied_etag
-                # fixme: we don't need to with the current middleware setup,
-                # but we may wish to explicitly patch the vary headers here
         return response
 
     raise Http404
 
 def view_wikipage(request, pagename):
-    page = get_object_or_404(WikiPage, name=pagename)
+    try:
+        page = WikiPage.objects.get(name=pagename)
+    except WikiPage.DoesNotExist:
+        return implicit_new_wikipage(request, pagename)
 
     if request.GET.get('view', None) in ('location_history', 'hybrid_history'):
         response = render_to_response('wiki/location_history.html',
@@ -136,7 +137,10 @@ def view_wikipage(request, pagename):
         patch_vary_headers(response, ['Cookie', 'Accept-language'])
         return response
 
-    revision = page.get_latest_revision() # what if none?
+    revision = page.get_latest_revision()
+    if not revision.urn:
+        return implicit_new_wikipage(request, pagename)
+
     hash_type, hash_digest = revision.urn.split(':')
 
     response = view_urn(request, hash_type, hash_digest, wikipage=True)
@@ -155,6 +159,12 @@ def view_wikipage(request, pagename):
 
     patch_cache_control(response, must_revalidate=True)
     return response
+
+def implicit_new_wikipage(request, pagename):
+    # fixme: should we just 404 if non-empty query_string?
+    return render_to_response('wiki/implicit_new_wikipage.html', {
+        'pagename' : pagename
+    }, context_instance=RequestContext(request))
 
 @register_view(None, 'xml')
 @unvarying

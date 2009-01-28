@@ -23,8 +23,13 @@ class WikiPage(models.Model):
     def get_absolute_url(self):
         return u'/wiki/%s' % self.name # fixme: reverse resolve? user/group?
 
-    def get_latest_revision(self): # what to do if no revisions exist?
-        return WikiRevision.objects.filter(page=self).order_by('-timestamp')[0]
+    def get_latest_revision(self):
+        # fixme: we need a db_index on page/timestamp combo
+        query = WikiRevision.objects.filter(page=self).order_by('-timestamp')
+        try:
+            return query[0]
+        except IndexError:
+            return NullRevision(self)
 
     def __unicode__(self):
         return self.name
@@ -37,6 +42,8 @@ class WikiRevision(models.Model):
                                            # infer this from the urn subsystem?
 
     # always be sure to remove 'urn:' prefix for urn field
+
+    # fixme: validator for urn field (make sure it exists)
 
     author = models.ForeignKey(User, blank=True, null=True)
     author_ip = models.IPAddressField(blank=True, null=True)
@@ -52,6 +59,11 @@ class WikiRevision(models.Model):
 
     def __unicode__(self):
         return u'%s (%s)' % (unicode(self.page), self.timestamp)
+
+class NullRevision(object):
+    def __init__(self, page):
+        self.page = page
+        self.urn = ''
 
 # admin interface -- for debugging only
 
