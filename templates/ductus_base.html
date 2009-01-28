@@ -32,7 +32,7 @@
         </li>
 {% endif %}
 {% if user.is_authenticated %}
-        <li><a href="/user/{{ user.username }}/">{{ user.username }}</a>
+        <li><a href="/user/{{ user.username }}">{{ user.username }}</a>
           &mdash; <a href="/logout/">{% trans "Log&nbsp;out" %}</a></li>
 {% else %}
         {% block login_button %}
