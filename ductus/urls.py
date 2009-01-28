@@ -7,7 +7,7 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', admin.site.root), # Should be changed in Django 1.1
 #    (r'^group/', include('ductus.group.urls')),
     (r'^urn/(?P<hash_type>[-_\w]+)/(?P<hash_digest>[-_\w]+)/$', 'ductus.wiki.views.view_urn'),
-#    (r'^user/', include('ductus.user.urls')),
+    (r'^user/', include('ductus.user.urls')),
     (r'^wiki/(.*)$', 'ductus.wiki.views.view_wikipage'),
     (r'^login/$', 'django.contrib.auth.views.login'),
     (r'^logout/$', 'django.contrib.auth.views.logout'),
