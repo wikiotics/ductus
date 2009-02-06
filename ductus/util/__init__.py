@@ -88,7 +88,7 @@ class sequence_contains_only(object):
 
     Perfect for use with strings!
 
-    >>> f = ductus.util.sequence_contains_only('abcdef')
+    >>> f = sequence_contains_only('abcdef')
     >>> f('vegetables')
     False
     >>> f('deadbeef')
