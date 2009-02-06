@@ -176,8 +176,13 @@ class ResourceDatabase(object):
     def store_xml(self, x, urn=None):
         return self.store(itertools.chain((bytes("xml\0"),), x), urn)
 
-    def store_xml_tree(self, root, urn=None):
-        return self.store_xml((etree.tostring(root),), urn)
+    def store_xml_tree(self, root, urn=None, encoding=None):
+        if encoding is unicode:
+            raise Exception("You must use an encoding that results in a normal byte string.")
+        if encoding is None:
+            encoding = 'utf-8'
+        xml = etree.tostring(root, encoding=encoding, xml_declaration=True)
+        return self.store_xml((xml,), urn)
 
     def get_blob(self, urn):
         header, data_iterator = determine_header(self[urn], False)
@@ -192,7 +197,7 @@ class ResourceDatabase(object):
         return data_iterator
 
     def get_xml_tree(self, urn):
-        from StringIO import StringIO
+        from cStringIO import StringIO
         # following line could be simplified if the data_iterator had
         # a "read" method instead ...
         return etree.parse(StringIO(''.join(self.get_xml(urn))))
