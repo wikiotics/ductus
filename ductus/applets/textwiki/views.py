@@ -39,8 +39,7 @@ def edit_textwiki(request):
     if hasattr(request, 'ductus'):
         resource = request.ductus.resource
     else:
-        resource = Wikitext()
-        resource.resource_database = get_resource_database()
+        resource = None
 
     if request.method == 'POST':
         form = WikiEditForm(request.POST)
@@ -50,13 +49,20 @@ def edit_textwiki(request):
                 raise Exception
             if 'preview' in request.GET:
                 pass # fixme
-            textwiki = resource.clone()
-            textwiki.text = form.cleaned_data['text'].replace('\r', '')
-            urn = textwiki.save()
+            if resource:
+                resource = resource.clone()
+            else:
+                resource = Wikitext()
+                resource.resource_database = get_resource_database()
+            resource.text = form.cleaned_data['text'].replace('\r', '')
+            urn = resource.save()
             return SuccessfulEditRedirect(urn)
 
     else:
-        form = WikiEditForm({'text': resource.text}) # fixme: shouldn't say 'field required' in ui
+        if resource:
+            form = WikiEditForm({'text': resource.text})
+        else:
+            form = WikiEditForm()
 
     return render_to_response('textwiki/edit_wiki.html',
                               {'form': form},
