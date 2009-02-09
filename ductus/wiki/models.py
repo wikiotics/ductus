@@ -17,6 +17,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from ductus.wiki import get_resource_database
+
 class WikiPage(models.Model):
     name = models.CharField(max_length=512)
 
@@ -41,21 +43,26 @@ class WikiRevision(models.Model):
                                            # length... is there a way we can
                                            # infer this from the urn subsystem?
 
-    # always be sure to remove 'urn:' prefix for urn field
-
-    # fixme: validator for urn field (make sure it exists)
+    # always be sure to remove 'urn:' prefix when reading or setting urn field
 
     author = models.ForeignKey(User, blank=True, null=True)
     author_ip = models.IPAddressField(blank=True, null=True)
     log_message = models.CharField(max_length=400)
 
-    def get_absolute_url(self):
-        return u'%s?oldid=%d' % (self.page.get_absolute_url(), self.id)
-
     class Meta:
         ordering = ('-timestamp',)
         get_latest_by = 'timestamp'
-        # fixme: force either username or IP to be given for a revision
+
+    def save(self, *args, **kwargs):
+        assert not self.urn.startswith('urn:')
+        if ('urn:%s' % self.urn) not in get_resource_database():
+            raise Exception("urn is not in database: urn:%s" % self.urn)
+        if (not self.author) and (not self.author_ip):
+            raise Exception("A user or IP address must be given when saving a revision")
+        return super(WikiRevision, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return u'%s?oldid=%d' % (self.page.get_absolute_url(), self.id)
 
     def __unicode__(self):
         return u'%s (%s)' % (unicode(self.page), self.timestamp)
