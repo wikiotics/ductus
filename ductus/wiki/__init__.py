@@ -28,7 +28,7 @@ def get_resource_database():
         storage_backend = getattr(__import__(mod_name, {}, {}, ['']),
                                       var_name)
         __resource_database = ResourceDatabase(storage_backend)
-        __register_installed_applets()
+        register_installed_applets()
     return __resource_database
 
 __resource_database = None
@@ -55,7 +55,7 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
         self.urn = urn
         return HttpResponseRedirect.__init__(self, resolve_urn(urn))
 
-def __register_installed_applets():
+def register_installed_applets():
     global __applets_registered
     if __applets_registered:
         return
