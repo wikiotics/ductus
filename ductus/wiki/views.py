@@ -220,6 +220,9 @@ def urn_linkify(html):
     import re
     return re.sub(r'urn:[_\-A-Za-z0-9\:]*', repl, html)
 
+def allow_line_wrap(html):
+    return html.replace('pre>', 'tt>').replace('\n', '<br/>\n')
+
 try:
     import pygments, pygments.lexers, pygments.formatters
 except ImportError:
@@ -235,7 +238,7 @@ else:
 
         lexer = pygments.lexers.XmlLexer()
         formatter = pygments.formatters.HtmlFormatter()
-        html = urn_linkify(pygments.highlight(xml, lexer, formatter))
+        html = urn_linkify(allow_line_wrap(pygments.highlight(xml, lexer, formatter)))
         css = formatter.get_style_defs('.highlight')
 
         return render_to_response('wiki/xml_display.html',
