@@ -143,7 +143,10 @@ def view_wikipage(request, pagename):
         patch_vary_headers(response, ['Cookie', 'Accept-language'])
         return response
 
-    revision = page.get_latest_revision()
+    if "oldid" in request.GET:
+        revision = get_object_or_404(WikiRevision, pk=request.GET["oldid"], page=page)
+    else:
+        revision = page.get_latest_revision()
     if not revision.urn:
         return implicit_new_wikipage(request, pagename)
 
