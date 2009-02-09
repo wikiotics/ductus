@@ -288,7 +288,11 @@ class ArrayElement(Element): # fixme: needs much work, especially XML work!
 
     def populate_from_xml(self, xml_node, ns):
         super(ArrayElement, self)._populate_attributes_from_xml(xml_node, ns) # or we can just forbid arrays from having attributes
-        # fixme: do something!
+        for child in xml_node:
+            # fixme: make sure child.tag is as expected
+            item = self.new_item()
+            item.populate_from_xml(child, ns)
+            self.array.append(item)
 
     def __iter__(self):
         return iter(self.array)
