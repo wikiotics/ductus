@@ -19,37 +19,25 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from ductus.wiki.decorators import register_view, unvarying
 from ductus.wiki import get_resource_database
-from ductus.util.xml import make_ns_func
+from ductus.applets.picture.models import Picture
 
 from PIL import Image, ImageFile
 from cStringIO import StringIO
 
-nsmap = {
-    None: 'http://wikiotics.org/ns/2008/picture',
-    'xlink': 'http://www.w3.org/1999/xlink',
-}
-ns = make_ns_func(nsmap)
-
 __allowed_thumbnail_sizes = set([(250, 250), (100, 100), (50, 50)])
 
-@register_view(ns('picture'), None)
+@register_view(Picture, None)
 def view_picture_info(request):
     return render_to_response('picture/display.html',
-                              {'urn': request.ductus.urn},
+                              {'urn': request.ductus.resource.urn},
                               context_instance=RequestContext(request))
 
-@register_view(ns('picture'), 'image')
+@register_view(Picture, 'image')
 @unvarying
 def view_picture(request):
-    blob = request.ductus.xml_tree.getroot().find(ns('blob'))
-    blob_urn = blob.get(ns('xlink', 'href'))
-    mime_type = blob.get('type') # lxml does not seem to set the
-                                 # namespace correctly on this element
-                                 # when parsing.  Investigation is
-                                 # needed.  My bad: it's not supposed to.
-
-    # prepare original image
-    data_iterator = get_resource_database().get_blob(blob_urn)
+    picture = request.ductus.resource
+    mime_type = picture.blob.mime_type
+    data_iterator = picture.blob.iterate(get_resource_database()) # iter(picture.blob)
 
     # resize if requested
     if 'max_size' in request.GET:
@@ -59,6 +47,8 @@ def view_picture(request):
         except Exception:
             raise # call this a formatting error or something
         if (max_width, max_height) not in __allowed_thumbnail_sizes:
+            # fixme: once we cache things, we can just return any image with a
+            # smaller size in most cases
             raise Exception("Requested size not available")
 
         p = ImageFile.Parser()
@@ -67,9 +57,9 @@ def view_picture(request):
         im = p.close()
         im.thumbnail((max_width, max_height), Image.ANTIALIAS)
         output = StringIO()
-        im.save(output, 'JPEG', quality=90) # PIL manual: avoid quality > 95
-        data_iterator = iter([output.getvalue()])
+        im.save(output, 'JPEG', quality=90) # PIL manual says avoid quality > 95
         mime_type = 'image/jpeg'
+        data_iterator = iter([output.getvalue()])
 
     return HttpResponse(list(data_iterator), # see django #6527
                         content_type=mime_type)

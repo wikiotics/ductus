@@ -19,7 +19,6 @@ from ductus.strutil import *
 
 import base64, hashlib
 import itertools
-import logging
 import os
 from tempfile import mkstemp
 
@@ -56,18 +55,27 @@ class ResourceDatabase(object):
     """
     Main resource database.
 
-    Make sure XML is well-formed.  Verify hashes.
+    Makes sure XML of stored resources is well-formed and correct.  Verifies
+    hashes.
 
     This module should keep everything consistent as long as the
     backend storage module doesn't mess things up.
 
     Arguments/attributes:
 
-    * backend storage module to use
+    * backend storage module to use (set at init time only)
 
     * maximum size allowed for a resource
 
     * whether to allow XML document types we don't know/support (fixme)
+
+    * whether to allow links to urns that are not known to exist (fixme)
+
+    * whether to make an exception for "parent" resources in the DuctusCommonElement
+
+    * a simple framework for enforcing arbitrary, user-defined constraints on
+      saved resources (e.g., check for acceptable license; check to ensure
+      license compatibility with parents)
     """
 
     def __init__(self, storage_backend, max_resource_size=(20*1024*1024)):
@@ -149,9 +157,14 @@ class ResourceDatabase(object):
             tree = etree.parse(f)
 
         # Make sure we recognize the root node and the document is valid
-        # wrt DTD or relaxng (fixme)
+        # fixme: combine below lines with get_resource_object function
+        root = tree.getroot()
+        resource = _registered_models[root.tag]() # fixme: may raise KeyError
+        resource.populate_from_xml(root)
+        resource.validate()
 
         # Find all urn:hash_type:hash_value links and ensure they are not broken
+        # fixme on deciding correct policy here
         links = set()
         for event, element in etree.iterwalk(tree):
             if '{http://www.w3.org/1999/xlink}href' in element.attrib:
@@ -187,13 +200,13 @@ class ResourceDatabase(object):
     def get_blob(self, urn):
         header, data_iterator = determine_header(self[urn], False)
         if header != 'blob':
-            raise Exception("Expecting 'blob', but received '%s'" % header)
+            raise UnexpectedHeader("Expecting 'blob', but received '%s'" % header)
         return data_iterator
 
     def get_xml(self, urn):
         header, data_iterator = determine_header(self[urn], False)
         if header != 'xml':
-            raise Exception("Expecting 'xml', but received '%s'" % header)
+            raise UnexpectedHeader("Expecting 'xml', but received '%s'" % header)
         return data_iterator
 
     def get_xml_tree(self, urn):
@@ -201,6 +214,17 @@ class ResourceDatabase(object):
         # following line could be simplified if the data_iterator had
         # a "read" method instead ...
         return etree.parse(StringIO(''.join(self.get_xml(urn))))
+
+    def get_resource_object(self, urn):
+        tree = self.get_xml_tree(urn) # fixme: what exceptions can this throw?
+        root = tree.getroot()
+        model_class = _registered_models[root.tag] # fixme: may raise KeyError
+        resource = model_class()
+        resource.urn = urn
+        resource.resource_database = self
+        resource.populate_from_xml(root)
+        resource.validate()
+        return resource
 
     def keys(self):
         "This will be easy... just query the database."
@@ -229,3 +253,22 @@ def determine_header(data_iterator, replace_header=True):
     data_iterator = itertools.chain((buf,), data_iterator)
 
     return unicode(header), data_iterator
+
+def register_model(model):
+    """Registers a model.
+
+    This function can be used as a class decorator in Python >= 2.6
+
+    Or, we could decide to call this automatically from
+    ductus.resource.models.ModelMetaclass (fixme)
+    """
+    if __debug__:
+        from ductus.resource.models import Model
+        assert issubclass(model, Model)
+    if model.fqn in _registered_models and _registered_models[model.fqn] != model:
+        raise Exception("Models '%s' and '%s' have conflicting fully-qualified XML names."
+                        % (model, _registered_models[model.fqn]))
+    _registered_models[model.fqn] = model
+    return model
+
+_registered_models = {}

@@ -20,31 +20,24 @@ from django.template import RequestContext
 
 from ductus.wiki.decorators import register_view
 from ductus.wiki import get_resource_database
-from ductus.util.xml import make_ns_func
+from ductus.applets.picture_choice.models import PictureChoice
 
 from random import shuffle
 
-nsmap = {
-    None: 'http://wikiotics.org/ns/2008/picture_choice',
-    'xlink': 'http://www.w3.org/1999/xlink',
-}
-ns = make_ns_func(nsmap)
-
 factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
 
-@register_view(ns('picture_choice'), None)
+@register_view(PictureChoice, None)
 def view_picture_choice(request):
-    element = general_picture_choice(request.ductus.xml_tree, request.GET)
+    element = general_picture_choice(request.ductus.urn, request.GET)
     return render_to_response('picture_choice/choice.html', {'element': element},
                               context_instance=RequestContext(request))
 
-def general_picture_choice(tree, options_dict):
-    root = tree.getroot()
-    phrase = root.find(ns('phrase')).text
-
-    pictures = root.findall('.//' + ns('picture'))
-    pictures = [picture.get(ns('xlink', 'href'))
-                for picture in pictures]
+def general_picture_choice(urn, options_dict):
+    picture_choice = PictureChoice(urn)
+    correct_picture = picture_choice.correct_picture
+    pictures = [correct_picture.href]
+    pictures += [p.href for p in picture_choice.incorrect_pictures]
+    phrase = picture_choice.phrase
 
     if 'order' in options_dict:
         pictures.sort()
@@ -61,7 +54,7 @@ def general_picture_choice(tree, options_dict):
 
     object = {
         'pictures': pictures,
-        'correct_picture': root.find('.//%s/%s' % (ns('correct'), ns('picture'))).get('{http://www.w3.org/1999/xlink}href'),
+        'correct_picture': correct_picture,
         'phrase': phrase,
     }
 

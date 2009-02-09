@@ -23,33 +23,15 @@
 
 from django.http import HttpResponse
 from ductus.wiki import get_resource_database
+from ductus.wiki.decorators import register_creation_view
 from ductus.util import iterate_file_object
-from ductus.util.xml import add_simple_xlink, make_ns_func
 from ductus.util.http import render_json_response
+from ductus.applets.picture.models import Picture
 
 import re
 from urllib2 import urlopen
 from cStringIO import StringIO
 from lxml import etree
-
-nsmap = {
-    None: 'http://wikiotics.org/ns/2008/picture',
-    'xlink': 'http://www.w3.org/1999/xlink',
-}
-ns = make_ns_func(nsmap)
-
-allowed_licenses = (
-    'http://creativecommons.org/licenses/publicdomain/',
-    'http://creativecommons.org/licenses/by-sa/1.0/',
-    'http://creativecommons.org/licenses/by-sa/2.0/',
-    'http://creativecommons.org/licenses/by-sa/2.5/',
-    'http://creativecommons.org/licenses/by-sa/3.0/',
-    'http://creativecommons.org/licenses/by/1.0/',
-    'http://creativecommons.org/licenses/by/2.0/',
-    'http://creativecommons.org/licenses/by/2.5/',
-    'http://creativecommons.org/licenses/by/3.0/',
-)
-allowed_licenses = set(allowed_licenses)
 
 base_url_re = re.compile(r'(http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.@]+/[0-9]+/)')
 rdf_re = re.compile(r'(\<rdf\:RDF.*\</rdf\:RDF\>)', re.DOTALL)
@@ -74,7 +56,6 @@ def download_flickr(url):
     # parse RDF and get license information
     tree = etree.parse(StringIO(rdf_portion))
     root = tree.getroot()
-    #return etree.tostring(tree.getroot())
 
     # find huge image
     huge_html_url = base_url + 'sizes/o/'
@@ -93,28 +74,18 @@ def download_flickr(url):
             'original_url': base_url}
 
 def save_picture(picture_info):
-    if picture_info['license'] not in allowed_licenses:
-        # fixme: fix string exception
-        raise "License not allowed (%s)" % picture_info['license']
+    picture = Picture()
+    picture.resource_database = get_resource_database()
+    picture.blob.href = picture_info['blob_urn']
+    picture.blob.mime_type = 'image/jpeg'
+#    picture.common.licenses = [picture_info['license']]
+#    picture.common.creator = picture_info['creator']
+#    picture.common.rights = picture_info['rights']
+#    picture.common.original_url = picture_info['original_url']
+    # fixme: save log of what we just did ?
+    return picture.save()
 
-    # save authorship/copyright XML
-    root = etree.Element(ns('picture'), nsmap=nsmap)
-    blob = etree.SubElement(root, ns('blob'))
-    add_simple_xlink(blob, picture_info['blob_urn'])
-    blob.attrib[ns('type')] = 'image/jpeg'
-    add_simple_xlink(etree.SubElement(root, ns('license')),
-                     picture_info['license'])
-    etree.SubElement(root, ns('creator')).text = picture_info['creator']
-    etree.SubElement(root, ns('rights')).text = picture_info['rights']
-    add_simple_xlink(etree.SubElement(root, ns('original_url')),
-                     picture_info['original_url'])
-
-    urn = get_resource_database().store_xml_tree(root)
-
-    # save log of what we just did ?
-
-    return urn
-
+@register_creation_view(Picture)
 def new_picture(request):
     if request.method == 'POST':
         # TODO: plugin system to recognize URI style and fetch image

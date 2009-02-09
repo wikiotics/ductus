@@ -45,7 +45,7 @@ def resolve_urn(urn):
     """Resolves a URN, returning its absolute URL on the server"""
 
     verify_valid_urn(urn)
-    return u'/%s/' % u'/'.join(urn.split(':'))
+    return u'/%s' % u'/'.join(urn.split(':'))
 
 class SuccessfulEditRedirect(HttpResponseRedirect):
     """Used by 'edit' views to say that an edit or fork has led to a new URN
@@ -74,3 +74,4 @@ def __register_installed_applets():
 __applets_registered = False
 
 registered_views = {}
+registered_creation_views = {}

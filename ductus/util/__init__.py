@@ -132,3 +132,6 @@ def ignore(*exceptions):
     except:
         if exceptions != ():
             raise
+
+def create_property(f):
+    return property(**f())

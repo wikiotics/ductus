@@ -18,11 +18,10 @@ from django import forms
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from ductus.wiki import get_resource_database
-from ductus.util.xml import add_simple_xlink, make_ns_func
+from ductus.wiki.decorators import register_creation_view
 from ductus.util.http import render_json_response
 from ductus.applets.picture.forms import PictureUrnField
-
-from lxml import etree
+from ductus.applets.picture_choice.models import PictureChoice
 
 def all_unique(iterable):
     return len(frozenset(iterable)) == len(iterable)
@@ -56,6 +55,7 @@ class PictureChoiceForm(forms.Form):
 
         return self.cleaned_data
 
+@register_creation_view(PictureChoice)
 def new_picture_choice(request):
     new_urns = []
 
@@ -88,25 +88,12 @@ def new_picture_choice(request):
                                'new_urns': new_urns},
                               context_instance=RequestContext(request))
 
-nsmap = {
-    None: 'http://wikiotics.org/ns/2008/picture_choice',
-    'xlink': 'http://www.w3.org/1999/xlink',
-}
-ns = make_ns_func(nsmap)
-
 def save_picture_choice(phrase, correct_picture, incorrect_pictures):
     """returns urn of new picture choice"""
-
-    root = etree.Element(ns('picture_choice'), nsmap=nsmap)
-    etree.SubElement(root, ns('phrase')).text = phrase
-
-    def add_pictures(elt, pictures):
-        for picture in pictures:
-            add_simple_xlink(etree.SubElement(elt, ns('picture')), picture)
-
-    add_pictures(etree.SubElement(root, ns('correct')), [correct_picture])
-    add_pictures(etree.SubElement(root, ns('incorrect')), incorrect_pictures)
-
+    picture_choice = PictureChoice()
+    picture_choice.resource_database = get_resource_database()
+    picture_choice.phrase = phrase
+    picture_choice.correct_picture.href = correct_picture
+    picture_choice.incorrect_pictures.set_hrefs(incorrect_pictures) # fixme
     # save log of what we just did?
-
-    return get_resource_database().store_xml_tree(root)
+    return picture_choice.save()

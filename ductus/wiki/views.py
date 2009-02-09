@@ -22,16 +22,15 @@ from django.utils.safestring import mark_safe
 from django.utils.cache import patch_vary_headers, patch_cache_control
 
 from ductus.resource import determine_header
-from ductus.wiki import get_resource_database, registered_views, SuccessfulEditRedirect, resolve_urn
+from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn
 from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view, unvarying
 from ductus.util.http import query_string_not_found
 
 class DuctusRequestInfo(object):
-    def __init__(self, urn, requested_view, xml_tree, wikipage):
-        self.urn = urn
+    def __init__(self, resource, requested_view, wikipage):
+        self.resource = resource
         self.requested_view = requested_view
-        self.xml_tree = xml_tree
         self.wikipage = wikipage
 
 class __Http304(Exception):
@@ -98,20 +97,17 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
             unvaried_etag = __handle_etag(request, unvaried_etag)
             varied_etag = __handle_etag(request, varied_etag)
 
-        tree = resource_database.get_xml_tree(urn)
-        root_tag_name = tree.getroot().tag
+        resource = resource_database.get_resource_object(urn)
         try:
-            f = registered_views[root_tag_name][requested_view]
+            f = registered_views[resource.fqn][requested_view]
         except KeyError:
             try:
                 f = registered_views[None][requested_view]
             except KeyError:
                 return query_string_not_found(request)
 
-        request.ductus = DuctusRequestInfo(urn, requested_view, tree, wikipage)
+        request.ductus = DuctusRequestInfo(resource, requested_view, wikipage)
         response = f(request)
-
-        # fixme: set X-License header
 
         if request.method == "GET" and not response.has_header("ETag"):
             if getattr(response, "_unvarying", False):
@@ -123,6 +119,16 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
         return response
 
     raise Http404
+
+def _handle_successful_edit(request, response, page):
+    # the underlying page has been modified, so we should take note of that
+    # and save its new location
+    revision = WikiRevision(page=page, urn=response.urn[4:])
+    if request.user.is_authenticated():
+        revision.author = request.user
+    else:
+        revision.author_ip = request.remote_addr
+    revision.save()
 
 def view_wikipage(request, pagename):
     try:
@@ -146,15 +152,7 @@ def view_wikipage(request, pagename):
     response = view_urn(request, hash_type, hash_digest, wikipage=True)
 
     if isinstance(response, SuccessfulEditRedirect):
-        # the underlying page has been modified, so we should take note of that
-        # and save its new location
-        revision = WikiRevision(page=page, urn=response.urn[4:])
-        if request.user.is_authenticated():
-            revision.author = request.user
-        else:
-            revision.author_ip = request.remote_addr
-        revision.save()
-
+        _handle_successful_edit(request, response, page)
         return HttpResponseRedirect(request.path)
 
     patch_cache_control(response, must_revalidate=True)
@@ -162,9 +160,28 @@ def view_wikipage(request, pagename):
 
 def implicit_new_wikipage(request, pagename):
     # fixme: should we just 404 if non-empty query_string?
+    get_resource_database() # FIXME: we are only calling this because it registers all applets!
     return render_to_response('wiki/implicit_new_wikipage.html', {
-        'pagename' : pagename
+        'pagename': pagename,
+        'creation_views': registered_creation_views.keys(),
     }, context_instance=RequestContext(request))
+
+def creation_view(request, page_type):
+    get_resource_database() # FIXME: we are only calling this because it registers all applets!
+    try:
+        view_func = registered_creation_views[page_type]
+    except KeyError:
+        return HttpResponse(["Creation views for %s" % list(registered_creation_views)])
+        raise Http404
+
+    response = view_func(request)
+    if "target" in request.GET and isinstance(response, SuccessfulEditRedirect):
+        page, page_created = WikiPage.objects.get_or_create(name=request.GET["target"])
+        if page_created:
+            page.save()
+        _handle_successful_edit(request, response, page)
+        return HttpResponseRedirect(page.get_absolute_url())
+    return response
 
 @register_view(None, 'xml')
 @unvarying
@@ -172,7 +189,7 @@ def view_xml(request):
     """Displays XML representation of resource.
     """
 
-    urn = request.ductus.urn
+    urn = request.ductus.resource.urn
     return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
                         content_type='application/xml')
 
@@ -182,7 +199,7 @@ def view_xml_as_text(request):
     """Displays XML representation of resource in text/plain format.
     """
 
-    urn = request.ductus.urn
+    urn = request.ductus.resource.urn
     return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
                         content_type='text/plain')
 
@@ -210,7 +227,8 @@ else:
         """Displays HTML-formatted XML representation of resource.
         """
 
-        xml = ''.join(get_resource_database().get_xml(request.ductus.urn))
+        urn = request.ductus.resource.urn
+        xml = ''.join(get_resource_database().get_xml(urn))
 
         lexer = pygments.lexers.XmlLexer()
         formatter = pygments.formatters.HtmlFormatter()
@@ -227,7 +245,7 @@ def view_view_index(request):
     """Display the index of available views for the resource.
     """
 
-    root_tag_name = request.ductus.xml_tree.getroot().tag
+    root_tag_name = request.ductus.resource.fqn
 
     def get_views(tag):
         return registered_views.get(tag, ())
@@ -243,4 +261,9 @@ def view_view_index(request):
 @register_view(None, 'document_history')
 def view_document_history(request):
     return render_to_response('wiki/document_history.html',
+                              context_instance=RequestContext(request))
+
+@register_view(None, 'license_info')
+def view_license_info(request):
+    return render_to_response('wiki/license_info.html',
                               context_instance=RequestContext(request))

@@ -1,5 +1,5 @@
 function resolve_urn(urn) {
-    return '/' + urn.split(':').join('/') + '/'
+    return '/' + urn.split(':').join('/');
 }
 
 $(function () {
@@ -35,7 +35,7 @@ $(function () {
         $(this).siblings("input").hide();
         // fixme: what about error, or somebody pushing twice?
         var div = $(this).parent().parent();
-        $.post('/new/picture/',
+        $.post('/new/picture',
                {'uri': $(this).siblings("input").val()},
                function (data) { set_urn(div, data.urn); },
                'json');

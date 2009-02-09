@@ -21,25 +21,11 @@ from django.template import RequestContext
 from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view
 from ductus.wiki import get_resource_database, SuccessfulEditRedirect
-from ductus.util.xml import add_simple_xlink, make_ns_func
+from ductus.applets.picture_choice_lesson.models import PictureChoiceLesson
 
-from lxml import etree
-
-nsmap = {
-    None: 'http://wikiotics.org/ns/2008/picture_choice_lesson',
-    'xlink': 'http://www.w3.org/1999/xlink',
-}
-ns = make_ns_func(nsmap)
-
-def question_urns(tree):
-    root = tree.getroot()
-    quiz = root.find('.//' + ns('quiz'))
-    questions = quiz.findall('.//' + ns('picture_choice'))
-    return [question.get(ns('xlink', 'href')) for question in questions]
-
-@register_view(ns('picture_choice_lesson'), None)
+@register_view(PictureChoiceLesson, None)
 def view_picture_choice_lesson(request):
-    questions = question_urns(request.ductus.xml_tree)
+    questions = request.ductus.resource.questions.get_hrefs()
     frame = int(request.GET.get('frame', 0))
     if frame >= len(questions):
         return query_string_not_found(request)
@@ -51,7 +37,7 @@ def view_picture_choice_lesson(request):
     request.ductus.xml_tree = qtree # VERY BAD!! (fixme asap)
     return view_picture_choice(request)
 
-@register_view(ns('picture_choice_lesson'), 'edit')
+@register_view(PictureChoiceLesson, 'edit')
 def edit_picture_choice_lesson(request):
     resource_database = get_resource_database()
     tree = request.ductus.xml_tree
@@ -68,55 +54,44 @@ def edit_picture_choice_lesson(request):
         else:
             # now we append each element of this list with an xlink in the
             # document tree, save the new tree, and return the new urn
-            root = tree.getroot()
-            quiz = root.find('.//' + ns('quiz'))
-            for u in urns:
-                add_simple_xlink(etree.SubElement(quiz, ns('picture_choice')),
-                                 u)
-            urn = get_resource_database().store_xml_tree(root)
+            pcl = request.ductus.resource.copy()
+            pcl.quiz.extend_hrefs(urns)
+            urn = pcl.save()
             return SuccessfulEditRedirect(urn)
 
-    questions = question_urns(tree)
-    quiz = [tmp_general_picture_choice(resource_database.get_xml_tree(q))
+    questions = request.ductus.resource.questions.get_hrefs()
+    quiz = [tmp_general_picture_choice(q)
             for q in questions]
     return render_to_response('picture_choice_lesson/edit.html',
                               {'quiz': quiz},
                               context_instance=RequestContext(request))
 
-def tmp_general_picture_choice(tree):
-    nsmap = {
-        None: 'http://wikiotics.org/ns/2008/picture_choice',
-        'xlink': 'http://www.w3.org/1999/xlink',
-    }
-    ns = make_ns_func(nsmap)
-
-    root = tree.getroot()
-    phrase = root.find(ns('phrase')).text
-
-    pictures = root.findall('.//' + ns('picture'))
-    pictures = [picture.get(ns('xlink', 'href'))
-                for picture in pictures]
+def tmp_general_picture_choice(urn):
+    picture_choice = PictureChoice(urn)
+    correct_picture = picture_choice.correct_picture
+    pictures = [correct_picture.href]
+    pictures += [p.href for p in picture_choice.incorrect_pictures]
+    phrase = picture_choice.phrase
 
     object = {
         'pictures': pictures,
-        'correct_picture': root.find('.//%s/%s' % (ns('correct'), ns('picture'))).get('{http://www.w3.org/1999/xlink}href'),
+        'correct_picture': correct_picture,
         'phrase': phrase,
     }
 
     return object
 
-@register_view(ns('picture_choice_lesson'), 'tmp_json')
+@register_view(PictureChoiceLesson, 'tmp_json')
 def tmp_json_picture_choice_lesson(request):
-    questions = question_urns(request.ductus.xml_tree)
+    questions = request.ductus.resource.questions.get_hrefs()
     return render_to_response('picture_choice_lesson/tmp_json.html',
                               {'questions': questions},
                               context_instance=RequestContext(request))
 
-@register_view(ns('picture_choice_lesson'), 'html_flashcards')
+@register_view(PictureChoiceLesson, 'html_flashcards')
 def html_flashcards(request):
-    resource_database = get_resource_database()
-    questions = question_urns(request.ductus.xml_tree)
-    quiz = [tmp_general_picture_choice(resource_database.get_xml_tree(q))
+    questions = request.ductus.resource.questions.get_hrefs()
+    quiz = [tmp_general_picture_choice(q)
             for q in questions]
     return render_to_response('picture_choice_lesson/flashcards.html',
                               {'quiz': quiz},

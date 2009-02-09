@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-<form method="POST" action="">
+<form method="POST">
 <p>{{ form.text.errors }}</p>
 <p>{{ form.text }}</p>
 <p><input type="submit" value="{% trans "Save" %}"/> {#<input type="submit" value="{% trans "Preview" %}" name="preview"/>#}</p>
