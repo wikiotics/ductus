@@ -250,7 +250,7 @@ class TextElement(Element):
             text = ""
         self.text = text
 
-class ArrayElement(Element): # fixme: needs much work, especially XML work!
+class ArrayElement(Element):
     __metaclass__ = NoChildMetaclass
 
     def __init__(self, item_prototype, min_size=0, max_size=None, null_on_empty=False):
@@ -289,7 +289,7 @@ class ArrayElement(Element): # fixme: needs much work, especially XML work!
     def populate_from_xml(self, xml_node, ns):
         super(ArrayElement, self)._populate_attributes_from_xml(xml_node, ns) # or we can just forbid arrays from having attributes
         for child in xml_node:
-            # fixme: make sure child.tag is as expected
+            # fixme: make sure child.tag is as expected (see "item" above)
             item = self.new_item()
             item.populate_from_xml(child, ns)
             self.array.append(item)
