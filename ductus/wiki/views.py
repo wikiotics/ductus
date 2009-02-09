@@ -16,7 +16,7 @@
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotModified, Http404
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.template import RequestContext, loader
 from django.views.decorators.vary import vary_on_headers
 from django.utils.safestring import mark_safe
 from django.utils.cache import patch_vary_headers, patch_cache_control
@@ -162,12 +162,13 @@ def view_wikipage(request, pagename):
     return response
 
 def implicit_new_wikipage(request, pagename):
-    # fixme: should we just 404 if non-empty query_string?
     get_resource_database() # FIXME: we are only calling this because it registers all applets!
-    return render_to_response('wiki/implicit_new_wikipage.html', {
+    c = RequestContext(request, {
         'pagename': pagename,
         'creation_views': registered_creation_views.keys(),
-    }, context_instance=RequestContext(request))
+    })
+    t = loader.get_template('wiki/implicit_new_wikipage.html')
+    return HttpResponse(t.render(c), status=404)
 
 def creation_view(request, page_type):
     get_resource_database() # FIXME: we are only calling this because it registers all applets!
