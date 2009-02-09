@@ -1,4 +1,10 @@
 {% extends "ductus_document.html" %}
+{% load urn %}
 {% block content %}
-<p>Unimplemented</p>
+<p>Parents:</p>
+<ul>
+{% for parent in request.ductus.resource.common.parents %}
+<li><a href="{{ parent.href|resolve }}">{{ parent.href }}</a></li>
+{% endfor %}
+</ul>
 {% endblock %}
