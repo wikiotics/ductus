@@ -65,7 +65,7 @@ def register_installed_applets():
             __import__('%s.views' % applet, {}, {}, [''])
         except ImportError:
             raise "Could not import applet '%s'" % applet
-        for submod in ('edit_views',):
+        for submod in ('edit_views', 'models'):
             with ignore(ImportError):
                 __import__((applet + '.' + submod), {}, {}, [''])
 
