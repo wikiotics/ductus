@@ -61,10 +61,7 @@ def register_installed_applets():
         return
 
     for applet in getattr(settings, "DUCTUS_INSTALLED_APPLETS", ()):
-        try:
-            __import__('%s.views' % applet, {}, {}, [''])
-        except ImportError:
-            raise "Could not import applet '%s'" % applet
+        __import__('%s.views' % applet, {}, {}, [''])
         for submod in ('edit_views', 'models'):
             with ignore(ImportError):
                 __import__((applet + '.' + submod), {}, {}, [''])
