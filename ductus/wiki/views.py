@@ -173,7 +173,6 @@ def creation_view(request, page_type):
     try:
         view_func = registered_creation_views[page_type]
     except KeyError:
-        return HttpResponse(["Creation views for %s" % list(registered_creation_views)])
         raise Http404
 
     response = view_func(request)
