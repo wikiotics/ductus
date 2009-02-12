@@ -22,7 +22,7 @@
 #       allowed licenses
 
 from django.http import HttpResponse
-from ductus.wiki import get_resource_database
+from ductus.wiki import get_resource_database, SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view
 from ductus.util import iterate_file_object
 from ductus.util.http import render_json_response
@@ -98,8 +98,10 @@ def new_picture(request):
             urn = save_picture(picture_info)
 
         if request.is_ajax():
+            # fixme: also check that "target" not in request.GET (or come up
+            # with a better scheme for handling this case altogether)
             return render_json_response({'urn': urn})
-        return HttpResponse(urn)
+        return SuccessfulEditRedirect(urn)
 
     else:
         return HttpResponse('<form method="post">Enter a URI: <input name="uri"/><input type="submit" /></form>')
