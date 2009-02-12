@@ -50,7 +50,11 @@ def creole(value):
             pass
         return "internal broken"
 
-    interwiki_links_base_urls = dict(enWP='http://en.wikipedia.org/wiki/')
+    interwiki_links_base_urls = dict(
+        DjangoBug='http://code.djangoproject.com/ticket/',
+        UbuntuBug='https://bugs.launchpad.net/ubuntu/+bug/',
+        enWP='http://en.wikipedia.org/wiki/',
+    )
 
     c = Creole10(use_additions=False,
                  no_wiki_monospace=True,
