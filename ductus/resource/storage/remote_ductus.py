@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from ductus.util import iterate_file_object
-from ductus.wiki import resolve_urn # fixme: bad to import a much higher layer
 from urllib2 import urlopen, HTTPError
 
 class RemoteDuctusStorageBackend(object):
@@ -25,7 +24,7 @@ class RemoteDuctusStorageBackend(object):
         self.__base_url = base_url
 
     def __remote_url(urn):
-        return "%s%s?view=raw" % (self.__base_url, resolve_urn(urn))
+        return "%s/%s?view=raw" % (self.__base_url, urn.replace(':', '/'))
 
     def __contains__(self, key):
         # Remember: if the remote hash is wrong, this backend will claim to
