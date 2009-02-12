@@ -2,6 +2,11 @@
 
 # this file is likely to be out of date at any given time
 
+# fixme: recursive-include's in MANIFEST.in don't ignore text editor backup
+# files (such as *~)
+
+# fixme: depend on Python >= 2.5 somehow
+
 try:
     from setuptools import setup
 except ImportError:

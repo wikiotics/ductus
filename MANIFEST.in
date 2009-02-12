@@ -1,2 +1,8 @@
 include MANIFEST.in
 include COPYING
+recursive-include static *
+recursive-include templates *
+recursive-include ductus/applets/picture/templates *
+recursive-include ductus/applets/picture_choice/templates *
+recursive-include ductus/applets/picture_choice_lesson/templates *
+recursive-include ductus/applets/textwiki/templates *
