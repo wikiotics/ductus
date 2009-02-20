@@ -1,9 +1,0 @@
-{% load urn %}
-<table>
-{% for q in quiz %}
-<tr>
-<td>{{ q.phrase }}</td>
-<td><img alt="{{ q.phrase }}" src="{{ q.pictures.0|resolve }}?view=image&amp;max_size=250,250"/></td>{# fixme: pictures[0] is not guaranteed to be the correct one, at least not at this point #}
-</tr>
-{% endfor %}
-</table>
