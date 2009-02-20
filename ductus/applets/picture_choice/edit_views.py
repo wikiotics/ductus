@@ -92,8 +92,12 @@ def save_picture_choice(phrase, correct_picture, incorrect_pictures):
     """returns urn of new picture choice"""
     picture_choice = PictureChoice()
     picture_choice.resource_database = get_resource_database()
-    picture_choice.phrase = phrase
+    picture_choice.phrase.text = phrase
     picture_choice.correct_picture.href = correct_picture
-    picture_choice.incorrect_pictures.set_hrefs(incorrect_pictures) # fixme
+    # fixme: this API is clumsy
+    for pic in incorrect_pictures:
+        p = picture_choice.incorrect_pictures.new_item()
+        p.href = pic
+        picture_choice.incorrect_pictures.array.append(p)
     # save log of what we just did?
     return picture_choice.save()
