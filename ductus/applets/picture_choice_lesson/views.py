@@ -40,7 +40,6 @@ def view_picture_choice_lesson(request):
 @register_view(PictureChoiceLesson, 'edit')
 def edit_picture_choice_lesson(request):
     resource_database = get_resource_database()
-    tree = request.ductus.xml_tree
 
     if request.method == 'POST':
         # right now we only allow appending of elements through a single form
@@ -54,45 +53,24 @@ def edit_picture_choice_lesson(request):
         else:
             # now we append each element of this list with an xlink in the
             # document tree, save the new tree, and return the new urn
-            pcl = request.ductus.resource.copy()
-            pcl.quiz.extend_hrefs(urns)
+            pcl = request.ductus.resource.clone()
+            #pcl.questions.extend_hrefs(urns) # fixme: current api is clumsy
+            for u in urns:
+                q = pcl.questions.new_item()
+                q.href = u
+                pcl.questions.array.append(q)
             urn = pcl.save()
             return SuccessfulEditRedirect(urn)
 
-    questions = request.ductus.resource.questions.get_hrefs()
-    quiz = [tmp_general_picture_choice(q)
-            for q in questions]
+    questions = request.ductus.resource.questions
+    quiz = [resource_database.get_resource_object(q.href) for q in questions]
     return render_to_response('picture_choice_lesson/edit.html',
                               {'quiz': quiz},
                               context_instance=RequestContext(request))
-
-def tmp_general_picture_choice(urn):
-    picture_choice = PictureChoice(urn)
-    correct_picture = picture_choice.correct_picture
-    pictures = [correct_picture.href]
-    pictures += [p.href for p in picture_choice.incorrect_pictures]
-    phrase = picture_choice.phrase
-
-    object = {
-        'pictures': pictures,
-        'correct_picture': correct_picture,
-        'phrase': phrase,
-    }
-
-    return object
 
 @register_view(PictureChoiceLesson, 'tmp_json')
 def tmp_json_picture_choice_lesson(request):
     questions = request.ductus.resource.questions.get_hrefs()
     return render_to_response('picture_choice_lesson/tmp_json.html',
                               {'questions': questions},
-                              context_instance=RequestContext(request))
-
-@register_view(PictureChoiceLesson, 'html_flashcards')
-def html_flashcards(request):
-    questions = request.ductus.resource.questions.get_hrefs()
-    quiz = [tmp_general_picture_choice(q)
-            for q in questions]
-    return render_to_response('picture_choice_lesson/flashcards.html',
-                              {'quiz': quiz},
                               context_instance=RequestContext(request))
