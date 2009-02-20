@@ -17,6 +17,7 @@
 from django import forms
 from django.utils.safestring import mark_safe
 from ductus.wiki import get_resource_database, resolve_urn, UnsupportedURN
+from ductus.applets.picture.models import Picture
 
 def urn_to_img_url(urn):
     try:
@@ -66,8 +67,8 @@ class PictureUrnField(forms.CharField):
 
         # Does it exist, and is it a picture?
         try:
-            elt_tag = get_resource_database().get_xml_tree(value).getroot().tag
-            if elt_tag == '{http://wikiotics.org/ns/2008/picture}picture':
+            obj = get_resource_database().get_resource_object(value)
+            if isinstance(obj, Picture):
                 return value
         except KeyError:
             pass
