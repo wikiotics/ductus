@@ -213,6 +213,9 @@ class Element(object):
             obj = getattr(self, name)
             # verify that the object is in fact a subelement of acceptable lineage
             if oldest_ancestor(self.subelements[name]) != oldest_ancestor(obj):
+                # fixme: if we are looking at a string, give an appropriate
+                # error message (it is quite easy to accidentally set a
+                # TextElement itself instead of its text property)
                 raise ValidationError
             # validate it
             obj.validate()
@@ -262,6 +265,11 @@ class ArrayElement(Element):
         self.max_size = max_size
         self.null_on_empty = null_on_empty # this doesn't really seem like essential functionality
         self.array = []
+
+    def clone(self):
+        clone = super(ArrayElement, self).clone()
+        clone.array = list(self.array)
+        return clone
 
     def is_null_xml_element(self):
         return (self.null_on_empty and len(self.array) == 0)
