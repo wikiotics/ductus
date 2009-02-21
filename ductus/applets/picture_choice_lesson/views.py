@@ -14,6 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+try:
+    import json # python 2.6
+except ImportError:
+    from django.utils import simplejson as json
+
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 from django.template import RequestContext
@@ -22,19 +27,20 @@ from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view
 from ductus.wiki import get_resource_database, SuccessfulEditRedirect
 from ductus.applets.picture_choice_lesson.models import PictureChoiceLesson
+from ductus.applets.picture_choice.views import general_picture_choice
 
 @register_view(PictureChoiceLesson, None)
 def view_picture_choice_lesson(request):
     questions = [q.href for q in request.ductus.resource.questions]
-    frame = int(request.GET.get('frame', 0))
-    if frame >= len(questions):
+    if not questions:
         return query_string_not_found(request)
-    question = questions[frame]
-
-    from ductus.applets.picture_choice.views import view_picture_choice
-    pc = get_resource_database().get_resource_object(question)
-    request.ductus.resource = pc # VERY BAD!! (fixme asap)
-    return view_picture_choice(request)
+    pc = get_resource_database().get_resource_object(questions[0])
+    element = general_picture_choice(pc)
+    return render_to_response('picture_choice_lesson/lesson.html', {
+        'element': element,
+        'questions': questions,
+        'json_questions': json.dumps(questions),
+    }, context_instance=RequestContext(request))
 
 @register_view(PictureChoiceLesson, 'edit')
 def edit_picture_choice_lesson(request):
@@ -43,7 +49,6 @@ def edit_picture_choice_lesson(request):
     if request.method == 'POST':
         # right now we only allow appending of elements through a single form
         # field...
-        from django.utils import simplejson as json
         try:
             append_list = request.POST['append_list'].replace("'", '"')
             urns = json.loads(append_list)

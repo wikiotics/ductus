@@ -1,0 +1,30 @@
+{% extends "picture_choice/choice.html" %}
+
+{% block javascript %}
+function resolve_urn(urn) {
+    return '/' + urn.split(':').join('/');
+}
+
+var questions = {{ json_questions|safe }};
+var frame = 0;
+$(function () {
+    picture_choice_correct_callbacks.push(function () {
+        setTimeout(function () {
+            frame = frame + 1;
+            if (frame < questions.length) {
+                $("#pcl_html_block").load(resolve_urn(questions[frame]), function () {
+                    pc_connect_click_actions();
+                    $("#frame_number").html(frame + 1 + '');
+                });
+            }
+        }, 2500);
+    });
+});
+{% endblock %}
+
+{% block content %}
+<div id="pcl_html_block">
+{{ block.super }}
+</div>
+<p class="pcl_frame_count">Frame <span id="frame_number">1</span> of {{ questions|length }}.</p>
+{% endblock %}

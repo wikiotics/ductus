@@ -37,13 +37,13 @@ def view_picture_choice(request):
                                   {'element': element},
                                   context_instance=RequestContext(request))
 
-def general_picture_choice(picture_choice, options_dict):
+def general_picture_choice(picture_choice, options_dict=None):
     correct_picture = picture_choice.correct_picture
     pictures = [correct_picture.href]
     pictures += [p.href for p in picture_choice.incorrect_pictures]
     phrase = picture_choice.phrase
 
-    if 'order' in options_dict:
+    if options_dict and 'order' in options_dict:
         pictures.sort()
         order = int(options_dict['order']) % factorial(len(pictures))
         new_pictures = []
