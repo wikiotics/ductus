@@ -5,15 +5,26 @@
 $(function () {
     $("ul.picture_choice_lesson").sortable({});
 });
+$(function () {
+    function json_pcl() {
+        var questions = [];
+        $(".picture_choice_urn").each(function (i) {
+            questions.push($(this).attr("title"));
+        });
+        return {"questions": questions};
+    }
+});
 {% endblock %}
 
 {% block content %}
 <ul class="picture_choice_lesson">
 {% for q in quiz %}
 <li>
-<td>{{ q.phrase }}</td>
-{% for p in q.pictures %}
-<img alt="" src="{{ p|resolve }}?view=image&amp;max_size=50,50"/>
+<span class="picture_choice_urn" title="{{ q.urn }}"></span>
+{{ q.phrase.text }}
+<img alt="" src="{{ q.correct_picture.href|resolve }}?view=image&amp;max_size=50,50"/>
+{% for p in q.incorrect_pictures %}
+<img alt="" src="{{ p.href|resolve }}?view=image&amp;max_size=50,50"/>
 {% endfor %}
 </li>
 {% endfor %}

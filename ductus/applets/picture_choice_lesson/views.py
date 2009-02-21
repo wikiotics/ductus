@@ -25,16 +25,15 @@ from ductus.applets.picture_choice_lesson.models import PictureChoiceLesson
 
 @register_view(PictureChoiceLesson, None)
 def view_picture_choice_lesson(request):
-    questions = request.ductus.resource.questions.get_hrefs()
+    questions = [q.href for q in request.ductus.resource.questions]
     frame = int(request.GET.get('frame', 0))
     if frame >= len(questions):
         return query_string_not_found(request)
     question = questions[frame]
 
     from ductus.applets.picture_choice.views import view_picture_choice
-    qtree = get_resource_database().get_xml_tree(question)
-    request.ductus.urn = question # VERY BAD!! (fixme asap)
-    request.ductus.xml_tree = qtree # VERY BAD!! (fixme asap)
+    pc = get_resource_database().get_resource_object(question)
+    request.ductus.resource = pc # VERY BAD!! (fixme asap)
     return view_picture_choice(request)
 
 @register_view(PictureChoiceLesson, 'edit')
