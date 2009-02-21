@@ -4,21 +4,13 @@
 {{ block.super }}
 {{ element.js }}
 $(function () {
-    clickfunc = function(n) {
-        return function() {
-            if (picture_urns[n] == correct_urn) {
-                //correct
-                $('.ductus_picture_choice table tr td').not('#picture' + n).hide(500);
-            } else {
-                //incorrect
-                $(this).parent().fadeTo(200, .25);
-            }
-        };
-    };
-    $("#picture0 * img").click(clickfunc(0));
-    $("#picture1 * img").click(clickfunc(1));
-    $("#picture2 * img").click(clickfunc(2));
-    $("#picture3 * img").click(clickfunc(3));
+    $(".picture_choice_picture * img").click(function () {
+        if ($(this).parent().parent().hasClass("correct")) {
+            $('.ductus_picture_choice table tr td').not('.correct').hide(500);
+        } else {
+            $(this).parent().fadeTo(200, .25);
+        }
+    });
 });
 {% endblock %}
 
@@ -32,5 +24,7 @@ $(function () {
 {% endblock %}
 
 {% block content %}
+<div id="pcl_html_block">
 {{ element.html_block }}
+</div>
 {% endblock %}

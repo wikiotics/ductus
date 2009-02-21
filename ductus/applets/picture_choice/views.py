@@ -17,6 +17,7 @@
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
 from django.template import RequestContext
+from django.http import HttpResponse
 
 from ductus.wiki.decorators import register_view
 from ductus.wiki import get_resource_database
@@ -28,12 +29,15 @@ factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
 
 @register_view(PictureChoice, None)
 def view_picture_choice(request):
-    element = general_picture_choice(request.ductus.resource.urn, request.GET)
-    return render_to_response('picture_choice/choice.html', {'element': element},
-                              context_instance=RequestContext(request))
+    element = general_picture_choice(request.ductus.resource, request.GET)
+    if request.is_ajax():
+        return HttpResponse([element["html_block"]])
+    else:
+        return render_to_response('picture_choice/choice.html',
+                                  {'element': element},
+                                  context_instance=RequestContext(request))
 
-def general_picture_choice(urn, options_dict):
-    picture_choice = get_resource_database().get_resource_object(urn)
+def general_picture_choice(picture_choice, options_dict):
     correct_picture = picture_choice.correct_picture
     pictures = [correct_picture.href]
     pictures += [p.href for p in picture_choice.incorrect_pictures]
@@ -61,6 +65,4 @@ def general_picture_choice(urn, options_dict):
     return {
         'html_block': render_to_string('picture_choice/element.html',
                                        {'object': object}),
-        'js': render_to_string('picture_choice/element.js',
-                               {'object': object}),
     }
