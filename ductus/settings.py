@@ -106,6 +106,20 @@ DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 #DUCTUS_MEDIA_PREFIX = '/static/ductus/'
 #DUCTUS_SITE_NAME = 'Example Ductus Site'
 
+DUCTUS_ALLOWED_LICENSES = (
+    'http://creativecommons.org/licenses/publicdomain/',
+    'http://creativecommons.org/licenses/by-sa/1.0/',
+    'http://creativecommons.org/licenses/by-sa/2.0/',
+    'http://creativecommons.org/licenses/by-sa/2.5/',
+    'http://creativecommons.org/licenses/by-sa/3.0/',
+    'http://creativecommons.org/licenses/by/1.0/',
+    'http://creativecommons.org/licenses/by/2.0/',
+    'http://creativecommons.org/licenses/by/2.5/',
+    'http://creativecommons.org/licenses/by/3.0/',
+)
+
+#DUCTUS_FLICKR_API_KEY = ""
+
 CACHE_BACKEND = 'dummy:///'
 CACHE_MIDDLEWARE_SECONDS = 86400
 
