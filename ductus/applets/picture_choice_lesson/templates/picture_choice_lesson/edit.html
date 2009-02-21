@@ -6,13 +6,21 @@ $(function () {
     $("ul.picture_choice_lesson").sortable({});
 });
 $(function () {
-    function json_pcl() {
+    function pcl_object() {
         var questions = [];
         $(".picture_choice_urn").each(function (i) {
             questions.push($(this).attr("title"));
         });
+        // fixme: assert that the length of our array is equal to the number
+        // of list items in ul.picture_choice_lesson
         return {"questions": questions};
     }
+    function pcl_json() { return JSON.stringify(pcl_object()); }
+    $("#save_button").click(function () {
+        $.post(document.URL, {"pcl": pcl_json()}, function (data) {
+            alert("saved");
+        });
+    });
 });
 {% endblock %}
 
@@ -29,11 +37,5 @@ $(function () {
 </li>
 {% endfor %}
 </ul>
-
-<h4>Hacked-together form for appending picture_choice's to this lesson</h4>
-<form method="POST">
-Insert JSON urn list here:<br/>
-<textarea name="append_list" rows="5" cols="80"></textarea><br/>
-<input type="submit"/>
-</form>
+<p><a id="save_button">Save</a></p>
 {% endblock %}

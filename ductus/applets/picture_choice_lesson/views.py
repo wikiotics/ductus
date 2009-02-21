@@ -50,20 +50,21 @@ def edit_picture_choice_lesson(request):
         # right now we only allow appending of elements through a single form
         # field...
         try:
-            append_list = request.POST['append_list'].replace("'", '"')
-            urns = json.loads(append_list)
+            urns = json.loads(request.POST['pcl'])['questions']
         except ValueError:
             raise
         else:
-            # now we append each element of this list with an xlink in the
-            # document tree, save the new tree, and return the new urn
+            # fixme: only save if something actually changes
+            # fixme: have the model only allow valid picture_choice's
             pcl = request.ductus.resource.clone()
+            pcl.questions.array = []
             #pcl.questions.extend_hrefs(urns) # fixme: current api is clumsy
             for u in urns:
                 q = pcl.questions.new_item()
                 q.href = u
                 pcl.questions.array.append(q)
             urn = pcl.save()
+            # fixme: successful-edit-redirect doesn't really make sense w/ ajax...
             return SuccessfulEditRedirect(urn)
 
     questions = request.ductus.resource.questions
