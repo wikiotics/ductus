@@ -6,18 +6,33 @@ function resolve_urn(urn) {
 }
 
 var questions = {{ json_questions|safe }};
-var frame = 0;
 $(function () {
+    var frame = 0;
+    var correct = 0;
+    var incorrect = 0;
+    var current_frame_incorrect_guess = false;
     picture_choice_correct_callbacks.push(function () {
+        if (!current_frame_incorrect_guess) {
+            correct = correct + 1;
+            $("#pcl_correct_count").html(correct + '');
+        }
         setTimeout(function () {
             frame = frame + 1;
             if (frame < questions.length) {
                 $("#pcl_html_block").load(resolve_urn(questions[frame]), function () {
                     pc_connect_click_actions();
                     $("#frame_number").html(frame + 1 + '');
+                    current_frame_incorrect_guess = false;
                 });
             }
         }, 2500);
+    });
+    picture_choice_incorrect_callbacks.push(function () {
+        if (!current_frame_incorrect_guess) {
+            incorrect = incorrect + 1;
+            $("#pcl_incorrect_count").html(incorrect + '');
+            current_frame_incorrect_guess = true;
+        }
     });
 });
 {% endblock %}
@@ -26,5 +41,6 @@ $(function () {
 <div id="pcl_html_block">
 {{ block.super }}
 </div>
-<p class="pcl_frame_count">Frame <span id="frame_number">1</span> of {{ questions|length }}.</p>
+<p class="pcl_frame_count">Frame <span id="frame_number">1</span> of {{ questions|length }}
+(<span id="pcl_correct_count">0</span> correct, <span id="pcl_incorrect_count">0</span> incorrect).</p>
 {% endblock %}
