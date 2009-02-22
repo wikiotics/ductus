@@ -34,9 +34,11 @@ def view_picture_info(request):
 
 def adjust_orientation_from_exif(image):
     rotation_table = {6: 270, 8: 90}
-    orientation = image._getexif().get(274, 1)
-    if orientation in rotation_table:
+    try:
+        orientation = image._getexif().get(274, 1)
         image = image.rotate(rotation_table[orientation], expand=True)
+    except KeyError:
+        pass
     return image
 
 @register_view(Picture, 'image')
