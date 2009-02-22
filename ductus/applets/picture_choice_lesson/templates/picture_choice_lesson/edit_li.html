@@ -1,0 +1,11 @@
+{% load urn %}
+{% for q in quiz %}
+<li>
+<span class="picture_choice_urn" title="{{ q.urn }}"></span>
+{{ q.phrase.text }}
+<img alt="" src="{{ q.correct_picture.href|resolve }}?view=image&amp;max_size=50,50"/>
+{% for p in q.incorrect_pictures %}
+<img alt="" src="{{ p.href|resolve }}?view=image&amp;max_size=50,50"/>
+{% endfor %}
+</li>
+{% endfor %}

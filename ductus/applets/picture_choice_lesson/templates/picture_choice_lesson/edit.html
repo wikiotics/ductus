@@ -1,9 +1,12 @@
 {% extends "ductus_document.html" %}
-{% load urn %}
+
+{% block head %}
+<script type="text/javascript" src="{{ ductus_media_prefix }}applets/picture/js/picture_selector.js"></script>
+{% endblock %}
 
 {% block javascript %}
 $(function () {
-    $("ul.picture_choice_lesson").sortable({});
+    $("ul#picture_choice_lesson").sortable({});
 });
 $(function () {
     function pcl_object() {
@@ -12,7 +15,7 @@ $(function () {
             questions.push($(this).attr("title"));
         });
         // fixme: assert that the length of our array is equal to the number
-        // of list items in ul.picture_choice_lesson
+        // of list items in #picture_choice_lesson
         return {"questions": questions};
     }
     function pcl_json() { return JSON.stringify(pcl_object()); }
@@ -22,20 +25,44 @@ $(function () {
         });
     });
 });
+$(function () {
+    function load_blank_pc_form () {
+        // fixme look up static urls
+        $("#builder_form").load("/new/picture_choice", function () {
+            connect_picture_widgets();
+        });
+    }
+    load_blank_pc_form();
+    $("#builder_form_submit").click(function () {
+        $.post("/new/picture_choice", $("#builder form").serialize(), function (data, textStatus) {
+            try {
+                var new_urns = JSON.parse(data);
+                // append them to the ul
+                $.get("{{ request.path }}", {"urns": data, "view": "static_li"}, function (data) {
+                    $("#picture_choice_lesson").append(data);
+                });
+                // show the form again
+                load_blank_pc_form();
+            } catch (e) {
+                $("#builder_form").html(data);
+            }
+        });
+    });
+});
 {% endblock %}
 
 {% block content %}
-<ul class="picture_choice_lesson">
-{% for q in quiz %}
-<li>
-<span class="picture_choice_urn" title="{{ q.urn }}"></span>
-{{ q.phrase.text }}
-<img alt="" src="{{ q.correct_picture.href|resolve }}?view=image&amp;max_size=50,50"/>
-{% for p in q.incorrect_pictures %}
-<img alt="" src="{{ p.href|resolve }}?view=image&amp;max_size=50,50"/>
-{% endfor %}
-</li>
-{% endfor %}
+<ul id="picture_choice_lesson">
+{{ quiz_list_items }}
 </ul>
 <p><a id="save_button">Save</a></p>
+
+<hr/>
+
+<div id="builder">
+<form>
+<div id="builder_form"></div>
+<a id="builder_form_submit">Submit</a>
+</form>
+</div>
 {% endblock %}

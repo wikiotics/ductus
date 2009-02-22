@@ -17,6 +17,8 @@
 from django import forms
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.http import HttpResponse
+
 from ductus.wiki import get_resource_database
 from ductus.wiki.decorators import register_creation_view
 from ductus.util.http import render_json_response
@@ -49,7 +51,7 @@ class PictureChoiceForm(forms.Form):
         if not all_unique(phrases):
             raise forms.ValidationError("Phrases must be unique")
 
-        pictures = get_pictures(self.data)
+        pictures = tuple(p for p in get_pictures(self.data) if p)
         if not all_unique(pictures):
             raise forms.ValidationError("Pictures must be unique")
 
@@ -75,13 +77,16 @@ def new_picture_choice(request):
                     new_urns.append(urn)
 
             view = request.GET.get('view', None)
-            if view == 'json':
-                return render_json_response({urns: new_urns})
+            if request.is_ajax():
+                return render_json_response(new_urns)
 
             form = PictureChoiceForm() # just do it all again!
 
     else:
         form = PictureChoiceForm()
+
+    if request.is_ajax():
+        return HttpResponse(unicode(form))
 
     return render_to_response('picture_choice/new.html',
                               {'form': form,

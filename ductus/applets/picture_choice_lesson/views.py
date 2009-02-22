@@ -21,7 +21,8 @@ except ImportError:
 
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
-from django.template import RequestContext
+from django.template import RequestContext, Context, loader
+from django.http import HttpResponse
 
 from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view
@@ -68,10 +69,21 @@ def edit_picture_choice_lesson(request):
             return SuccessfulEditRedirect(urn)
 
     questions = request.ductus.resource.questions
-    quiz = [resource_database.get_resource_object(q.href) for q in questions]
+    quiz_list_items = list_items(request, [q.href for q in questions])
     return render_to_response('picture_choice_lesson/edit.html',
-                              {'quiz': quiz},
+                              {'quiz_list_items': quiz_list_items},
                               context_instance=RequestContext(request))
+
+# fixme: static view
+@register_view(PictureChoiceLesson, 'static_li')
+def list_items_for_edit_view(request):
+    urns = json.loads(request.GET['urns'])
+    return HttpResponse(list_items(request, urns))
+
+def list_items(request, urns):
+    quiz = [get_resource_database().get_resource_object(q) for q in urns]
+    t = loader.get_template('picture_choice_lesson/edit_li.html')
+    return t.render(Context({'quiz': quiz}))
 
 @register_view(PictureChoiceLesson, 'tmp_json')
 def tmp_json_picture_choice_lesson(request):

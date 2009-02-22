@@ -2,7 +2,7 @@ function resolve_urn(urn) {
     return '/' + urn.split(':').join('/');
 }
 
-$(function () {
+var connect_picture_widgets = function () {
     function set_urn(div, urn) {
         div.children("input").val(urn);
         var qs = '?view=image&amp;max_size=100,100';
@@ -40,5 +40,6 @@ $(function () {
                function (data) { set_urn(div, data.urn); },
                'json');
     });
-});
+};
 
+$(function () { connect_picture_widgets(); });
