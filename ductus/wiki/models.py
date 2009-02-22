@@ -47,7 +47,7 @@ class WikiRevision(models.Model):
 
     author = models.ForeignKey(User, blank=True, null=True)
     author_ip = models.IPAddressField(blank=True, null=True)
-    log_message = models.CharField(max_length=400)
+    log_message = models.CharField(max_length=400, blank=True)
 
     class Meta:
         ordering = ('-timestamp',)
