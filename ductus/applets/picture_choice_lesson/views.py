@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from random import shuffle
+
 try:
     import json # python 2.6
 except ImportError:
@@ -35,6 +37,8 @@ def view_picture_choice_lesson(request):
     questions = [q.href for q in request.ductus.resource.questions]
     if not questions:
         return query_string_not_found(request)
+    if request.GET.get("shuffle", False):
+        shuffle(questions)
     pc = get_resource_database().get_resource_object(questions[0])
     element = general_picture_choice(pc)
     return render_to_response('picture_choice_lesson/lesson.html', {
