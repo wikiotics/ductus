@@ -106,9 +106,12 @@ class ModelMetaclass(ElementMetaclass):
         # Create nsmap
         nsmap = {}
         def add_nsmap_of_descendants(element_class):
-            for subelement in element_class.subelements.values():
+            children = element_class.subelements.values()
+            children += [subelement.item_prototype for subelement in children
+                         if isinstance(subelement, ArrayElement)]
+            for subelement in children:
                 add_nsmap_of_descendants(subelement.__class__)
-            children = element_class.attributes.values() + element_class.subelements.values()
+            children += element_class.attributes.values()
             nsmaps = [obj.nsmap for obj in children if hasattr(obj, "nsmap")]
             nsmaps = dict([(y, x) for (x, y) in chain(*[nsm.items() for nsm in nsmaps])])
             nsmap.update(dict([(y, x) for (x, y) in nsmaps.items()]))
@@ -331,6 +334,7 @@ class LicenseElement(LinkElement):
 
 class ResourceElement(LinkElement):
     "Verify it is a URN that exists in our universe (whatever that means)"
+    # fixme: should be able to specify constraints on allowed resource types
 
 class BlobElement(ResourceElement):
     "Verify it is a blob"
