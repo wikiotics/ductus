@@ -25,7 +25,7 @@ from ductus.resource import determine_header
 from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, register_installed_applets
 from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view, unvarying
-from ductus.util.http import query_string_not_found
+from ductus.util.http import query_string_not_found, render_json_response
 
 class DuctusRequestInfo(object):
     def __init__(self, resource, requested_view, wikipage):
@@ -129,6 +129,10 @@ def _handle_successful_edit(request, response, page):
     else:
         revision.author_ip = request.remote_addr
     revision.save()
+    if request.is_ajax():
+        return render_json_response(response.urn)
+    else:
+        return HttpResponseRedirect(page.get_absolute_url())
 
 def view_wikipage(request, pagename):
     try:
@@ -155,8 +159,7 @@ def view_wikipage(request, pagename):
     response = view_urn(request, hash_type, hash_digest, wikipage=True)
 
     if isinstance(response, SuccessfulEditRedirect):
-        _handle_successful_edit(request, response, page)
-        return HttpResponseRedirect(request.path)
+        return _handle_successful_edit(request, response, page)
 
     patch_cache_control(response, must_revalidate=True)
     return response
@@ -180,8 +183,7 @@ def creation_view(request, page_type):
         page, page_created = WikiPage.objects.get_or_create(name=request.GET["target"])
         if page_created:
             page.save()
-        _handle_successful_edit(request, response, page)
-        return HttpResponseRedirect(page.get_absolute_url())
+        return _handle_successful_edit(request, response, page)
     return response
 
 @register_view(None, 'xml')
