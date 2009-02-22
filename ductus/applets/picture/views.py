@@ -32,6 +32,13 @@ def view_picture_info(request):
                               {'urn': request.ductus.resource.urn},
                               context_instance=RequestContext(request))
 
+def adjust_orientation_from_exif(image):
+    rotation_table = {6: 270, 8: 90}
+    orientation = image._getexif().get(274, 1)
+    if orientation in rotation_table:
+        image = image.rotate(rotation_table[orientation], expand=True)
+    return image
+
 @register_view(Picture, 'image')
 @unvarying
 def view_picture(request):
@@ -55,6 +62,7 @@ def view_picture(request):
         for data in data_iterator:
             p.feed(data)
         im = p.close()
+        im = adjust_orientation_from_exif(im)
         im.thumbnail((max_width, max_height), Image.ANTIALIAS)
         output = StringIO()
         im.save(output, 'JPEG', quality=90) # PIL manual says avoid quality > 95
@@ -63,3 +71,6 @@ def view_picture(request):
 
     return HttpResponse(list(data_iterator), # see django #6527
                         content_type=mime_type)
+
+from flickr import search_view
+register_view(Picture, "search")(search_view)
