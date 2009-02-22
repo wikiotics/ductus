@@ -4,8 +4,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/wiki/front_page'}), # django 1.1: add {'permanent': False} to this dictionary
-    (r'^admin/(.*)', admin.site.root), # Should be changed in Django 1.1
+    (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/wiki/front_page', 'permanent': False}),
+    (r'^admin/', include(admin.site.urls)),
     (r'^urn/(?P<hash_type>[-_\w]+)/(?P<hash_digest>[-_\w]+)$', 'ductus.wiki.views.view_urn'),
     (r'^wiki/(.*)$', 'ductus.wiki.views.view_wikipage'),
     (r'^new/(.*)', 'ductus.wiki.views.creation_view'),
