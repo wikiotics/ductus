@@ -84,10 +84,3 @@ def list_items(request, urns):
     quiz = [get_resource_database().get_resource_object(q) for q in urns]
     t = loader.get_template('picture_choice_lesson/edit_li.html')
     return t.render(Context({'quiz': quiz}))
-
-@register_view(PictureChoiceLesson, 'tmp_json')
-def tmp_json_picture_choice_lesson(request):
-    questions = request.ductus.resource.questions.get_hrefs()
-    return render_to_response('picture_choice_lesson/tmp_json.html',
-                              {'questions': questions},
-                              context_instance=RequestContext(request))
