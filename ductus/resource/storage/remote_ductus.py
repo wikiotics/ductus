@@ -14,14 +14,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.util import iterate_file_object
 from urllib2 import urlopen, HTTPError
+
+from ductus.util import iterate_file_object
+from ductus.resource.storage.untrusted import UntrustedStorageMetaclass
 
 class RemoteDuctusStorageBackend(object):
     """Fetches resources from a remote Ductus over HTTP"""
 
-    def __init__(self, base_url="http://wikiotics.org"):
+    __metaclass__ = UntrustedStorageMetaclass
+
+    def __init__(self, base_url="http://wikiotics.org", max_resource_size=None):
         self.__base_url = base_url
+        if max_resource_size is not None:
+            self.max_resource_size = max_resource_size
 
     def __remote_url(urn):
         return "%s/%s?view=raw" % (self.__base_url, urn.replace(':', '/'))
@@ -39,9 +45,6 @@ class RemoteDuctusStorageBackend(object):
         return True
 
     def __getitem__(self, key):
-        # fixme: check hash.  Do we do it now (read it all into memory), or do
-        # it as it is iterated?  Either way, we should have some parameter for
-        # the maximum size of a file we will allow.
         try:
             return iterate_file_object(urlopen(self.__remote_url(key)))
         except HTTPError:

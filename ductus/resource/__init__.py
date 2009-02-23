@@ -17,12 +17,14 @@
 from __future__ import with_statement
 from ductus.strutil import *
 
-import base64, hashlib
+import base64
+import hashlib
 import itertools
 import os
-from tempfile import mkstemp
 
 from lxml import etree
+
+from ductus.util import iterator_to_tempfile
 
 hash_name = "sha384"
 hash_encode = base64.urlsafe_b64encode
@@ -50,6 +52,21 @@ class UnsupportedURN(ValueError):
         self.value = value
     def __str__(self):
         return repr(self.value)
+
+def check_resource_size(data_iterator, max_resource_size):
+    cumulative_size = 0
+    while True:
+        data = data_iterator.next()
+        cumulative_size += len(data)
+        if cumulative_size > max_resource_size:
+            raise SizeTooLargeError("Resource is greater than limit of %d bytes." % max_resource_size)
+        yield data
+
+def calculate_hash(data_iterator, hash_obj):
+    while True:
+        data = data_iterator.next()
+        hash_obj.update(data)
+        yield data
 
 class ResourceDatabase(object):
     """
@@ -110,18 +127,12 @@ class ResourceDatabase(object):
 
         header, data_iterator = determine_header(data_iterator)
 
-        # Calculate hash and save to temporary file
         hash_obj = hash_algorithm()
-        fd, tmpfile = mkstemp()
-        try:
-            try:
-                data_iterator = self.__check_size(data_iterator)
-                for data in data_iterator:
-                    hash_obj.update(data)
-                    os.write(fd, data)
-            finally:
-                os.close(fd)
+        data_iterator = check_resource_size(data_iterator, self.max_resource_size)
+        data_iterator = calculate_hash(data_iterator, hash_obj)
+        tmpfile = iterator_to_tempfile(data_iterator)
 
+        try:
             digest = hash_encode(hash_obj.digest())
             urn = "urn:%s:%s" % (hash_name, digest)
             if intended_urn and intended_urn != urn:
@@ -173,15 +184,6 @@ class ResourceDatabase(object):
             if link.startswith('urn:%s:' % hash_name) and link not in self:
                 raise Exception("Broken link from %s to %s"
                                 % (urn, link))
-
-    def __check_size(self, data_iterator):
-        cumulative_size = 0
-        while True:
-            data = data_iterator.next()
-            cumulative_size += len(data)
-            if cumulative_size > self.max_resource_size:
-                raise SizeTooLargeError("Resource is greater than limit of %d bytes." % self.max_resource_size)
-            yield data
 
     def store_blob(self, x, urn=None):
         return self.store(itertools.chain((bytes("blob\0"),), x), urn)

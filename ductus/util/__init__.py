@@ -72,10 +72,17 @@ def iterator_to_tempfile(data_iterator):
     """
     fd, tmpfile = mkstemp()
     try:
-        for data in data_iterator:
-            os.write(fd, data)
-    finally:
-        os.close(fd)
+        try:
+            for data in data_iterator:
+                os.write(fd, data)
+        finally:
+            os.close(fd)
+    except:
+        try:
+            os.remove(tmpfile)
+        except:
+            pass
+        raise
     return tmpfile
 
 class sequence_contains_only(object):
