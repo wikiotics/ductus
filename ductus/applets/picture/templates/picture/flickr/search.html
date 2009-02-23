@@ -1,0 +1,14 @@
+{% extends "ductus_base.html" %}
+
+{% block javascript %}
+
+$(function () { $("img.flickr_thumbnail").click(function () { $("#test img").attr("src", $(this).attr("src").replace('\_s.jpg', '.jpg')); }); });
+{% endblock %}
+
+{% block content %}
+<h3>{{ place }}</h3>
+<p>page {{ page }} of {{ paginator.num_pages }} {% if page_obj.has_previous %}<a href="{{ request.path }}?{{ previous_query_string }}">prev</a>{% endif %} {% if page_obj.has_next %}<a href="{{ request.path }}?{{ next_query_string }}">next</a>{% endif %}</p>
+<p><form>What: <input type="hidden" name="view" value="search"/><input name="q" value="{{ request.GET.q|escape }}"/> Where: <input name="place" value="{{ request.GET.place|escape }}"/> <input type="submit"/></form></p>
+<p>{% for p in photos %}<a rel="#test"><img class="flickr_thumbnail" src="{{ p.square_url }}" title="{{ p.title }} [{{ p.license }}]"/></a>{% endfor %}</p>
+<p>{% for p in photos %}<a href="{{ p.page_url }}"><img class="flickr_thumbnail" src="{{ p.square_url }}" title="{{ p.title }} [{{ p.license }}]"/></a>{% endfor %}</p>
+{% endblock %}
