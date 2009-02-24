@@ -16,7 +16,7 @@
 
 import os
 
-from ductus.resource import check_resource_size, hash_algorithm, hash_encode
+from ductus.resource import check_resource_size, calculate_hash, hash_name, hash_algorithm, hash_encode
 from ductus.util import iterator_to_tempfile, iterate_file_then_delete
 from ductus.resource.storage.noop import WrapStorageBackend
 
@@ -34,7 +34,7 @@ def _wrap_getitem(original_getitem):
         # Verify hash
         try:
             digest = hash_encode(hash_obj.digest())
-            if urn != "urn:%s:%s" % (hash_name, digest):
+            if key != "urn:%s:%s" % (hash_name, digest):
                 raise "URN given does not match content." # valueerror
         except:
             os.remove(tmpfile)

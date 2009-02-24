@@ -29,7 +29,7 @@ class RemoteDuctusStorageBackend(object):
         if max_resource_size is not None:
             self.max_resource_size = max_resource_size
 
-    def __remote_url(urn):
+    def __remote_url(self, urn):
         return "%s/%s?view=raw" % (self.__base_url, urn.replace(':', '/'))
 
     def __contains__(self, key):
