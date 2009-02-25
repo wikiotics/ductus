@@ -65,7 +65,7 @@ url_format_map = {
     'small': 'http://farm%(farm)s.static.flickr.com/%(server)s/%(id)s_%(secret)s_m.jpg',
     'original': 'http://farm%(farm)s.static.flickr.com/%(server)s/%(id)s_%(originalsecret)s_o.%(originalformat)s',
     'page': 'http://www.flickr.com/photos/%(owner)s/%(id)s',
-    'userpage': 'http://www.flickr.com/people/%(owner)/',
+    'userpage': 'http://www.flickr.com/people/%(owner)s/',
 }
 
 class FlickrPhotoMetaclass(type):
@@ -85,7 +85,12 @@ class FlickrPhoto(object):
     __metaclass__ = FlickrPhotoMetaclass
 
     def __init__(self, d):
-        self.dict = d
+        self.dict = dict(d)
+        try:
+            # normalize results from photos.getInfo and photos.search
+            self.dict["owner"] = self.dict["owner"]["nsid"]
+        except KeyError:
+            pass
 
     def __getitem__(self, key):
         if key == "license":

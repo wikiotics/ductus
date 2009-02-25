@@ -130,7 +130,7 @@ def _handle_successful_edit(request, response, page):
         revision.author_ip = request.remote_addr
     revision.save()
     if request.is_ajax():
-        return render_json_response(response.urn)
+        return render_json_response({"urn": response.urn})
     else:
         return HttpResponseRedirect(page.get_absolute_url())
 
@@ -154,8 +154,10 @@ def view_wikipage(request, pagename):
     if not revision.urn:
         return implicit_new_wikipage(request, pagename)
 
-    hash_type, hash_digest = revision.urn.split(':')
+    if request.GET.get('view', None) == 'urn':
+        return render_json_response({"urn": "urn:" + revision.urn})
 
+    hash_type, hash_digest = revision.urn.split(':')
     response = view_urn(request, hash_type, hash_digest, wikipage=True)
 
     if isinstance(response, SuccessfulEditRedirect):
