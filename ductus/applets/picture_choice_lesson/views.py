@@ -52,8 +52,6 @@ def edit_picture_choice_lesson(request):
     resource_database = get_resource_database()
 
     if request.method == 'POST':
-        # right now we only allow appending of elements through a single form
-        # field...
         try:
             urns = json.loads(request.POST['pcl'])['questions']
         except ValueError:
@@ -69,7 +67,6 @@ def edit_picture_choice_lesson(request):
                 q.href = u
                 pcl.questions.array.append(q)
             urn = pcl.save()
-            # fixme: successful-edit-redirect doesn't really make sense w/ ajax...
             return SuccessfulEditRedirect(urn)
 
     questions = request.ductus.resource.questions
