@@ -138,20 +138,25 @@ def view_wikipage(request, pagename):
     try:
         page = WikiPage.objects.get(name=pagename)
     except WikiPage.DoesNotExist:
-        return implicit_new_wikipage(request, pagename)
+        page = None
 
-    if request.GET.get('view', None) in ('location_history', 'hybrid_history'):
-        response = render_to_response('wiki/location_history.html',
-                                      {'page': page},
-                                      context_instance=RequestContext(request))
-        patch_vary_headers(response, ['Cookie', 'Accept-language'])
-        return response
+    if page:
+        if request.GET.get('view', None) in ('location_history', 'hybrid_history'):
+            response = render_to_response('wiki/location_history.html',
+                                          {'page': page},
+                                          context_instance=RequestContext(request))
+            patch_vary_headers(response, ['Cookie', 'Accept-language'])
+            return response
 
-    if "oldid" in request.GET:
-        revision = get_object_or_404(WikiRevision, pk=request.GET["oldid"], page=page)
-    else:
-        revision = page.get_latest_revision()
-    if not revision.urn:
+        if "oldid" in request.GET:
+            revision = get_object_or_404(WikiRevision, pk=request.GET["oldid"], page=page)
+        else:
+            revision = page.get_latest_revision()
+
+    #if page is None and getattr(settings, "DUCTUS_WIKI_REMOTE"):
+    #    json.loads(urlopen("%s/wiki/%s?view=urn" % ()).read(1000))["urn"]
+
+    if page is None or not revision.urn:
         return implicit_new_wikipage(request, pagename)
 
     if request.GET.get('view', None) == 'urn':
