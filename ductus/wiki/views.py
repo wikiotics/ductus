@@ -14,12 +14,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json
+from urllib2 import urlopen, HTTPError as urllib2_HTTPError
+from urllib import quote as urllib_quote
+
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotModified, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, loader
 from django.views.decorators.vary import vary_on_headers
 from django.utils.safestring import mark_safe
 from django.utils.cache import patch_vary_headers, patch_cache_control
+from django.conf import settings
 
 from ductus.resource import determine_header
 from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, register_installed_applets
@@ -152,11 +160,24 @@ def view_wikipage(request, pagename):
             revision = get_object_or_404(WikiRevision, pk=request.GET["oldid"], page=page)
         else:
             revision = page.get_latest_revision()
+    else:
+        revision = None
 
-    #if page is None and getattr(settings, "DUCTUS_WIKI_REMOTE"):
-    #    json.loads(urlopen("%s/wiki/%s?view=urn" % ()).read(1000))["urn"]
+    if revision is None and getattr(settings, "DUCTUS_WIKI_REMOTE", None):
+        # See if DUCTUS_WIKI_REMOTE has the page
+        try:
+            remote_url = "%s/wiki/%s?view=urn" % (settings.DUCTUS_WIKI_REMOTE, urllib_quote(pagename))
+            remote_urn = json.loads(urlopen(remote_url).read(1000))["urn"]
+            # we never actually save this WikiPage or WikiRevision to the database
+            if page is None:
+                page, page_created = WikiPage.objects.get_or_create(name=pagename)
+                if page_created:
+                    page.save()
+            revision = WikiRevision(page=page, urn=remote_urn[4:])
+        except urllib2_HTTPError:
+            pass
 
-    if page is None or not revision.urn:
+    if revision is None:
         return implicit_new_wikipage(request, pagename)
 
     if request.GET.get('view', None) == 'urn':

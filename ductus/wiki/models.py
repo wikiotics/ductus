@@ -31,7 +31,7 @@ class WikiPage(models.Model):
         try:
             return query[0]
         except IndexError:
-            return NullRevision(self)
+            return None
 
     def __unicode__(self):
         return self.name
@@ -66,11 +66,6 @@ class WikiRevision(models.Model):
 
     def __unicode__(self):
         return u'%s (%s)' % (unicode(self.page), self.timestamp)
-
-class NullRevision(object):
-    def __init__(self, page):
-        self.page = page
-        self.urn = ''
 
 # admin interface -- for debugging only
 
