@@ -44,13 +44,23 @@ class FlickrJSON(flickrapi.FlickrAPI):
             return j
         return f
 
-# fixme: make initialization of license_map (and hence search_photos) lazy
 flickr = FlickrJSON(settings.DUCTUS_FLICKR_API_KEY)
 
-license_map = dict([(x['id'], x['url']) for x in flickr.photos_licenses_getInfo()["licenses"]["license"] if x['url'] in settings.DUCTUS_ALLOWED_LICENSES])
-license_query = u','.join(license_map)
+def lazy_memoize(f):
+    """Returns an object that when called returns the value of the given function.
 
-search_photos = partial(flickr.photos_search, license=license_query, safe_search=1, content_type=1, media="photos", extras="license,owner_name,original_format", per_page=100)
+    On each subsequent call the cached value is simply returned.
+    """
+    class ValueHolder(object):
+        __slots__ = "v"
+    rv = ValueHolder()
+    def _memoize():
+        if not hasattr(rv, "v"):
+            rv.v = f()
+        return rv.v
+    return _memoize
+
+license_map = lazy_memoize(lambda: dict([(x['id'], x['url']) for x in flickr.photos_licenses_getInfo()["licenses"]["license"] if x['url'] in settings.DUCTUS_ALLOWED_LICENSES]))
 
 valid_sort_methods = {
     'date-posted-desc': 'Newest',
@@ -94,7 +104,7 @@ class FlickrPhoto(object):
 
     def __getitem__(self, key):
         if key == "license":
-            return license_map[self.dict[key]]
+            return license_map()[self.dict[key]]
         return self.dict[key]
 
 from django.shortcuts import render_to_response
@@ -103,6 +113,10 @@ from django.http import QueryDict
 from django.core.paginator import Paginator
 
 def search_view(request):
+    search_photos = partial(flickr.photos_search, license=(','.join(license_map())),
+                            safe_search=1, content_type=1, media="photos",
+                            extras="license,owner_name,original_format", per_page=100)
+
     kw = {'page': request.GET.get("page", "1")}
     place_name = None
     if "place_id" in request.GET:
