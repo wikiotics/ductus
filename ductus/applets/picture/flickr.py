@@ -89,7 +89,7 @@ class FlickrPhoto(object):
         try:
             # normalize results from photos.getInfo and photos.search
             self.dict["owner"] = self.dict["owner"]["nsid"]
-        except KeyError:
+        except (TypeError, KeyError):
             pass
 
     def __getitem__(self, key):
