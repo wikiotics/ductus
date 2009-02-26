@@ -266,7 +266,9 @@ class ArrayElement(Element):
         self.item_prototype = item_prototype
         self.min_size = min_size
         self.max_size = max_size
-        self.null_on_empty = null_on_empty # this doesn't really seem like essential functionality
+        self.null_on_empty = null_on_empty
+        if null_on_empty:
+            self.optional = True
         self.array = []
 
     def clone(self):
@@ -330,7 +332,7 @@ class LinkElement(Element):
 
 class LicenseElement(LinkElement):
     pass
-    #or_later = BooleanElement(optional=True, default=False)
+    #or_later = BooleanAttribute(optional=True, default=False)
 
 class ResourceElement(LinkElement):
     "Verify it is a URN that exists in our universe (whatever that means)"
@@ -367,7 +369,7 @@ class TimestampElement(TextElement): # maybe this should be an attribute
 class DuctusCommonElement(Element):
     #title
     parents = ArrayElement(ResourceElement()) # do we allow URLs too?
-    licenses = ArrayElement(LicenseElement()) #, optional=True) # null on empty
+    licenses = ArrayElement(LicenseElement(), null_on_empty=True)
     timestamp = Attribute()
     #languages
     #author, rights, creator
@@ -389,6 +391,10 @@ class DuctusCommonElement(Element):
         if not self.timestamp:
             self.timestamp = datetime.datetime.utcnow().isoformat()
         super(DuctusCommonElement, self).populate_xml_element(element, ns)
+
+    def validate(self):
+        super(DuctusCommonElement, self).validate()
+        # fixme: make sure all parents are the same model type
 
 class Model(Element):
     __metaclass__ = ModelMetaclass
