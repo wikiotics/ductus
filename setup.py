@@ -21,8 +21,10 @@ setup(
     author_email='jim@garrison.cc',
     url='http://wikiotics.org/',
     install_requires=(
-        'Django >= 1.0',
+        'Django >= 1.1',
         'Creoleparser',
+        'lxml',
+        'PIL',
     ),
     extras_require={
         'flickr': ['flickrapi >= 1.2'],
