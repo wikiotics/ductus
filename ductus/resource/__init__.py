@@ -68,6 +68,11 @@ def calculate_hash(data_iterator, hash_obj):
         hash_obj.update(data)
         yield data
 
+def ensure_isinstance(data, type_):
+    if not isinstance(data, type_):
+        raise TypeError("data must generate '%s' type, not '%s'" % (type_.__name__, type(data).__name__))
+    return data
+
 class ResourceDatabase(object):
     """
     Main resource database.
@@ -125,6 +130,7 @@ class ResourceDatabase(object):
 
         intended_urn = urn
 
+        data_iterator = (ensure_isinstance(data, bytes) for data in data_iterator)
         header, data_iterator = determine_header(data_iterator)
 
         hash_obj = hash_algorithm()
