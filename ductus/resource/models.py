@@ -280,9 +280,11 @@ class ArrayElement(Element):
         self.min_size = min_size
         self.max_size = max_size
         self.null_on_empty = null_on_empty
-        if null_on_empty:
-            self.optional = True
         self.array = []
+
+    @property
+    def optional(self):
+        return self.null_on_empty
 
     def clone(self):
         clone = super(ArrayElement, self).clone()
