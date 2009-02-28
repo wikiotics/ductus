@@ -235,7 +235,7 @@ class ResourceDatabase(object):
         return resource
 
     def keys(self):
-        "This will be easy... just query the database."
+        return self.storage_backend.keys()
 
     def __getitem__(self, key):
         return self.storage_backend[key]
