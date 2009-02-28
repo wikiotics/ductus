@@ -323,7 +323,7 @@ class ArrayElement(Element):
             self.array.append(item)
 
     def __eq__(self, other):
-        return super(TextElement, self).__eq__(other) and self.array == other.array
+        return super(ArrayElement, self).__eq__(other) and self.array == other.array
 
     def __iter__(self):
         return iter(self.array)
