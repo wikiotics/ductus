@@ -215,7 +215,7 @@ class Element(object):
         for name, subelement in self.subelements.items():
             obj = getattr(self, name)
             # verify that the object is in fact a subelement of acceptable lineage
-            if oldest_ancestor(self.subelements[name]) != oldest_ancestor(obj):
+            if oldest_ancestor(self.subelements[name]) is not oldest_ancestor(obj):
                 # fixme: if we are looking at a string, give an appropriate
                 # error message (it is quite easy to accidentally set a
                 # TextElement itself instead of its text property)
@@ -224,6 +224,16 @@ class Element(object):
             obj.validate()
         for name, attribute in self.attributes.items():
             attribute.validate(self._attribute_data[name])
+
+    def __eq__(self, other):
+        if self is other:
+            return True
+        return (type(self) == type(other) and
+                self._attribute_data == other._attribute_data and
+                all(getattr(self, name) == getattr(other, name) for name in self.subelements))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 def _is_element(obj):
     return isinstance(obj, Element)
@@ -256,6 +266,9 @@ class TextElement(Element):
             text = ""
         self.text = text
 
+    def __eq__(self, other):
+        return super(TextElement, self).__eq__(other) and self._text == other._text
+
 class ArrayElement(Element):
     __metaclass__ = NoChildMetaclass
 
@@ -285,7 +298,7 @@ class ArrayElement(Element):
     def validate(self):
         super(ArrayElement, self).validate()
         prototype_oldest_ancestor = oldest_ancestor(self.item_prototype)
-        if any(oldest_ancestor(item) != prototype_oldest_ancestor for item in self.array):
+        if any(oldest_ancestor(item) is not prototype_oldest_ancestor for item in self.array):
             raise ValidationError
         if len(self) < self.min_size:
             raise ValidationError("too few elements")
@@ -307,6 +320,9 @@ class ArrayElement(Element):
             item.populate_from_xml(child, ns)
             self.array.append(item)
 
+    def __eq__(self, other):
+        return super(TextElement, self).__eq__(other) and self.array == other.array
+
     def __iter__(self):
         return iter(self.array)
 
@@ -314,7 +330,7 @@ class ArrayElement(Element):
         return len(self.array)
 
     # fixme: __getitem__, __delitem__, __setitem__, __delslice__, __getslice__,
-    # __setslice__, __eq__, __ne__, __reversed__, append, extend, insert, pop
+    # __setslice__, __reversed__, append, extend, insert, pop
 
     # maybe make an interface for new_item to be passed arguments, which will
     # call some yet-to-be-defined "set_stuff" function on the item
@@ -362,9 +378,6 @@ class TypedBlobElement(BlobElement):
         super(TypedBlobElement, self).validate()
         if self.mime_type not in self.allowed_mime_types:
             raise ValidationError()
-
-class TimestampElement(TextElement): # maybe this should be an attribute
-    pass
 
 class DuctusCommonElement(Element):
     #title
@@ -423,5 +436,8 @@ class Model(Element):
             rv.common.parents.array = [rv.common.parents.new_item()] # fixme
             rv.common.parents.array[0].href = self.urn
         return rv
+
+    def __eq__(self, other):
+        return (self.urn is not None and self.urn == other.urn) or super(Model, self).__eq__(other)
 
 from ductus.resource import register_model
