@@ -1,0 +1,22 @@
+{% extends "ductus_document.html" %}
+
+{% block head %}
+<style type="text/css">
+.ductus_diff_info_column { background: #bbb; }
+.ductus_diff_unchanged { background: #ddd; }
+.ductus_diff_old { background: #fdd; }
+.ductus_diff_new { background: #dfd; }
+</style>
+{% endblock %}
+
+{% block content %}
+<table>
+{% for item in diff %}
+<tr>
+<td class="ductus_diff_info_column">{% for i in item.hierarchy %}{{ i }}{% if not forloop.last %}.{% endif %}{% endfor %}</td>
+<td class="{% if item.different %}ductus_diff_old{% else %}ductus_diff_unchanged{% endif %}" style="padding-left: {{ item.hierarchy|length }}em">{{ item.that }}</td>
+<td class="{% if item.different %}ductus_diff_new{% else %}ductus_diff_unchanged{% endif %}" style="padding-left: {{ item.hierarchy|length }}em">{{ item.this }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

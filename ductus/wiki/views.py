@@ -181,6 +181,7 @@ def view_wikipage(request, pagename):
         return implicit_new_wikipage(request, pagename)
 
     if request.GET.get('view', None) == 'urn':
+        # fixme: we should just have an X-Urn header and use HEAD instead of GET
         return render_json_response({"urn": "urn:" + revision.urn})
 
     hash_type, hash_digest = revision.urn.split(':')
@@ -301,5 +302,60 @@ def view_document_history(request):
 def view_license_info(request):
     return render_to_response('wiki/license_info.html',
                               context_instance=RequestContext(request))
+
+class DiffItem(object):
+    __slots__ = ('hierarchy', 'different', 'this', 'that')
+
+    def __init__(self, hierarchy, different, this, that):
+        self.hierarchy = hierarchy
+        self.different = bool(different)
+        self.this = unicode(this)
+        self.that = unicode(that)
+
+class Diff(list):
+    def __init__(self, this, that):
+        super(Diff, self).__init__()
+        self.__do_diff(this, that)
+
+    def __do_diff(self, this, that, hierarchy=()):
+        from ductus.resource.models import TextElement, ArrayElement
+
+        if type(this) is not type(that):
+            self.append(DiffItem(hierarchy, True,
+                                 "Type <%s>" % type(this),
+                                 "Type <%s>" % type(that)))
+            return
+
+        elements_are_equal = (this == that)
+        if hierarchy:
+            label = "[%s]" % hierarchy[-1]
+            self.append(DiffItem(hierarchy, not elements_are_equal,
+                                 label, label))
+        if elements_are_equal:
+            return
+
+        for attribute in this.attributes:
+            this_attribute = getattr(this, attribute)
+            that_attribute = getattr(that, attribute)
+            self.append(DiffItem(hierarchy + (attribute,),
+                                 (this_attribute != that_attribute),
+                                 this_attribute, that_attribute))
+        for subelement in this.subelements:
+            self.__do_diff(getattr(this, subelement), getattr(that, subelement),
+                           hierarchy + (subelement,))
+        if isinstance(this, TextElement):
+            self.append(DiffItem(hierarchy + ("text",),
+                                 (this.text != that.text),
+                                 this.text, that.text))
+        if isinstance(this, ArrayElement):
+            pass # fixme
+
+@register_view(None, 'diff')
+def view_diff(request):
+    this = request.ductus.resource
+    that = get_resource_database().get_resource_object(request.GET["diff"])
+    return render_to_response("wiki/diff.html", {
+        'diff': Diff(this, that),
+    }, RequestContext(request))
 
 register_installed_applets()

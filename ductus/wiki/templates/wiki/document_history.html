@@ -4,7 +4,7 @@
 <p>Parents:</p>
 <ul>
 {% for parent in request.ductus.resource.common.parents %}
-<li><a href="{{ parent.href|resolve }}">{{ parent.href }}</a></li>
+<li><a href="{{ parent.href|resolve }}">{{ parent.href }}</a> (<a href="?view=diff&diff={{ parent.href }}">diff</a>)</li>
 {% endfor %}
 </ul>
 {% endblock %}
