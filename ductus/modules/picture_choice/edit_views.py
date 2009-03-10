@@ -22,8 +22,8 @@ from django.http import HttpResponse
 from ductus.wiki import get_resource_database
 from ductus.wiki.decorators import register_creation_view
 from ductus.util.http import render_json_response
-from ductus.applets.picture.forms import PictureUrnField
-from ductus.applets.picture_choice.models import PictureChoice
+from ductus.modules.picture.forms import PictureUrnField
+from ductus.modules.picture_choice.models import PictureChoice
 
 def all_unique(iterable):
     return len(frozenset(iterable)) == len(iterable)

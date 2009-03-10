@@ -30,7 +30,7 @@ from django.utils.cache import patch_vary_headers, patch_cache_control
 from django.conf import settings
 
 from ductus.resource import determine_header
-from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, register_installed_applets
+from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, register_installed_modules
 from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view, unvarying
 from ductus.util.http import query_string_not_found, render_json_response
@@ -358,4 +358,4 @@ def view_diff(request):
         'diff': Diff(this, that),
     }, RequestContext(request))
 
-register_installed_applets()
+register_installed_modules()

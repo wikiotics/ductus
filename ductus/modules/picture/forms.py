@@ -17,7 +17,7 @@
 from django import forms
 from django.utils.safestring import mark_safe
 from ductus.wiki import get_resource_database, resolve_urn, UnsupportedURN
-from ductus.applets.picture.models import Picture
+from ductus.modules.picture.models import Picture
 
 def urn_to_img_url(urn):
     try:
@@ -28,7 +28,7 @@ def urn_to_img_url(urn):
 class PictureSelector(forms.TextInput):
     """Picture selection widget
 
-    Requires static/applets/picture/js/picture_selector.js
+    Requires static/modules/picture/js/picture_selector.js
     """
 
     # fixme: we should set some element of this class to make it clear it

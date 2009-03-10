@@ -47,7 +47,7 @@ ADMIN_MEDIA_PREFIX = '/media/'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
-    'ductus.template_loaders.applet_directories.load_template_source',
+    'ductus.template_loaders.module_directories.load_template_source',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -92,11 +92,11 @@ INSTALLED_APPS = (
     'ductus.user',
 )
 
-DUCTUS_INSTALLED_APPLETS = (
-    'ductus.applets.picture',
-    'ductus.applets.picture_choice',
-    'ductus.applets.picture_choice_lesson',
-    'ductus.applets.textwiki',
+DUCTUS_INSTALLED_MODULES = (
+    'ductus.modules.picture',
+    'ductus.modules.picture_choice',
+    'ductus.modules.picture_choice_lesson',
+    'ductus.modules.textwiki',
 )
 
 DUCTUS_STORAGE_BACKEND = 'ductus.urls.storage_backend'

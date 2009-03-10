@@ -28,7 +28,7 @@ def get_resource_database():
         storage_backend = getattr(__import__(mod_name, {}, {}, ['']),
                                       var_name)
         __resource_database = ResourceDatabase(storage_backend)
-        register_installed_applets()
+        register_installed_modules()
     return __resource_database
 
 __resource_database = None
@@ -55,20 +55,20 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
         self.urn = urn
         return HttpResponseRedirect.__init__(self, resolve_urn(urn))
 
-def register_installed_applets():
-    global __applets_registered
-    if __applets_registered:
+def register_installed_modules():
+    global __modules_registered
+    if __modules_registered:
         return
 
-    for applet in getattr(settings, "DUCTUS_INSTALLED_APPLETS", ()):
-        __import__('%s.views' % applet, {}, {}, [''])
+    for module in getattr(settings, "DUCTUS_INSTALLED_MODULES", ()):
+        __import__('%s.views' % module, {}, {}, [''])
         for submod in ('edit_views', 'models'):
             with ignore(ImportError):
-                __import__((applet + '.' + submod), {}, {}, [''])
+                __import__((module + '.' + submod), {}, {}, [''])
 
-    __applets_registered = True
+    __modules_registered = True
 
-__applets_registered = False
+__modules_registered = False
 
 registered_views = {}
 registered_creation_views = {}

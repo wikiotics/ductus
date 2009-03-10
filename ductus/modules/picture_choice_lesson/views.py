@@ -29,8 +29,8 @@ from django.http import HttpResponse
 from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view
 from ductus.wiki import get_resource_database, SuccessfulEditRedirect
-from ductus.applets.picture_choice_lesson.models import PictureChoiceLesson
-from ductus.applets.picture_choice.views import general_picture_choice
+from ductus.modules.picture_choice_lesson.models import PictureChoiceLesson
+from ductus.modules.picture_choice.views import general_picture_choice
 
 @register_view(PictureChoiceLesson, None)
 def view_picture_choice_lesson(request):

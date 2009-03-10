@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 __doc__ = """
 Wrapper for loading templates from "template" directories in
-DUCTUS_INSTALLED_APPLETS packages.
+DUCTUS_INSTALLED_MODULES packages.
 """
 
 import os
@@ -47,7 +47,7 @@ from django.utils._os import safe_join
 # At compile time, cache the directories to search.
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
 app_template_dirs = []
-for app in settings.DUCTUS_INSTALLED_APPLETS:
+for app in settings.DUCTUS_INSTALLED_MODULES:
     i = app.rfind('.')
     if i == -1:
         m, a = app, None
@@ -98,7 +98,7 @@ load_template_source.is_usable = True
 
 from django import templatetags
 
-for a in settings.DUCTUS_INSTALLED_APPLETS:
+for a in settings.DUCTUS_INSTALLED_MODULES:
     try:
         templatetags.__path__.extend(__import__(a + '.templatetags',
                                                 {}, {}, ['']).__path__)

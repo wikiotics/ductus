@@ -19,7 +19,7 @@ from django.template import RequestContext
 from django import forms
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import get_resource_database, SuccessfulEditRedirect
-from ductus.applets.textwiki.models import Wikitext
+from ductus.modules.textwiki.models import Wikitext
 
 # fixme: in this default view, lower the cache time for when links change from
 # broken to unbroken and back

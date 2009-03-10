@@ -21,7 +21,7 @@ from django.http import HttpResponse
 
 from ductus.wiki.decorators import register_view
 from ductus.wiki import get_resource_database
-from ductus.applets.picture_choice.models import PictureChoice
+from ductus.modules.picture_choice.models import PictureChoice
 
 from random import shuffle
 

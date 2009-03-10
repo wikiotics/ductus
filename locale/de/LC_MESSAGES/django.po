@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ductus/applets/textwiki/templates/textwiki/edit_wiki.html:8
+#: ductus/modules/textwiki/templates/textwiki/edit_wiki.html:8
 msgid "Save"
 msgstr ""
 

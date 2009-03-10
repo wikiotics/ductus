@@ -30,8 +30,8 @@ from ductus.wiki import get_resource_database, SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view
 from ductus.util import iterate_file_object
 from ductus.util.http import render_json_response
-from ductus.applets.picture.models import Picture
-from ductus.applets.picture.flickr import flickr, FlickrPhoto
+from ductus.modules.picture.models import Picture
+from ductus.modules.picture.flickr import flickr, FlickrPhoto
 
 def download_flickr(url):
     rdb = get_resource_database()
