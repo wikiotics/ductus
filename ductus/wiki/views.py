@@ -131,11 +131,15 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
 def _handle_successful_edit(request, response, page):
     # the underlying page has been modified, so we should take note of that
     # and save its new location
+
+    # fixme: check for permission
+
     revision = WikiRevision(page=page, urn=response.urn[4:])
     if request.user.is_authenticated():
         revision.author = request.user
     else:
         revision.author_ip = request.remote_addr
+    revision.log_message = request.POST.get("log_message", "")
     revision.save()
     if request.is_ajax():
         return render_json_response({"urn": response.urn})
