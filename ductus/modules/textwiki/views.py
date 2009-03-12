@@ -19,6 +19,7 @@ from django.template import RequestContext
 from django import forms
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import get_resource_database, SuccessfulEditRedirect
+from ductus.wiki.forms import LogMessageField
 from ductus.modules.textwiki.models import Wikitext
 
 # fixme: in this default view, lower the cache time for when links change from
@@ -32,6 +33,14 @@ def view_textwiki(request):
 class WikiEditForm(forms.Form):
     textarea_attrs = {'cols': '80', 'rows': '30'}
     text = forms.CharField(widget=forms.Textarea(attrs=textarea_attrs))
+    log_message = LogMessageField()
+def add_author_and_log_message(request, resource):
+    if request.user.is_authenticated():
+        resource.common.author.text = request.user.username
+        #resource.common.author.href = "%s" % urlescape(request.user.username)
+    else:
+        resource.common.author.text = request.remote_addr
+    resource.common.log_message.text = request.POST.get('log_message', '')
 
 @register_creation_view(Wikitext)
 @register_view(Wikitext, 'edit')
@@ -55,6 +64,7 @@ def edit_textwiki(request):
                 resource = Wikitext()
                 resource.resource_database = get_resource_database()
             resource.text = form.cleaned_data['text'].replace('\r', '')
+            add_author_and_log_message(request, resource)
             urn = resource.save()
             return SuccessfulEditRedirect(urn)
 

@@ -354,10 +354,15 @@ class LicenseElement(LinkElement):
 
 class ResourceElement(LinkElement):
     "Verify it is a URN that exists in our universe (whatever that means)"
-    # fixme: should be able to specify constraints on allowed resource types
+
+    def __init__(self, *allowed_resource_types):
+        # fixme: should be able to specify more general constraints on allowed resource types
+        super(ResourceElement, self).__init__()
+
+    # fixme: implementation
 
 class BlobElement(ResourceElement):
-    "Verify it is a blob"
+    "Verify it is a blob" # (fixme)
 
     def iterate(self, resource_database=None):
         if self.href:
@@ -381,15 +386,21 @@ class TypedBlobElement(BlobElement):
         if self.mime_type not in self.allowed_mime_types:
             raise ValidationError()
 
+class TextBlobElement(BlobElement):
+    # fixme: textual diff
+    pass
+
+class _AuthorElement(LinkElement, TextElement):
+    pass
+
 class DuctusCommonElement(Element):
-    #title
-    parents = ArrayElement(ResourceElement()) # do we allow URLs too?
+    author = _AuthorElement()
+    parents = ArrayElement(ResourceElement())
     licenses = ArrayElement(LicenseElement(), null_on_empty=True)
     timestamp = Attribute()
-    #languages
-    #author, rights, creator
-    #source url (optional)
     log_message = TextElement()
+
+    # rejected: title, languages, source url
 
     ns = "http://ductus.us/ns/2009/ductus"
     nsmap = {"ductus": ns}
@@ -400,6 +411,8 @@ class DuctusCommonElement(Element):
         rv.parents.array = []
         rv.timestamp = ""
         rv.log_message.text = ""
+        rv.author.test = ""
+        rv.author.href = ""
         return rv
 
     def populate_xml_element(self, element, ns):

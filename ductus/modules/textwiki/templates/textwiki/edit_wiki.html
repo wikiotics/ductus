@@ -5,6 +5,7 @@
 <form method="POST">
 <p>{{ form.text.errors }}</p>
 <p>{{ form.text }}</p>
+<p>Log message: {{ form.log_message }}</p>
 <p><input type="submit" value="{% trans "Save" %}"/> {#<input type="submit" value="{% trans "Preview" %}" name="preview"/>#}</p>
 </form>
 {% endblock %}

@@ -1,7 +1,7 @@
 from ductus.resource import models, register_model
 from ductus.util import create_property
 
-class WikiBlobElement(models.BlobElement):
+class WikiBlobElement(models.TextBlobElement):
     allowed_languages = ('creole-1.0',)
     markup_language = models.Attribute(validator=models.allowed_values_attribute_validator(allowed_languages))
 
