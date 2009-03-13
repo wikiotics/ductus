@@ -23,7 +23,7 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 
 def render_json_response(d):
-    return HttpResponse(json.dumps(d), content_type='application/json')
+    return HttpResponse(json.dumps(d), content_type='application/json; charset=utf-8')
 
 def query_string_not_found(request):
     """Used instead of Http404 if the query string causes nothing to be found.

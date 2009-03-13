@@ -227,7 +227,7 @@ def view_xml(request):
 
     urn = request.ductus.resource.urn
     return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
-                        content_type='application/xml')
+                        content_type='application/xml; charset=utf-8')
 
 @register_view(None, 'xml_as_text')
 @unvarying
@@ -237,7 +237,7 @@ def view_xml_as_text(request):
 
     urn = request.ductus.resource.urn
     return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
-                        content_type='text/plain')
+                        content_type='text/plain; charset=utf-8')
 
 def urn_linkify(html):
     """linkifies URNs
