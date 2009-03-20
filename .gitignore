@@ -1,6 +1,7 @@
 *~
 *.pyc
 *.pyo
+*.mo
 build
 dist
 MANIFEST
