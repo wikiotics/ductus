@@ -29,6 +29,7 @@ setup(
     extras_require={
         'flickr': ['flickrapi >= 1.2'],
         'highlighting': ['pygments'],
+        'captcha': ['recaptcha-client'],
     },
     packages=(
         'ductus',

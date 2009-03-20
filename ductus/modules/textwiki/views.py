@@ -14,13 +14,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils.safestring import mark_safe
 from django import forms
+
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import get_resource_database, SuccessfulEditRedirect
 from ductus.wiki.forms import LogMessageField
 from ductus.modules.textwiki.models import Wikitext
+
+recaptcha = None
+if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):
+    from recaptcha.client import captcha as recaptcha
 
 # fixme: in this default view, lower the cache time for when links change from
 # broken to unbroken and back
@@ -51,6 +58,14 @@ def edit_textwiki(request):
         resource = None
 
     if request.method == 'POST':
+        if recaptcha is not None and not request.user.is_authenticated():
+            captcha = recaptcha.submit(request.POST['recaptcha_challenge_field'],
+                                       request.POST['recaptcha_response_field'],
+                                       settings.RECAPTCHA_PRIVATE_KEY,
+                                       request.remote_addr)
+            if not captcha.is_valid:
+                raise Exception("invalid captcha")
+
         form = WikiEditForm(request.POST)
 
         if form.is_valid():
@@ -74,8 +89,14 @@ def edit_textwiki(request):
         else:
             form = WikiEditForm()
 
-    return render_to_response('textwiki/edit_wiki.html',
-                              {'form': form},
-                              context_instance=RequestContext(request))
+    captcha_html = ""
+    if recaptcha is not None and not request.user.is_authenticated():
+        captcha_html = recaptcha.displayhtml(settings.RECAPTCHA_PUBLIC_KEY,
+                                             use_ssl=request.is_secure())
+
+    return render_to_response('textwiki/edit_wiki.html', {
+        'form': form,
+        'captcha': mark_safe(captcha_html),
+    }, context_instance=RequestContext(request))
 
 new_textwiki = edit_textwiki
