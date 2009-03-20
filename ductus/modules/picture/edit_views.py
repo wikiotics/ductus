@@ -14,13 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: license saving
-#       determine whether the default view should just show the image or license info too
-#       which namespace to save license info in
-#       what license info to save
-#       intermediate "data model" class
-#       allowed licenses
-
 import re
 from urllib2 import urlopen
 
