@@ -31,6 +31,8 @@ def download_flickr(url):
 
     picture_id = re.match(r'http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.@]+/([0-9]+)', url).group(1)
     photo = FlickrPhoto(flickr.photos_getInfo(photo_id=picture_id)["photo"])
+    if photo["media"] != "photo":
+        raise Exception("must be a photo, not '%s'" % photo["media"])
     blob_urn = rdb.store_blob(iterate_file_object(urlopen(photo.original_url)))
 
     picture = Picture()
