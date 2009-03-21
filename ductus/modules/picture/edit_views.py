@@ -42,11 +42,11 @@ def download_flickr(url):
     license_elt = picture.common.licenses.new_item()
     license_elt.href = photo['license']
     picture.common.licenses.array = [license_elt]
-#    picture.common.creator = picture_info['creator']
-#    picture.common.rights = picture_info['rights']
-#    picture.common.original_url = photo.page_url
+    picture.credit.title.text = photo['title']['_content']
+    picture.credit.original_url.href = photo.page_url
+    picture.credit.author.text = "%(realname)s (%(username)s)" % photo['owner']
+    picture.credit.author_url.href = photo.userpage_url
     # fixme: save log of what we just did ?
-    # fixme: save creator/original_url info
     return picture.save()
 
 @register_creation_view(Picture)
