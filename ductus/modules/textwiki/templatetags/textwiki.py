@@ -43,6 +43,7 @@ def creole(value):
 
     def wiki_links_class_func(page_name):
         page_name = page_name.partition('#')[0].partition('?')[0]
+        page_name = wiki_links_path_func(page_name) # handle special pages
         try:
             if WikiPage.objects.get(name=page_name).get_latest_revision().urn:
                 return "internal"
