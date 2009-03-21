@@ -23,7 +23,7 @@ class WikiPage(models.Model):
     name = models.CharField(max_length=512)
 
     def get_absolute_url(self):
-        return u'/wiki/%s' % self.name # fixme: reverse resolve? user/group?
+        return u'/%s' % self.name # fixme: reverse resolve?
 
     def get_latest_revision(self):
         # fixme: we need a db_index on page/timestamp combo
