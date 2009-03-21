@@ -1,12 +1,27 @@
+from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.utils.safestring import mark_safe
+from django import forms
+
+recaptcha = None
+if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):
+    from recaptcha.client import captcha as recaptcha
 
 def user_creation(request, template_name='registration/create_user.html',
                   success_template_name='registration/user_created.html'):
     "Displays user creation form and handles its action"
     if request.method == "POST":
+        if recaptcha is not None:
+            captcha = recaptcha.submit(request.POST['recaptcha_challenge_field'],
+                                       request.POST['recaptcha_response_field'],
+                                       settings.RECAPTCHA_PRIVATE_KEY,
+                                       request.remote_addr)
+            if not captcha.is_valid:
+                raise Exception("invalid captcha")
+
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
@@ -16,8 +31,14 @@ def user_creation(request, template_name='registration/create_user.html',
     else:
         form = UserCreationForm()
 
+    captcha_html = ""
+    if recaptcha is not None:
+        captcha_html = recaptcha.displayhtml(settings.RECAPTCHA_PUBLIC_KEY,
+                                             use_ssl=request.is_secure())
+
     return render_to_response(template_name, {
         'form': form,
+        'captcha': mark_safe(captcha_html),
     }, context_instance=RequestContext(request))
 
 def view_userpage(request, username):
