@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django import forms
 from django.utils.safestring import mark_safe
 from ductus.wiki import get_resource_database, resolve_urn, UnsupportedURN
@@ -24,6 +25,10 @@ def urn_to_img_url(urn):
         return u'%s?view=image&amp;max_size=100,100' % resolve_urn(urn)
     except UnsupportedURN:
         return None
+
+def nothing_url():
+    return (getattr(settings, "DUCTUS_MEDIA_PREFIX", "/static/ductus/")
+            + "modules/picture/img/nothing.png")
 
 class PictureSelector(forms.TextInput):
     """Picture selection widget
@@ -50,9 +55,9 @@ class PictureSelector(forms.TextInput):
         form_field = super(PictureSelector, self).render(name, value, attrs)
         div_attrs = {'class': 'ductus_picture_selector',
                      'id': u'%s_selector' % attrs['id']}
-        img = u'<img src="%s"/>' % (urn_to_img_url(value) or '/broken.png')
-        return mark_safe(u'<div%s>%s%s<div></div></div>'
-                         % (forms.util.flatatt(div_attrs), img, form_field))
+        img = u'<img src="%s"/>' % (urn_to_img_url(value) or nothing_url())
+        return mark_safe(u'<div%s><div></div>%s%s</div>'
+                         % (forms.util.flatatt(div_attrs), form_field, img))
 
         # img fixmes: put it in a 100x100 container; get a blank image
 
