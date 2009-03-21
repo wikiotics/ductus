@@ -152,7 +152,7 @@ class Element(object):
 
     def populate_xml_element(self, element, ns):
         for name, subelement in self.subelements.items():
-            if not subelement.is_null_xml_element():
+            if not getattr(self, name).is_null_xml_element():
                 fqn = subelement.fqn or "{%s}%s" % (ns, name)
                 xml_subelement = etree.SubElement(element, fqn)
                 getattr(self, name).populate_xml_element(xml_subelement, ns)
