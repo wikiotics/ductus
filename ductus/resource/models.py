@@ -85,10 +85,10 @@ class ElementMetaclass(type):
 
         super(ElementMetaclass, cls).__init__(name, bases, attrs)
 
-class NoChildMetaclass(ElementMetaclass):
+class NoChildElementMetaclass(ElementMetaclass):
     "Forbids subelements (but allowed attributes)"
     def __init__(cls, name, bases, attrs):
-        super(NoChildMetaclass, cls).__init__(name, bases, attrs)
+        super(NoChildElementMetaclass, cls).__init__(name, bases, attrs)
         if cls.subelements:
             raise Exception("Subelements not allowed in a text element")
 
@@ -239,7 +239,7 @@ def _is_element(obj):
     return isinstance(obj, Element)
 
 class TextElement(Element):
-    __metaclass__ = NoChildMetaclass
+    __metaclass__ = NoChildElementMetaclass
     _text = ""
 
     @create_property
@@ -270,7 +270,7 @@ class TextElement(Element):
         return super(TextElement, self).__eq__(other) and self._text == other._text
 
 class ArrayElement(Element):
-    __metaclass__ = NoChildMetaclass
+    __metaclass__ = NoChildElementMetaclass
 
     def __init__(self, item_prototype, min_size=0, max_size=None, null_on_empty=False):
         super(ArrayElement, self).__init__()
