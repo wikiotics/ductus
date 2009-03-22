@@ -29,7 +29,6 @@ __allowed_thumbnail_sizes = set([(250, 250), (100, 100), (50, 50)])
 @register_view(Picture, None)
 def view_picture_info(request):
     return render_to_response('picture/display.html',
-                              {'urn': request.ductus.resource.urn},
                               context_instance=RequestContext(request))
 
 def adjust_orientation_from_exif(image):

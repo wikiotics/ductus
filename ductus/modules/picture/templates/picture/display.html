@@ -1,6 +1,10 @@
 {% extends "ductus_document.html" %}
 {% load urn %}
+{% load credit %}
 
 {% block content %}
-<img alt="{{ urn }}" src="{{ urn|resolve }}?view=image" style="display: block; margin-left: auto; margin-right: auto;" />
+{% with request.ductus.resource as resource %}
+<p><img alt="{{ resource.urn }}" src="{{ resource.urn|resolve }}?view=image" style="display: block; margin-left: auto; margin-right: auto;" /></p>
+<p>{{ resource|credit }}</p>
+{% endwith %}
 {% endblock %}
