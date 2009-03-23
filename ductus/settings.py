@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.markup',
+    'ductus.initialize',
     'ductus.wiki',
     'ductus.user',
 )
@@ -100,7 +101,7 @@ DUCTUS_INSTALLED_MODULES = (
     'ductus.modules.textwiki',
 )
 
-DUCTUS_STORAGE_BACKEND = 'ductus.urls.storage_backend'
+DUCTUS_STORAGE_BACKEND = 'ductus_site.storage_backend'
 
 DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 

@@ -14,27 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import with_statement
-
-from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.utils.importlib import import_module
 from django.utils.encoding import iri_to_uri
 
-from ductus.resource import ResourceDatabase, UnsupportedURN
-from ductus.util import ignore
-
-def get_resource_database():
-    global __resource_database
-    if __resource_database is None:
-        backend = settings.DUCTUS_STORAGE_BACKEND
-        mod_name, junk, var_name = backend.rpartition('.')
-        storage_backend = getattr(import_module(mod_name), var_name)
-        __resource_database = ResourceDatabase(storage_backend)
-        register_installed_modules()
-    return __resource_database
-
-__resource_database = None
+from ductus.resource import ResourceDatabase, UnsupportedURN, get_resource_database
 
 is_valid_urn = ResourceDatabase.is_valid_urn
 
@@ -60,21 +43,6 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
 
     def set_redirect_url(self, url):
         self['Location'] = iri_to_uri(url)
-
-def register_installed_modules():
-    global __modules_registered
-    if __modules_registered:
-        return
-
-    for module in getattr(settings, "DUCTUS_INSTALLED_MODULES", ()):
-        import_module('.views', module)
-        for submod in ('edit_views', 'models'):
-            with ignore(ImportError):
-                import_module('.' + submod, module)
-
-    __modules_registered = True
-
-__modules_registered = False
 
 registered_views = {}
 registered_creation_views = {}
