@@ -446,10 +446,6 @@ class DuctusCommonElement(Element):
             self.timestamp = datetime.datetime.utcnow().isoformat()
         super(DuctusCommonElement, self).populate_xml_element(element, ns)
 
-    def validate(self, strict=True):
-        super(DuctusCommonElement, self).validate(strict)
-        # fixme: make sure all parents are the same model type
-
 class Model(Element):
     __metaclass__ = ModelMetaclass
 
@@ -475,6 +471,13 @@ class Model(Element):
             rv.common.parents.array = [rv.common.parents.new_item()] # fixme
             rv.common.parents.array[0].href = self.urn
         return rv
+
+    def validate(self, strict=True):
+        super(Model, self).validate(strict)
+        if strict:
+            for parent in self.common.parents:
+                if type(parent.get()) != type(self):
+                    raise Exception("Resource's parents must be of the same type")
 
     def __eq__(self, other):
         return (self.urn is not None and self.urn == other.urn) or super(Model, self).__eq__(other)
