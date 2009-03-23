@@ -33,11 +33,10 @@ def download_flickr(url):
     photo = FlickrPhoto(flickr.photos_getInfo(photo_id=picture_id)["photo"])
     if photo["media"] != "photo":
         raise Exception("must be a photo, not '%s'" % photo["media"])
-    blob_urn = rdb.store_blob(iterate_file_object(urlopen(photo.original_url)))
 
     picture = Picture()
     picture.resource_database = rdb
-    picture.blob.href = blob_urn
+    picture.blob.store(iterate_file_object(urlopen(photo.original_url)))
     picture.blob.mime_type = 'image/jpeg'
     license_elt = picture.common.licenses.new_item()
     license_elt.href = photo['license']

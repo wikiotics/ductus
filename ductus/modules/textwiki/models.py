@@ -18,9 +18,9 @@ class Wikitext(models.Model):
     @create_property
     def text():
         def fget(s):
-            return ''.join(s.blob.iterate(s.resource_database)).decode('utf-8')
+            return ''.join(s.blob).decode('utf-8')
         def fset(s, v):
-            s.blob.href = s.resource_database.store_blob([v.encode('utf-8')])
+            s.blob.store([v.encode('utf-8')])
         return locals()
 
 register_model(Wikitext)

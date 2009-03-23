@@ -110,6 +110,12 @@ class ResourceDatabase(object):
         self.storage_backend = storage_backend
         self.max_resource_size = max_resource_size
 
+        global _resource_database
+        if _resource_database is None:
+            _resource_database = self
+        else:
+            raise Exception("A ResourceDatabase has already been initialized.")
+
     def __contains__(self, key):
         return key in self.storage_backend
 
@@ -286,3 +292,8 @@ def register_model(model):
     return model
 
 _registered_models = {}
+
+def get_resource_database():
+    return _resource_database
+
+_resource_database = None

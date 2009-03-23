@@ -21,6 +21,7 @@ from itertools import chain
 from lxml import etree
 from django.utils.datastructures import SortedDict
 from ductus.util import create_property
+from ductus.resource import register_model, get_resource_database
 
 class ValidationError(Exception):
     pass
@@ -364,9 +365,12 @@ class ResourceElement(LinkElement):
 class BlobElement(ResourceElement):
     "Verify it is a blob" # (fixme)
 
-    def iterate(self, resource_database=None):
+    def store(self, iterable):
+        self.href = get_resource_database().store_blob(iterable)
+
+    def __iter__(self):
         if self.href:
-            return resource_database.get_blob(self.href)
+            return get_resource_database().get_blob(self.href)
         else:
             return ('',)
 
@@ -428,17 +432,15 @@ class Model(Element):
     __metaclass__ = ModelMetaclass
 
     urn = None
-    resource_database = None
     common = DuctusCommonElement()
 
-    def save(self, resource_database=None, encoding=None):
+    def save(self, encoding=None):
         if self.urn:
             return self.urn # no-op
-        resource_database = resource_database or self.resource_database
-        assert resource_database is not None
         self.validate()
         root = etree.Element(self.fqn, nsmap=self.nsmap)
         self.populate_xml_element(root, self.ns)
+        resource_database = get_resource_database()
         self.urn = resource_database.store_xml_tree(root, encoding=encoding)
         return self.urn
 
@@ -454,5 +456,3 @@ class Model(Element):
 
     def __eq__(self, other):
         return (self.urn is not None and self.urn == other.urn) or super(Model, self).__eq__(other)
-
-from ductus.resource import register_model

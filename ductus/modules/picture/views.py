@@ -47,7 +47,7 @@ def adjust_orientation_from_exif(image):
 def view_picture(request):
     picture = request.ductus.resource
     mime_type = picture.blob.mime_type
-    data_iterator = picture.blob.iterate(get_resource_database()) # iter(picture.blob)
+    data_iterator = iter(picture.blob)
 
     # resize if requested
     if 'max_size' in request.GET:
