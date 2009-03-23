@@ -384,7 +384,7 @@ class ResourceElement(LinkElement):
             if not type(resource) in self.allowed_resource_types:
                 raise Exception("Not a correct resource type")
 
-class BlobElement(ResourceElement):
+class BlobElement(LinkElement):
     "Verify it is a blob" # (fixme)
 
     def store(self, iterable):
