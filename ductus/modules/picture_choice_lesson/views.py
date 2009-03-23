@@ -28,19 +28,20 @@ from django.http import HttpResponse
 
 from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view
-from ductus.wiki import get_resource_database, SuccessfulEditRedirect
+from ductus.wiki import SuccessfulEditRedirect
 from ductus.modules.picture_choice_lesson.models import PictureChoiceLesson
 from ductus.modules.picture_choice.views import general_picture_choice
 
 @register_view(PictureChoiceLesson, None)
 def view_picture_choice_lesson(request):
-    questions = [q.href for q in request.ductus.resource.questions]
+    questions = list(request.ductus.resource.questions)
     if not questions:
         return query_string_not_found(request)
     if request.GET.get("shuffle", False):
         shuffle(questions)
-    pc = get_resource_database().get_resource_object(questions[0])
+    pc = questions[0].get()
     element = general_picture_choice(pc)
+    question = [q.href for q in questions]
     return render_to_response('picture_choice_lesson/lesson.html', {
         'element': element,
         'questions': questions,
@@ -49,8 +50,6 @@ def view_picture_choice_lesson(request):
 
 @register_view(PictureChoiceLesson, 'edit')
 def edit_picture_choice_lesson(request):
-    resource_database = get_resource_database()
-
     if request.method == 'POST':
         try:
             urns = json.loads(request.POST['pcl'])['questions']
@@ -69,8 +68,8 @@ def edit_picture_choice_lesson(request):
             urn = pcl.save()
             return SuccessfulEditRedirect(urn)
 
-    questions = request.ductus.resource.questions
-    quiz_list_items = list_items(request, [q.href for q in questions])
+    questions = list(request.ductus.resource.questions)
+    quiz_list_items = list_items(request, [q.get() for q in questions])
     return render_to_response('picture_choice_lesson/edit.html',
                               {'quiz_list_items': quiz_list_items},
                               context_instance=RequestContext(request))
@@ -79,9 +78,11 @@ def edit_picture_choice_lesson(request):
 @register_view(PictureChoiceLesson, 'static_li')
 def list_items_for_edit_view(request):
     urns = json.loads(request.GET['urns'])
-    return HttpResponse(list_items(request, urns))
+    from ductus.wiki import get_resource_database
+    resource_database = get_resource_database()
+    resources = [resource_database.get_resource_object(urn) for urn in urns]
+    return HttpResponse(list_items(request, resources))
 
-def list_items(request, urns):
-    quiz = [get_resource_database().get_resource_object(q) for q in urns]
+def list_items(request, resources):
     t = loader.get_template('picture_choice_lesson/edit_li.html')
-    return t.render(Context({'quiz': quiz}))
+    return t.render(Context({'quiz': resources}))
