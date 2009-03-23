@@ -43,7 +43,7 @@ def view_picture_choice_lesson(request):
         shuffle(questions)
     pc = questions[0].get()
     element = general_picture_choice(pc)
-    question = [q.href for q in questions]
+    questions = [q.href for q in questions]
     return render_to_response('picture_choice_lesson/lesson.html', {
         'element': element,
         'questions': questions,
