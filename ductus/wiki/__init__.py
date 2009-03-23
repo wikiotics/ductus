@@ -19,6 +19,7 @@ from __future__ import with_statement
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.utils.importlib import import_module
+from django.utils.encoding import iri_to_uri
 
 from ductus.resource import ResourceDatabase, UnsupportedURN
 from ductus.util import ignore
@@ -56,6 +57,9 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
     def __init__(self, urn):
         self.urn = urn
         return HttpResponseRedirect.__init__(self, resolve_urn(urn))
+
+    def set_redirect_url(self, url):
+        self['Location'] = iri_to_uri(url)
 
 def register_installed_modules():
     global __modules_registered

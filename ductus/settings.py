@@ -56,6 +56,7 @@ MIDDLEWARE_CLASSES = (
     'ductus.middleware.unvarying.UnvaryingResponseMiddleware',
     'ductus.middleware.remote_addr.RemoteAddrMiddleware',
     'django.contrib.csrf.middleware.CsrfMiddleware',
+    'ductus.middleware.common.DuctusCommonMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

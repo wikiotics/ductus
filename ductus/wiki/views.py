@@ -128,7 +128,7 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
 
     raise Http404
 
-def _handle_successful_edit(request, response, page):
+def _handle_successful_wikiedit(request, response, page):
     # the underlying page has been modified, so we should take note of that
     # and save its new location
 
@@ -141,10 +141,8 @@ def _handle_successful_edit(request, response, page):
         revision.author_ip = request.remote_addr
     revision.log_message = request.POST.get("log_message", "")
     revision.save()
-    if request.is_ajax():
-        return render_json_response({"urn": response.urn})
-    else:
-        return HttpResponseRedirect(page.get_absolute_url())
+    response.set_redirect_url(page.get_absolute_url())
+    return response
 
 def view_wikipage(request, pagename):
     try:
@@ -192,7 +190,7 @@ def view_wikipage(request, pagename):
     response = view_urn(request, hash_type, hash_digest, wikipage=True)
 
     if isinstance(response, SuccessfulEditRedirect):
-        return _handle_successful_edit(request, response, page)
+        return _handle_successful_wikiedit(request, response, page)
 
     patch_cache_control(response, must_revalidate=True)
     return response
@@ -216,7 +214,7 @@ def creation_view(request, page_type):
         page, page_created = WikiPage.objects.get_or_create(name=request.GET["target"])
         if page_created:
             page.save()
-        return _handle_successful_edit(request, response, page)
+        return _handle_successful_wikiedit(request, response, page)
     return response
 
 @register_view(None, 'xml')
