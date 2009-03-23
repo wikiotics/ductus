@@ -432,7 +432,6 @@ class DuctusCommonElement(Element):
 
     ns = "http://ductus.us/ns/2009/ductus"
     nsmap = {"ductus": ns}
-    fqn = "{%s}common" % ns
 
     def clone(self):
         rv = super(DuctusCommonElement, self).clone()
