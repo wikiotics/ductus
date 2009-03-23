@@ -15,6 +15,7 @@ class OptionalLinkElement(models.LinkElement):
 class Credit(models.Element):
     ns = 'http://wikiotics.org/ns/2009/credit'
     nsmap = {'credit': ns}
+    fqn = "{%s}credit" % ns
 
     title = OptionalTextElement()
     original_url = OptionalLinkElement()
