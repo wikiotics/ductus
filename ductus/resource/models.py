@@ -135,6 +135,7 @@ class Element(object):
     __metaclass__ = ElementMetaclass
     creation_counter = 0
     fqn = None
+    ns = None
 
     def __init__(self):
         self._attribute_data = dict((a, None if o.optional else "") for a, o in self.attributes.items())
@@ -154,11 +155,12 @@ class Element(object):
     def populate_xml_element(self, element, ns):
         for name, subelement in self.subelements.items():
             if not getattr(self, name).is_null_xml_element():
-                fqn = subelement.fqn or "{%s}%s" % (ns, name)
+                local_ns = subelement.ns or ns
+                fqn = subelement.fqn or "{%s}%s" % (local_ns, name)
                 xml_subelement = etree.SubElement(element, fqn)
-                getattr(self, name).populate_xml_element(xml_subelement, ns)
+                getattr(self, name).populate_xml_element(xml_subelement, local_ns)
         for name, attribute in self.attributes.items():
-            fqn = attribute.fqn or "{%s}%s" % (ns, name)
+            fqn = attribute.fqn or name
             if not (attribute.optional and attribute.blank_is_null and not self._attribute_data[name]):
                 element.set(fqn, self._attribute_data[name])
 
@@ -176,7 +178,7 @@ class Element(object):
         used_tags = set()
         subelements_by_fqn = {}
         for name, subelement in self.subelements.items():
-            fqn = subelement.fqn or "{%s}%s" % (ns, name)
+            fqn = subelement.fqn or "{%s}%s" % (subelement.ns or ns, name)
             subelements_by_fqn[fqn] = getattr(self, name)
         for child in xml_node:
             if child.tag in used_tags:
@@ -186,7 +188,7 @@ class Element(object):
                 subelement = subelements_by_fqn[child.tag]
             except KeyError:
                 raise Exception("Unrecognized tag")
-            subelement.populate_from_xml(child, ns)
+            subelement.populate_from_xml(child, subelement.ns or ns)
         required_tags = set(fqn for fqn, subelement in subelements_by_fqn.items()
                             if not getattr(subelement, "optional", False))
         missing_tags = required_tags.difference(used_tags)
