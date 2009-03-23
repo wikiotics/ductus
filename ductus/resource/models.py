@@ -463,6 +463,13 @@ class Model(Element):
         self.urn = resource_database.store_xml_tree(root, encoding=encoding)
         return self.urn
 
+    @classmethod
+    def load(cls, urn):
+        resource = get_resource_database().get_resource_object(urn)
+        if type(resource) != cls:
+            raise Exception("Expecting %s, got %" % (cls, type(resource)))
+        return resource
+
     def clone(self):
         rv = super(Model, self).clone()
         rv.urn = None
