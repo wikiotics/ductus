@@ -357,10 +357,32 @@ class ResourceElement(LinkElement):
     "Verify it is a URN that exists in our universe (whatever that means)"
 
     def __init__(self, *allowed_resource_types):
-        # fixme: should be able to specify more general constraints on allowed resource types
+        # fixme: should be able to specify more general constraints on allowed
+        # resource types
+        self.allowed_resource_types = allowed_resource_types
         super(ResourceElement, self).__init__()
 
-    # fixme: implementation
+    def store(self, resource):
+        self.__check_type(resource)
+        self.href = resource.save()
+
+    def get(self):
+        if self.href == "":
+            return None
+        resource = get_resource_database().get_resource_object(self.href)
+        self.__check_type(resource)
+        return resource
+
+    def validate(self, strict=True):
+        super(ResourceElement, self).validate(strict)
+        if strict and self.href:
+            resource = get_resource_database().get_resource_object(self.href)
+            self.__check_type(resource)
+
+    def __check_type(self, resource):
+        if self.allowed_resource_types:
+            if not type(resource) in self.allowed_resource_types:
+                raise Exception("Not a correct resource type")
 
 class BlobElement(ResourceElement):
     "Verify it is a blob" # (fixme)
