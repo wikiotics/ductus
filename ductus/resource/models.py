@@ -114,7 +114,7 @@ class ModelMetaclass(ElementMetaclass):
                 add_nsmap_of_descendants(subelement.__class__)
             children += element_class.attributes.values()
             nsmaps = [obj.nsmap for obj in children if hasattr(obj, "nsmap")]
-            nsmaps = dict([(y, x) for (x, y) in chain(*[nsm.items() for nsm in nsmaps])])
+            nsmaps = dict([(y, x) for (x, y) in chain(*[nsm.items() for nsm in nsmaps]) if y != cls.ns])
             nsmap.update(dict([(y, x) for (x, y) in nsmaps.items()]))
         add_nsmap_of_descendants(cls)
         nsmap[None] = cls.ns
