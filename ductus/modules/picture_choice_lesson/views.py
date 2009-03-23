@@ -27,7 +27,7 @@ from django.template import RequestContext, Context, loader
 from django.http import HttpResponse
 
 from ductus.util.http import query_string_not_found
-from ductus.wiki.decorators import register_view
+from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.modules.picture_choice_lesson.models import PictureChoiceLesson
 from ductus.modules.picture_choice.views import general_picture_choice
@@ -86,3 +86,10 @@ def list_items_for_edit_view(request):
 def list_items(request, resources):
     t = loader.get_template('picture_choice_lesson/edit_li.html')
     return t.render(Context({'quiz': resources}))
+
+@register_creation_view(PictureChoiceLesson)
+def new_picture_choice_lesson(request):
+    if request.method != "POST":
+        return HttpResponse('<form method="post"><input type="submit" value="Click to create picture choice lesson"/></form>')
+    urn = PictureChoiceLesson().save()
+    return SuccessfulEditRedirect(urn)
