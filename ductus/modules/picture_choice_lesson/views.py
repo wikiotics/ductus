@@ -36,7 +36,9 @@ from ductus.modules.picture_choice.views import general_picture_choice
 def view_picture_choice_lesson(request):
     questions = list(request.ductus.resource.questions)
     if not questions:
-        return query_string_not_found(request)
+        return render_to_response('picture_choice_lesson/empty.html', {
+        }, context_instance=RequestContext(request))
+
     if request.GET.get("shuffle", False):
         shuffle(questions)
     pc = questions[0].get()
