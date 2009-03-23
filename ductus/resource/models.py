@@ -211,7 +211,7 @@ class Element(object):
         if missing_attributes:
             raise Exception("Missing attribute(s)! %s" % tuple(missing_attributes))
 
-    def validate(self):
+    def validate(self, strict=True):
         for name, subelement in self.subelements.items():
             obj = getattr(self, name)
             # verify that the object is in fact a subelement of acceptable lineage
@@ -221,7 +221,7 @@ class Element(object):
                 # TextElement itself instead of its text property)
                 raise ValidationError
             # validate it
-            obj.validate()
+            obj.validate(strict)
         for name, attribute in self.attributes.items():
             attribute.validate(self._attribute_data[name])
 
@@ -297,8 +297,8 @@ class ArrayElement(Element):
     def new_item(self):
         return self.item_prototype.clone()
 
-    def validate(self):
-        super(ArrayElement, self).validate()
+    def validate(self, strict=True):
+        super(ArrayElement, self).validate(strict)
         prototype_oldest_ancestor = oldest_ancestor(self.item_prototype)
         if any(oldest_ancestor(item) is not prototype_oldest_ancestor for item in self.array):
             raise ValidationError
@@ -381,8 +381,8 @@ class TypedBlobElement(BlobElement):
             allowed_mime_types = frozenset(allowed_mime_types)
         self.allowed_mime_types = allowed_mime_types
 
-    def validate(self):
-        super(TypedBlobElement, self).validate()
+    def validate(self, strict=True):
+        super(TypedBlobElement, self).validate(strict)
         if self.mime_type not in self.allowed_mime_types:
             raise ValidationError()
 
@@ -420,8 +420,8 @@ class DuctusCommonElement(Element):
             self.timestamp = datetime.datetime.utcnow().isoformat()
         super(DuctusCommonElement, self).populate_xml_element(element, ns)
 
-    def validate(self):
-        super(DuctusCommonElement, self).validate()
+    def validate(self, strict=True):
+        super(DuctusCommonElement, self).validate(strict)
         # fixme: make sure all parents are the same model type
 
 class Model(Element):

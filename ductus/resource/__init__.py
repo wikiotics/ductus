@@ -237,7 +237,7 @@ class ResourceDatabase(object):
         resource.urn = urn
         resource.resource_database = self
         resource.populate_from_xml(root)
-        resource.validate()
+        resource.validate(strict=False)
         return resource
 
     def keys(self):
