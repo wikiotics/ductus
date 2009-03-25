@@ -19,7 +19,7 @@ from urllib2 import urlopen
 
 from django.http import HttpResponse
 
-from ductus.wiki import get_resource_database, SuccessfulEditRedirect
+from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view
 from ductus.util import iterate_file_object
 from ductus.util.http import render_json_response
@@ -27,15 +27,12 @@ from ductus.modules.picture.models import Picture
 from ductus.modules.picture.flickr import flickr, FlickrPhoto
 
 def download_flickr(url):
-    rdb = get_resource_database()
-
     picture_id = re.match(r'http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.@]+/([0-9]+)', url).group(1)
     photo = FlickrPhoto(flickr.photos_getInfo(photo_id=picture_id)["photo"])
     if photo["media"] != "photo":
         raise Exception("must be a photo, not '%s'" % photo["media"])
 
     picture = Picture()
-    picture.resource_database = rdb
     picture.blob.store(iterate_file_object(urlopen(photo.original_url)))
     picture.blob.mime_type = 'image/jpeg'
     license_elt = picture.common.licenses.new_item()
@@ -55,10 +52,7 @@ def new_picture(request):
         uri = request.POST['uri']
         if uri.startswith('urn:'):
             urn = uri
-            # make sure it's a picture
-            picture = get_resource_database().get_resource_object(urn)
-            if not isinstance(picture, Picture):
-                raise Exception("not a valid picture")
+            Picture.load(urn) # this line makes sure it's a picture
         else:
             urn = download_flickr(uri)
 

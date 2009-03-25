@@ -19,7 +19,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
 
-from ductus.wiki import get_resource_database
 from ductus.wiki.decorators import register_creation_view
 from ductus.util.http import render_json_response
 from ductus.modules.picture.forms import PictureUrnField
@@ -96,7 +95,6 @@ def new_picture_choice(request):
 def save_picture_choice(phrase, correct_picture, incorrect_pictures):
     """returns urn of new picture choice"""
     picture_choice = PictureChoice()
-    picture_choice.resource_database = get_resource_database()
     picture_choice.phrase.text = phrase
     picture_choice.correct_picture.href = correct_picture
     # fixme: this API is clumsy

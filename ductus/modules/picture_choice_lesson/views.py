@@ -29,6 +29,7 @@ from django.http import HttpResponse
 from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import SuccessfulEditRedirect
+from ductus.modules.picture_choice.models import PictureChoice
 from ductus.modules.picture_choice_lesson.models import PictureChoiceLesson
 from ductus.modules.picture_choice.views import general_picture_choice
 
@@ -80,9 +81,7 @@ def edit_picture_choice_lesson(request):
 @register_view(PictureChoiceLesson, 'static_li')
 def list_items_for_edit_view(request):
     urns = json.loads(request.GET['urns'])
-    from ductus.wiki import get_resource_database
-    resource_database = get_resource_database()
-    resources = [resource_database.get_resource_object(urn) for urn in urns]
+    resources = [PictureChoice.load(urn) for urn in urns]
     return HttpResponse(list_items(request, resources))
 
 def list_items(request, resources):

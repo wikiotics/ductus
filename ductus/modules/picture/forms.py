@@ -72,10 +72,9 @@ class PictureUrnField(forms.CharField):
 
         # Does it exist, and is it a picture?
         try:
-            obj = get_resource_database().get_resource_object(value)
-            if isinstance(obj, Picture):
-                return value
-        except KeyError:
+            Picture.load(value)
+            return value
+        except Exception: # could be KeyError or Model.load type mismatch
             pass
         # Fixme: we should probably give more specific error responses
         raise forms.ValidationError('Not a valid picture in the system')

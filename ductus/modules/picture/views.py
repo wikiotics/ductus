@@ -18,7 +18,6 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from ductus.wiki.decorators import register_view, unvarying
-from ductus.wiki import get_resource_database
 from ductus.modules.picture.models import Picture
 
 from PIL import Image, ImageFile

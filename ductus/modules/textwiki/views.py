@@ -21,7 +21,7 @@ from django.utils.safestring import mark_safe
 from django import forms
 
 from ductus.wiki.decorators import register_view, register_creation_view
-from ductus.wiki import get_resource_database, SuccessfulEditRedirect
+from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.forms import LogMessageField
 from ductus.modules.textwiki.models import Wikitext
 
@@ -77,7 +77,6 @@ def edit_textwiki(request):
                 resource = resource.clone()
             else:
                 resource = Wikitext()
-                resource.resource_database = get_resource_database()
             resource.text = form.cleaned_data['text'].replace('\r', '')
             add_author_and_log_message(request, resource)
             urn = resource.save()
