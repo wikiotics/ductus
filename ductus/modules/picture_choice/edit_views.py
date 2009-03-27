@@ -19,10 +19,12 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
 
+from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view
 from ductus.util.http import render_json_response
+from ductus.modules.picture.models import Picture
 from ductus.modules.picture.forms import PictureUrnField
-from ductus.modules.picture_choice.models import PictureChoice
+from ductus.modules.picture_choice.models import PictureChoiceGroup
 
 def all_unique(iterable):
     return len(frozenset(iterable)) == len(iterable)
@@ -33,74 +35,52 @@ def get_phrases(d):
 def get_pictures(d):
     return (d['picture0'], d['picture1'], d['picture2'], d['picture3'])
 
-class PictureChoiceForm(forms.Form):
-    phrase0 = forms.CharField(required=False)
+class PictureChoiceGroupForm(forms.Form):
+    phrase0 = forms.CharField()
     picture0 = PictureUrnField()
-    phrase1 = forms.CharField(required=False)
+    phrase1 = forms.CharField()
     picture1 = PictureUrnField()
-    phrase2 = forms.CharField(required=False)
+    phrase2 = forms.CharField()
     picture2 = PictureUrnField()
-    phrase3 = forms.CharField(required=False)
+    phrase3 = forms.CharField()
     picture3 = PictureUrnField()
 
     def clean(self):
-        phrases = tuple(p for p in get_phrases(self.data) if p)
-        if not phrases:
-            raise forms.ValidationError("Need at least one phrase")
-        if not all_unique(phrases):
+        if not all_unique(get_phrases(self.data)):
             raise forms.ValidationError("Phrases must be unique")
 
-        pictures = tuple(p for p in get_pictures(self.data) if p)
-        if not all_unique(pictures):
+        picture_blob_urns = [Picture.load(urn).blob.href
+                             for urn in get_pictures(self.data)]
+        if not all_unique(picture_blob_urns):
             raise forms.ValidationError("Pictures must be unique")
 
         return self.cleaned_data
 
-@register_creation_view(PictureChoice)
-def new_picture_choice(request):
+@register_creation_view(PictureChoiceGroup)
+def new_picture_choice_group(request):
     new_urns = []
 
     if request.method == 'POST':
-        form = PictureChoiceForm(request.POST)
+        form = PictureChoiceGroupForm(request.POST)
 
         if form.is_valid():
-            phrases = get_phrases(form.cleaned_data)
-            pictures = get_pictures(form.cleaned_data)
+            pcg = PictureChoiceGroup()
+            for phrase, picture in zip(get_phrases(form.cleaned_data),
+                                       get_pictures(form.cleaned_data)):
+                pc = pcg.group.new_item()
+                pc.phrase.text = phrase
+                pc.picture.href = picture
+                pcg.group.array.append(pc)
 
-            for n in range(len(phrases)):
-                phrase = phrases[n]
-                if phrase:
-                    incorrect = list(pictures)
-                    correct = incorrect.pop(n)
-                    urn = save_picture_choice(phrase, correct, incorrect)
-                    new_urns.append(urn)
-
-            view = request.GET.get('view', None)
-            if request.is_ajax():
-                return render_json_response(new_urns)
-
-            form = PictureChoiceForm() # just do it all again!
+            urn = pcg.save()
+            return SuccessfulEditRedirect(urn)
 
     else:
-        form = PictureChoiceForm()
+        form = PictureChoiceGroupForm()
 
     if request.is_ajax():
         return HttpResponse(unicode(form))
 
     return render_to_response('picture_choice/new.html',
-                              {'form': form,
-                               'new_urns': new_urns},
+                              {'form': form},
                               context_instance=RequestContext(request))
-
-def save_picture_choice(phrase, correct_picture, incorrect_pictures):
-    """returns urn of new picture choice"""
-    picture_choice = PictureChoice()
-    picture_choice.phrase.text = phrase
-    picture_choice.correct_picture.href = correct_picture
-    # fixme: this API is clumsy
-    for pic in incorrect_pictures:
-        p = picture_choice.incorrect_pictures.new_item()
-        p.href = pic
-        picture_choice.incorrect_pictures.array.append(p)
-    # save log of what we just did?
-    return picture_choice.save()
