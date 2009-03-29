@@ -22,20 +22,20 @@ from django.utils.importlib import import_module
 from ductus.resource import ResourceDatabase
 from ductus.util import ignore
 
-def create_resource_database():
+def _create_resource_database():
     """Initialize ResourceDatabase using DUCTUS_STORAGE_BACKEND"""
     backend = settings.DUCTUS_STORAGE_BACKEND
     mod_name, junk, var_name = backend.rpartition('.')
     storage_backend = getattr(import_module(mod_name), var_name)
     ResourceDatabase(storage_backend)
 
-def register_installed_modules():
+def _register_installed_modules():
     """Register each module in DUCTUS_INSTALLED_MODULES"""
     for module in getattr(settings, "DUCTUS_INSTALLED_MODULES", ()):
-        import_module('.views', module)
-        for submod in ('edit_views', 'models'):
+        import_module(module)
+        for submod in ('views', 'edit_views', 'models'):
             with ignore(ImportError):
                 import_module('.' + submod, module)
 
-create_resource_database()
-register_installed_modules()
+_create_resource_database()
+_register_installed_modules()
