@@ -18,6 +18,10 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 
 def site_settings(request):
+    """Sets Ductus-specific template variables based on site settings
+
+    Includes ductus_media_prefix, ductus_site_name, and ductus_site_head
+    """
     dmp = getattr(settings, "DUCTUS_MEDIA_PREFIX", "/static/ductus/")
     dsn = getattr(settings, "DUCTUS_SITE_NAME", "Example Ductus Site")
     dsh = getattr(settings, "DUCTUS_SITE_HEAD", "")
