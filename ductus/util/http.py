@@ -23,6 +23,7 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 
 def render_json_response(d):
+    """Returns a HttpResponse with a json representation of the passed object"""
     return HttpResponse(json.dumps(d), content_type='application/json; charset=utf-8')
 
 def query_string_not_found(request):

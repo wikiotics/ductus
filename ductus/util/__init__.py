@@ -68,7 +68,9 @@ def iterate_file_then_delete(filename):
     return retval
 
 def iterator_to_tempfile(data_iterator):
-    """Returns the filename of a new temporary file
+    """Saves an iterator to a new temporary file.
+
+    Returns: the name of the file
     """
     fd, tmpfile = mkstemp()
     try:
@@ -78,10 +80,8 @@ def iterator_to_tempfile(data_iterator):
         finally:
             os.close(fd)
     except:
-        try:
+        with ignore(OSError):
             os.remove(tmpfile)
-        except:
-            pass
         raise
     return tmpfile
 
@@ -112,8 +112,8 @@ class sequence_contains_only(object):
 def remove_adjacent_duplicates(list_):
     """Removes adjacent duplicates from a list.
 
-    Operates on the list in place.  If the list is sorted, all duplicates will
-    be removed.
+    Operates on the list in place.  If the list happens to be sorted,
+    all duplicates will be removed.
     """
 
     last = list_[-1]
@@ -141,4 +141,17 @@ def ignore(*exceptions):
             raise
 
 def create_property(f):
+    """Helper decorator for creating properties
+
+    >>> class A(object):
+    ...     @create_property
+    ...     def monty():
+    ...         def fget(s):
+    ...             return 43
+    ...         return locals()
+    ... 
+    >>> A().monty
+    43
+
+    """
     return property(**f())
