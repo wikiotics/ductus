@@ -36,10 +36,11 @@ from ductus.wiki.decorators import register_view, unvarying
 from ductus.util.http import query_string_not_found, render_json_response
 
 class DuctusRequestInfo(object):
-    def __init__(self, resource, requested_view, wikipage):
+    def __init__(self, resource, requested_view, wiki_page, wiki_revision):
         self.resource = resource
         self.requested_view = requested_view
-        self.wikipage = wikipage
+        self.wiki_page = wiki_page
+        self.wiki_revision = wiki_revision
 
 class __Http304(Exception):
     pass
@@ -62,7 +63,8 @@ def __catch_http304(func):
 
 @__catch_http304
 @vary_on_headers('Cookie', 'Accept-language')
-def view_urn(request, hash_type, hash_digest, wikipage=False):
+def view_urn(request, hash_type, hash_digest,
+             wiki_page=None, wiki_revision=None):
     """Dispatches the appropriate view for a resource
     """
 
@@ -99,7 +101,8 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
 
         etag = None
         if request.method == "GET":
-            unvaried_etag = [urn, wikipage, request.META.get("QUERY_STRING", "")]
+            unvaried_etag = [urn, bool(wiki_page),
+                             request.META.get("QUERY_STRING", "")]
             varied_etag = unvaried_etag + [request.LANGUAGE_CODE,
                                            request.META.get("HTTP_COOKIE", "")]
             unvaried_etag = __handle_etag(request, unvaried_etag)
@@ -114,7 +117,8 @@ def view_urn(request, hash_type, hash_digest, wikipage=False):
             except KeyError:
                 return query_string_not_found(request)
 
-        request.ductus = DuctusRequestInfo(resource, requested_view, wikipage)
+        request.ductus = DuctusRequestInfo(resource, requested_view,
+                                           wiki_page, wiki_revision)
         response = f(request)
 
         if request.method == "GET" and not response.has_header("ETag"):
@@ -187,7 +191,8 @@ def view_wikipage(request, pagename):
         return render_json_response({"urn": "urn:" + revision.urn})
 
     hash_type, hash_digest = revision.urn.split(':')
-    response = view_urn(request, hash_type, hash_digest, wikipage=True)
+    response = view_urn(request, hash_type, hash_digest,
+                        wiki_page=page, wiki_revision=revision)
 
     if isinstance(response, SuccessfulEditRedirect):
         return _handle_successful_wikiedit(request, response, page)
