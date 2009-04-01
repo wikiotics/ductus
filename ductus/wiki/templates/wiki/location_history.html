@@ -1,7 +1,7 @@
 {% extends "ductus_document.html" %}
 {% block content %}
 <ol>
-{% for revision in page.wikirevision_set.all %}
+{% for revision in request.ductus.wiki_page.wikirevision_set.all %}
 <li><a href="{{ revision.get_absolute_url }}">{{ revision.timestamp }}</a> {% if revision.author %}{{ revision.author }}{% else %}{{ revision.author_ip }}{% endif %}</li>
 {% endfor %}
 </ol>

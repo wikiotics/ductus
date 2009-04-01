@@ -26,7 +26,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, loader
 from django.views.decorators.vary import vary_on_headers
 from django.utils.safestring import mark_safe
-from django.utils.cache import patch_vary_headers, patch_cache_control
+from django.utils.cache import patch_cache_control
 from django.conf import settings
 
 from ductus.resource import determine_header
@@ -63,12 +63,10 @@ def __catch_http304(func):
 
 @__catch_http304
 @vary_on_headers('Cookie', 'Accept-language')
-def view_urn(request, hash_type, hash_digest,
-             wiki_page=None, wiki_revision=None):
-    """Dispatches the appropriate view for a resource
+def main_view(request, urn=None, wiki_page=None, wiki_revision=None):
+    """Dispatches the appropriate view for a resource/page
     """
 
-    urn = 'urn:%s:%s' % (hash_type, hash_digest)
     requested_view = request.GET.get('view', None)
 
     if requested_view == 'raw':
@@ -109,6 +107,9 @@ def view_urn(request, hash_type, hash_digest,
             varied_etag = __handle_etag(request, varied_etag)
 
         resource = resource_database.get_resource_object(urn)
+        request.ductus = DuctusRequestInfo(resource, requested_view,
+                                           wiki_page, wiki_revision)
+
         try:
             f = registered_views[resource.fqn][requested_view]
         except KeyError:
@@ -116,9 +117,8 @@ def view_urn(request, hash_type, hash_digest,
                 f = registered_views[None][requested_view]
             except KeyError:
                 return query_string_not_found(request)
-
-        request.ductus = DuctusRequestInfo(resource, requested_view,
-                                           wiki_page, wiki_revision)
+        if not f.meets_requirements(request.ductus):
+            return query_string_not_found(request)
         response = f(request)
 
         if request.method == "GET" and not response.has_header("ETag"):
@@ -131,6 +131,10 @@ def view_urn(request, hash_type, hash_digest,
         return response
 
     raise Http404
+
+def view_urn(request, hash_type, hash_digest):
+    urn = 'urn:%s:%s' % (hash_type, hash_digest)
+    return main_view(request, urn)
 
 def _handle_successful_wikiedit(request, response, page):
     # the underlying page has been modified, so we should take note of that
@@ -155,13 +159,6 @@ def view_wikipage(request, pagename):
         page = None
 
     if page:
-        if request.GET.get('view', None) in ('location_history', 'hybrid_history'):
-            response = render_to_response('wiki/location_history.html',
-                                          {'page': page},
-                                          context_instance=RequestContext(request))
-            patch_vary_headers(response, ['Cookie', 'Accept-language'])
-            return response
-
         if "oldid" in request.GET:
             revision = get_object_or_404(WikiRevision, pk=request.GET["oldid"], page=page)
         else:
@@ -183,19 +180,17 @@ def view_wikipage(request, pagename):
         except urllib2_HTTPError:
             pass
 
-    if revision is None:
-        return implicit_new_wikipage(request, pagename)
-
     if request.GET.get('view', None) == 'urn':
         # fixme: we should just have an X-Urn header and use HEAD instead of GET
-        return render_json_response({"urn": "urn:" + revision.urn})
+        if revison:
+            return render_json_response({"urn": "urn:" + revision.urn})
 
-    hash_type, hash_digest = revision.urn.split(':')
-    response = view_urn(request, hash_type, hash_digest,
-                        wiki_page=page, wiki_revision=revision)
-
-    if isinstance(response, SuccessfulEditRedirect):
-        return _handle_successful_wikiedit(request, response, page)
+    if revision:
+        response = main_view(request, ("urn:" + revision.urn), page, revision)
+        if isinstance(response, SuccessfulEditRedirect):
+            return _handle_successful_wikiedit(request, response, page)
+    else:
+        response = implicit_new_wikipage(request, pagename)
 
     patch_cache_control(response, must_revalidate=True)
     return response
@@ -282,15 +277,17 @@ else:
                                    'css': mark_safe(css)},
                                   context_instance=RequestContext(request))
 
-@register_view(None, 'view_index')
+@register_view(None, 'view_index', requires=None)
 def view_view_index(request):
-    """Display the index of available views for the resource.
+    """Display the index of available views for the resource/page.
     """
 
     root_tag_name = request.ductus.resource.fqn
 
     def get_views(tag):
-        return registered_views.get(tag, ())
+        tmp = registered_views.get(tag, ())
+        return [label for label, view in registered_views.get(tag, ()).items()
+                if view.meets_requirements(request.ductus)]
 
     special_views = sorted(get_views(root_tag_name))
     generic_views = sorted(set(get_views(None)) - set(special_views))
@@ -303,6 +300,12 @@ def view_view_index(request):
 @register_view(None, 'document_history')
 def view_document_history(request):
     return render_to_response('wiki/document_history.html',
+                              context_instance=RequestContext(request))
+
+@register_view(None, 'location_history', requires=lambda d: d.wiki_page)
+@register_view(None, 'history', requires=lambda d: d.wiki_page)
+def view_location_history(request):
+    return render_to_response('wiki/location_history.html',
                               context_instance=RequestContext(request))
 
 @register_view(None, 'license_info')

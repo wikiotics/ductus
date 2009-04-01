@@ -16,16 +16,16 @@
 
 from ductus.wiki import registered_views, registered_creation_views
 
-def register_view(model, *args):
+def register_view(model, label, requires=(lambda d: d.resource)):
     """Registers a URN view function.
     """
 
-    if len(args) == 0:
-        raise TypeError("function requires at least two arguments")
     fqn = None if model is None else model.fqn
+    if requires is None:
+        requires = lambda d: True # accept everything; no requirements
     def _register_view(func):
-        for arg in args:
-            registered_views.setdefault(fqn, dict())[arg] = func
+        func.meets_requirements = requires # boolean function
+        registered_views.setdefault(fqn, dict())[label] = func
         return func
     return _register_view
 
