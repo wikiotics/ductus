@@ -15,8 +15,10 @@ div#ductus_header { background: #6b497e; border-bottom: 1px solid #39005a;
 #ductus_footer { border-top: 1px solid #ddd; padding: 0 1em; }
 #ductus_footer p { text-align: center; }
 
-#ductus_document_header ul { list-style: none; }
-#ductus_document_header ul li { display: inline; float: left; margin-right: 1em; }
+#ductus_document_header ul { list-style: none; padding-left: 20%; border-bottom: 1px solid #ddd; padding-bottom: .2em; }
+#ductus_document_header ul li { display: inline; }
+#ductus_document_header ul li a { margin-right: 1em; border: 1px solid #ddd; border-bottom: none; padding: 3px .5em; background-color: #fff; font-size: 80%; text-decoration: none; }
+#ductus_document_header ul li.selected a { padding-bottom: 4px; }
 
 hr { border: 0; height: 1px; color: #aaa; background-color: #aaa; }
 
