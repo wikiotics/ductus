@@ -41,6 +41,7 @@ class WikiEditForm(forms.Form):
     textarea_attrs = {'cols': '80', 'rows': '30'}
     text = forms.CharField(widget=forms.Textarea(attrs=textarea_attrs))
     log_message = LogMessageField()
+
 def add_author_and_log_message(request, resource):
     if request.user.is_authenticated():
         resource.common.author.text = request.user.username
@@ -64,7 +65,8 @@ def edit_textwiki(request):
                                        settings.RECAPTCHA_PRIVATE_KEY,
                                        request.remote_addr)
             if not captcha.is_valid:
-                raise Exception("invalid captcha")
+                from django.http import HttpResponseForbidden
+                return HttpResponseForbidden("invalid captcha")
 
         form = WikiEditForm(request.POST)
 

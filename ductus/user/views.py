@@ -20,7 +20,8 @@ def user_creation(request, template_name='registration/create_user.html',
                                        settings.RECAPTCHA_PRIVATE_KEY,
                                        request.remote_addr)
             if not captcha.is_valid:
-                raise Exception("invalid captcha")
+                from django.http import HttpResponseForbidden
+                return HttpResponseForbidden("invalid captcha")
 
         form = UserCreationForm(request.POST)
         if form.is_valid():
