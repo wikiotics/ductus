@@ -1,5 +1,6 @@
 {% extends "ductus_base_error.html" %}
-{% block title %}Not Found{% endblock %}
+{% load title %}
+{% block title %}{{ block.super }}{% title "Not Found" %}{% endblock %}
 {% block content %}
 <h2>Not Found</h2>
 <p>The requested resource was not found.</p>

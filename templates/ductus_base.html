@@ -1,8 +1,8 @@
-{% load i18n %}<?xml version="1.0" encoding="utf-8"?>
+{% load i18n %}{% load title %}<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <title>{% block title %}{% endblock %} - {{ ductus_site_name }}</title>
+    <title>{% block title %}{% title ductus_site_name %}{% endblock %}{% for title in title_list reversed %}{{ title }}{% if not forloop.last %} - {% endif %}{% endfor %}</title>
     <meta http-equiv="content-type" content="application/xhtml+xml;charset=utf-8" />
     <meta http-equiv="content-style-type" content="text/css" />
     <link rel="stylesheet" type="text/css" media="screen, projection" href="{{ ductus_media_prefix }}common/css/base.css" />

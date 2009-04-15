@@ -1,5 +1,6 @@
 {% extends "ductus_base_error.html" %}
-{% block title %}Server Error{% endblock %}
+{% load title %}
+{% block title %}{{ block.super }}{% title "Server Error" %}{% endblock %}
 {% block content %}
 <h2>Server Error</h2>
 <p>The server encountered an internal error.</p>
