@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
 from django.contrib import admin
 
 admin.autodiscover()
@@ -22,3 +23,10 @@ urlpatterns = patterns('',
     (r'^reset-password/success/$', 'django.contrib.auth.views.password_reset_complete'),
     (r'^setlang/$', 'django.views.i18n.set_language'),
 )
+
+if (settings.DEBUG
+    and getattr(settings, "DUCTUS_MEDIA_PREFIX", "").startswith('/')
+    and getattr(settings, "DUCTUS_MEDIA_ROOT", "")):
+    urlpatterns += patterns('',
+        (r'^%s(?P<path>.*)$' % settings.DUCTUS_MEDIA_PREFIX[1:], 'django.views.static.serve', {'document_root': settings.DUCTUS_MEDIA_ROOT}),
+    )
