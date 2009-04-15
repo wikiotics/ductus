@@ -1,6 +1,0 @@
-{% extends "ductus_document.html" %}
-{% load urn %}
-{% block content %}
-<p>[{% for q in questions %}"<a href="{{ q|resolve }}">{{ q }}</a>"{% if forloop.last %}]{% else %},<br/>{% endif %}
-{% endfor %}</p>
-{% endblock %}
