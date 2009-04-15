@@ -22,11 +22,3 @@ urlpatterns = patterns('',
     (r'^reset-password/success/$', 'django.contrib.auth.views.password_reset_complete'),
     (r'^setlang/$', 'django.views.i18n.set_language'),
 )
-
-from ductus.resource.storage import LocalStorageBackend
-storage_backend = LocalStorageBackend('/tmp/ductus')
-
-try:
-    from ductus_local_urls import *
-except ImportError:
-    pass
