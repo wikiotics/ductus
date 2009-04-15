@@ -23,16 +23,15 @@ from ductus.wiki.models import WikiPage
 
 register = template.Library()
 
-@register.filter
-@stringfilter
-def creole(value):
-    try:
-        from creoleparser.core import Parser
-        from creoleparser.dialects import Creole10
-    except ImportError:
-        if settings.TEMPLATE_DEBUG:
-            raise template.TemplateSyntaxError, "Error in {% creole %} filter: The Python creoleparser library isn't installed."
-        return value
+creole2html = None
+
+def prepare_parser():
+    global creole2html
+    if creole2html is not None:
+        return
+
+    from creoleparser.core import Parser
+    from creoleparser.dialects import create_dialect, creole10_base
 
     def wiki_links_path_func(page_name):
         # handle special pages
@@ -57,12 +56,22 @@ def creole(value):
         enWP='http://en.wikipedia.org/wiki/',
     )
 
-    c = Creole10(use_additions=False,
-                 no_wiki_monospace=True,
-                 wiki_links_base_url='/',
-                 wiki_links_path_func=wiki_links_path_func,
-                 wiki_links_class_func=wiki_links_class_func,
-                 interwiki_links_base_urls=interwiki_links_base_urls)
+    c = create_dialect(creole10_base,
+                       no_wiki_monospace=True,
+                       wiki_links_base_url='/',
+                       wiki_links_path_func=wiki_links_path_func,
+                       wiki_links_class_func=wiki_links_class_func,
+                       interwiki_links_base_urls=interwiki_links_base_urls)
     creole2html = Parser(c)
 
-    return mark_safe(creole2html(value))
+@register.filter
+@stringfilter
+def creole(value):
+    try:
+        prepare_parser()
+    except ImportError:
+        if settings.TEMPLATE_DEBUG:
+            raise template.TemplateSyntaxError, "Error in {% creole %} filter: The Python creoleparser library isn't installed."
+        return value
+    else:
+        return mark_safe(creole2html(value))

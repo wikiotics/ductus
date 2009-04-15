@@ -22,7 +22,7 @@ setup(
     url='http://wikiotics.org/',
     install_requires=(
         'Django >= 1.1',
-        'Creoleparser',
+        'Creoleparser >= 0.6',
         'lxml',
         'PIL',
     ),
