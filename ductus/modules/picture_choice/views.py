@@ -54,8 +54,8 @@ def view_picture_choice_groups(request, groups):
 
     pcg = groups[frame / 4]()
     picture_urns = [pc.picture.href for pc in pcg.group]
-    shuffle(picture_urns)
     correct = pcg.group.array[frame % 4]
+    shuffle(picture_urns)
 
     object = {
         'picture_urns': picture_urns,
