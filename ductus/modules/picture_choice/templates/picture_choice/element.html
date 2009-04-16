@@ -2,8 +2,8 @@
 <div class="ductus_picture_choice">
   <h2>{{ object.phrase.text|escape }}</h2>
   <table>
-    <tr><td class="picture_choice_picture{% ifequal object.pictures.0 object.correct_picture %} correct{% endifequal %}"><div><img alt="" src="{{ object.pictures.0|resolve }}?view=image&amp;max_size=250,250"/></div></td><td></td><td class="picture_choice_picture{% ifequal object.pictures.1 object.correct_picture %} correct{% endifequal %}"><div><img alt="" src="{{ object.pictures.1|resolve }}?view=image&amp;max_size=250,250"/></div></td></tr>
+    <tr><td class="picture_choice_picture{% ifequal object.picture_urns.0 object.correct_picture_urn %} correct{% endifequal %}"><div><img alt="" src="{{ object.picture_urns.0|resolve }}?view=image&amp;max_size=250,250"/></div></td><td></td><td class="picture_choice_picture{% ifequal object.picture_urns.1 object.correct_picture_urn %} correct{% endifequal %}"><div><img alt="" src="{{ object.picture_urns.1|resolve }}?view=image&amp;max_size=250,250"/></div></td></tr>
     <tr><td></td><td></td><td></td></tr>
-    <tr><td class="picture_choice_picture{% ifequal object.pictures.2 object.correct_picture %} correct{% endifequal %}"><div><img alt="" src="{{ object.pictures.2|resolve }}?view=image&amp;max_size=250,250"/></div></td><td></td><td class="picture_choice_picture{% ifequal object.pictures.3 object.correct_picture %} correct{% endifequal %}"><div><img alt="" src="{{ object.pictures.3|resolve }}?view=image&amp;max_size=250,250"/></div></td></tr>
+    <tr><td class="picture_choice_picture{% ifequal object.picture_urns.2 object.correct_picture_urn %} correct{% endifequal %}"><div><img alt="" src="{{ object.picture_urns.2|resolve }}?view=image&amp;max_size=250,250"/></div></td><td></td><td class="picture_choice_picture{% ifequal object.picture_urns.3 object.correct_picture_urn %} correct{% endifequal %}"><div><img alt="" src="{{ object.picture_urns.3|resolve }}?view=image&amp;max_size=250,250"/></div></td></tr>
   </table>
 </div>

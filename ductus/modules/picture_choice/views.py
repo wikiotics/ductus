@@ -14,54 +14,62 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from random import shuffle
+
 from django.shortcuts import render_to_response
-from django.template.loader import render_to_string
 from django.template import RequestContext
 from django.http import HttpResponse
 
-from ductus.wiki.decorators import register_view
-from ductus.modules.picture_choice.models import PictureChoice
+from ductus.util.http import query_string_not_found
+from ductus.wiki.decorators import register_view, register_creation_view
+from ductus.modules.picture_choice.models import PictureChoiceGroup, PictureChoiceLesson
 
-from random import shuffle
+@register_view(PictureChoiceGroup, None)
+def view_picture_choice_group(request):
+    return view_picture_choice_groups(request, [lambda: request.ductus.resource])
 
-factorial = lambda n: reduce(lambda x, y: x * y, range(n, 1, -1))
+@register_view(PictureChoiceLesson, None)
+def view_picture_choice_lesson(request):
+    groups = [(lambda: g.get()) for g in request.ductus.resource.groups]
+    if not groups:
+        return render_to_response('picture_choice/empty_lesson.html', {
+        }, context_instance=RequestContext(request))
 
-@register_view(PictureChoice, None)
-def view_picture_choice(request):
-    element = general_picture_choice(request.ductus.resource, request.GET)
-    if request.is_ajax():
-        return HttpResponse([element["html_block"]])
+    return view_picture_choice_groups(request, groups)
+
+def view_picture_choice_groups(request, groups):
+    nframes = len(groups) * 4
+    frame = request.GET.get('frame', None)
+    frames = None
+    if frame is None:
+        frames = range(nframes)
+        shuffle(frames)
+        frame = frames[0]
     else:
-        return render_to_response('picture_choice/choice.html',
-                                  {'element': element},
-                                  context_instance=RequestContext(request))
+        frame = int(frame)
+        if frame < 0 or frame >= nframes:
+            return query_string_not_found(request)
 
-def general_picture_choice(picture_choice, options_dict=None):
-    correct_picture = picture_choice.correct_picture
-    pictures = [correct_picture.href]
-    pictures += [p.href for p in picture_choice.incorrect_pictures]
-    phrase = picture_choice.phrase
-
-    if options_dict and 'order' in options_dict:
-        pictures.sort()
-        order = int(options_dict['order']) % factorial(len(pictures))
-        new_pictures = []
-        for n in range(len(pictures), 0, -1):
-            i = order % n
-            order //= n
-            new_pictures.append(pictures[i])
-            del pictures[i]
-        pictures = new_pictures
-    else:
-        shuffle(pictures)
+    pcg = groups[frame / 4]()
+    picture_urns = [pc.picture.href for pc in pcg.group]
+    shuffle(picture_urns)
+    correct = pcg.group.array[frame % 4]
 
     object = {
-        'pictures': pictures,
-        'correct_picture': correct_picture.href,
-        'phrase': phrase,
+        'picture_urns': picture_urns,
+        'correct_picture_urn': correct.picture.href,
+        'phrase': correct.phrase,
     }
 
-    return {
-        'html_block': render_to_string('picture_choice/element.html',
-                                       {'object': object}),
-    }
+    if request.is_ajax():
+        template_name = 'picture_choice/element.html'
+    else:
+        if frames:
+            template_name = 'picture_choice/lesson.html'
+        else:
+            template_name = 'picture_choice/choice.html'
+
+    return render_to_response(template_name, {
+        'object': object,
+        'frames': frames,
+    }, RequestContext(request))

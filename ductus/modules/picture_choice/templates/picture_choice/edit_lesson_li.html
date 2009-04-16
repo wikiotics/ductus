@@ -1,0 +1,11 @@
+{% load urn %}
+{% for group in groups %}
+<li>
+<span class="picture_choice_group_urn" title="{{ group.urn }}"></span>
+<ul>
+{% for frame in group.group %}
+<li>{{ frame.phrase.text }} <img alt="{{ frame.phrase.text }}" src="{{ frame.picture.href|resolve }}?view=image&amp;max_size=50,50"/></li>
+{% endfor %}
+</ul>
+</li>
+{% endfor %}

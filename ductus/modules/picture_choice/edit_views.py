@@ -14,17 +14,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+try:
+    import json # python 2.6
+except ImportError:
+    from django.utils import simplejson as json
+
 from django import forms
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
 
 from ductus.wiki import SuccessfulEditRedirect
-from ductus.wiki.decorators import register_creation_view
+from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.util.http import render_json_response
 from ductus.modules.picture.models import Picture
 from ductus.modules.picture.forms import PictureUrnField
-from ductus.modules.picture_choice.models import PictureChoiceGroup
+from ductus.modules.picture_choice.models import PictureChoiceGroup, PictureChoiceLesson
 
 def all_unique(iterable):
     return len(frozenset(iterable)) == len(iterable)
@@ -84,3 +89,41 @@ def new_picture_choice_group(request):
     return render_to_response('picture_choice/new.html',
                               {'form': form},
                               context_instance=RequestContext(request))
+
+@register_creation_view(PictureChoiceLesson)
+def new_picture_choice_lesson(request):
+    if request.method != "POST":
+        return HttpResponse('<form method="post"><input type="submit" value="Click to create picture choice lesson"/></form>')
+    urn = PictureChoiceLesson().save()
+    return SuccessfulEditRedirect(urn)
+
+@register_view(PictureChoiceLesson, 'edit')
+def edit_picture_choice_lesson(request):
+    if request.method == 'POST':
+        try:
+            urns = json.loads(request.POST['pcl'])['groups']
+        except ValueError:
+            raise
+        else:
+            # fixme: only save if something actually changes
+            pcl = request.ductus.resource.clone()
+            pcl.groups.array = []
+            #pcl.groups.extend_hrefs(urns) # fixme: current api is clumsy
+            for u in urns:
+                g = pcl.groups.new_item()
+                g.href = u
+                pcl.groups.array.append(g)
+            urn = pcl.save()
+            return SuccessfulEditRedirect(urn)
+
+    groups = [href.get() for href in request.ductus.resource.groups]
+    return render_to_response('picture_choice/edit_lesson.html', {
+        'groups': groups,
+    }, RequestContext(request))
+
+@register_view(PictureChoiceGroup, 'edit_lesson_li')
+def list_items_for_edit_view(request):
+    groups = [request.ductus.resource]
+    return render_to_response('picture_choice/edit_lesson_li.html', {
+        'groups': groups,
+    }, RequestContext(request))

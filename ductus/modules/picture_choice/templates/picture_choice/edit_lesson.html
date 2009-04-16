@@ -1,0 +1,22 @@
+{% extends "ductus_document.html" %}
+
+{% block head %}
+<script type="text/javascript" src="{{ ductus_media_prefix }}modules/picture/js/picture_selector.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}modules/picture_choice/js/editor.js"></script>
+{% endblock %}
+
+{% block content %}
+<ul id="picture_choice_lesson">
+{% include "picture_choice/edit_lesson_li.html" %}
+</ul>
+<p><a id="save_button">Save</a></p>
+
+<hr/>
+
+<div id="builder">
+<form>
+<div id="builder_form"></div>
+<a id="builder_form_submit">Submit</a>
+</form>
+</div>
+{% endblock %}
