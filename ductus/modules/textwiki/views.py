@@ -60,11 +60,12 @@ def edit_textwiki(request):
 
     if request.method == 'POST':
         if recaptcha is not None and not request.user.is_authenticated():
-            captcha = recaptcha.submit(request.POST['recaptcha_challenge_field'],
-                                       request.POST['recaptcha_response_field'],
-                                       settings.RECAPTCHA_PRIVATE_KEY,
-                                       request.remote_addr)
-            if not captcha.is_valid:
+            if not ('recaptcha_challenge_field' in request.POST
+                    and 'recaptcha_response_field' in request.POST
+                    and recaptcha.submit(request.POST['recaptcha_challenge_field'],
+                                         request.POST['recaptcha_response_field'],
+                                         settings.RECAPTCHA_PRIVATE_KEY,
+                                         request.remote_addr).is_valid):
                 from django.http import HttpResponseForbidden
                 return HttpResponseForbidden("invalid captcha")
 

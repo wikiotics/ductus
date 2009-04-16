@@ -15,11 +15,12 @@ def user_creation(request, template_name='registration/create_user.html',
     "Displays user creation form and handles its action"
     if request.method == "POST":
         if recaptcha is not None:
-            captcha = recaptcha.submit(request.POST['recaptcha_challenge_field'],
-                                       request.POST['recaptcha_response_field'],
-                                       settings.RECAPTCHA_PRIVATE_KEY,
-                                       request.remote_addr)
-            if not captcha.is_valid:
+            if not ('recaptcha_challenge_field' in request.POST
+                    and 'recaptcha_response_field' in request.POST
+                    and recaptcha.submit(request.POST['recaptcha_challenge_field'],
+                                         request.POST['recaptcha_response_field'],
+                                         settings.RECAPTCHA_PRIVATE_KEY,
+                                         request.remote_addr).is_valid):
                 from django.http import HttpResponseForbidden
                 return HttpResponseForbidden("invalid captcha")
 
