@@ -30,7 +30,9 @@ def view_picture_choice_group(request):
 
 @register_view(PictureChoiceLesson, None)
 def view_picture_choice_lesson(request):
-    groups = [(lambda: g.get()) for g in request.ductus.resource.groups]
+    def get_func(g):
+        return lambda: g.get()
+    groups = [get_func(g) for g in request.ductus.resource.groups]
     if not groups:
         return render_to_response('picture_choice/empty_lesson.html', {
         }, context_instance=RequestContext(request))
