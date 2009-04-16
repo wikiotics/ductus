@@ -182,7 +182,7 @@ def view_wikipage(request, pagename):
 
     if request.GET.get('view', None) == 'urn':
         # fixme: we should just have an X-Urn header and use HEAD instead of GET
-        if revison:
+        if revision:
             return render_json_response({"urn": "urn:" + revision.urn})
 
     if revision:
