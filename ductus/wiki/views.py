@@ -291,7 +291,9 @@ def view_view_index(request):
                 and view.meets_requirements(request.ductus)]
 
     special_views = sorted(get_views(root_tag_name))
-    generic_views = sorted(set(get_views(None)) - set(special_views))
+    generic_views = set(get_views(None)) - set(special_views)
+    generic_views.discard("view_index") # no reason to list ourself
+    generic_views = sorted(generic_views)
 
     return render_to_response('wiki/view_index.html',
                               {'special_views': special_views,
