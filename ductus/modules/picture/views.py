@@ -25,7 +25,7 @@ from cStringIO import StringIO
 
 __allowed_thumbnail_sizes = set([(250, 250), (100, 100), (50, 50)])
 
-@register_view(Picture, None)
+@register_view(Picture)
 def view_picture_info(request):
     return render_to_response('picture/display.html',
                               context_instance=RequestContext(request))

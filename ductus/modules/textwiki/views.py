@@ -31,7 +31,7 @@ if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):
 
 # fixme: in this default view, lower the cache time for when links change from
 # broken to unbroken and back
-@register_view(Wikitext, None)
+@register_view(Wikitext)
 def view_textwiki(request):
     return render_to_response('textwiki/display_wiki.html',
                               {'text': request.ductus.resource.text},

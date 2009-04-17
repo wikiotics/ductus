@@ -16,7 +16,7 @@
 
 from ductus.wiki import registered_views, registered_creation_views
 
-def register_view(model, label, requires=(lambda d: d.resource)):
+def register_view(model, label=None, requires=(lambda d: d.resource)):
     """Registers a URN view function.
     """
 

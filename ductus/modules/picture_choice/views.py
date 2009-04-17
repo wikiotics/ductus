@@ -24,11 +24,11 @@ from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.modules.picture_choice.models import PictureChoiceGroup, PictureChoiceLesson
 
-@register_view(PictureChoiceGroup, None)
+@register_view(PictureChoiceGroup)
 def view_picture_choice_group(request):
     return view_picture_choice_groups(request, [lambda: request.ductus.resource])
 
-@register_view(PictureChoiceLesson, None)
+@register_view(PictureChoiceLesson)
 def view_picture_choice_lesson(request):
     def get_func(g):
         return lambda: g.get()
