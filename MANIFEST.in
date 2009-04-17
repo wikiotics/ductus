@@ -4,5 +4,4 @@ recursive-include static *
 recursive-include templates *
 recursive-include ductus/modules/picture/templates *
 recursive-include ductus/modules/picture_choice/templates *
-recursive-include ductus/modules/picture_choice_lesson/templates *
 recursive-include ductus/modules/textwiki/templates *

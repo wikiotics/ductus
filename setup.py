@@ -43,7 +43,6 @@ setup(
         'ductus.modules',
         'ductus.modules.picture',
         'ductus.modules.picture_choice',
-        'ductus.modules.picture_choice_lesson',
         'ductus.modules.textwiki',
         'ductus.modules.textwiki.templatetags',
     ),
