@@ -285,10 +285,11 @@ def view_view_index(request):
     root_tag_name = request.ductus.resource.fqn
 
     def get_views(tag):
-        tmp = registered_views.get(tag, ())
-        return [label for label, view in registered_views.get(tag, ()).items()
-                if (label is None or not label.startswith('_'))
-                and view.meets_requirements(request.ductus)]
+        rv = [label for label, view in registered_views.get(tag, ()).items()
+              if view.meets_requirements(request.ductus)]
+        if "show_all" not in request.GET:
+            rv = [lbl for lbl in rv if lbl is None or not lbl.startswith('_')]
+        return rv
 
     special_views = sorted(get_views(root_tag_name))
     generic_views = set(get_views(None)) - set(special_views)
