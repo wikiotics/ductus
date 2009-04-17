@@ -287,7 +287,8 @@ def view_view_index(request):
     def get_views(tag):
         tmp = registered_views.get(tag, ())
         return [label for label, view in registered_views.get(tag, ()).items()
-                if view.meets_requirements(request.ductus)]
+                if (label is None or not label.startswith('_'))
+                and view.meets_requirements(request.ductus)]
 
     special_views = sorted(get_views(root_tag_name))
     generic_views = sorted(set(get_views(None)) - set(special_views))

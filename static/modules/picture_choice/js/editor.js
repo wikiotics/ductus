@@ -31,7 +31,7 @@ $(function () {
             try {
                 var new_urn = JSON.parse(data)['urn'];
                 // append them to the ul
-                $.get(resolve_urn(new_urn), {"view": "edit_lesson_li"}, function (data) {
+                $.get(resolve_urn(new_urn), {"view": "_edit_lesson_li"}, function (data) {
                     $("#picture_choice_lesson").append(data);
                 });
                 // show the form again

@@ -121,7 +121,7 @@ def edit_picture_choice_lesson(request):
         'groups': groups,
     }, RequestContext(request))
 
-@register_view(PictureChoiceGroup, 'edit_lesson_li')
+@register_view(PictureChoiceGroup, '_edit_lesson_li')
 def list_items_for_edit_view(request):
     groups = [request.ductus.resource]
     return render_to_response('picture_choice/edit_lesson_li.html', {
