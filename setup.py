@@ -40,6 +40,7 @@ setup(
         'ductus.user',
         'ductus.template_loaders',
         'ductus.middleware',
+        'ductus.license',
         'ductus.modules',
         'ductus.modules.picture',
         'ductus.modules.picture_choice',
