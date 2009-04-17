@@ -48,8 +48,11 @@ def view_picture_choice_groups(request, groups):
         shuffle(frames)
         frame = frames[0]
     else:
-        frame = int(frame)
-        if frame < 0 or frame >= nframes:
+        try:
+            frame = int(frame)
+        except ValueError:
+            frame = None
+        if frame is None or frame < 0 or frame >= nframes:
             return query_string_not_found(request)
 
     pcg = groups[frame / 4]()
