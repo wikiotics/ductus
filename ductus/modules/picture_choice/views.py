@@ -45,7 +45,14 @@ def view_picture_choice_groups(request, groups):
     frames = None
     if frame is None:
         frames = range(nframes)
-        shuffle(frames)
+        if request.GET.get('order', None) == 'shuffle':
+            shuffle(frames)
+        else:
+            # shuffle each group of 4 individually
+            for i in range(0, nframes, 4):
+                g = frames[i:i+4]
+                shuffle(g)
+                frames[i:i+4] = g
         frame = frames[0]
     else:
         try:
