@@ -133,7 +133,12 @@ def search_view(request):
     if "q" in request.GET:
         if request.GET.get("sort", None) in valid_sort_methods:
             kw["sort"] = request.GET["sort"]
-        photos = search_photos(text=request.GET["q"], **kw)["photos"]
+        if request.GET.get("search_by", None) == 'tags':
+            tags = [t for t in re.split(r'\s|"(.+)"', request.GET['q']) if t]
+            kw['tags'] = ','.join(tags)
+        else:
+            kw['text'] = request.GET['q']
+        photos = search_photos(**kw)["photos"]
         paginator = Paginator(range(photos["pages"]), 1)
         page = int(photos["page"])
         page_obj = paginator.page(page)
