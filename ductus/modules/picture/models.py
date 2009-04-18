@@ -12,7 +12,7 @@ class OptionalLinkElement(models.LinkElement):
     def is_null_xml_element(self):
         return not self.href
 
-class Credit(models.Element):
+class CreditElement(models.Element):
     ns = 'http://wikiotics.org/ns/2009/credit'
     nsmap = {'credit': ns}
 
@@ -21,9 +21,15 @@ class Credit(models.Element):
     author = OptionalTextElement()
     author_url = OptionalLinkElement()
 
+def rotation_validator(v):
+    if not v in (None, '', '0', '90', '180', '270'):
+        raise models.ValidationError
+
 class Picture(models.Model):
     ns = 'http://wikiotics.org/ns/2009/picture'
     blob = models.TypedBlobElement(allowed_mime_types=['image/jpeg'])
-    credit = Credit()
+    credit = CreditElement()
+    rotation = models.Attribute(optional=True, blank_is_null=True,
+                                validator=rotation_validator)
 
 register_model(Picture)

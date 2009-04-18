@@ -42,6 +42,8 @@ def download_flickr(url):
     picture.credit.original_url.href = photo.page_url
     picture.credit.author.text = "%(realname)s (%(username)s)" % photo['owner']
     picture.credit.author_url.href = photo.userpage_url
+    if photo['rotation']:
+        picture.rotation = unicode(360 - int(photo['rotation']))
     # fixme: save log of what we just did ?
     return picture.save()
 

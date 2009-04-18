@@ -64,7 +64,10 @@ def view_picture(request):
         for data in data_iterator:
             p.feed(data)
         im = p.close()
-        im = adjust_orientation_from_exif(im)
+        if picture.rotation:
+            im = im.rotate(int(picture.rotation), expand=True)
+        else:
+            im = adjust_orientation_from_exif(im)
         im.thumbnail((max_width, max_height), Image.ANTIALIAS)
         output = StringIO()
         im.save(output, 'JPEG', quality=90) # PIL manual says avoid quality > 95
