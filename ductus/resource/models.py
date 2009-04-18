@@ -208,8 +208,8 @@ class Element(object):
             except KeyError:
                 raise Exception("Unrecognized attribute tag: %s" % attr)
             setattr(self, name, value)
-        required_attributes = set(fqn for fqn, attr in attributes_by_fqn.items()
-                                  if not getattr(attr, "optional", False))
+        required_attributes = set(fqn for fqn, name in attributes_by_fqn.items()
+                                  if not getattr(self.attributes[name], "optional", False))
         missing_attributes = required_attributes.difference(used_attributes)
         if missing_attributes:
             raise Exception("Missing attribute(s)! %s" % tuple(missing_attributes))
