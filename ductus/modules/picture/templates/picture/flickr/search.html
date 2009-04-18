@@ -15,9 +15,10 @@ $(function () {
 {% endblock %}
 
 {% block content %}
-<h3>{{ place }}</h3>
+<h3>{% if place %}{{ place }}{% endif %}</h3>
 <p>page {{ page }} of {{ paginator.num_pages }} {% if page_obj.has_previous %}<a href="{{ request.path }}?{{ previous_query_string }}">prev</a>{% endif %} {% if page_obj.has_next %}<a href="{{ request.path }}?{{ next_query_string }}">next</a>{% endif %}</p>
 <div id="preview"></div>
-<p><form>What: <input type="hidden" name="view" value="search"/><input name="q" value="{{ request.GET.q|escape }}"/> Where: <input name="place" value="{{ request.GET.place|escape }}"/> <input type="submit"/></form></p>
+<p><form method="get" action="{{ request.path }}">What: <input type="hidden" name="view" value="search"/><input name="q" value="{{ request.GET.q|escape }}"/> Where: <input name="place" value="{{ request.GET.place|escape }}"/> <input type="submit"/><br/><input type="radio" name="sort" value="date-posted-desc"{% ifequal sort_method "date-posted-desc" %} checked="checked"{% endifequal %}/>Recent <input type="radio" name="sort" value="interestingness-desc"{% ifequal sort_method "interestingness-desc" %} checked="checked"{% endifequal %}/>Interesting <input type="radio" name="sort" value="relevance"{% ifequal sort_method "relevance" %} checked="checked"{% endifequal %}/>Relevant</form></p>
 <p>{% for p in photos %}<span><img class="flickr_thumbnail" src="{{ p.square_url }}" title="{{ p.title }} [{{ p.license }}]"/><a href="{{ p.page_url }}"></a></span>{% endfor %}</p>
+<p>page {{ page }} of {{ paginator.num_pages }} {% if page_obj.has_previous %}<a href="{{ request.path }}?{{ previous_query_string }}">prev</a>{% endif %} {% if page_obj.has_next %}<a href="{{ request.path }}?{{ next_query_string }}">next</a>{% endif %}</p>
 {% endblock %}

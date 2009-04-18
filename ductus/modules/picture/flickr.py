@@ -159,4 +159,5 @@ def search_view(request):
         'page': page, # why can't page_obj identify its page number?
         'next_query_string': next_qs,
         'previous_query_string': prev_qs,
+        'sort_method': kw.get('sort', 'date-posted-desc'),
     }, RequestContext(request))
