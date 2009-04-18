@@ -17,6 +17,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+
+from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view, unvarying
 from ductus.modules.picture.models import Picture
 
@@ -53,12 +55,12 @@ def view_picture(request):
         try:
             max_width, max_height = [int(n) for n in
                                      request.GET['max_size'].split(',')]
-        except Exception:
-            raise # call this a formatting error or something
+        except ValueError:
+            return query_string_not_found(request)
         if (max_width, max_height) not in __allowed_thumbnail_sizes:
             # fixme: once we cache things, we can just return any image with a
             # smaller size in most cases
-            raise Exception("Requested size not available")
+            return query_string_not_found(request)
 
         p = ImageFile.Parser()
         for data in data_iterator:
