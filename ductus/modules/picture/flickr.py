@@ -107,6 +107,9 @@ class FlickrPhoto(object):
             return license_map()[self.dict[key]]
         return self.dict[key]
 
+
+import re
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import QueryDict
