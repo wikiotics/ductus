@@ -367,7 +367,13 @@ class Diff(list):
 @register_view(None, 'diff')
 def view_diff(request):
     this = request.ductus.resource
-    that = get_resource_database().get_resource_object(request.GET["diff"])
+    try:
+        that = get_resource_database().get_resource_object(request.GET["diff"])
+    except KeyError:
+        # This could mean there is no "diff" in the query string, or that the
+        # resource object doesn't exist.  Either way, we do the same thing.
+        return query_string_not_found(request)
+
     return render_to_response("wiki/diff.html", {
         'diff': Diff(this, that),
     }, RequestContext(request))
