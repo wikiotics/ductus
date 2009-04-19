@@ -59,8 +59,6 @@ class PictureSelector(forms.TextInput):
         return mark_safe(u'<div%s><div></div>%s%s</div>'
                          % (forms.util.flatatt(div_attrs), form_field, img))
 
-        # img fixmes: put it in a 100x100 container; get a blank image
-
 class PictureUrnField(forms.CharField):
     """Field for a Picture URN
     """
