@@ -5,7 +5,7 @@
 {% with request.ductus as ductus %}
   <div id="ductus_document_header">
     <ul>
-      {% if ductus.resource %}<li{% if not request.GET.view %} class="selected"{% endif %}><a href="{{ request.path }}">{% trans "Document" %}</a></li>{% endif %}
+      {% if ductus.resource %}<li{% if not request.GET.view %} class="selected"{% endif %}><a href="{{ request.path|urlencode|iriencode }}">{% trans "Document" %}</a></li>{% endif %}
       {# <li>Talk (location)</li> #}
       {% if ductus.resource %}
         {# <li>Talk (document)</li> #}
