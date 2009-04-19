@@ -36,9 +36,12 @@ class LocalStorageBackend(object):
 
     def __storage_location_else_keyerror(self, urn):
         try:
-            return self.__storage_location(urn)
+            pathname = self.__storage_location(urn)
         except UnsupportedURN:
             raise KeyError(urn)
+        if not os.access(pathname, os.R_OK):
+            raise KeyError(urn)
+        return pathname
 
     def __contains__(self, key):
         # does file exist, and can we read it?
@@ -75,14 +78,10 @@ class LocalStorageBackend(object):
 
     def __getitem__(self, key):
         pathname = self.__storage_location_else_keyerror(key)
-        if not os.access(pathname, os.R_OK):
-            raise KeyError(key)
         return iterate_file(pathname)
 
     def __delitem__(self, key):
         pathname = self.__storage_location_else_keyerror(key)
-        if not os.access(pathname, os.R_OK):
-            raise KeyError(key)
         os.remove(pathname) # may raise OSError
 
     def __len__(self):
