@@ -17,6 +17,8 @@
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
+from django.utils.encoding import iri_to_uri
+from django.utils.http import urlquote
 from django.conf import settings
 
 from ductus.wiki.models import WikiPage
@@ -34,6 +36,8 @@ def prepare_parser():
     from creoleparser.dialects import create_dialect, creole10_base
 
     def wiki_links_path_func(page_name):
+        page_name = iri_to_uri(urlquote(page_name))
+
         # handle special pages
         if not page_name.startswith(('user/', 'group/', 'urn/')):
             page_name = 'wiki/' + page_name

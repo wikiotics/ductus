@@ -19,7 +19,6 @@ try:
 except ImportError:
     from django.utils import simplejson as json
 from urllib2 import urlopen, HTTPError as urllib2_HTTPError
-from urllib import quote as urllib_quote
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotModified, Http404
 from django.shortcuts import render_to_response, get_object_or_404
@@ -27,6 +26,8 @@ from django.template import RequestContext, loader
 from django.views.decorators.vary import vary_on_headers
 from django.utils.safestring import mark_safe
 from django.utils.cache import patch_cache_control
+from django.utils.encoding import iri_to_uri
+from django.utils.http import urlquote
 from django.conf import settings
 
 from ductus.resource import determine_header
@@ -169,7 +170,7 @@ def view_wikipage(request, pagename):
     if revision is None and getattr(settings, "DUCTUS_WIKI_REMOTE", None):
         # See if DUCTUS_WIKI_REMOTE has the page
         try:
-            remote_url = "%s/%s?view=urn" % (settings.DUCTUS_WIKI_REMOTE, urllib_quote(pagename))
+            remote_url = "%s/%s?view=urn" % (settings.DUCTUS_WIKI_REMOTE, iri_to_uri(urlquote(pagename)))
             remote_urn = json.loads(urlopen(remote_url).read(1000))["urn"]
             # we never actually save this WikiPage or WikiRevision to the database
             if page is None:

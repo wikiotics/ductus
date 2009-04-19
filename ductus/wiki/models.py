@@ -17,7 +17,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core import exceptions
+from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy, ugettext as _
+from django.utils.http import urlquote
 
 from ductus.wiki import get_resource_database
 
@@ -25,7 +27,7 @@ class WikiPage(models.Model):
     name = models.CharField(max_length=512)
 
     def get_absolute_url(self):
-        return u'/%s' % self.name # fixme: reverse resolve?
+        return u'/%s' % iri_to_uri(urlquote(self.name))
 
     def get_latest_revision(self):
         # fixme: we need a db_index on page/timestamp combo
