@@ -42,7 +42,10 @@ class LocalStorageBackend(object):
 
     def __contains__(self, key):
         # does file exist, and can we read it?
-        return os.access(self.__storage_location_else_keyerror(key), os.R_OK)
+        try:
+            return os.access(self.__storage_location(key), os.R_OK)
+        except UnsupportedURN:
+            return False
 
     def put_file(self, key, tmpfile):
         pathname = self.__storage_location(key)
