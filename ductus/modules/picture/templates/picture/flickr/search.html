@@ -20,7 +20,7 @@ $(function () {
 <div id="preview"></div>
 <p>
 <form method="get" action="{{ request.path }}">
-What: <input type="hidden" name="view" value="search"/><input name="q" value="{{ request.GET.q|escape }}"/> Where: <input name="place" value="{{ request.GET.place|escape }}"/> <input type="submit"/>
+What: <input type="hidden" name="view" value="flickr_search"/><input name="q" value="{{ request.GET.q|escape }}"/> Where: <input name="place" value="{{ request.GET.place|escape }}"/> <input type="submit"/>
 <br/>
 <input type="radio" name="sort" value="date-posted-desc"{% ifequal sort_method "date-posted-desc" %} checked="checked"{% endifequal %}/>Recent <input type="radio" name="sort" value="interestingness-desc"{% ifequal sort_method "interestingness-desc" %} checked="checked"{% endifequal %}/>Interesting <input type="radio" name="sort" value="relevance"{% ifequal sort_method "relevance" %} checked="checked"{% endifequal %}/>Relevant
 |

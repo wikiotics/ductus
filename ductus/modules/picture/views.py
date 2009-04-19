@@ -78,6 +78,3 @@ def view_picture(request):
 
     return HttpResponse(list(data_iterator), # see django #6527
                         content_type=mime_type)
-
-from flickr import search_view
-register_view(Picture, "search")(search_view)
