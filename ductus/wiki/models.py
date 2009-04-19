@@ -16,6 +16,8 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.core import exceptions
+from django.utils.translation import ugettext_lazy, ugettext as _
 
 from ductus.wiki import get_resource_database
 
@@ -54,11 +56,13 @@ class WikiRevision(models.Model):
         get_latest_by = 'timestamp'
 
     def save(self, *args, **kwargs):
+        # fixme: See Django #6845.  We may need to move these tests to a
+        # special validation function some day.
         assert not self.urn.startswith('urn:')
         if ('urn:%s' % self.urn) not in get_resource_database():
-            raise Exception("urn is not in database: urn:%s" % self.urn)
+            raise exceptions.ValidationError(_("urn is not in database: urn:%s") % self.urn)
         if (not self.author) and (not self.author_ip):
-            raise Exception("A user or IP address must be given when saving a revision")
+            raise exceptions.ValidationError(_("A user or IP address must be given when saving a revision"))
         return super(WikiRevision, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
