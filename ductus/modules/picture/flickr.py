@@ -116,10 +116,6 @@ from django.http import QueryDict
 from django.core.paginator import Paginator
 
 def search_view(request):
-    search_photos = partial(flickr.photos_search, license=(','.join(license_map())),
-                            safe_search=1, content_type=1, media="photos",
-                            extras="license,owner_name,original_format", per_page=100)
-
     kw = {'page': request.GET.get("page", "1")}
     place_name = None
     if "place_id" in request.GET:
@@ -134,6 +130,11 @@ def search_view(request):
             kw["place_id"] = place["place_id"]
             place_name = place["_content"]
     if "q" in request.GET:
+        search_photos = partial(flickr.photos_search, per_page=100,
+                                license=(','.join(license_map())),
+                                safe_search=1, content_type=1, media="photos",
+                                extras="license,owner_name,original_format")
+
         if request.GET.get("sort", None) in valid_sort_methods:
             kw["sort"] = request.GET["sort"]
         if request.GET.get("search_by", None) == 'tags':
