@@ -1,9 +1,4 @@
 {% extends "ductus_document.html" %}
-{% load license_name %}
 {% block content %}
-<ul>
-{% for license in request.ductus.resource.common.licenses %}
-<li><a href="{{ license.href }}">{{ license.href|license_name }}</a></li>
-{% endfor %}
-</ul>
+{% with request.ductus.resource.common.licenses as licenses %}{% include "wiki/license_list.html" %}{% endwith %}
 {% endblock %}

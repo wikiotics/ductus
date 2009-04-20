@@ -1,0 +1,8 @@
+{% load license_name %}
+{% if licenses %}
+<ul>
+{% for license in licenses %}
+<li><a href="{{ license.href }}">{{ license.href|license_name }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
