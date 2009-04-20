@@ -1,5 +1,5 @@
 {% load license_name %}
-{% if licenses %}
+{% if licenses.array %}
 <ul>
 {% for license in licenses %}
 <li><a href="{{ license.href }}">{{ license.href|license_name }}</a></li>
