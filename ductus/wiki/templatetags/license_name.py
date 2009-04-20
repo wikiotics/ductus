@@ -24,7 +24,10 @@ register = Library()
 @register.filter
 @stringfilter
 def license_name(value):
-    """Resolves a URN, returning its absolute URL on the server
+    """Maps a license URI to a human-readable short title of the license.
+
+    In the future, the returned string will automatically be translated
+    into the current locale's language.
     """
 
     try:
