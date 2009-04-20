@@ -58,6 +58,8 @@ def edit_textwiki(request):
     else:
         resource = None
 
+    preview_requested = ('preview' in request.POST)
+
     if request.method == 'POST':
         if recaptcha is not None and not request.user.is_authenticated():
             if not ('recaptcha_challenge_field' in request.POST
@@ -71,11 +73,9 @@ def edit_textwiki(request):
 
         form = WikiEditForm(request.POST)
 
-        if form.is_valid():
+        if form.is_valid() and not preview_requested:
             if form.cleaned_data['text'].strip() == '':
                 raise Exception
-            if 'preview' in request.GET:
-                pass # fixme
             if resource:
                 resource = resource.clone()
             else:
@@ -99,6 +99,7 @@ def edit_textwiki(request):
     return render_to_response('textwiki/edit_wiki.html', {
         'form': form,
         'captcha': mark_safe(captcha_html),
+        'show_preview': (preview_requested and form.is_valid()),
     }, context_instance=RequestContext(request))
 
 new_textwiki = edit_textwiki
