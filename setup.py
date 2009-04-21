@@ -15,11 +15,11 @@ except ImportError:
 setup(
     name='Ductus',
     version='0.1pre',
-    description='Wikiotics wiki system',
+    description='Structured wiki system, designed for language instruction at wikiotics.org',
     license='GNU GPLv3 or later',
     author='Jim Garrison',
     author_email='jim@garrison.cc',
-    url='http://wikiotics.org/',
+    url='http://ductus.us/',
     install_requires=(
         'Django >= 1.1',
         'Creoleparser >= 0.6',
