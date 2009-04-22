@@ -14,7 +14,9 @@
         {% if 0 and ductus.wiki_revision %}<li>{% trans "Delete" %}</li>{% endif %} {# fixme: poor name since it doesn't permanently delete #}
         {# <li>Flag</li> #}
       {% endif %}
-      <li{% ifequal request.GET.view "history" %} class="selected"{% endifequal %}><a href="?view=history">{% trans "History" %}</a></li>
+      {% if ductus.resource or ductus.wiki_page %}
+        <li{% ifequal request.GET.view "history" %} class="selected"{% endifequal %}><a href="?view=history">{% trans "History" %}</a></li>
+      {% endif %}
       <li{% ifequal request.GET.view "view_index" %} class="selected"{% endifequal %}><a href="?view=view_index">{% trans "More views" %}</a></li>
     </ul>
   </div>
