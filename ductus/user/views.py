@@ -37,6 +37,8 @@ def user_creation(request, template_name='registration/create_user.html',
     if recaptcha is not None:
         captcha_html = recaptcha.displayhtml(settings.RECAPTCHA_PUBLIC_KEY,
                                              use_ssl=request.is_secure())
+        captcha_html = captcha_html.replace('frameborder="0"',
+                                            'style="border: 0"')
 
     return render_to_response(template_name, {
         'form': form,

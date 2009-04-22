@@ -95,6 +95,8 @@ def edit_textwiki(request):
     if recaptcha is not None and not request.user.is_authenticated():
         captcha_html = recaptcha.displayhtml(settings.RECAPTCHA_PUBLIC_KEY,
                                              use_ssl=request.is_secure())
+        captcha_html = captcha_html.replace('frameborder="0"',
+                                            'style="border: 0"')
 
     return render_to_response('textwiki/edit_wiki.html', {
         'form': form,
