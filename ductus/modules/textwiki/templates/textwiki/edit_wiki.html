@@ -8,7 +8,7 @@
 {{ form.cleaned_data.text|creole }}
 </div>
 {% endif %}
-<form method="post">
+<form method="post" action="{{ request.get_full_path }}">
 <p>{{ form.text.errors }}</p>
 <p>{{ form.text }}</p>
 {{ captcha }}
