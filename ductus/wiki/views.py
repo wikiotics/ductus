@@ -319,10 +319,16 @@ def view_document_history(request):
                               context_instance=RequestContext(request))
 
 @register_view(None, 'location_history', requires=lambda d: d.wiki_page)
-@register_view(None, 'history', requires=lambda d: d.wiki_page)
 def view_location_history(request):
     return render_to_response('wiki/location_history.html',
                               context_instance=RequestContext(request))
+
+@register_view(None, 'history', requires=lambda d: d.wiki_page or d.resource)
+def view_history(request):
+    if request.ductus.wiki_page:
+        return view_location_history(request)
+    else:
+        return view_document_history(request)
 
 @register_view(None, 'license_info')
 def view_license_info(request):
