@@ -186,11 +186,21 @@ def view_wikipage(request, pagename):
         if revision:
             return render_json_response({"urn": "urn:" + revision.urn})
 
+    response = None
+
     if revision:
         response = main_view(request, ("urn:" + revision.urn), page, revision)
         if isinstance(response, SuccessfulEditRedirect):
             return _handle_successful_wikiedit(request, response, page)
     else:
+        requested_view = request.GET.get("view", None)
+        request.ductus = DuctusRequestInfo(None, requested_view, page, None)
+        if requested_view:
+            f = registered_views[None].get(requested_view, None)
+            if f and f.meets_requirements(request.ductus):
+                response = f(request)
+
+    if response is None:
         response = implicit_new_wikipage(request, pagename)
 
     patch_cache_control(response, must_revalidate=True)
@@ -283,8 +293,6 @@ def view_view_index(request):
     """Display the index of available views for the resource/page.
     """
 
-    root_tag_name = request.ductus.resource.fqn
-
     def get_views(tag):
         rv = [label for label, view in registered_views.get(tag, ()).items()
               if view.meets_requirements(request.ductus)]
@@ -292,7 +300,10 @@ def view_view_index(request):
             rv = [lbl for lbl in rv if lbl is None or not lbl.startswith('_')]
         return rv
 
-    special_views = sorted(get_views(root_tag_name))
+    if request.ductus.resource:
+        special_views = sorted(get_views(request.ductus.resource.fqn))
+    else:
+        special_views = []
     generic_views = set(get_views(None)) - set(special_views)
     generic_views.discard("view_index") # no reason to list ourself
     generic_views = sorted(generic_views)
