@@ -35,18 +35,17 @@ def prepare_parser():
     from creoleparser.core import Parser
     from creoleparser.dialects import create_dialect, creole10_base
 
-    def wiki_links_path_func(page_name):
-        page_name = iri_to_uri(urlquote(page_name))
-
-        # handle special pages
+    def _handle_special(page_name):
         if not page_name.startswith(('user/', 'group/', 'urn/')):
             page_name = 'wiki/' + page_name
-
         return page_name
+
+    def wiki_links_path_func(page_name):
+        return iri_to_uri(urlquote(_handle_special(page_name)))
 
     def wiki_links_class_func(page_name):
         page_name = page_name.partition('#')[0].partition('?')[0]
-        page_name = wiki_links_path_func(page_name) # handle special pages
+        page_name = _handle_special(page_name)
         try:
             if WikiPage.objects.get(name=page_name).get_latest_revision().urn:
                 return "internal"
