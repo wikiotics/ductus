@@ -22,8 +22,6 @@ from ductus.util import iterate_file, sequence_contains_only
 
 class LocalStorageBackend(object):
     """Local storage backend.
-
-    This backend supports only Class-A URN's (as defined in ductus.urn).
     """
 
     def __init__(self, storage_directory):
