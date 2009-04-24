@@ -20,6 +20,7 @@ from django.template import RequestContext
 
 from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view, unvarying
+from ductus.wiki import diskcache
 from ductus.modules.picture.models import Picture
 
 from PIL import Image, ImageFile
@@ -48,7 +49,7 @@ def adjust_orientation_from_exif(image):
 def view_picture(request):
     picture = request.ductus.resource
     mime_type = picture.blob.mime_type
-    data_iterator = iter(picture.blob)
+    data_iterator = iter(picture.blob) # fixme: lazyiter
 
     # resize if requested
     if 'max_size' in request.GET:
@@ -62,19 +63,27 @@ def view_picture(request):
             # smaller size in most cases
             return query_string_not_found(request)
 
-        p = ImageFile.Parser()
-        for data in data_iterator:
-            p.feed(data)
-        im = p.close()
-        if picture.rotation:
-            im = im.rotate(int(picture.rotation), expand=True)
-        else:
-            im = adjust_orientation_from_exif(im)
-        im.thumbnail((max_width, max_height), Image.ANTIALIAS)
-        output = StringIO()
-        im.save(output, 'JPEG', quality=90) # PIL manual says avoid quality > 95
         mime_type = 'image/jpeg'
-        data_iterator = iter([output.getvalue()])
+
+        diskcache_key = '%s,%s,%s' % (max_width, max_height,
+                                      picture.rotation or 0)
+        cached = diskcache.get(picture.blob.href, diskcache_key)
+        if cached is not None:
+            data_iterator = cached
+        else:
+            p = ImageFile.Parser()
+            for data in data_iterator:
+                p.feed(data)
+            im = p.close()
+            if picture.rotation:
+                im = im.rotate(int(picture.rotation), expand=True)
+            else:
+                im = adjust_orientation_from_exif(im)
+            im.thumbnail((max_width, max_height), Image.ANTIALIAS)
+            output = StringIO()
+            im.save(output, 'JPEG', quality=90) # PIL manual says avoid quality > 95
+            data_iterator = iter([output.getvalue()])
+            diskcache.put(picture.blob.href, diskcache_key, [output.getvalue()])
 
     return HttpResponse(list(data_iterator), # see django #6527
                         content_type=mime_type)
