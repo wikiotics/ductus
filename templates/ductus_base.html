@@ -36,7 +36,7 @@
           &mdash; <a href="/logout/">{% trans "Log&nbsp;out" %}</a></li>
 {% else %}
         {% block login_button %}
-          <li><a href="/login/?next={{ request.get_full_path|urlencode|iriencode|urlencode }}">{% trans "Log&nbsp;in" %}</a></li>
+          <li><a href="/login/?next={{ request.escaped_full_path|urlencode }}">{% trans "Log&nbsp;in" %}</a></li>
         {% endblock %}
 {% endif %}
       </ul>
@@ -51,7 +51,7 @@
       <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
       <form action="/setlang/" method="post">
         <p>
-          <input name="next" type="hidden" value="{{ request.get_full_path|urlencode|iriencode }}" />
+          <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />
           <select name="language">
             {% for lang in LANGUAGES %}
             <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.0 }} {{ lang.1 }}</option>{% endfor %}
