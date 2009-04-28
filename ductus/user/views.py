@@ -48,5 +48,5 @@ def user_creation(request, template_name='registration/create_user.html',
 def view_userpage(request, username):
     user = get_object_or_404(User, username=username)
     return render_to_response("user/userpage.html", {
-        'user': user,
+        'userpage_user': user,
     }, context_instance=RequestContext(request))
