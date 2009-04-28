@@ -33,10 +33,10 @@
 {% endif %}
 {% if user.is_authenticated %}
         <li><a href="/user/{{ user.username }}">{{ user.username }}</a>
-          &mdash; <a href="/logout/">{% trans "Log&nbsp;out" %}</a></li>
+          &mdash; <a href="/logout/" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
 {% else %}
         {% block login_button %}
-          <li><a href="/login/?next={{ request.escaped_full_path|urlencode }}">{% trans "Log&nbsp;in" %}</a></li>
+          <li><a href="/login/?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
         {% endblock %}
 {% endif %}
       </ul>
