@@ -263,7 +263,7 @@ def urn_linkify(html):
     return re.sub(r'urn:[_\-A-Za-z0-9\:]*', repl, html)
 
 def allow_line_wrap(html):
-    return html.replace('pre>', 'tt>').replace('\n', '<br/>\n')
+    return html.replace('pre>', 'code>').replace('\n', '<br/>\n')
 
 try:
     import pygments, pygments.lexers, pygments.formatters
