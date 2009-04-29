@@ -5,19 +5,19 @@
 {% with request.ductus as ductus %}
   <div id="ductus_document_header">
     <ul>
-      {% if ductus.resource %}<li{% if not request.GET.view %} class="selected"{% endif %}><a href="{{ request.path|urlencode|iriencode }}">{% trans "Document" %}</a></li>{% endif %}
+      {% if ductus.resource %}<li{% if not request.GET.view %} class="selected"{% endif %}><a href="{{ request.path|urlencode|iriencode }}{{ oldid_str_qm }}">{% trans "Document" %}</a></li>{% endif %}
       {# <li>Talk (location)</li> #}
       {% if ductus.resource %}
         {# <li>Talk (document)</li> #}
-        <li{% ifequal request.GET.view "edit" %} class="selected"{% endifequal %}><a href="?view=edit">{% trans "Edit" %}</a></li> {# fixme: check for permission to edit in place. #}
+        <li{% ifequal request.GET.view "edit" %} class="selected"{% endifequal %}><a href="?view=edit{{ oldid_str_amp }}">{% trans "Edit" %}</a></li> {# fixme: check for permission to edit in place. #}
         {# <li>{% trans "Copy" %}</li> #}
         {% if 0 and ductus.wiki_revision %}<li>{% trans "Delete" %}</li>{% endif %} {# fixme: poor name since it doesn't permanently delete #}
         {# <li>Flag</li> #}
       {% endif %}
       {% if ductus.resource or ductus.wiki_page %}
-        <li{% ifequal request.GET.view "history" %} class="selected"{% endifequal %}><a href="?view=history">{% trans "History" %}</a></li>
+        <li{% ifequal request.GET.view "history" %} class="selected"{% endifequal %}><a href="?view=history{{ oldid_str_amp }}">{% trans "History" %}</a></li>
       {% endif %}
-      <li{% ifequal request.GET.view "view_index" %} class="selected"{% endifequal %}><a href="?view=view_index">{% trans "More views" %}</a></li>
+      <li{% ifequal request.GET.view "view_index" %} class="selected"{% endifequal %}><a href="?view=view_index{{ oldid_str_amp }}">{% trans "More views" %}</a></li>
     </ul>
   </div>
 {% endwith %}

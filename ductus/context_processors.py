@@ -28,3 +28,15 @@ def site_settings(request):
     return dict(ductus_media_prefix=mark_safe(dmp),
                 ductus_site_name=mark_safe(dsn),
                 ductus_site_head=mark_safe(dsh))
+
+def oldid(request):
+    oldid_str_amp = oldid_str_qm = ''
+    try:
+        if request.GET['oldid'] and request.ductus.wiki_revision:
+            oldid_str = u'oldid=%d' % request.ductus.wiki_revision.id
+            oldid_str_amp = mark_safe(u'&amp;' + oldid_str)
+            oldid_str_qm = mark_safe(u'?' + oldid_str)
+    except (KeyError, AttributeError):
+        pass
+    return dict(oldid_str_amp=oldid_str_amp,
+                oldid_str_qm=oldid_str_qm)

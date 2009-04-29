@@ -81,6 +81,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'ductus.context_processors.site_settings',
+    'ductus.context_processors.oldid',
 )
 
 INSTALLED_APPS = (

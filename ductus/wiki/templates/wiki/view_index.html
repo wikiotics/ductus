@@ -6,9 +6,9 @@
 {% for view in special_views %}
 <li>
   {% if view %}
-    <a href="?view={{ view }}">{{ view }}</a>
+    <a href="?view={{ view }}{{ oldid_str_amp }}">{{ view }}</a>
   {% else %}
-    <a href="{{ request.path|urlencode|iriencode }}"><em>(default)</em></a>
+    <a href="{{ request.path|urlencode|iriencode }}{{ oldid_str_qm }}"><em>(default)</em></a>
   {% endif %}
 </li>
 {% endfor %}
@@ -17,7 +17,7 @@
 <h4>Generic views</h4>
 <ul>
 {% for view in generic_views %}
-<li><a href="?view={{ view }}">{{ view }}</a></li>
+<li><a href="?view={{ view }}{{ oldid_str_amp }}">{{ view }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}
