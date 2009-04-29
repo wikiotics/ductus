@@ -9,7 +9,7 @@
     <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery-ui-1.7.custom.min.js"></script>
     <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/json2.min.js"></script>
     <script type="text/javascript">
-      var RecaptchaOptions = {'theme': 'white', 'lang': '{{ LANGUAGE_CODE }}'};
+      var RecaptchaOptions = {'theme': 'white', 'lang': '{{ LANGUAGE_CODE|slice:':2' }}'};
       {% block javascript %}{% endblock %}
     </script>
     {{ ductus_site_head }}
