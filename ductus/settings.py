@@ -9,6 +9,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+EMAIL_SUBJECT_PREFIX = '[Ductus] '
+
 DATABASE_ENGINE = ''           # 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 DATABASE_NAME = ''             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
