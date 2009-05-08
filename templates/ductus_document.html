@@ -4,7 +4,7 @@
 {% block document_header %}
 {% with request.ductus as ductus %}
 {% if oldid_str_qm %}{% with request.path|urlencode|iriencode as current_url %}{% blocktrans %}You may be viewing an old version of this page.  <a href="{{ current_url }}">Click here to see the most up-to-date version.</a>{% endblocktrans %}{% endwith %}{% endif %}
-{% if not ductus.wiki_page %}{% trans "You are viewing a URN.  This page is static and will never change." %}{% endif %}
+{% if ductus.resource and not ductus.wiki_page %}{% trans "You are viewing a URN.  This page is static and will never change." %}{% endif %}
   <div id="ductus_document_header">
     <ul>
       {% if ductus.resource %}<li{% if not request.GET.view %} class="selected"{% endif %}><a href="{{ request.path|urlencode|iriencode }}{{ oldid_str_qm }}">{% trans "Document" %}</a></li>{% endif %}
