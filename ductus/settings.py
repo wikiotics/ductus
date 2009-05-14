@@ -73,7 +73,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".
     # Always use forward slashes, even on Windows.
 
-#    '/path/to/ductus/ductus/templates',
+#    '/path/to/ductus/templates',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
