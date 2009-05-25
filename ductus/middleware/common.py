@@ -2,7 +2,7 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
 
 from ductus.wiki import SuccessfulEditRedirect
-from ductus.util.http import render_json_response
+from ductus.util.http import render_json_response, ImmediateResponse
 
 class DuctusCommonMiddleware(object):
     def process_request(self, request):
@@ -14,3 +14,7 @@ class DuctusCommonMiddleware(object):
         if request.is_ajax() and isinstance(response, SuccessfulEditRedirect):
             response = render_json_response({"urn": response.urn})
         return response
+
+    def process_exception(self, request, exception):
+        if isinstance(exception, ImmediateResponse):
+            return exception.response

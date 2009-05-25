@@ -31,10 +31,10 @@ from django.utils.http import urlquote
 from django.conf import settings
 
 from ductus.resource import determine_header
-from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn
+from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, user_has_edit_permission
 from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view, unvarying
-from ductus.util.http import query_string_not_found, render_json_response
+from ductus.util.http import query_string_not_found, render_json_response, ImmediateResponse
 
 class DuctusRequestInfo(object):
     def __init__(self, resource, requested_view, wiki_page, wiki_revision):
@@ -137,11 +137,21 @@ def view_urn(request, hash_type, hash_digest):
     urn = 'urn:%s:%s' % (hash_type, hash_digest)
     return main_view(request, urn)
 
+def check_edit_permission(request, pagename, status=403):
+    if not user_has_edit_permission(request.user, pagename):
+        # fixme: real templated message
+        raise ImmediateResponse('You do not have permission to edit this page.', status=status)
+
+def check_create_permission(request, pagename, status=404):
+    if not user_has_edit_permission(request.user, pagename):
+        # fixme: real templated message
+        raise ImmediateResponse('This page does not exist, and you do not have permission to create it.', status=status)
+
 def _handle_successful_wikiedit(request, response, page):
     # the underlying page has been modified, so we should take note of that
     # and save its new location
 
-    # fixme: check for permission
+    check_edit_permission(request, page.name)
 
     revision = WikiRevision(page=page, urn=response.urn[4:])
     if request.user.is_authenticated():
@@ -211,6 +221,7 @@ def implicit_new_wikipage(request, pagename):
         'pagename': pagename,
         'creation_views': registered_creation_views.keys(),
     })
+    check_create_permission(request, pagename)
     t = loader.get_template('wiki/implicit_new_wikipage.html')
     return HttpResponse(t.render(c), status=404)
 
@@ -221,6 +232,8 @@ def creation_view(request, page_type):
         raise Http404
 
     response = view_func(request)
+    if "target" in request.GET:
+        check_create_permission(request, request.GET["target"], status=403)
     if "target" in request.GET and isinstance(response, SuccessfulEditRedirect):
         page, page_created = WikiPage.objects.get_or_create(name=request.GET["target"])
         if page_created:

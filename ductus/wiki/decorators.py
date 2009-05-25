@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.wiki import registered_views, registered_creation_views
+from ductus.wiki import registered_views, registered_creation_views, wiki_permissions
 
 def register_view(model, label=None, requires=(lambda d: d.resource)):
     """Registers a URN view function.
@@ -44,3 +44,9 @@ def unvarying(func):
         response._unvarying = True
         return response
     return new_func
+
+def register_wiki_permission(prefix):
+    def _register_wiki_permission(func):
+        wiki_permissions[prefix] = func
+        return func
+    return _register_wiki_permission

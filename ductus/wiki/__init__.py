@@ -44,5 +44,16 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
     def set_redirect_url(self, url):
         self['Location'] = iri_to_uri(url)
 
+def user_has_edit_permission(user, pagename):
+    if '/' not in pagename:
+        return False
+
+    permission_func = wiki_permissions.get(pagename.partition('/')[0],
+                                           lambda user, pagename: False)
+    return permission_func(user, pagename)
+
 registered_views = {}
 registered_creation_views = {}
+wiki_permissions = {}
+
+wiki_permissions['wiki'] = lambda user, pagename: True

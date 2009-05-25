@@ -33,3 +33,11 @@ def query_string_not_found(request):
     t = loader.get_template('query_string_404.html')
     c = RequestContext(request)
     return HttpResponse(t.render(c), status=404)
+
+class ImmediateResponse(Exception):
+    def __init__(self, response, *args, **kwargs):
+        if not isinstance(response, HttpResponse):
+            response = HttpResponse(response, *args, **kwargs)
+        elif args or kwargs:
+            raise TypeError("too many arguments")
+        self.response = response
