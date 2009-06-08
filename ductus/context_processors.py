@@ -27,7 +27,8 @@ def site_settings(request):
     dsh = getattr(settings, "DUCTUS_SITE_HEAD", "")
     return dict(ductus_media_prefix=mark_safe(dmp),
                 ductus_site_name=mark_safe(dsn),
-                ductus_site_head=mark_safe(dsh))
+                ductus_site_head=mark_safe(dsh),
+                ductus_front_page=settings.DUCTUS_FRONT_PAGE)
 
 def oldid(request):
     oldid_str_amp = oldid_str_qm = ''

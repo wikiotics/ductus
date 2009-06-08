@@ -5,7 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/wiki/front_page', 'permanent': False}),
+    (r'^$', 'django.views.generic.simple.redirect_to', {'url': settings.DUCTUS_FRONT_PAGE, 'permanent': False}),
     (r'^admin/', include(admin.site.urls)),
     (r'^urn/(?P<hash_type>[-_\w]+)/(?P<hash_digest>[-_\w]+)$', 'ductus.wiki.views.view_urn'),
     (r'^(wiki/.+)$', 'ductus.wiki.views.view_wikipage'),
