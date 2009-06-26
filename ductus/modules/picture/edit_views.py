@@ -24,11 +24,12 @@ from django.http import QueryDict, HttpResponse
 from django.core.paginator import Paginator
 
 from ductus.wiki import SuccessfulEditRedirect
-from ductus.wiki.decorators import register_creation_view
+from ductus.wiki.decorators import register_creation_view, register_view
 from ductus.util import iterate_file_object
 from ductus.util.http import render_json_response
 from ductus.modules.picture.models import Picture
 from ductus.modules.picture.flickr import flickr, FlickrPhoto, license_map, url_format_map, valid_sort_methods
+from ductus.modules.picture.forms import PictureRotationForm
 
 def download_flickr(url):
     picture_id = re.match(r'http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.@]+/([0-9]+)', url).group(1)
@@ -124,4 +125,20 @@ def flickr_search_view(request):
         'next_query_string': next_qs,
         'previous_query_string': prev_qs,
         'sort_method': kw.get('sort', 'date-posted-desc'),
+    }, RequestContext(request))
+
+@register_view(Picture, 'edit')
+def edit_picture(request):
+    if request.method == 'POST':
+        form = PictureRotationForm(request.POST)
+        if form.is_valid():
+            picture = request.ductus.resource = request.ductus.resource.clone()
+            picture.rotation = form.cleaned_data['rotation']
+            urn = picture.save()
+            return SuccessfulEditRedirect(urn)
+    else:
+        form = PictureRotationForm()
+
+    return render_to_response('picture/edit.html', {
+        'form': form,
     }, RequestContext(request))

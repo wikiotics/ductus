@@ -76,3 +76,14 @@ class PictureUrnField(forms.CharField):
             pass
         # Fixme: we should probably give more specific error responses
         raise forms.ValidationError('Not a valid picture in the system')
+
+class PictureRotationForm(forms.Form):
+    choices = (
+        (None, 'Use image metadata'),
+        (0, 'No rotation'),
+        (90, '90 degrees counterclockwise'),
+        (180, '180 degrees'),
+        (270, '90 degrees clockwise'),
+    )
+
+    rotation = forms.ChoiceField(choices=choices)
