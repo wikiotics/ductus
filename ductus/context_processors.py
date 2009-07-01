@@ -31,6 +31,17 @@ def site_settings(request):
                 ductus_front_page=settings.DUCTUS_FRONT_PAGE)
 
 def oldid(request):
+    """Sets `oldid_str_amp` and `oldid_str_qm` in the context.
+
+    One of these two variables can be safely appended to a url to make it a
+    link to a given 'oldid'.  If 'oldid' is not in `request.GET`, these two
+    variables will simply return the empty string.
+
+    You should append `oldid_str_qm` to a url if is has no query_string; append
+    `oldid_str_amp` if there is already a query_string that you are extending.
+
+    See templates/ductus_document.html for examples
+    """
     oldid_str_amp = oldid_str_qm = ''
     try:
         if request.GET['oldid'] and request.ductus.wiki_revision:
