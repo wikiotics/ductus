@@ -31,18 +31,10 @@ def nothing_url():
             + "modules/picture/img/nothing.png")
 
 class PictureSelector(forms.TextInput):
-    """Picture selection widget
+    """Picture selection widget"""
 
-    Requires static/modules/picture/js/picture_selector.js
-    """
-
-    # fixme: we should set some element of this class to make it clear it
-    # depends on picture_selector.js.  And hopefully we can make including an
-    # automatic phenomenon.
-
-    # or we could just move the static js file to a string here...
-
-    # also, we should do the same thing for CSS
+    class Media:
+        js = (settings.DUCTUS_MEDIA_PREFIX + 'modules/picture/js/picture_selector.js',)
 
     def render(self, name, value, attrs=None):
         if attrs is None:

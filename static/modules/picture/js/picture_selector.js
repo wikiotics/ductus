@@ -1,7 +1,3 @@
-function resolve_urn(urn) {
-    return '/' + urn.split(':').join('/');
-}
-
 var connect_picture_widgets = function () {
     function set_urn(div, urn) {
         div.children("input").val(urn);
