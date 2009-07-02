@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from functools import wraps
+
 from ductus.wiki import registered_views, registered_creation_views, wiki_permissions
 
 def register_view(model, label=None, requires=(lambda d: d.resource)):
@@ -43,7 +45,7 @@ def unvarying(func):
         response = func(*args, **kwargs)
         response._unvarying = True
         return response
-    return new_func
+    return wraps(func)(new_func)
 
 def register_wiki_permission(prefix):
     def _register_wiki_permission(func):
