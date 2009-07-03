@@ -171,7 +171,10 @@ def view_wikipage(request, pagename):
 
     if page:
         if "oldid" in request.GET:
-            revision = get_object_or_404(WikiRevision, pk=request.GET["oldid"], page=page)
+            try:
+                revision = get_object_or_404(WikiRevision, pk=request.GET["oldid"], page=page)
+            except ValueError: # oldid is not an integer
+                return query_string_not_found(request)
         else:
             revision = page.get_latest_revision()
     else:
