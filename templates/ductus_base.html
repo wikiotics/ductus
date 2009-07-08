@@ -44,6 +44,13 @@
       <h1><a href="{{ ductus_front_page }}">{{ ductus_site_name }}</a></h1>
       <hr/>
     </div>
+{% if messages %}
+    <div class="messages">
+{% for message in messages %}
+      <div>{{ message }}</div>
+{% endfor %}
+    </div>
+{% endif %}
     {% block document_header %}{% endblock %}
     <div id="ductus_content">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
     <div id="ductus_footer">
