@@ -26,9 +26,7 @@ urlpatterns = patterns('',
     url(r'^setlang/$', 'django.views.i18n.set_language'),
 )
 
-if (settings.DEBUG
-    and getattr(settings, "DUCTUS_MEDIA_PREFIX", "").startswith('/')
-    and getattr(settings, "DUCTUS_MEDIA_ROOT", "")):
+if (settings.DEBUG and settings.DUCTUS_MEDIA_PREFIX.startswith('/')):
     urlpatterns += patterns('',
-        url(r'^%s(?P<path>.*)$' % settings.DUCTUS_MEDIA_PREFIX[1:], 'django.views.static.serve', {'document_root': settings.DUCTUS_MEDIA_ROOT}),
+        url(r'^%s(?P<path>.*)$' % settings.DUCTUS_MEDIA_PREFIX[1:], 'django.views.static.serve', {'document_root': settings.DUCTUS_SITE_ROOT + '/static'}),
     )

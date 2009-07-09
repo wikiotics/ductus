@@ -22,10 +22,9 @@ def site_settings(request):
 
     Includes ductus_media_prefix, ductus_site_name, and ductus_site_head
     """
-    dmp = getattr(settings, "DUCTUS_MEDIA_PREFIX", "/static/ductus/")
     dsn = getattr(settings, "DUCTUS_SITE_NAME", "Example Ductus Site")
     dsh = getattr(settings, "DUCTUS_SITE_HEAD", "")
-    return dict(ductus_media_prefix=mark_safe(dmp),
+    return dict(ductus_media_prefix=settings.DUCTUS_MEDIA_PREFIX,
                 ductus_site_name=mark_safe(dsn),
                 ductus_site_head=mark_safe(dsh),
                 ductus_front_page=settings.DUCTUS_FRONT_PAGE)

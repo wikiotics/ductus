@@ -1,7 +1,7 @@
 include MANIFEST.in
 include COPYING
-recursive-include static *
-recursive-include templates *
+recursive-include ductus/static *
+recursive-include ductus/templates *
 recursive-include ductus/modules/picture/templates *
 recursive-include ductus/modules/picture_choice/templates *
 recursive-include ductus/modules/textwiki/templates *

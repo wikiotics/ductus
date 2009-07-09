@@ -1,5 +1,9 @@
 # Django settings for ductus project.
 
+import os
+DUCTUS_SITE_ROOT = os.path.dirname(__file__)
+del os
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -70,10 +74,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'ductus.urls'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates".
-    # Always use forward slashes, even on Windows.
-
-#    '/path/to/ductus/templates',
+    DUCTUS_SITE_ROOT + '/templates',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -107,7 +108,7 @@ DUCTUS_STORAGE_BACKEND = 'ductus_site.storage_backend'
 
 DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 
-#DUCTUS_MEDIA_PREFIX = '/static/ductus/'
+DUCTUS_MEDIA_PREFIX = '/static/ductus/'
 #DUCTUS_SITE_NAME = 'Example Ductus Site'
 
 DUCTUS_ALLOWED_LICENSES = (

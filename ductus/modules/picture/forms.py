@@ -27,8 +27,7 @@ def urn_to_img_url(urn):
         return None
 
 def nothing_url():
-    return (getattr(settings, "DUCTUS_MEDIA_PREFIX", "/static/ductus/")
-            + "modules/picture/img/nothing.png")
+    return settings.DUCTUS_MEDIA_PREFIX + "modules/picture/img/nothing.png"
 
 class PictureSelector(forms.TextInput):
     """Picture selection widget"""
