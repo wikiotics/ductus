@@ -7,15 +7,16 @@
 {% if form.errors %}
 <p>{% trans "Your username and password did not match. Please try again." %}</p>
 {% endif %}
-<form method="post" action=".">
+<form method="post" action="{{ request.path }}">
 <table>
 <tr><td><label for="id_username">{% trans "Username" %}:</label></td><td>{{ form.username }}</td></tr>
-<tr><td><label for="id_password">{% trans "Password" %}:</label></td><td>{{ form.password }} <a href="/reset-password/">Forget your password</a>?</td></tr>
+<tr><td><label for="id_password">{% trans "Password" %}:</label></td><td>{{ form.password }} <a href="{% url django.contrib.auth.views.password_reset %}">Forget your password</a>?</td></tr>
 </table>
 <input type="submit" value="{% trans "Log in" %}" />
-{% ifnotequal next "/logout/" %}<input type="hidden" name="next" value="{{ next }}" />{% endifnotequal %}
+{% url django.contrib.auth.views.logout as logout_url %}
+{% ifnotequal next logout_url %}{% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}{% endifnotequal %}
 </form>
-<p>Need to <a href="/create-account/">create an account</a>?</p>
+<p>Need to <a href="{% url ductus.user.views.user_creation %}">create an account</a>?</p>
 {% endblock %}
 
 {% block javascript %}

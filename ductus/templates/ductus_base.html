@@ -33,11 +33,11 @@
         </li>
 {% endif %}
 {% if user.is_authenticated %}
-        <li><a href="/user/{{ user.username }}">{{ user.username }}</a>
-          &mdash; <a href="/logout/" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
+        <li><a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
+          &mdash; <a href="{% url django.contrib.auth.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
 {% else %}
         {% block login_button %}
-          <li><a href="/login/?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
+          <li><a href="{% url django.contrib.auth.views.login %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
         {% endblock %}
 {% endif %}
       </ul>
@@ -56,7 +56,7 @@
     <div id="ductus_footer">
       <hr/>
       <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
-      <form action="/setlang/" method="post">
+      <form action="{% url django.views.i18n.set_language %}" method="post">
         <p>
           <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />
           <select name="language">
