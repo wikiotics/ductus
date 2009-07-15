@@ -77,6 +77,10 @@ TEMPLATE_DIRS = (
     DUCTUS_SITE_ROOT + '/templates',
 )
 
+LOCALE_PATHS = (
+    DUCTUS_SITE_ROOT + '/locale',
+)
+
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',
     'django.core.context_processors.debug',
