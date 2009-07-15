@@ -16,7 +16,6 @@
 
 import re
 from functools import partial
-from urllib2 import urlopen
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -25,32 +24,10 @@ from django.core.paginator import Paginator
 
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view, register_view
-from ductus.util import iterate_file_object
 from ductus.util.http import render_json_response
 from ductus.modules.picture.models import Picture
 from ductus.modules.picture.flickr import flickr, FlickrPhoto, license_map, url_format_map, valid_sort_methods
-from ductus.modules.picture.forms import PictureRotationForm
-
-def download_flickr(url):
-    picture_id = re.match(r'http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.@]+/([0-9]+)', url).group(1)
-    photo = FlickrPhoto(flickr.photos_getInfo(photo_id=picture_id)["photo"])
-    if photo["media"] != "photo":
-        raise Exception("must be a photo, not '%s'" % photo["media"])
-
-    picture = Picture()
-    picture.blob.store(iterate_file_object(urlopen(photo.original_url)))
-    picture.blob.mime_type = 'image/jpeg'
-    license_elt = picture.common.licenses.new_item()
-    license_elt.href = photo['license']
-    picture.common.licenses.array = [license_elt]
-    picture.credit.title.text = photo['title']['_content']
-    picture.credit.original_url.href = photo.page_url
-    picture.credit.author.text = "%(realname)s (%(username)s)" % photo['owner']
-    picture.credit.author_url.href = photo.userpage_url
-    if photo['rotation']:
-        picture.rotation = unicode(360 - int(photo['rotation']))
-    # fixme: save log of what we just did ?
-    return picture.save()
+from ductus.modules.picture.forms import PictureRotationForm, PictureImportForm
 
 @register_creation_view(Picture)
 def new_picture(request):
@@ -58,18 +35,16 @@ def new_picture(request):
         return flickr_search_view(request)
 
     if request.method == 'POST':
-        # TODO: plugin system to recognize URI style and fetch image
-        uri = request.POST['uri']
-        if uri.startswith('urn:'):
-            urn = uri
-            Picture.load(urn) # this line makes sure it's a picture
-        else:
-            urn = download_flickr(uri)
-
-        return SuccessfulEditRedirect(urn)
-
+        form = PictureImportForm(request.POST)
+        if form.is_valid():
+            urn = form.save()
+            return SuccessfulEditRedirect(urn)
     else:
-        return HttpResponse('<form method="post">Enter a URI: <input name="uri"/><input type="submit" /></form>')
+        form = PictureImportForm()
+
+    return render_to_response('picture/picture_import_form.html', {
+        'form': form,
+    }, RequestContext(request))
 
 def flickr_search_view(request):
     kw = {'page': request.GET.get("page", "1")}

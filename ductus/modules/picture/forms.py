@@ -17,6 +17,8 @@
 from django.conf import settings
 from django import forms
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy, ugettext as _
+
 from ductus.wiki import get_resource_database, resolve_urn, UnsupportedURN
 from ductus.modules.picture.models import Picture
 
@@ -78,3 +80,27 @@ class PictureRotationForm(forms.Form):
     )
 
     rotation = forms.ChoiceField(choices=choices)
+
+class PictureImportForm(forms.Form):
+    uri = forms.CharField()
+
+    _uri_handlers = []
+
+    @classmethod
+    def register_uri_handler(cls, handler):
+        return cls._uri_handlers.append(handler)
+
+    def clean_uri(self):
+        uri = self.cleaned_data['uri']
+        for handler_class in self._uri_handlers:
+            if handler_class.handles(uri):
+                handler = handler_class(uri)
+                handler.validate()
+                self.handler = handler
+                return uri
+        raise forms.ValidationError(_("Unrecogized uri type"))
+
+    def save(self):
+        return self.handler.save()
+
+# fixme: need a uri handler for urn: urls as well as local /urn/* urls

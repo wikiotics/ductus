@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+
 try:
     import json # added in python 2.6
 except ImportError:
@@ -102,5 +104,53 @@ class FlickrPhoto(object):
 
     def __getitem__(self, key):
         if key == "license":
-            return license_map()[self.dict[key]]
+            return license_map().get(self.dict[key], None)
         return self.dict[key]
+
+# Everything below is for the flickr uri handler
+
+from urllib2 import urlopen
+
+from django import forms
+from django.utils.translation import ugettext_lazy, ugettext as _
+
+from ductus.modules.picture.forms import PictureImportForm
+from ductus.modules.picture.models import Picture
+from ductus.util import iterate_file_object
+
+@PictureImportForm.register_uri_handler
+class FlickrUriHandler(object):
+    _uri_re = re.compile(r'http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.@]+/([0-9]+)')
+
+    @classmethod
+    def handles(cls, uri):
+        return bool(cls._uri_re.match(uri))
+
+    def __init__(self, uri):
+        self.uri = uri
+
+    def validate(self):
+        picture_id = self._uri_re.match(self.uri).group(1)
+        photo = FlickrPhoto(flickr.photos_getInfo(photo_id=picture_id)["photo"])
+        if photo["media"] != "photo":
+            raise forms.ValidationError(_("must be a photo, not '%s'" % photo["media"]))
+        if photo["license"] is None:
+            raise forms.ValidationError(_("This photo is not available under an acceptable license for this wiki."))
+        self.photo = photo
+
+    def save(self):
+        photo = self.photo
+        picture = Picture()
+        picture.blob.store(iterate_file_object(urlopen(photo.original_url)))
+        picture.blob.mime_type = 'image/jpeg'
+        license_elt = picture.common.licenses.new_item()
+        license_elt.href = photo['license']
+        picture.common.licenses.array = [license_elt]
+        picture.credit.title.text = photo['title']['_content']
+        picture.credit.original_url.href = photo.page_url
+        picture.credit.author.text = "%(realname)s (%(username)s)" % photo['owner']
+        picture.credit.author_url.href = photo.userpage_url
+        if photo['rotation']:
+            picture.rotation = unicode(360 - int(photo['rotation']))
+        # fixme: save log of what we just did ?
+        return picture.save()
