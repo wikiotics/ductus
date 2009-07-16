@@ -16,7 +16,7 @@
 
 from __future__ import with_statement
 
-import os, os.path
+import os
 from shutil import copyfile
 
 from ductus.resource import UnsupportedURN

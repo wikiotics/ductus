@@ -16,7 +16,7 @@
 
 from __future__ import with_statement
 
-import os, os.path
+import os
 
 from django.conf import settings
 
