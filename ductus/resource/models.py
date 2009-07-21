@@ -26,6 +26,9 @@ from ductus.resource import register_model, get_resource_database
 class ValidationError(Exception):
     pass
 
+class ModelMismatchError(Exception):
+    pass
+
 def allowed_values_attribute_validator(allowed_values):
     def validator(v):
         if v not in allowed_values:
@@ -467,7 +470,7 @@ class Model(Element):
     def load(cls, urn):
         resource = get_resource_database().get_resource_object(urn)
         if type(resource) != cls:
-            raise Exception("Expecting %s, got %" % (cls, type(resource)))
+            raise ModelMismatchError("Expecting %s, got %s" % (cls, type(resource)))
         return resource
 
     def clone(self):

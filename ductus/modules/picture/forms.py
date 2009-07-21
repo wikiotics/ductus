@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+
 from django.conf import settings
 from django import forms
 from django.utils.safestring import mark_safe
@@ -103,4 +105,45 @@ class PictureImportForm(forms.Form):
     def save(self):
         return self.handler.save()
 
-# fixme: need a uri handler for urn: urls as well as local /urn/* urls
+@PictureImportForm.register_uri_handler
+class UrnHandler(object):
+    "uri handler for urn: uris as well as local /urn/* urls"
+
+    _re_objects = (
+        re.compile(r'.*\/urn\/(sha384)\/([A-Za-z0-9\-_]{64}).*'),
+        re.compile(r'urn\:(sha384)\:([A-Za-z0-9\-_]{64})'),
+    )
+
+    @classmethod
+    def handles(cls, uri):
+        return any(r.match(uri) for r in cls._re_objects)
+
+    def __init__(self, uri):
+        self.uri = uri
+
+    def validate(self):
+        from ductus.resource import get_resource_database
+        from ductus.resource.models import ModelMismatchError
+        resource_database = get_resource_database()
+
+        for r in self._re_objects:
+            match = r.match(self.uri)
+            if match is not None:
+                hash_type, digest = match.group(1), match.group(2)
+                urn = "urn:%s:%s" % (hash_type, digest)
+                if urn not in resource_database:
+                    raise forms.ValidationError(_(u"This urn cannot be found on the server you are currently accessing."))
+                try:
+                    Picture.load(urn)
+                except ModelMismatchError:
+                    raise forms.ValidationError(_(u"This urn represents content that is not a picture."))
+                # fixme: handle exception raised by get_resource_object if it's
+                # actually a blob
+                self.urn = urn
+                return
+
+        # this should never be reached
+        assert self.handles(uri)
+
+    def save(self):
+        return self.urn
