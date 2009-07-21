@@ -42,8 +42,11 @@ def new_picture(request):
     else:
         form = PictureImportForm()
 
+    verbose_descriptions = PictureImportForm.get_verbose_input_descriptions()
+
     return render_to_response('picture/picture_import_form.html', {
         'form': form,
+        'verbose_descriptions': verbose_descriptions,
     }, RequestContext(request))
 
 def flickr_search_view(request):

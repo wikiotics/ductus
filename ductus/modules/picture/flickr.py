@@ -122,6 +122,8 @@ from ductus.util import iterate_file_object
 class FlickrUriHandler(object):
     _uri_re = re.compile(r'http\://[A-Za-z\.]*flickr\.com/photos/[A-Za-z0-9_\-\.@]+/([0-9]+)')
 
+    verbose_description = ugettext_lazy("a URL from Flickr")
+
     @classmethod
     def handles(cls, uri):
         return bool(cls._uri_re.match(uri))

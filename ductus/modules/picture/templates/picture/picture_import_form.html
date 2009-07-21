@@ -1,10 +1,17 @@
 {% extends "ductus_base.html" %}
 
 {% block content %}
+<p>Please enter one of the following below:</p>
+<ul>
+{% for input_type_desc in verbose_descriptions %}
+   <li>{{ input_type_desc }}</li>
+{% endfor %}
+</ul>
+
 <form method="post" action="{{ request.escaped_full_path }}">
 <table>
 {{ form }}
-<tr><td></td><td><input type="submit"/></td></tr>
+<tr><td></td><td><input type="submit" value="Add picture"/></td></tr>
 </table>
 </form>
 {% endblock %}

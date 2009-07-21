@@ -105,6 +105,11 @@ class PictureImportForm(forms.Form):
     def save(self):
         return self.handler.save()
 
+    @classmethod
+    def get_verbose_input_descriptions(cls):
+        return [handler.verbose_description for handler in cls._uri_handlers
+                if hasattr(handler, "verbose_description")]
+
 @PictureImportForm.register_uri_handler
 class UrnHandler(object):
     "uri handler for urn: uris as well as local /urn/* urls"
@@ -113,6 +118,8 @@ class UrnHandler(object):
         re.compile(r'.*\/urn\/(sha384)\/([A-Za-z0-9\-_]{64}).*'),
         re.compile(r'urn\:(sha384)\:([A-Za-z0-9\-_]{64})'),
     )
+
+    verbose_description = ugettext_lazy("a URN available on this site")
 
     @classmethod
     def handles(cls, uri):
