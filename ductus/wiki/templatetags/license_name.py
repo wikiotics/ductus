@@ -26,8 +26,8 @@ register = Library()
 def license_name(value):
     """Maps a license URI to a human-readable short title of the license.
 
-    In the future, the returned string will automatically be translated
-    into the current locale's language.
+    The returned string is automatically translated to the current locale's
+    language.
     """
 
     try:
