@@ -4,8 +4,8 @@ $(function () {
 $(function () {
     function pcl_object() {
         var groups = [];
-        $(".picture_choice_group_urn").each(function (i) {
-            groups.push($(this).attr("title"));
+        $(".picture_choice_group_item").each(function (i) {
+            groups.push($(this).metadata().urn);
         });
         // fixme: assert that the length of our array is equal to the number
         // of list items in #picture_choice_lesson
