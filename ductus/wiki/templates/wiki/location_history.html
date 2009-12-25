@@ -2,7 +2,7 @@
 {% block content %}
 <ol>
 {% for revision in request.ductus.wiki_page.wikirevision_set.all %}
-<li><a href="{{ revision.get_absolute_url }}">{{ revision.timestamp|date:"Y-m-d H:i:s T" }}</a> {% if revision.author %}{{ revision.author }}{% else %}{{ revision.author_ip }} {% if revision.log_message %}&ndash; <i>{{ revision.log_message }}</i>{% endif %}{% endif %}</li>
+<li><a href="{{ revision.get_absolute_url }}">{{ revision.timestamp|date:"Y-m-d H:i:s T" }}</a> {% if revision.author %}{{ revision.author }}{% else %}{{ revision.author_ip }}{% endif %} {% if revision.log_message %}&ndash; <i>{{ revision.log_message }}</i>{% endif %}</li>
 {% endfor %}
 </ol>
 {% endblock %}
