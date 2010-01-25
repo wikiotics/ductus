@@ -30,5 +30,7 @@ a.broken { color: #c00; }
 
 .clear { clear: both; }
 
+.handle { cursor: move; }
+
 /* for jquery */
 .ui-effects-transfer { border: 2px solid black; }
