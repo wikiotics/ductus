@@ -1,5 +1,5 @@
 $(function () {
-    $("ul#picture_choice_lesson").sortable({});
+    $("ul#picture_choice_lesson").sortable({'handle': '.handle'});
 });
 $(function () {
     function pcl_object() {

@@ -2,6 +2,7 @@
 {% for group in groups %}
 <li class="picture_choice_group_item" data-urn="'{{ group.urn }}'">
 <ul>
+<li class="handle">&mdash;&mdash;&mdash;</li>
 {% for frame in group.group %}
 <li>{{ frame.phrase.text }} <img alt="{{ frame.phrase.text }}" src="{{ frame.picture.href|resolve }}?view=image&amp;max_size=50,50"/></li>
 {% endfor %}
