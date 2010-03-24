@@ -1,3 +1,4 @@
+from ductus.strutil import *
 from ductus.resource import models, register_model
 from ductus.util import create_property
 
@@ -18,7 +19,7 @@ class Wikitext(models.Model):
     @create_property
     def text():
         def fget(s):
-            return ''.join(s.blob).decode('utf-8')
+            return bytes('').join(s.blob).decode('utf-8')
         def fset(s, v):
             s.blob.store([v.encode('utf-8')])
         return locals()
