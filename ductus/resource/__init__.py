@@ -136,7 +136,7 @@ class ResourceDatabase(object):
         return False
 
     def store(self, data_iterator, urn=None):
-        """x is an iterator that returns all data.
+        """data_iterator is an iterator that returns all data.
 
         Returns the urn or could raise some exceptions."""
 
