@@ -399,7 +399,7 @@ class BlobElement(LinkElement):
         if self.href:
             return get_resource_database().get_blob(self.href)
         else:
-            return ('',)
+            return ()
 
 class TypedBlobElement(BlobElement):
     "Add type attribute"
