@@ -10,18 +10,16 @@ class PictureChoiceElement(models.Element):
     phrase = models.TextElement()
     picture = models.ResourceElement(Picture)
 
+@register_model
 class PictureChoiceGroup(models.Model):
     ns = _ns
     nsmap = {'picture_choice': ns}
 
     group = models.ArrayElement(PictureChoiceElement(), min_size=4, max_size=4)
 
-register_model(PictureChoiceGroup)
-
+@register_model
 class PictureChoiceLesson(models.Model):
     ns = _ns
     nsmap = {'picture_choice': ns}
 
     groups = models.ArrayElement(models.ResourceElement(PictureChoiceGroup))
-
-register_model(PictureChoiceLesson)

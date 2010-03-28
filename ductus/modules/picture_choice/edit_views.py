@@ -14,10 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-try:
-    import json # python 2.6
-except ImportError:
-    from django.utils import simplejson as json
+import json
 
 from django import forms
 from django.shortcuts import render_to_response

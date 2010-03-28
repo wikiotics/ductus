@@ -5,7 +5,7 @@
 # fixme: recursive-include's in MANIFEST.in don't ignore text editor backup
 # files (such as *~)
 
-# fixme: depend on Python >= 2.5 somehow
+# fixme: depend on Python >= 2.6 somehow
 
 try:
     from setuptools import setup

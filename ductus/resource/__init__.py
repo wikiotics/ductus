@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import with_statement
-from ductus.strutil import *
 
 import base64
 import hashlib
@@ -32,8 +31,7 @@ hash_decode = base64.urlsafe_b64decode
 hash_algorithm = getattr(hashlib, hash_name)
 hash_digest_size = hash_algorithm().digest_size
 
-max_urn_length = len('urn:%s:%s' % (hash_name,
-                                    hash_encode(hash_algorithm('').digest())))
+max_urn_length = len('urn:%s:%s' % (hash_name, hash_encode(hash_algorithm(b'').digest()).decode("ascii")))
 
 class InvalidHeader(ValueError):
     def __init__(self, value):
@@ -128,10 +126,10 @@ class ResourceDatabase(object):
                 return False
             if urn_str == 'urn' and hash_type == hash_name:
                 try:
-                    decoded = hash_decode(bytes(digest))
+                    decoded = hash_decode(digest.encode("ascii"))
                     if len(decoded) == hash_digest_size:
                         return True
-                except TypeError:
+                except (TypeError, UnicodeEncodeError):
                     return False
         return False
 
@@ -151,7 +149,7 @@ class ResourceDatabase(object):
         tmpfile = iterator_to_tempfile(data_iterator)
 
         try:
-            digest = hash_encode(hash_obj.digest())
+            digest = hash_encode(hash_obj.digest()).decode("ascii")
             urn = "urn:%s:%s" % (hash_name, digest)
             if intended_urn and intended_urn != urn:
                 raise "URN given does not match content." # valueerror
@@ -182,7 +180,7 @@ class ResourceDatabase(object):
 
     def __check_xml(self, urn, filename):
         with file(filename, 'rb') as f:
-            f.read(len(bytes('xml\0')))
+            f.read(len(b'xml\0'))
             tree = etree.parse(f)
 
         # Make sure we recognize the root node and the document is valid
@@ -204,10 +202,10 @@ class ResourceDatabase(object):
                                 % (urn, link))
 
     def store_blob(self, x, urn=None):
-        return self.store(itertools.chain((bytes("blob\0"),), x), urn)
+        return self.store(itertools.chain((b'blob\0',), x), urn)
 
     def store_xml(self, x, urn=None):
-        return self.store(itertools.chain((bytes("xml\0"),), x), urn)
+        return self.store(itertools.chain((b'xml\0',), x), urn)
 
     def store_xml_tree(self, root, urn=None, encoding=None):
         if encoding is unicode:
@@ -256,7 +254,7 @@ def determine_header(data_iterator, replace_header=True):
     buf = bytes()
 
     try:
-        while (bytes("\0") not in buf and len(buf) < 256):
+        while (b'\0' not in buf and len(buf) < 256):
             buf += data_iterator.next()
     except StopIteration:
         data_iterator = iter(())

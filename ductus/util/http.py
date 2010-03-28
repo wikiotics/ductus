@@ -14,10 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-try:
-    import json # added in python 2.6
-except ImportError:
-    from django.utils import simplejson as json
+import json
 
 from django.http import HttpResponse
 from django.template import RequestContext, loader

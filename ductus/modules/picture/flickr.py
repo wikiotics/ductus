@@ -15,11 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-
-try:
-    import json # added in python 2.6
-except ImportError:
-    from django.utils import simplejson as json
+import json
 
 import flickrapi
 from django.conf import settings

@@ -25,11 +25,10 @@ def rotation_validator(v):
     if not v in (None, '', '0', '90', '180', '270'):
         raise models.ValidationError
 
+@register_model
 class Picture(models.Model):
     ns = 'http://wikiotics.org/ns/2009/picture'
     blob = models.TypedBlobElement(allowed_mime_types=['image/jpeg'])
     credit = CreditElement()
     rotation = models.Attribute(optional=True, blank_is_null=True,
                                 validator=rotation_validator)
-
-register_model(Picture)

@@ -14,10 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
+import json
 from urllib2 import urlopen, HTTPError as urllib2_HTTPError
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotModified, Http404

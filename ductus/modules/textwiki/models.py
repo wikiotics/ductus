@@ -1,4 +1,3 @@
-from ductus.strutil import *
 from ductus.resource import models, register_model
 from ductus.util import create_property
 
@@ -12,6 +11,7 @@ class WikiBlobElement(models.TextBlobElement):
         super(WikiBlobElement, self).__init__()
         self.markup_language = "creole-1.0"
 
+@register_model
 class Wikitext(models.Model):
     ns = 'http://wikiotics.org/ns/2009/wikitext'
     blob = WikiBlobElement()
@@ -19,9 +19,7 @@ class Wikitext(models.Model):
     @create_property
     def text():
         def fget(s):
-            return bytes('').join(s.blob).decode('utf-8')
+            return b''.join(s.blob).decode('utf-8')
         def fset(s, v):
             s.blob.store([v.encode('utf-8')])
         return locals()
-
-register_model(Wikitext)
