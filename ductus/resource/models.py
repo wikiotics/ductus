@@ -90,11 +90,11 @@ class ElementMetaclass(type):
         super(ElementMetaclass, cls).__init__(name, bases, attrs)
 
 class NoChildElementMetaclass(ElementMetaclass):
-    "Forbids subelements (but allowed attributes)"
+    "Forbids subelements (but allows attributes)"
     def __init__(cls, name, bases, attrs):
         super(NoChildElementMetaclass, cls).__init__(name, bases, attrs)
         if cls.subelements:
-            raise Exception("Subelements not allowed in a text element")
+            raise Exception("%s does not allow subelements" % cls.__name__)
 
 class ModelMetaclass(ElementMetaclass):
     def __init__(cls, name, bases, attrs):
