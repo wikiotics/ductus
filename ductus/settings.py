@@ -100,6 +100,7 @@ INSTALLED_APPS = (
     'ductus.initialize',
     'ductus.wiki',
     'ductus.user',
+    'ductus.special',
 )
 
 DUCTUS_INSTALLED_MODULES = (
