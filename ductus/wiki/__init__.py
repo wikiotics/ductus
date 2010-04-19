@@ -52,6 +52,9 @@ def user_has_edit_permission(user, pagename):
                                            lambda user, pagename: False)
     return permission_func(user, pagename)
 
+def user_has_unlink_permission(user, pagename):
+    return user.is_authenticated() and user_has_edit_permission(user, pagename)
+
 registered_views = {}
 registered_creation_views = {}
 wiki_permissions = {}

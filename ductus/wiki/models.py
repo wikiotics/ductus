@@ -43,11 +43,15 @@ class WikiPage(models.Model):
 class WikiRevision(models.Model):
     page = models.ForeignKey(WikiPage)
     timestamp = models.DateTimeField(auto_now_add=True)
-    urn = models.CharField(max_length=100) # not ideal to have a fixed max
-                                           # length... is there a way we can
-                                           # infer this from the urn subsystem?
+    urn = models.CharField(max_length=100, blank=True)
 
-    # always be sure to remove 'urn:' prefix when reading or setting urn field
+        # always be sure to remove 'urn:' prefix when reading or setting urn
+        # field
+
+        # not ideal to have a fixed max length... is there a way we can infer
+        # this from the urn subsystem?
+
+        # blank "urn" means the page has been unlinked (i.e. "deleted")
 
     author = models.ForeignKey(User, blank=True, null=True)
     author_ip = models.IPAddressField(blank=True, null=True)
@@ -61,13 +65,15 @@ class WikiRevision(models.Model):
         # fixme: See Django #6845.  We may need to move these tests to a
         # special validation function some day.
         assert not self.urn.startswith('urn:')
-        if ('urn:%s' % self.urn) not in get_resource_database():
+        if self.urn and ('urn:%s' % self.urn) not in get_resource_database():
             raise exceptions.ValidationError(_("urn is not in database: urn:%s") % self.urn)
         if (not self.author) and (not self.author_ip):
             raise exceptions.ValidationError(_("A user or IP address must be given when saving a revision"))
         return super(WikiRevision, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
+        if not self.urn:
+            return None
         return u'%s?oldid=%d' % (self.page.get_absolute_url(), self.id)
 
     def __unicode__(self):

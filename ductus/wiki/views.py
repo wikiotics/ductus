@@ -28,7 +28,7 @@ from django.utils.http import urlquote
 from django.conf import settings
 
 from ductus.resource import determine_header
-from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, user_has_edit_permission
+from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, user_has_edit_permission, user_has_unlink_permission
 from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view, unvarying
 from ductus.util.http import query_string_not_found, render_json_response, ImmediateResponse
@@ -144,18 +144,33 @@ def check_create_permission(request, pagename, status=404):
         # fixme: real templated message
         raise ImmediateResponse('This page does not exist, and you do not have permission to create it.', status=status)
 
+def check_unlink_permission(request, pagename, status=403):
+    if not user_has_unlink_permission(request.user, pagename):
+        # fixme: real templated message
+        raise ImmediateResponse('You do not have permission to delete this page.', status=status)
+
+def construct_wiki_revision(page, urn, request):
+    # the 'urn:' should already be chopped off
+    assert not urn.startswith('urn:')
+
+    # we shouldn't be preparing to modify server state on a GET request
+    assert request.method != 'GET'
+
+    revision = WikiRevision(page=page, urn=urn)
+    if request.user.is_authenticated():
+        revision.author = request.user
+    else:
+        revision.author_ip = request.remote_addr
+    revision.log_message = request.POST.get("log_message", "")
+    return revision
+
 def _handle_successful_wikiedit(request, response, page):
     # the underlying page has been modified, so we should take note of that
     # and save its new location
 
     check_edit_permission(request, page.name)
 
-    revision = WikiRevision(page=page, urn=response.urn[4:])
-    if request.user.is_authenticated():
-        revision.author = request.user
-    else:
-        revision.author_ip = request.remote_addr
-    revision.log_message = request.POST.get("log_message", "")
+    revision = construct_wiki_revision(page, response.urn[4:], request)
     revision.save()
     response.set_redirect_url(page.get_absolute_url())
     return response
@@ -171,6 +186,8 @@ def view_wikipage(request, pagename):
             try:
                 revision = WikiRevision.objects.get(id=request.GET["oldid"], page=page)
             except (ValueError, WikiRevision.DoesNotExist):
+                return query_string_not_found(request)
+            if not revision.urn:
                 return query_string_not_found(request)
         else:
             revision = page.get_latest_revision()
@@ -191,17 +208,22 @@ def view_wikipage(request, pagename):
         except urllib2_HTTPError:
             pass
 
+    if revision and revision.urn:
+        urn = 'urn:' + revision.urn
+    else:
+        urn = None
+
     if request.GET.get('view', None) == 'urn':
-        # fixme: we should just have an X-Urn header and use HEAD instead of GET
         if revision:
-            return render_json_response({"urn": "urn:" + revision.urn})
+            return render_json_response({"urn": urn})
 
     response = None
 
-    if revision:
-        response = main_view(request, ("urn:" + revision.urn), page, revision)
+    if urn:
+        response = main_view(request, urn, page, revision)
         if isinstance(response, SuccessfulEditRedirect):
             return _handle_successful_wikiedit(request, response, page)
+        response["X-Ductus-URN"] = urn
     else:
         requested_view = request.GET.get("view", None)
         request.ductus = DuctusRequestInfo(None, requested_view, page, None)
@@ -342,6 +364,20 @@ def view_history(request):
         return view_location_history(request)
     else:
         return view_document_history(request)
+
+@register_view(None, 'unlink', requires=lambda d: d.wiki_revision)
+def view_unlink_wikipage(request):
+    check_unlink_permission(request, request.ductus.wiki_page.name)
+
+    if request.ductus.wiki_revision.urn == "":
+        return HttpResponse("it's already been deleted")
+
+    if request.method == 'POST':
+        revision = construct_wiki_revision(request.ductus.wiki_page, "", request)
+        revision.save()
+        return HttpResponse("page deleted.")
+
+    return HttpResponse('log message: <form method="post"><input name="log_message"/><input type="submit" value="Delete"/></form>')
 
 @register_view(None, 'license_info')
 def view_license_info(request):
