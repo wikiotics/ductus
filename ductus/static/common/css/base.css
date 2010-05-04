@@ -23,10 +23,11 @@ div#ductus_header { background: #6b497e; border-bottom: 1px solid #39005a;
 
 hr { border: 0; height: 1px; color: #aaa; background-color: #aaa; }
 
-a { color: #00a; }
-a:visited { color: #07a; }
-a.internal { color: #061; }
-a.broken { color: #c00; }
+a { color: #002bb8; }
+a:visited { color: #5a36af; }
+a.broken { color: #c20; }
+.ductus_textwiki_content a { padding-right: 14px; background: transparent url(../img/Icon_External_Link.png) no-repeat center right; }
+.ductus_textwiki_content a.internal { padding-right: 0; background: none; }
 
 .clear { clear: both; }
 
