@@ -19,7 +19,9 @@
     {% block head %}{% endblock %}
   </head>
   <body>
+    <header>
     <div id="ductus_header">
+      <nav>
       <ul class="ductus_header_tabs">
 {% if 0 %}
         <li>Community
@@ -43,9 +45,11 @@
         {% endblock %}
 {% endif %}
       </ul>
+      </nav>
       <h1><a href="{{ ductus_front_page }}">{{ ductus_site_name }}</a></h1>
       <hr/>
     </div>
+    </header>
 {% if messages %}
     <div class="messages">
 {% for message in messages %}
@@ -55,6 +59,7 @@
 {% endif %}
     {% block document_header %}{% endblock %}
     <div id="ductus_content">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
+    <footer>
     <div id="ductus_footer">
       <hr/>
       <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
@@ -69,5 +74,6 @@
         </p>
       </form>
     </div>
+    </footer>
   </body>
 </html>
