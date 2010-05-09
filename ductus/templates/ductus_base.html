@@ -20,35 +20,35 @@
   </head>
   <body>
     <header>
-    <div id="ductus_header">
-      <nav>
-      <ul class="ductus_header_tabs">
+      <div id="ductus_header">
+        <nav>
+          <ul class="ductus_header_tabs">
 {% if 0 %}
-        <li>Community
-          <ul>
+            <li>Community
+              <ul>
 {% if user.is_authenticated %}
-            <li>My Page</li>
-            <li>My Groups</li>
-            <li></li>
+                <li>My Page</li>
+                <li>My Groups</li>
+                <li></li>
 {% endif %}
-            <li>Contribute</li>
-            <li>Help</li>
-          </ul>
-        </li>
+                <li>Contribute</li>
+                <li>Help</li>
+              </ul>
+            </li>
 {% endif %}
 {% if user.is_authenticated %}
-        <li><a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
-          &mdash; <a href="{% url django.contrib.auth.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
+            <li><a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
+              &mdash; <a href="{% url django.contrib.auth.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
 {% else %}
-        {% block login_button %}
-          <li><a href="{% url django.contrib.auth.views.login %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
-        {% endblock %}
+            {% block login_button %}
+              <li><a href="{% url django.contrib.auth.views.login %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
+            {% endblock %}
 {% endif %}
-      </ul>
-      </nav>
-      <h1><a href="{{ ductus_front_page }}">{{ ductus_site_name }}</a></h1>
-      <hr/>
-    </div>
+          </ul>
+        </nav>
+        <h1><a href="{{ ductus_front_page }}">{{ ductus_site_name }}</a></h1>
+        <hr/>
+      </div>
     </header>
 {% if messages %}
     <div class="messages">
@@ -60,20 +60,20 @@
     {% block document_header %}{% endblock %}
     <div id="ductus_content">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
     <footer>
-    <div id="ductus_footer">
-      <hr/>
-      <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
-      <form action="{% url django.views.i18n.set_language %}" method="post">
-        <p>
-          <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />
-          <select name="language">
-            {% for lang in LANGUAGES %}
-            <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.0 }} {{ lang.1 }}</option>{% endfor %}
-          </select>
-        <input type="submit" value="{% trans "Go" %}" />
-        </p>
-      </form>
-    </div>
+      <div id="ductus_footer">
+        <hr/>
+        <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
+        <form action="{% url django.views.i18n.set_language %}" method="post">
+          <p>
+            <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />
+            <select name="language">
+              {% for lang in LANGUAGES %}
+              <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.0 }} {{ lang.1 }}</option>{% endfor %}
+            </select>
+          <input type="submit" value="{% trans "Go" %}" />
+          </p>
+        </form>
+      </div>
     </footer>
   </body>
 </html>
