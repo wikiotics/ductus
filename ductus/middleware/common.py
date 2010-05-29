@@ -24,7 +24,10 @@ def __escaped_full_path(request, **kwargs):
     if kwargs:
         GET = request.GET.copy()
         for k, v in kwargs.items():
-            GET[k] = v
+            if v is None:
+                GET.pop(k, None)
+            else:
+                GET[k] = v
         if GET:
             path += u'?' + GET.urlencode()
     elif request.META.get("QUERY_STRING"):
