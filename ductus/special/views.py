@@ -56,12 +56,38 @@ def register_special_page(x):
 
 @register_special_page
 def recent_changes(request, pagename):
-    # fixme: we should probably just use a generic view here to get pagination
-    # fixme: also be able to output rss
     # fixme: also be able to query a certain page or something
     revisions = WikiRevision.objects.order_by('-timestamp')[:20]
+    rss_url = request.escaped_full_path(view='rss')
+
+    if request.GET.get('view') == 'rss':
+        from django.contrib.syndication.views import Feed
+        class RecentChangesFeed(Feed):
+            title = u'Recent changes'
+            link = rss_url
+            description = u'Recent changes'
+
+            def items(self):
+                return revisions
+
+            def item_title(self, item):
+                return item.page.name
+
+            def item_link(self, item):
+                # get_absolute_url returns None when a page is deleted, so we
+                # just link to the now/recently-empty page in that case
+                return item.get_absolute_url() or item.page.get_absolute_url()
+
+            def item_pubdate(self, item):
+                return item.timestamp
+
+        return RecentChangesFeed()(request)
+
+    # fixme: we should probably just use a generic view here to get pagination
+
     return render_to_response('special/recent_changes.html', {
         'revisions': revisions,
+        'rss_url': rss_url,
     }, RequestContext(request))
 
 @register_special_page

@@ -15,6 +15,9 @@
       jQuery.metadata.setType("html5");
       {% block javascript %}{% endblock %}
     </script>
+{% if rss_url %}
+    <link rel="alternate" type="application/rss+xml" title="{{ title_list|last }}" href="{{ rss_url }}"/>
+{% endif %}
     {{ ductus_site_head }}
     {% block head %}{% endblock %}
   </head>

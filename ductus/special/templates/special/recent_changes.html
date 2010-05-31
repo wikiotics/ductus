@@ -1,4 +1,10 @@
 {% extends "ductus_base.html" %}
+{% load title %}
+
+{% block title %}
+{{ block.super }}
+{% title "Recent changes" %}
+{% endblock %}
 
 {% block content %}
 <ul>
