@@ -35,22 +35,11 @@ def prepare_parser():
     from creoleparser.core import Parser
     from creoleparser.dialects import create_dialect, creole10_base
 
-    def _handle_link_abbreviations(page_name):
-        if page_name.startswith((u'urn/', u'special/')):
-            pass
-        elif page_name.startswith('~'):
-            page_name = u'user/%s' % page_name[1:]
-        else:
-            # normal wiki page
-            page_name = u'wiki/%s' % page_name
-        return page_name
-
     def wiki_links_path_func(page_name):
-        return iri_to_uri(urlquote(_handle_link_abbreviations(page_name)))
+        return iri_to_uri(urlquote(page_name))
 
     def wiki_links_class_func(page_name):
         page_name = page_name.partition('#')[0].partition('?')[0]
-        page_name = _handle_link_abbreviations(page_name)
 
         try:
             if WikiPage.objects.get(name=page_name).get_latest_revision().urn:
@@ -67,7 +56,7 @@ def prepare_parser():
 
     c = create_dialect(creole10_base,
                        no_wiki_monospace=True,
-                       wiki_links_base_url='/',
+                       wiki_links_base_url='/wiki/',
                        wiki_links_path_func=wiki_links_path_func,
                        wiki_links_class_func=wiki_links_class_func,
                        interwiki_links_base_urls=interwiki_links_base_urls)

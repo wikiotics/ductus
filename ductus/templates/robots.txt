@@ -1,2 +1,3 @@
+# Don't index "special" pages
 User-agent: *
-Disallow: /special/
+Disallow: /+*

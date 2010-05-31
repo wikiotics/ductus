@@ -27,7 +27,7 @@ class WikiPage(models.Model):
     name = models.CharField(max_length=512)
 
     def get_absolute_url(self):
-        return u'/%s' % iri_to_uri(urlquote(self.name))
+        return u'/wiki/%s' % iri_to_uri(urlquote(self.name))
 
     def get_latest_revision(self):
         # fixme: we need a db_index on page/timestamp combo

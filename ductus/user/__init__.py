@@ -14,14 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.wiki.decorators import register_wiki_permission
+from ductus.wiki import register_wiki_permission
 
-@register_wiki_permission('user')
+@register_wiki_permission(u'~')
 def user_permission_func(user, pagename):
     return (user.is_authenticated()
-            and pagename.split('/', 2)[1] == user.username)
+            and pagename[1:].partition('/')[0] == user.username)
 
 from django.contrib.auth.models import User
 
 # fix User.get_absolute_url() to point to the right place
-User.get_absolute_url = lambda self: '/user/%s' % self.username
+User.get_absolute_url = lambda self: u'/wiki/~%s' % self.username

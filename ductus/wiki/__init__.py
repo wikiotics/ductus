@@ -45,18 +45,34 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
         self['Location'] = iri_to_uri(url)
 
 def user_has_edit_permission(user, pagename):
-    if '/' not in pagename:
+    if not pagename:
         return False
 
-    permission_func = wiki_permissions.get(pagename.partition('/')[0],
-                                           lambda user, pagename: False)
-    return permission_func(user, pagename)
+    if pagename[-1] == u'/':
+        # pages shouldn't end with a slash
+        return False
+
+    prefix = pagename[0]
+    if prefix == u'+':
+        # can't edit (or create) special pages
+        return False
+
+    if prefix in (u'~',):
+        permission_func = __wiki_permissions[prefix]
+        return permission_func(user, pagename)
+
+    # regular wiki page; anyone can edit (for now)
+    return True
 
 def user_has_unlink_permission(user, pagename):
     return user.is_authenticated() and user_has_edit_permission(user, pagename)
 
 registered_views = {}
 registered_creation_views = {}
-wiki_permissions = {}
+__wiki_permissions = {}
 
-wiki_permissions['wiki'] = lambda user, pagename: True
+def register_wiki_permission(prefix):
+    def _register_wiki_permission(func):
+        __wiki_permissions[prefix] = func
+        return func
+    return _register_wiki_permission

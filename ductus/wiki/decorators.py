@@ -16,7 +16,7 @@
 
 from functools import wraps
 
-from ductus.wiki import registered_views, registered_creation_views, wiki_permissions
+from ductus.wiki import registered_views, registered_creation_views
 
 def register_view(model, label=None, requires=(lambda d: d.resource)):
     """Registers a URN view function.
@@ -46,9 +46,3 @@ def unvarying(func):
         response._unvarying = True
         return response
     return wraps(func)(new_func)
-
-def register_wiki_permission(prefix):
-    def _register_wiki_permission(func):
-        wiki_permissions[prefix] = func
-        return func
-    return _register_wiki_permission

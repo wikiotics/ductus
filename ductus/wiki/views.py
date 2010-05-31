@@ -197,7 +197,7 @@ def view_wikipage(request, pagename):
     if revision is None and getattr(settings, "DUCTUS_WIKI_REMOTE", None):
         # See if DUCTUS_WIKI_REMOTE has the page
         try:
-            remote_url = "%s/%s?view=urn" % (settings.DUCTUS_WIKI_REMOTE, iri_to_uri(urlquote(pagename)))
+            remote_url = "%s%s?view=urn" % (settings.DUCTUS_WIKI_REMOTE, iri_to_uri(urlquote(pagename)))
             remote_urn = json.loads(urlopen(remote_url).read(1000))["urn"]
             # we never actually save this WikiPage or WikiRevision to the database
             if page is None:
