@@ -26,7 +26,7 @@ class TitleNode(template.Node):
             self.title = lambda context: context[title]
     def render(self, context):
         # Add to title_list in top-level context
-        title_list = context.dicts[-1].setdefault('title_list', [])
+        title_list = context.dicts[0].setdefault('title_list', [])
         if isinstance(title_list, list):
             title_list.append(self.title(context))
         return ''
