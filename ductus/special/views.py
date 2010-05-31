@@ -66,8 +66,9 @@ def recent_changes(request, pagename):
 
 @register_special_page
 def version(request, pagename):
+    from ductus import DUCTUS_VERSION
     from django.http import HttpResponse
-    return HttpResponse("undefined version", content_type="text/plain")
+    return HttpResponse("version %s" % DUCTUS_VERSION, content_type="text/plain")
 
 # WhatLinksHere, MovePage, Random, Gadgets?, NewPages, Tags?, ListUsers, BlockList, Contributions, [group things], various user-related and "personal" pages (especially Preferences), BrokenRedirects, Cite?, BookSources, Block, Undelete
 

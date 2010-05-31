@@ -1,0 +1,1 @@
+DUCTUS_VERSION = u'0.1pre'
