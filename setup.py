@@ -21,8 +21,8 @@ setup(
     author_email='jim@garrison.cc',
     url='http://ductus.us/',
     install_requires=(
-        'Django >= 1.1',
-        'Creoleparser >= 0.6',
+        'Django >= 1.2',
+        'Creoleparser >= 0.7.2',
         'lxml',
         'PIL',
     ),
