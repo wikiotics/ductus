@@ -37,6 +37,8 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
     """Used by 'edit' views to say that an edit or fork has led to a new URN
     """
 
+    handled = False
+
     def __init__(self, urn):
         self.urn = urn
         return HttpResponseRedirect.__init__(self, resolve_urn(urn))

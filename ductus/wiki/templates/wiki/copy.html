@@ -1,0 +1,9 @@
+{% extends "ductus_document.html" %}
+{% block content %}
+<table>
+<form method="post" action="{{ request.escaped_full_path }}">
+{{ form }}
+<tr><td></td><td><input type="submit"/></td></tr>
+</form>
+</table>
+{% endblock %}

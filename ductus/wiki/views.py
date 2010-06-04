@@ -25,6 +25,7 @@ from django.utils.safestring import mark_safe
 from django.utils.cache import patch_cache_control
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
+from django.utils.translation import ugettext_lazy, ugettext as _
 from django.conf import settings
 
 from ductus.resource import determine_header
@@ -168,6 +169,10 @@ def _handle_successful_wikiedit(request, response, page):
     # the underlying page has been modified, so we should take note of that
     # and save its new location
 
+    if response.handled:
+        return response
+    response.handled = True
+
     check_edit_permission(request, page.name)
 
     revision = construct_wiki_revision(page, response.urn[4:], request)
@@ -262,6 +267,50 @@ def creation_view(request, page_type):
             page.save()
         return _handle_successful_wikiedit(request, response, page)
     return response
+
+@register_view(None, 'copy')
+def view_copy_resource(request):
+    """Copies/forks the resource to a new location on the wiki
+    """
+
+    from django import forms
+
+    class CopyPageForm(forms.Form):
+        source_urn = forms.CharField(widget=forms.HiddenInput())
+        target_pagename = forms.CharField(help_text=_('wiki location of the new resource'))
+
+        def clean_source_urn(self):
+            source_urn = self.cleaned_data['source_urn']
+            try:
+                source_resource = get_resource_database().get_resource_object(source_urn)
+            except Exception: # fixme: some day we should just be able to catch KeyError here, or something
+                raise forms.ValidationError(_('source resource does not exist'))
+            else:
+                return source_urn
+
+        def clean_target_pagename(self):
+            target_pagename = self.cleaned_data['target_pagename']
+            if not user_has_edit_permission(request.user, target_pagename):
+                raise forms.ValidationError(_('you do not have permission to create/write to this resource')) 
+            return target_pagename
+
+    if request.method == 'POST':
+        form = CopyPageForm(request.POST)
+        if form.is_valid():
+            source_urn = form.cleaned_data['source_urn']
+            source_resource = get_resource_database().get_resource_object(source_urn)
+            target_pagename = form.cleaned_data['target_pagename']
+            page, page_created = WikiPage.objects.get_or_create(name=target_pagename)
+            if page_created:
+                page.save()
+            response = SuccessfulEditRedirect(source_urn)
+            return _handle_successful_wikiedit(request, response, page)
+    else:
+        form = CopyPageForm(initial={'source_urn': request.ductus.resource.urn})
+
+    return render_to_response('wiki/copy.html', {
+        'form': form,
+    }, RequestContext(request))
 
 @register_view(None, 'xml')
 @unvarying
