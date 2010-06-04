@@ -3,8 +3,10 @@
 
 {% block head %}
 {{ block.super }}
-{# search engines should only index the main page of each document #}
-{% if request.GET %}<meta name="robots" content="noindex"/>{% endif %}
+{# search engines should only index the main page of each document. and URN pages should not be indexed. #}
+{% if request.GET or not ductus.wiki_page %}
+    <meta name="robots" content="noindex,nofollow"/>
+{% endif %}
 {% endblock %}
 
 {% block document_header %}
