@@ -22,7 +22,7 @@
         {% if ductus.resource %}
           {# <li>Talk (document)</li> #}
           <li{% ifequal request.GET.view "edit" %} class="selected"{% endifequal %}><a href="?view=edit{{ oldid_str_amp }}">{% trans "Edit" %}</a></li> {# fixme: check for permission to edit in place. #}
-          {# <li>{% trans "Copy" %}</li> #}
+          <li{% ifequal request.GET.view "copy" %} class="selected"{% endifequal %}><a href="?view=copy{{ oldid_str_amp }}">{% trans "Copy" %}</a></li>
           {% if 0 and ductus.wiki_revision %}<li>{% trans "Delete" %}</li>{% endif %} {# fixme: poor name since it doesn't permanently delete #}
           {# <li>Flag</li> #}
         {% endif %}
