@@ -57,5 +57,6 @@ def permissions(request):
     rv = {}
     if hasattr(request, 'ductus'):
         from ductus.wiki import user_has_edit_permission
-        rv['page_is_editable_by_user'] = user_has_edit_permission(request.user, request.ductus.wiki_page.name)
+        if request.ductus.wiki_page:
+            rv['page_is_editable_by_user'] = user_has_edit_permission(request.user, request.ductus.wiki_page.name)
     return rv
