@@ -51,3 +51,11 @@ def oldid(request):
         pass
     return dict(oldid_str_amp=oldid_str_amp,
                 oldid_str_qm=oldid_str_qm)
+
+def permissions(request):
+    """Sets a few variables if it's a ductus document"""
+    rv = {}
+    if hasattr(request, 'ductus'):
+        from ductus.wiki import user_has_edit_permission
+        rv['page_is_editable_by_user'] = user_has_edit_permission(request.user, request.ductus.wiki_page.name)
+    return rv
