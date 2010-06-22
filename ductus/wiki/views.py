@@ -260,7 +260,7 @@ def creation_view(request, page_type):
 
     response = view_func(request)
     if "target" in request.GET:
-        check_create_permission(request, request.GET["target"], status=403)
+        check_edit_permission(request, request.GET["target"])
     if "target" in request.GET and isinstance(response, SuccessfulEditRedirect):
         page, page_created = WikiPage.objects.get_or_create(name=request.GET["target"])
         if page_created:
