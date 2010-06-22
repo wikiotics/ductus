@@ -6,6 +6,10 @@
 {# search engines should only index the main page of each document. and URN pages should not be indexed. #}
 {% if request.GET or not ductus.wiki_page %}
     <meta name="robots" content="noindex,nofollow"/>
+{% else %}
+{% if not ductus.resource %}
+    <meta name="robots" content="noindex"/>
+{% endif %}
 {% endif %}
 {% endblock %}
 
