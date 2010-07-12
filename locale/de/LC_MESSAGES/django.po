@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-15 21:29-0500\n"
+"POT-Creation-Date: 2010-07-12 00:04-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,24 +16,211 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ductus/modules/textwiki/templates/textwiki/edit_wiki.html:8
+#: license/__init__.py:4
+msgid "Public Domain"
+msgstr ""
+
+#: license/__init__.py:5
+msgid "Creative Commons Attribution-ShareAlike 1.0"
+msgstr ""
+
+#: license/__init__.py:6
+msgid "Creative Commons Attribution-ShareAlike 2.0"
+msgstr ""
+
+#: license/__init__.py:7
+msgid "Creative Commons Attribution-ShareAlike 2.5"
+msgstr ""
+
+#: license/__init__.py:8
+msgid "Creative Commons Attribution-ShareAlike 3.0"
+msgstr ""
+
+#: license/__init__.py:9
+msgid "Creative Commons Attribution 1.0"
+msgstr ""
+
+#: license/__init__.py:10
+msgid "Creative Commons Attribution 2.0"
+msgstr ""
+
+#: license/__init__.py:11
+msgid "Creative Commons Attribution 2.5"
+msgstr ""
+
+#: license/__init__.py:12
+msgid "Creative Commons Attribution 3.0"
+msgstr ""
+
+#: modules/picture/flickr.py:114
+msgid "a URL from Flickr"
+msgstr ""
+
+#: modules/picture/flickr.py:127
+#, python-format
+msgid "must be a photo, not '%s'"
+msgstr ""
+
+#: modules/picture/flickr.py:129
+msgid "This photo is not available under an acceptable license for this wiki."
+msgstr ""
+
+#: modules/picture/forms.py:103
+msgid "Unrecogized uri type"
+msgstr ""
+
+#: modules/picture/forms.py:122
+msgid "a URN available on this site"
+msgstr ""
+
+#: modules/picture/forms.py:142
+msgid "This urn cannot be found on the server you are currently accessing."
+msgstr ""
+
+#: modules/picture/forms.py:146
+msgid "This urn represents content that is not a picture."
+msgstr ""
+
+#: modules/picture_choice/templates/picture_choice/edit_lesson.html:12
+msgid "add picture choice group"
+msgstr ""
+
+#: modules/picture_choice/templates/picture_choice/edit_lesson.html:13
+#: modules/textwiki/templates/textwiki/edit_wiki.html:16
 msgid "Save"
 msgstr ""
 
-#: templates/ductus_base.html:34
-msgid "Log&nbsp;out"
+#: modules/textwiki/templates/textwiki/edit_wiki.html:16
+msgid "Preview"
 msgstr ""
 
-#: templates/ductus_base.html:37
-msgid "Log&nbsp;in"
+#: templates/ductus_base.html:42
+msgid "Log out"
 msgstr ""
 
-#: templates/ductus_base.html:50
+#: templates/ductus_base.html:45 templates/registration/login.html:15
+msgid "Log in"
+msgstr ""
+
+#: templates/ductus_base.html:66
 #, python-format
 msgid ""
 "%(ductus_site_name)s is powered by <a href=\"http://ductus.us/\">Ductus</a>."
 msgstr ""
 
-#: templates/ductus_document.html:12
+#: templates/ductus_base.html:74
+msgid "Go"
+msgstr ""
+
+#: templates/ductus_document.html:19
+#, python-format
+msgid ""
+"You may be viewing an old version of this page.  <a href=\"%(current_url)s"
+"\">Click here to see the most up-to-date version.</a>"
+msgstr ""
+
+#: templates/ductus_document.html:20
+msgid "You are viewing a URN.  This page is static and will never change."
+msgstr ""
+
+#: templates/ductus_document.html:24
+msgid "Document"
+msgstr ""
+
+#: templates/ductus_document.html:28
 msgid "Edit"
 msgstr "Bearbeiten"
+
+#: templates/ductus_document.html:29
+msgid "Copy"
+msgstr ""
+
+#: templates/ductus_document.html:30
+msgid "Delete"
+msgstr ""
+
+#: templates/ductus_document.html:34
+msgid "History"
+msgstr ""
+
+#: templates/ductus_document.html:36
+msgid "More views"
+msgstr ""
+
+#: templates/registration/create_user.html:9
+msgid "Create Account"
+msgstr ""
+
+#: templates/registration/logged_out.html:5
+msgid "You are logged out!"
+msgstr ""
+
+#: templates/registration/login.html:8
+msgid "Your username and password did not match. Please try again."
+msgstr ""
+
+#: templates/registration/login.html:12
+msgid "Username"
+msgstr ""
+
+#: templates/registration/login.html:13
+msgid "Password"
+msgstr ""
+
+#: templates/registration/password_change_done.html:5
+msgid "Your password has been changed."
+msgstr ""
+
+#: templates/registration/password_change_form.html:8
+#: templates/registration/password_reset_confirm.html:10
+msgid "Change password"
+msgstr ""
+
+#: templates/registration/password_reset_done.html:5
+msgid ""
+"You should receive an email shortly with a link that contains a unique "
+"token.  Follow it to reset your password."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:1
+#, python-format
+msgid ""
+"Hello %(user)s,\n"
+"\n"
+"Somebody requested that your password be reset on %(site_name)s.\n"
+"Go to the link below to change it.  If you did not request to have\n"
+"your password reset, simply ignore this email."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:9
+msgid "Reset password"
+msgstr ""
+
+#: user/views.py:74
+msgid "Your account settings have been updated."
+msgstr ""
+
+#: user/templates/user/user_form.html:9
+msgid "Save settings"
+msgstr ""
+
+#: wiki/models.py:69
+#, python-format
+msgid "urn is not in database: urn:%s"
+msgstr ""
+
+#: wiki/models.py:71
+msgid "A user or IP address must be given when saving a revision"
+msgstr ""
+
+#: wiki/views.py:280
+msgid "wiki location of the new resource"
+msgstr ""
+
+#: wiki/views.py:287
+msgid "source resource does not exist"
+msgstr ""
+
+#: wiki/views.py:294
+msgid "you do not have permission to create/write to this resource"
+msgstr ""
