@@ -2,8 +2,8 @@ from ductus.resource import models, register_model
 from ductus.util import create_property
 
 class WikiBlobElement(models.TextBlobElement):
-    allowed_languages = ('creole-1.0',)
-    markup_language = models.Attribute(validator=models.allowed_values_attribute_validator(allowed_languages))
+    allowed_markup_languages = ('creole-1.0',)
+    markup_language = models.Attribute(validator=models.allowed_values_attribute_validator(allowed_markup_languages))
 
     def __init__(self):
         # fixme: if Attribute had a "default" argument, we wouldn't need to
