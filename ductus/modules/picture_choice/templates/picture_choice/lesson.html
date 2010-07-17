@@ -1,4 +1,5 @@
 {% extends "picture_choice/choice.html" %}
+{% load i18n %}
 {% load urn %}
 {% load jsonize %}
 
@@ -39,6 +40,16 @@ $(function () {
 <div id="pcl_html_block">
 {{ block.super }}
 </div>
-<p class="pcl_frame_count">Frame <span id="frame_number">1</span> of {{ frames|length }}
-(<span id="pcl_correct_count">0</span> correct, <span id="pcl_incorrect_count">0</span> incorrect).</p>
+<p class="pcl_frame_count">
+{% with '<span id="frame_number">1</span>' as current_frame %}
+{% with frames|length as number_of_frames %}
+{% blocktrans %}Frame {{ current_frame }} of {{ number_of_frames }}{% endblocktrans %}
+{% endwith %}
+{% endwith %}
+{% with '<span id="pcl_correct_count">0</span>' as correct_count %}
+{% with '<span id="pcl_incorrect_count">0</span>' as incorrect_count %}
+{% blocktrans %}({{ correct_count }} correct, {{ incorrect_count }} incorrect).{% endblocktrans %}
+{% endwith %}
+{% endwith %}
+</p>
 {% endblock %}
