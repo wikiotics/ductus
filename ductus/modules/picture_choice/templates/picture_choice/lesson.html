@@ -41,15 +41,11 @@ $(function () {
 {{ block.super }}
 </div>
 <p class="pcl_frame_count">
-{% with '<span id="frame_number">1</span>' as current_frame %}
-{% with frames|length as number_of_frames %}
-{% blocktrans %}Frame {{ current_frame }} of {{ number_of_frames }}{% endblocktrans %}
-{% endwith %}
-{% endwith %}
-{% with '<span id="pcl_correct_count">0</span>' as correct_count %}
-{% with '<span id="pcl_incorrect_count">0</span>' as incorrect_count %}
-{% blocktrans %}({{ correct_count }} correct, {{ incorrect_count }} incorrect).{% endblocktrans %}
-{% endwith %}
-{% endwith %}
+{% blocktrans with '<span id="frame_number">1</span>' as current_frame and frames|length as number_of_frames %}
+Frame {{ current_frame }} of {{ number_of_frames }}
+{% endblocktrans %}
+{% blocktrans with '<span id="pcl_correct_count">0</span>' as correct_count and '<span id="pcl_incorrect_count">0</span>' as incorrect_count %}
+({{ correct_count }} correct, {{ incorrect_count }} incorrect).
+{% endblocktrans %}
 </p>
 {% endblock %}
