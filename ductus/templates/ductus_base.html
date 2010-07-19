@@ -65,17 +65,18 @@
     <footer>
       <div id="ductus_footer">
         <hr/>
-        <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
         <form action="{% url django.views.i18n.set_language %}" method="post">
           <p>
+            {% trans "user interface language:" %}
             <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />
             <select name="language">
               {% for lang in LANGUAGES %}
-              <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.0 }} {{ lang.1 }}</option>{% endfor %}
+              <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.0 }} {% trans lang.1 %}</option>{% endfor %}
             </select>
-          <input type="submit" value="{% trans "Go" %}" />
+            <input type="submit" value="{% trans "Go" %}"/>
           </p>
         </form>
+        <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
       </div>
     </footer>
   </body>
