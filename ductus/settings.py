@@ -49,6 +49,14 @@ ADMIN_MEDIA_PREFIX = '/media/'
 # Make this unique, and don't share it with anybody.
 #SECRET_KEY = 'cpoong-0a^a(kp1q0jm*(okmdmcidh_!rqjzg4&ff%93flbwr$'
 
+# see django/conf/global_settings.py
+gettext_noop = lambda s: s
+LANGUAGES = (
+    ('cs',  gettext_noop('Czech')),
+    ('de', gettext_noop('German')),
+    ('en', gettext_noop('English')),
+)
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
