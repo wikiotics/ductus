@@ -41,7 +41,7 @@ def iterate_file(filename):
                 return
             yield x
 
-def iterate_file_then_delete(filename):
+def iterate_file_then_delete(filename, ignore_failed_delete=True):
     """Reads a binary file in chunks and then deletes it.
 
     Delete occurs when the iterator is garbage-collected or if an exception
@@ -57,8 +57,11 @@ def iterate_file_then_delete(filename):
                 yield data
         finally:
             del data_iterator
-            with ignore(OSError):
+            try:
                 os.remove(filename)
+            except OSError:
+                if not ignore_failed_delete:
+                    raise
 
     retval = gen()
     retval.next() # Execute the generator until the first yield statement.
