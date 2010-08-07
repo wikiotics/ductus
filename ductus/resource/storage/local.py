@@ -18,7 +18,7 @@ import os
 from shutil import copyfile
 
 from ductus.resource import UnsupportedURN
-from ductus.util import iterate_file, sequence_contains_only
+from ductus.util import iterate_file, sequence_contains_only, BLOCK_SIZE
 
 class LocalStorageBackend(object):
     """Local storage backend.
@@ -56,8 +56,8 @@ class LocalStorageBackend(object):
             f1 = file(pathname, 'rb')
             f2 = file(tmpfile, 'rb')
             while True:
-                x1 = f1.read(4096)
-                x2 = f2.read(4096)
+                x1 = f1.read(BLOCK_SIZE)
+                x2 = f2.read(BLOCK_SIZE)
                 if x1 != x2:
                     break # collision!
                 if x1 == '':

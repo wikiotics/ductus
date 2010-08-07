@@ -19,12 +19,14 @@ from contextlib import contextmanager
 from tempfile import mkstemp
 import os
 
+BLOCK_SIZE = 8192
+
 def iterate_file_object(file_object):
     """This generator function iterates a file-like object, then closes it.
     """
 
     while True:
-        x = file_object.read(4096)
+        x = file_object.read(BLOCK_SIZE)
         if x == '':
             file_object.close()
             return
@@ -36,7 +38,7 @@ def iterate_file(filename):
 
     with file(filename, 'rb') as f:
         while True:
-            x = f.read(4096)
+            x = f.read(BLOCK_SIZE)
             if x == '':
                 return
             yield x
