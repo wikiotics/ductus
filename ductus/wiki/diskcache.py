@@ -14,14 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import with_statement
-
 import os
 
 from django.conf import settings
 
 from ductus.resource.storage.local import split_urn
-from ductus.util import ignore
 
 def __to_filename(urn, key):
     hash_type, digest = split_urn(urn)
@@ -37,9 +34,12 @@ def put(urn, key, data_iterator):
     filename = __to_filename(urn, key)
 
     dirname = os.path.dirname(filename)
-    if not os.path.isdir(dirname):
-        with ignore(OSError):
-            os.makedirs(dirname)
+    try:
+        os.makedirs(dirname, mode=0755)
+    except OSError:
+        # fail only if the directory doesn't already exist
+        if not os.path.isdir(dirname):
+            raise
 
     try:
         fd = os.open(filename, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0644)

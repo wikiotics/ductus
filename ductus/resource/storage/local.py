@@ -14,13 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import with_statement
-
 import os
 from shutil import copyfile
 
 from ductus.resource import UnsupportedURN
-from ductus.util import iterate_file, sequence_contains_only, ignore
+from ductus.util import iterate_file, sequence_contains_only
 
 class LocalStorageBackend(object):
     """Local storage backend.
@@ -72,9 +70,12 @@ class LocalStorageBackend(object):
             raise Exception("Hash collision for %s" % key)
 
         dirname = os.path.dirname(pathname)
-        if not os.path.isdir(dirname):
-            with ignore(OSError):
-                os.makedirs(dirname)
+        try:
+            os.makedirs(dirname, mode=0755)
+        except OSError:
+            # fail only if the directory doesn't already exist
+            if not os.path.isdir(dirname):
+                raise
         copyfile(tmpfile, pathname)
 
     def __getitem__(self, key):
