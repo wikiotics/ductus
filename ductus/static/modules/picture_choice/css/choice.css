@@ -1,4 +1,4 @@
 .ductus_picture_choice h2 { text-align: center; }
-.ductus_picture_choice * td div { height: 250px; width: 250px; display: table-cell; vertical-align: middle; background: #ccc; }
+.ductus_picture_choice * td div { height: 250px; width: 250px; display: table-cell; vertical-align: middle; background: #eee; }
 .ductus_picture_choice * td div img { display: block; margin-left: auto; margin-right: auto; }
 .ductus_picture_choice table { margin-left: auto; margin-right: auto; }
