@@ -21,7 +21,7 @@ from django.template import RequestContext
 from django.http import HttpResponse
 
 from ductus.util.http import query_string_not_found
-from ductus.wiki.decorators import register_view, register_creation_view
+from ductus.wiki.decorators import register_view
 from ductus.modules.picture_choice.models import PictureChoiceGroup, PictureChoiceLesson
 
 @register_view(PictureChoiceGroup)

@@ -21,12 +21,29 @@ from itertools import chain
 from lxml import etree
 from django.utils.datastructures import SortedDict
 from ductus.util import create_property
-from ductus.resource import register_model, get_resource_database
+from ductus.resource import register_model, get_resource_database, _registered_models
+
+# fixme: we could just not "follow" parents instead of excluding them.  If we
+# change it to work this way, the browser will be aware of the parents in case
+# that's ever necessary.  Plus, there may be other things we don't want to
+# follow (but I can't think of any right now).
 
 class ValidationError(Exception):
     pass
 
 class ModelMismatchError(Exception):
+    pass
+
+class BlueprintError(Exception):
+    def __init__(self, value, blueprint):
+        self.value = value
+        self.blueprint = blueprint
+
+    def __str__(self):
+        import json
+        return u'%s -- %s' % (repr(self.value), json.dumps(self.blueprint))
+
+class BlueprintTypeError(BlueprintError):
     pass
 
 def allowed_values_attribute_validator(allowed_values):
@@ -155,6 +172,38 @@ class Element(object):
         clone._parent = self
         return clone
 
+    def output_json_dict(self, exclude=()):
+        rv = {}
+        # figure out how we are going to override things
+        # what the heck did i mean by override things?
+        # we should probably just output the blank string for null attributes, output null elements, etc
+        for name, subelement in self.subelements.items():
+            # fixme: should we really be testing is_null_xml_element here?
+            if not getattr(self, name).is_null_xml_element() and not name in exclude:
+                rv[name] = getattr(self, name).output_json_dict()
+        for name, attribute in self.attributes.items():
+            if not (attribute.optional and attribute.blank_is_null and not self._attribute_data[name]):
+                rv[name] = self._attribute_data[name]
+        return rv
+
+    def patch_from_blueprint(self, blueprint, save_context):
+        blueprint_expects_dict(blueprint)
+
+        blueprint_set = set(blueprint)
+        attribute_name_set = set(self.attributes.keys())
+        subelement_name_set = set(self.subelements.keys())
+
+        # patch all attributes
+        for attribute_name in (blueprint_set & attribute_name_set):
+            attribute_blueprint = blueprint[attribute_name]
+            attribute_blueprint = blueprint_cast_to_string(attribute_blueprint)
+            setattr(self, attribute_name, attribute_blueprint)
+
+        # patch all subelements
+        for subelement_name in (blueprint_set & subelement_name_set):
+            subelement = getattr(self, subelement_name)
+            subelement.patch_from_blueprint(blueprint[subelement_name], save_context)
+
     def populate_xml_element(self, element, ns):
         for name, subelement in self.subelements.items():
             if not getattr(self, name).is_null_xml_element():
@@ -248,6 +297,9 @@ class TextElement(Element):
     __metaclass__ = NoChildElementMetaclass
     _text = ""
 
+    # fixme: In theory we should prevent subclasses from having adding elements
+    # or attributes named "text"
+
     @create_property
     def text():
         def fget(self):
@@ -263,7 +315,7 @@ class TextElement(Element):
 
     def populate_xml_element(self, element, ns):
         super(TextElement, self).populate_xml_element(element, ns)
-        element.text = self._text
+        element.text = self.text
 
     def populate_from_xml(self, xml_node, ns):
         super(TextElement, self).populate_from_xml(xml_node, ns)
@@ -275,8 +327,23 @@ class TextElement(Element):
     def __eq__(self, other):
         return super(TextElement, self).__eq__(other) and self._text == other._text
 
+    def output_json_dict(self):
+        rv = super(TextElement, self).output_json_dict()
+        rv['text'] = self.text
+        return rv
+
+    def patch_from_blueprint(self, blueprint, save_context):
+        super(TextElement, self).patch_from_blueprint(blueprint, save_context)
+        if 'text' in blueprint:
+            text = blueprint['text']
+            blueprint_expects_string(text)
+            self.text = text
+
 class ArrayElement(Element):
     __metaclass__ = NoChildElementMetaclass
+
+    # fixme: In theory we should prevent subclasses from having adding elements
+    # or attributes named "array"
 
     def __init__(self, item_prototype, min_size=0, max_size=None, null_on_empty=False):
         super(ArrayElement, self).__init__()
@@ -312,6 +379,20 @@ class ArrayElement(Element):
             raise ValidationError("too few elements")
         if self.max_size is not None and len(self) > self.max_size:
             raise ValidationError("too many elements")
+
+    def output_json_dict(self):
+        rv = super(ArrayElement, self).output_json_dict()
+        rv['array'] = [x.output_json_dict() for x in self.array]
+        return rv
+
+    def patch_from_blueprint(self, blueprint, save_context):
+        super(ArrayElement, self).patch_from_blueprint(blueprint, save_context)
+        if 'array' in blueprint:
+            array_blueprint = blueprint['array']
+            blueprint_expects_list(array_blueprint)
+            self.array = [self.new_item() for a in array_blueprint]
+            for i, bp in enumerate(array_blueprint):
+                self.array[i].patch_from_blueprint(bp, save_context)
 
     def populate_xml_element(self, element, ns):
         super(ArrayElement, self).populate_xml_element(element, ns)
@@ -354,6 +435,11 @@ class LinkElement(Element):
         super(LinkElement, self).__init__()
         self._xlink_type = "simple"
 
+    def output_json_dict(self):
+        rv = super(LinkElement, self).output_json_dict()
+        del rv['_xlink_type']
+        return rv
+
 class LicenseElement(LinkElement):
     pass
     #or_later = BooleanAttribute(optional=True, default=False)
@@ -361,9 +447,14 @@ class LicenseElement(LinkElement):
 class ResourceElement(LinkElement):
     "Verify it is a URN that exists in our universe (whatever that means)"
 
+    # fixme: In theory we should prevent subclasses from having adding elements
+    # or attributes named "resource"
+
     def __init__(self, *allowed_resource_types):
         # fixme: should be able to specify more general constraints on allowed
         # resource types
+        # fixme: or should we instead allow only one resource type (an
+        # "interface" and force things to derive from it?)
         self.allowed_resource_types = allowed_resource_types
         super(ResourceElement, self).__init__()
 
@@ -378,6 +469,8 @@ class ResourceElement(LinkElement):
         self.__check_type(resource)
         return resource
 
+    #resource = property(get, store)
+
     def validate(self, strict=True):
         super(ResourceElement, self).validate(strict)
         if strict and self.href:
@@ -388,6 +481,19 @@ class ResourceElement(LinkElement):
         if self.allowed_resource_types:
             if not type(resource) in self.allowed_resource_types:
                 raise Exception("Not a correct resource type")
+
+    def output_json_dict(self):
+        rv = super(ResourceElement, self).output_json_dict()
+        resource = self.get()
+        rv['resource'] = resource and resource.output_json_dict()
+        return rv
+
+    def patch_from_blueprint(self, blueprint, save_context):
+        super(ResourceElement, self).patch_from_blueprint(blueprint, save_context)
+        if 'resource' in blueprint:
+            self.href = Model.save_blueprint({
+                'resource': blueprint['resource']
+            }, save_context)
 
 class BlobElement(LinkElement):
     "Verify it is a blob" # (fixme)
@@ -441,7 +547,7 @@ class DuctusCommonElement(Element):
         rv.parents.array = []
         rv.timestamp = ""
         rv.log_message.text = ""
-        rv.author.test = ""
+        rv.author.text = ""
         rv.author.href = ""
         return rv
 
@@ -449,6 +555,14 @@ class DuctusCommonElement(Element):
         if not self.timestamp:
             self.timestamp = datetime.datetime.utcnow().isoformat()
         super(DuctusCommonElement, self).populate_xml_element(element, ns)
+
+    def output_json_dict(self):
+        return Element.output_json_dict(self, ('parents',))
+
+    def patch_from_blueprint(self, blueprint, save_context):
+        # we don't allow patching, so we don't call the superclass
+        self.author.text = save_context.author_username or save_context.author_ip_address
+        self.log_message.text = save_context.log_message
 
 class Model(Element):
     __metaclass__ = ModelMetaclass
@@ -492,3 +606,85 @@ class Model(Element):
 
     def __eq__(self, other):
         return (self.urn is not None and self.urn == other.urn) or super(Model, self).__eq__(other)
+
+    @classmethod
+    def save_blueprint(cls, blueprint, save_context):
+        """`blueprint` is a json object. Returns a URN"""
+        # fixme: make sure the end result is compatible with the class.  this
+        # might actually be easy if we just make sure the @constructor will
+        # make a class we want, but this would eliminate our ability to make a
+        # @constructor that outputs a resource of some type that is unknown
+        # before its construction
+
+        resource_database = get_resource_database()
+
+        blueprint_expects_dict(blueprint)
+
+        if 'href' in blueprint:
+            href = blueprint['href']
+            blueprint_expects_string(href)
+            # we ensure it exists and is not a blob, then return the urn
+            resource_database.get_xml(href)
+            return href
+
+        try:
+            resource_blueprint = blueprint['resource']
+        except KeyError:
+            raise BlueprintError("blueprint needs either `href` or `resource`", blueprint)
+        blueprint_expects_dict(resource_blueprint)
+        resource_blueprint = dict(resource_blueprint) # copy it so we can modify
+
+        if '@patch' in resource_blueprint:
+            original_urn = resource_blueprint.pop('@patch')
+            resource = resource_database.get_resource_object(original_urn).clone()
+        elif '@create' in resource_blueprint:
+            fqn = resource_blueprint.pop('@create')
+            try:
+                resource_class = _registered_models[fqn]
+            except KeyError:
+                raise BlueprintError("invalid argument to `@create`", resource_blueprint)
+            if not issubclass(resource_class, cls):
+                raise BlueprintError("resource is not of an acceptable model type", resource_blueprint)
+            resource = resource_class()
+        else:
+            raise BlueprintError("resource blueprint must contain '@patch' or '@create'", resource_blueprint)
+
+        resource.patch_from_blueprint(resource_blueprint, save_context)
+        resource.common.patch_from_blueprint(None, save_context)
+        return resource.save()
+
+def blueprint_expects_dict(blueprint):
+    if not isinstance(blueprint, dict):
+        raise BlueprintTypeError("expected dict, got %s" % type(blueprint), blueprint)
+    return blueprint
+
+def blueprint_expects_list(blueprint):
+    if not isinstance(blueprint, list):
+        raise BlueprintTypeError("expected list, got %s" % type(blueprint), blueprint)
+    return blueprint
+
+def blueprint_expects_string(blueprint):
+    if not isinstance(blueprint, basestring):
+        raise BlueprintTypeError("expected string, got %s" % type(blueprint), blueprint)
+    return blueprint
+
+def blueprint_cast_to_string(blueprint):
+    if isinstance(blueprint, basestring):
+        return blueprint
+    if isinstance(blueprint, int):
+        return u'%d' % blueprint
+    raise BlueprintTypeError("expected string, got %s" % type(blueprint), blueprint)
+
+class BlueprintSaveContext(object):
+    author_username = ""
+    author_ip_address = ""
+    log_message = ""
+
+    @classmethod
+    def from_request(cls, request):
+        rv = cls()
+        if request.user.is_authenticated():
+            rv.author_username = request.user.username
+        rv.author_ip_address = request.remote_addr
+        rv.log_message = request.POST.get('log_message', '')
+        return rv

@@ -74,33 +74,29 @@ url_format_map = {
     'userpage': 'http://www.flickr.com/people/%(owner_id)s/',
 }
 
-class FlickrPhotoMetaclass(type):
-    """Adds square_url, thumbnail_url, etc properties to FlickrPhoto"""
-
-    def __init__(cls, name, bases, attrs):
-        def make_get_func(v):
-            def _get(s):
-                return v % s.dict
-            return _get
-        for k, v in url_format_map.iteritems():
-            setattr(cls, k + "_url", property(make_get_func(v)))
-
 class FlickrPhoto(object):
     """Initialized with a JSON photo, turns it into a nice little object"""
 
-    __metaclass__ = FlickrPhotoMetaclass
-
     def __init__(self, d):
         self.dict = dict(d)
+
+        # we want a license url, not flickr's enumeration
+        self.dict["license"] = license_map().get(self.dict["license"], None)
+
         # normalize results from photos.getInfo and photos.search
         try:
             self.dict["owner_id"] = self.dict["owner"]["nsid"]
         except (TypeError, KeyError):
             self.dict["owner_id"] = self.dict["owner"]
 
+        # add list of urls for convenience
+        for k, v in url_format_map.iteritems():
+            self.dict[k + "_url"] = v % self.dict
+
     def __getitem__(self, key):
-        if key == "license":
-            return license_map().get(self.dict[key], None)
+        return self.dict[key]
+
+    def __getattr__(self, key):
         return self.dict[key]
 
 # Everything below is for the flickr uri handler
@@ -136,9 +132,10 @@ class FlickrUriHandler(object):
             raise forms.ValidationError(_("This photo is not available under an acceptable license for this wiki."))
         self.photo = photo
 
-    def save(self):
+    def save(self, picture=None, return_before_saving=False):
         photo = self.photo
-        picture = Picture()
+        if picture is None:
+            picture = Picture()
         picture.blob.store(iterate_file_object(urlopen(photo.original_url)))
         picture.blob.mime_type = 'image/jpeg'
         license_elt = picture.common.licenses.new_item()
@@ -150,5 +147,7 @@ class FlickrUriHandler(object):
         picture.credit.author_url.href = photo.userpage_url
         if photo['rotation']:
             picture.rotation = unicode(360 - int(photo['rotation']))
+        if return_before_saving:
+            return
         # fixme: save log of what we just did ?
         return picture.save()

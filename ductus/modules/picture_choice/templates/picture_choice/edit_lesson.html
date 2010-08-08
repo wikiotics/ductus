@@ -1,22 +1,14 @@
 {% extends "ductus_document.html" %}
+{% load i18n %}
+{% load jsonize %}
 
 {% block head %}
-<script type="text/javascript" src="{{ ductus_media_prefix }}modules/picture/js/picture_selector.js"></script>
+<script type="text/javascript">var resource_json = {href: '{{ request.ductus.resource.urn }}', resource: {{ request.ductus.resource.output_json_dict|jsonize }} };</script>
 <script type="text/javascript" src="{{ ductus_media_prefix }}modules/picture_choice/js/editor.js"></script>
 {% endblock %}
 
 {% block content %}
-<ul id="picture_choice_lesson">
-{% include "picture_choice/edit_lesson_li.html" %}
-</ul>
-<p><a id="save_button">Save</a></p>
-
-<hr/>
-
-<div id="builder">
-<form>
-<div id="builder_form"></div>
-After filling in this form, <a id="builder_form_submit">click here to add these elements to the lesson above</a>
-</form>
-</div>
+<div id="pcl_editor"></div>
+<div><a id="append_new_pcg_button">{% trans "add picture choice group" %}</a></div>
+<div style="margin-top: 1em;"><a id="save_button">{% trans "Save" %}</a></div>
 {% endblock %}

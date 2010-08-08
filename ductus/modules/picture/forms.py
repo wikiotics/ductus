@@ -24,54 +24,6 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 from ductus.wiki import get_resource_database, resolve_urn, UnsupportedURN
 from ductus.modules.picture.models import Picture
 
-def urn_to_img_url(urn):
-    try:
-        return u'%s?view=image&amp;max_size=100,100' % resolve_urn(urn)
-    except UnsupportedURN:
-        return None
-
-def nothing_url():
-    return settings.DUCTUS_MEDIA_PREFIX + "modules/picture/img/nothing.png"
-
-class PictureSelector(forms.TextInput):
-    """Picture selection widget"""
-
-    class Media:
-        js = (settings.DUCTUS_MEDIA_PREFIX + 'modules/picture/js/picture_selector.js',)
-
-    def render(self, name, value, attrs=None):
-        if attrs is None:
-            attrs = {}
-        attrs = dict(attrs)
-        if 'class' in attrs:
-            attrs['class'] += u' %s' % 'ductus_picture_selector'
-        else:
-            attrs['class'] = 'ductus_picture_selector'
-        form_field = super(PictureSelector, self).render(name, value, attrs)
-        div_attrs = {'class': 'ductus_picture_selector',
-                     'id': u'%s_selector' % attrs['id']}
-        img = u'<img src="%s"/>' % (urn_to_img_url(value) or nothing_url())
-        return mark_safe(u'<div%s><div></div>%s%s</div>'
-                         % (forms.util.flatatt(div_attrs), form_field, img))
-
-class PictureUrnField(forms.CharField):
-    """Field for a Picture URN
-    """
-
-    widget = PictureSelector
-
-    def clean(self, value):
-        value = super(PictureUrnField, self).clean(value)
-
-        # Does it exist, and is it a picture?
-        try:
-            Picture.load(value)
-            return value
-        except Exception: # could be KeyError or Model.load type mismatch
-            pass
-        # Fixme: we should probably give more specific error responses
-        raise forms.ValidationError('Not a valid picture in the system')
-
 class PictureRotationForm(forms.Form):
     choices = (
         (None, 'Use image metadata'),
@@ -90,7 +42,8 @@ class PictureImportForm(forms.Form):
 
     @classmethod
     def register_uri_handler(cls, handler):
-        return cls._uri_handlers.append(handler)
+        cls._uri_handlers.append(handler)
+        return handler
 
     def clean_uri(self):
         uri = self.cleaned_data['uri']

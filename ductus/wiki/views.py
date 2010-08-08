@@ -312,6 +312,14 @@ def view_copy_resource(request):
         'form': form,
     }, RequestContext(request))
 
+if settings.DEBUG:
+    @register_view(None, 'DEBUG_json')
+    def view_json(request):
+        urn = request.ductus.resource.urn
+        resource = get_resource_database().get_resource_object(urn)
+        json_text = json.dumps(resource.output_json_dict())
+        return HttpResponse(json_text, content_type='text/plain; charset=utf-8')
+
 @register_view(None, 'xml')
 @unvarying
 def view_xml(request):

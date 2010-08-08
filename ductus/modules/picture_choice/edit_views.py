@@ -15,81 +15,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+from functools import partial
 
-from django import forms
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
 
+from ductus.resource.models import BlueprintSaveContext, BlueprintError, ValidationError
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_view, register_creation_view
-from ductus.util.http import render_json_response
-from ductus.modules.picture.models import Picture
-from ductus.modules.picture.forms import PictureUrnField
-from ductus.modules.picture_choice.models import PictureChoiceGroup, PictureChoiceLesson
+from ductus.modules.picture_choice.models import PictureChoiceLesson
 
-def all_unique(iterable):
-    return len(frozenset(iterable)) == len(iterable)
-
-def get_phrases(d):
-    return (d['phrase0'], d['phrase1'], d['phrase2'], d['phrase3'])
-
-def get_pictures(d):
-    return (d['picture0'], d['picture1'], d['picture2'], d['picture3'])
-
-class PictureChoiceGroupForm(forms.Form):
-    phrase0 = forms.CharField()
-    picture0 = PictureUrnField()
-    phrase1 = forms.CharField()
-    picture1 = PictureUrnField()
-    phrase2 = forms.CharField()
-    picture2 = PictureUrnField()
-    phrase3 = forms.CharField()
-    picture3 = PictureUrnField()
-
-    def clean(self):
-        if not all_unique(get_phrases(self.data)):
-            raise forms.ValidationError("Phrases must be unique")
-
-        picture_blob_urns = [Picture.load(urn).blob.href
-                             for urn in get_pictures(self.data)]
-        if not all_unique(picture_blob_urns):
-            raise forms.ValidationError("Pictures must be unique")
-
-        return self.cleaned_data
-
-@register_creation_view(PictureChoiceGroup)
-def new_picture_choice_group(request):
-    new_urns = []
-
-    if request.method == 'POST':
-        form = PictureChoiceGroupForm(request.POST)
-
-        if form.is_valid():
-            pcg = PictureChoiceGroup()
-            for phrase, picture in zip(get_phrases(form.cleaned_data),
-                                       get_pictures(form.cleaned_data)):
-                pc = pcg.group.new_item()
-                pc.phrase.text = phrase
-                pc.picture.href = picture
-                pcg.group.array.append(pc)
-
-            urn = pcg.save()
-            return SuccessfulEditRedirect(urn)
-
-    else:
-        form = PictureChoiceGroupForm()
-
-    if request.is_ajax():
-        return HttpResponse(unicode(form))
-
-    return render_to_response('picture_choice/new.html',
-                              {'form': form},
-                              context_instance=RequestContext(request))
+HttpTextResponseBadRequest = partial(HttpResponseBadRequest,
+                                     content_type="text/plain; charset=utf-8")
 
 @register_creation_view(PictureChoiceLesson)
 def new_picture_choice_lesson(request):
     if request.method != "POST":
+        from django.http import HttpResponse
         return HttpResponse('<form method="post"><input type="submit" value="Click to create picture choice lesson"/></form>')
     urn = PictureChoiceLesson().save()
     return SuccessfulEditRedirect(urn)
@@ -98,29 +41,21 @@ def new_picture_choice_lesson(request):
 def edit_picture_choice_lesson(request):
     if request.method == 'POST':
         try:
-            urns = json.loads(request.POST['pcl'])['groups']
+            blueprint = json.loads(request.POST['blueprint'])
+        except KeyError:
+            raise HttpTextResponseBadRequest(u"no blueprint given")
         except ValueError:
-            raise
-        else:
-            # fixme: only save if something actually changes
-            pcl = request.ductus.resource.clone()
-            pcl.groups.array = []
-            #pcl.groups.extend_hrefs(urns) # fixme: current api is clumsy
-            for u in urns:
-                g = pcl.groups.new_item()
-                g.href = u
-                pcl.groups.array.append(g)
-            urn = pcl.save()
-            return SuccessfulEditRedirect(urn)
+            raise HttpTextResponseBadRequest(u"json fails to parse")
+        save_context = BlueprintSaveContext.from_request(request)
+        try:
+            urn = PictureChoiceLesson.save_blueprint(blueprint, save_context)
+        except BlueprintError, e:
+            return HttpTextResponseBadRequest(str(e))
+        except ValidationError, e:
+            return HttpTextResponseBadRequest(u"validation failed")
+        return SuccessfulEditRedirect(urn)
 
-    groups = [href.get() for href in request.ductus.resource.groups]
+    groups = [linkelt.get() for linkelt in request.ductus.resource.groups]
     return render_to_response('picture_choice/edit_lesson.html', {
-        'groups': groups,
-    }, RequestContext(request))
-
-@register_view(PictureChoiceGroup, '_edit_lesson_li')
-def list_items_for_edit_view(request):
-    groups = [request.ductus.resource]
-    return render_to_response('picture_choice/edit_lesson_li.html', {
         'groups': groups,
     }, RequestContext(request))

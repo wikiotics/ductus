@@ -76,34 +76,22 @@ def flickr_search_view(request):
             kw['tags'] = ','.join(tags)
         else:
             kw['text'] = request.GET['q']
-        photos = search_photos(**kw)["photos"]
-        paginator = Paginator(range(photos["pages"]), 1)
-        page = int(photos["page"])
-        page_obj = paginator.page(page)
-        photos = photos['photo']
-        photos = [FlickrPhoto(p) for p in photos if 'originalsecret' in p]
+        search_result = search_photos(**kw)["photos"]
+        page = int(search_result["page"])
+        pages = int(search_result["pages"])
+        photos = [FlickrPhoto(p).dict for p in search_result['photo'] if 'originalsecret' in p]
     else:
         photos = None
-        paginator = Paginator([], 1)
-        page_obj = None
         page = 0
-    next_qs = request.GET.copy()
-    next_qs['page'] = page + 1
-    next_qs = next_qs.urlencode()
-    prev_qs = request.GET.copy()
-    prev_qs['page'] = page - 1
-    prev_qs = prev_qs.urlencode()
+        pages = 0
 
-    return render_to_response('picture/flickr/search.html', {
+    return render_json_response({
         'place': place_name,
         'photos': photos,
-        'paginator': paginator,
-        'page_obj': page_obj,
-        'page': page, # why can't page_obj identify its page number?
-        'next_query_string': next_qs,
-        'previous_query_string': prev_qs,
+        'page': page,
+        'pages': pages,
         'sort_method': kw.get('sort', 'date-posted-desc'),
-    }, RequestContext(request))
+    })
 
 @register_view(Picture, 'edit')
 def edit_picture(request):
