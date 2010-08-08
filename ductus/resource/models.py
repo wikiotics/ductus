@@ -590,10 +590,8 @@ class Model(Element):
     def clone(self):
         rv = super(Model, self).clone()
         rv.urn = None
-        # fixme: i really wish we could do this in DuctusCommonElement
-#        rv.parents.array = [rv.parents.new_item(self)] # fixme
         if self.urn:
-            rv.common.parents.array = [rv.common.parents.new_item()] # fixme
+            rv.common.parents.array = [rv.common.parents.new_item()]
             rv.common.parents.array[0].href = self.urn
         return rv
 
