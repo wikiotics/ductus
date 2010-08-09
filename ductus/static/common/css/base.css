@@ -21,6 +21,8 @@ div#ductus_header { background: #6b497e; border-bottom: 1px solid #39005a;
 #ductus_document_header ul li a:hover { text-decoration: underline; }
 #ductus_document_header ul li.selected a { padding-bottom: 4px; }
 
+#ductus_ajax_status { position: fixed; top: 0; left: 50%; background: #ee9; padding: .2em; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999; }
+
 hr { border: 0; height: 1px; color: #aaa; background-color: #aaa; }
 
 a { color: #002bb8; text-decoration: none; }
