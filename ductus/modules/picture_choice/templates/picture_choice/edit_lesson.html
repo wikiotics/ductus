@@ -3,6 +3,7 @@
 {% load jsonize %}
 
 {% block head %}
+{{ block.super }}
 <script type="text/javascript">var resource_json = {href: '{{ request.ductus.resource.urn }}', resource: {{ request.ductus.resource.output_json_dict|jsonize }} };</script>
 <script type="text/javascript" src="{{ ductus_media_prefix }}modules/picture_choice/js/editor.js"></script>
 {% endblock %}
