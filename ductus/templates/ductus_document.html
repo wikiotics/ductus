@@ -4,10 +4,10 @@
 {% block head %}
 {{ block.super }}
 {# search engines should only index the main page of each document. and URN pages should not be indexed. #}
-{% if request.GET or not ductus.wiki_page %}
+{% if request.GET or not request.ductus.wiki_page %}
     <meta name="robots" content="noindex,nofollow"/>
 {% else %}
-{% if not ductus.resource %}
+{% if not request.ductus.resource %}
     <meta name="robots" content="noindex"/>
 {% endif %}
 {% endif %}
