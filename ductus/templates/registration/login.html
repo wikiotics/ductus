@@ -3,6 +3,11 @@
 
 {% block login_button %}{% endblock %}
 
+{% block head %}
+{{ block.super }}
+    <meta name="robots" content="noindex"/>
+{% endblock %}
+
 {% block content %}
 {% if form.errors %}
 <p>{% trans "Your username and password did not match. Please try again." %}</p>
