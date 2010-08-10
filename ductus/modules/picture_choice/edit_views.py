@@ -30,13 +30,6 @@ HttpTextResponseBadRequest = partial(HttpResponseBadRequest,
                                      content_type="text/plain; charset=utf-8")
 
 @register_creation_view(PictureChoiceLesson)
-def new_picture_choice_lesson(request):
-    if request.method != "POST":
-        from django.http import HttpResponse
-        return HttpResponse('<form method="post"><input type="submit" value="Click to create picture choice lesson"/></form>')
-    urn = PictureChoiceLesson().save()
-    return SuccessfulEditRedirect(urn)
-
 @register_view(PictureChoiceLesson, 'edit')
 def edit_picture_choice_lesson(request):
     if request.method == 'POST':
@@ -55,7 +48,16 @@ def edit_picture_choice_lesson(request):
             return HttpTextResponseBadRequest(u"validation failed")
         return SuccessfulEditRedirect(urn)
 
-    groups = [linkelt.get() for linkelt in request.ductus.resource.groups]
+    if hasattr(request, "ductus"):
+        # set ourselves up to edit an existing lesson
+        resource_json = {
+            'href': request.ductus.resource.urn,
+            'resource': request.ductus.resource.output_json_dict(),
+        }
+    else:
+        # set ourselves up to create a new lesson
+        resource_json = None
+
     return render_to_response('picture_choice/edit_lesson.html', {
-        'groups': groups,
+        'resource_json': resource_json,
     }, RequestContext(request))

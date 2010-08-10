@@ -11,7 +11,10 @@ class DuctusCommonMiddleware(object):
     def process_response(self, request, response):
         "Handles successful ajax edits"
         if request.is_ajax() and isinstance(response, SuccessfulEditRedirect):
-            response = render_json_response({"urn": response.urn})
+            d = {"urn": response.urn}
+            if "Location" in response:
+                d["page_url"] = response["Location"]
+            response = render_json_response(d)
         return response
 
     def process_exception(self, request, exception):

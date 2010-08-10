@@ -378,7 +378,8 @@ $(function () {
 		    alert("unknown error while saving; please try again");
 		    return;
 		}
-		alert("saved! at this point, it's best to reload this page before making further changes.");
+		// go to the newly-saved page
+		window.location = (data.page_url || resolve_urn(data.urn));
 	    },
 	    error: function (xhr, textStatus, errorThrown) {
 		alert(xhr.status + " error. save failed.");
