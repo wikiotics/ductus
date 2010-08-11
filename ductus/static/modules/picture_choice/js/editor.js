@@ -366,11 +366,16 @@ $(function () {
     $("#append_new_pcg_button").click(function () {
 	pclw.append_new_pcg();
     });
-    $("#save_button").click(function () {
+    $("#save_form").submit(function (event) {
+	event.preventDefault(); // cancel normal submit event handling
 	var blueprint = JSON.stringify(ModelWidget.blueprint_repr(pclw));
+	$(this).find("input:submit").attr("disabled", "disabled");
         $.ajax({
 	    url: document.URL,
-	    data: {blueprint: blueprint},
+	    data: {
+		blueprint: blueprint,
+		log_message: $("#log_message").val()
+	    },
 	    success: function (data) {
 		if (!data) {
 		    // something failed, but jquery 1.4.2 gives "success"
@@ -383,6 +388,9 @@ $(function () {
 	    },
 	    error: function (xhr, textStatus, errorThrown) {
 		alert(xhr.status + " error. save failed.");
+	    },
+	    complete: function (xhr, textStatus) {
+		$("#save_form").find("input:submit").removeAttr("disabled");
 	    },
 	    type: 'POST',
 	    dataType: 'json'
