@@ -34,6 +34,11 @@ class Picture(models.Model):
                                 validator=rotation_validator)
 
     def patch_from_blueprint(self, blueprint, save_context):
+        models.blueprint_expects_dict(blueprint)
+        blueprint = dict(blueprint)
+        if "credit" in blueprint:
+            del blueprint["credit"]
+
         super(Picture, self).patch_from_blueprint(blueprint, save_context)
 
         if 'flickr_photo_id' in blueprint:
