@@ -40,7 +40,7 @@ def adjust_orientation_from_exif(image):
         if exif is not None:
             orientation = exif[274]
             image = image.rotate(rotation_table[orientation], expand=True)
-    except KeyError:
+    except (KeyError, AttributeError):
         pass
     return image
 
