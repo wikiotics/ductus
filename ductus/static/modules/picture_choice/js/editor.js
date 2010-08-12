@@ -247,6 +247,9 @@ $(function () {
 	}
 
 	Widget.call(this, '<div><form>What: <input name="q"/> Where: <input name="place"/><input type="submit" value="search"/><br/><input type="radio" name="sort" value="date-posted-desc" checked/>Recent <input type="radio" name="sort" value="interestingness-desc"/>Interesting <input type="radio" name="sort" value="relevance"/>Relevant | Search by <input type="radio" name="search_by" value="text" checked/>Text <input type="radio" name="search_by" value="tags"/>Tags</form></div>');
+	if (DUCTUS_FLICKR_GROUP_ID) {
+	    $(this.elt).find("form").append('<div><input type="checkbox" name="group" value="' + DUCTUS_FLICKR_GROUP_ID + '"/> Restrict to project\'s Flickr group</div>');
+	}
 	this.elt.addClass("ductus_PictureSearchWidget");
 	var search_results_elt = $('<div class="search_results"></div>');
 	this.elt.find("form").submit(function () {

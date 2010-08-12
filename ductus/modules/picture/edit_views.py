@@ -76,6 +76,8 @@ def flickr_search_view(request):
             kw['tags'] = ','.join(tags)
         else:
             kw['text'] = request.GET['q']
+        if "group" in request.GET:
+            kw['group_id'] = request.GET["group"]
         search_result = search_photos(**kw)["photos"]
         page = int(search_result["page"])
         pages = int(search_result["pages"])

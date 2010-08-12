@@ -58,6 +58,10 @@ def edit_picture_choice_lesson(request):
         # set ourselves up to create a new lesson
         resource_json = None
 
+    from django.conf import settings
+    DUCTUS_FLICKR_GROUP_ID = getattr(settings, "DUCTUS_FLICKR_GROUP_ID", None)
+
     return render_to_response('picture_choice/edit_lesson.html', {
         'resource_json': resource_json,
+        'DUCTUS_FLICKR_GROUP_ID': DUCTUS_FLICKR_GROUP_ID,
     }, RequestContext(request))
