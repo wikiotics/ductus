@@ -25,6 +25,7 @@ from django.core.paginator import Paginator
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view, register_view
 from ductus.util.http import render_json_response
+from ductus.resource.models import BlueprintSaveContext
 from ductus.modules.picture.models import Picture
 from ductus.modules.picture.flickr import flickr, FlickrPhoto, license_map, url_format_map, valid_sort_methods
 from ductus.modules.picture.forms import PictureRotationForm, PictureImportForm
@@ -99,14 +100,21 @@ def flickr_search_view(request):
 def edit_picture(request):
     if request.method == 'POST':
         form = PictureRotationForm(request.POST)
-        if form.is_valid():
-            picture = request.ductus.resource = request.ductus.resource.clone()
-            picture.rotation = form.cleaned_data['rotation']
-            urn = picture.save()
+        if form.is_valid() and "parent" in request.POST:
+            save_context = BlueprintSaveContext.from_request(request)
+            blueprint = {
+                'resource': {
+                    '@patch': request.POST["parent"],
+                    'rotation': form.cleaned_data['rotation'],
+                }
+            }
+            urn = Picture.save_blueprint(blueprint, save_context)
+            print urn
             return SuccessfulEditRedirect(urn)
     else:
         form = PictureRotationForm()
 
     return render_to_response('picture/edit.html', {
         'form': form,
+        'parent_urn': request.ductus.resource.urn,
     }, RequestContext(request))

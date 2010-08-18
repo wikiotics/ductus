@@ -20,6 +20,7 @@ from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from django import forms
 
+from ductus.resource import get_resource_database
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.forms import LogMessageField
@@ -53,7 +54,13 @@ def add_author_and_log_message(request, resource):
 @register_creation_view(Wikitext)
 @register_view(Wikitext, 'edit')
 def edit_textwiki(request):
-    if hasattr(request, 'ductus'):
+    resource_database = get_resource_database()
+    if "parent" in request.POST:
+        # fixme: this could raise exceptions if not found
+        resource = resource_database.get_resource_object(request.POST["parent"])
+        if not isinstance(resource, Wikitext):
+            raise Exception
+    elif hasattr(request, 'ductus'):
         resource = request.ductus.resource
     else:
         resource = None
@@ -100,6 +107,7 @@ def edit_textwiki(request):
 
     return render_to_response('textwiki/edit_wiki.html', {
         'form': form,
+        'parent_urn': (resource and resource.urn),
         'captcha': mark_safe(captcha_html),
         'show_preview': (preview_requested and form.is_valid()),
     }, context_instance=RequestContext(request))

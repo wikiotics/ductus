@@ -4,6 +4,7 @@
 <form method="post" action="{{ request.escaped_full_path }}">
 <table>
 {{ form }}
+{% if parent_urn %}<input type="hidden" name="parent" value="{{ parent_urn }}"/>{% endif %}
 <tr><td></td><td><input type="submit"/></td></tr>
 </table>
 </form>
