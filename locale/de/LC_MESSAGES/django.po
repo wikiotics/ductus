@@ -2,8 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -87,25 +86,28 @@ msgstr ""
 
 #: modules/picture_choice/templates/picture_choice/edit_lesson.html:13
 #: modules/textwiki/templates/textwiki/edit_wiki.html:16
+#, fuzzy
 msgid "Save"
-msgstr ""
+msgstr "Sichern"
 
 #: modules/textwiki/templates/textwiki/edit_wiki.html:16
+#, fuzzy
 msgid "Preview"
-msgstr ""
+msgstr "Vorschau"
 
 #: templates/ductus_base.html:42
+#, fuzzy
 msgid "Log out"
-msgstr ""
+msgstr "Ausloggen"
 
 #: templates/ductus_base.html:45 templates/registration/login.html:15
+#, fuzzy
 msgid "Log in"
-msgstr ""
+msgstr "Einloggen"
 
 #: templates/ductus_base.html:66
 #, python-format
-msgid ""
-"%(ductus_site_name)s is powered by <a href=\"http://ductus.us/\">Ductus</a>."
+msgid "%(ductus_site_name)s is powered by <a href=\"http://ductus.us/\">Ductus</a>."
 msgstr ""
 
 #: templates/ductus_base.html:74
@@ -114,9 +116,7 @@ msgstr ""
 
 #: templates/ductus_document.html:19
 #, python-format
-msgid ""
-"You may be viewing an old version of this page.  <a href=\"%(current_url)s"
-"\">Click here to see the most up-to-date version.</a>"
+msgid "You may be viewing an old version of this page.  <a href=\"%(current_url)s\">Click here to see the most up-to-date version.</a>"
 msgstr ""
 
 #: templates/ductus_document.html:20
@@ -124,8 +124,9 @@ msgid "You are viewing a URN.  This page is static and will never change."
 msgstr ""
 
 #: templates/ductus_document.html:24
+#, fuzzy
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
 
 #: templates/ductus_document.html:28
 msgid "Edit"
@@ -136,50 +137,57 @@ msgid "Copy"
 msgstr ""
 
 #: templates/ductus_document.html:30
+#, fuzzy
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
 #: templates/ductus_document.html:34
+#, fuzzy
 msgid "History"
-msgstr ""
+msgstr "Geschichte"
 
 #: templates/ductus_document.html:36
+#, fuzzy
 msgid "More views"
-msgstr ""
+msgstr "Weitere Ansichten"
 
 #: templates/registration/create_user.html:9
+#, fuzzy
 msgid "Create Account"
-msgstr ""
+msgstr "Konto erstellen"
 
 #: templates/registration/logged_out.html:5
 msgid "You are logged out!"
-msgstr ""
+msgstr "Sie sind abgemeldet!"
 
 #: templates/registration/login.html:8
+#, fuzzy
 msgid "Your username and password did not match. Please try again."
-msgstr ""
+msgstr "Ihr Benutzername und Passwort stimmen nicht überein. Bitte versuchen Sie es erneut."
 
 #: templates/registration/login.html:12
+#, fuzzy
 msgid "Username"
-msgstr ""
+msgstr "Benutzername"
 
 #: templates/registration/login.html:13
+#, fuzzy
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
 #: templates/registration/password_change_done.html:5
+#, fuzzy
 msgid "Your password has been changed."
-msgstr ""
+msgstr "Ihr Passwort wurde geändert."
 
 #: templates/registration/password_change_form.html:8
 #: templates/registration/password_reset_confirm.html:10
+#, fuzzy
 msgid "Change password"
-msgstr ""
+msgstr "Passwort ändern"
 
 #: templates/registration/password_reset_done.html:5
-msgid ""
-"You should receive an email shortly with a link that contains a unique "
-"token.  Follow it to reset your password."
+msgid "You should receive an email shortly with a link that contains a unique token.  Follow it to reset your password."
 msgstr ""
 
 #: templates/registration/password_reset_email.html:1
@@ -193,8 +201,9 @@ msgid ""
 msgstr ""
 
 #: templates/registration/password_reset_form.html:9
+#, fuzzy
 msgid "Reset password"
-msgstr ""
+msgstr "Passwort zurücksetzen"
 
 #: user/views.py:74
 msgid "Your account settings have been updated."
@@ -202,7 +211,7 @@ msgstr ""
 
 #: user/templates/user/user_form.html:9
 msgid "Save settings"
-msgstr ""
+msgstr "Einstellungen speichern"
 
 #: wiki/models.py:69
 #, python-format
