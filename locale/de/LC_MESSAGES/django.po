@@ -16,44 +16,54 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: license/__init__.py:4
+#, fuzzy
 msgid "Public Domain"
-msgstr ""
+msgstr "Public Domain"
 
 #: license/__init__.py:5
+#, fuzzy
 msgid "Creative Commons Attribution-ShareAlike 1.0"
-msgstr ""
+msgstr "Creative Commons Attribution-ShareAlike 1.0"
 
 #: license/__init__.py:6
+#, fuzzy
 msgid "Creative Commons Attribution-ShareAlike 2.0"
-msgstr ""
+msgstr "Creative Commons Attribution-ShareAlike 2.0"
 
 #: license/__init__.py:7
+#, fuzzy
 msgid "Creative Commons Attribution-ShareAlike 2.5"
-msgstr ""
+msgstr "Creative Commons Attribution-ShareAlike 2.5"
 
 #: license/__init__.py:8
+#, fuzzy
 msgid "Creative Commons Attribution-ShareAlike 3.0"
-msgstr ""
+msgstr "Creative Commons Attribution-ShareAlike 3.0"
 
 #: license/__init__.py:9
+#, fuzzy
 msgid "Creative Commons Attribution 1.0"
-msgstr ""
+msgstr "Creative Commons Attribution 1.0"
 
 #: license/__init__.py:10
+#, fuzzy
 msgid "Creative Commons Attribution 2.0"
-msgstr ""
+msgstr "Creative Commons Attribution 2.0"
 
 #: license/__init__.py:11
+#, fuzzy
 msgid "Creative Commons Attribution 2.5"
-msgstr ""
+msgstr "Creative Commons Attribution 2.5"
 
 #: license/__init__.py:12
+#, fuzzy
 msgid "Creative Commons Attribution 3.0"
-msgstr ""
+msgstr "Creative Commons Attribution 3.0"
 
 #: modules/picture/flickr.py:114
+#, fuzzy
 msgid "a URL from Flickr"
-msgstr ""
+msgstr "eine URL aus Flickr"
 
 #: modules/picture/flickr.py:127
 #, python-format
@@ -61,8 +71,9 @@ msgid "must be a photo, not '%s'"
 msgstr ""
 
 #: modules/picture/flickr.py:129
+#, fuzzy
 msgid "This photo is not available under an acceptable license for this wiki."
-msgstr ""
+msgstr "Dieses Foto ist nicht verfügbar unter einer akzeptablen Lizenz für dieses Wiki."
 
 #: modules/picture/forms.py:103
 msgid "Unrecogized uri type"
@@ -81,8 +92,9 @@ msgid "This urn represents content that is not a picture."
 msgstr ""
 
 #: modules/picture_choice/templates/picture_choice/edit_lesson.html:12
+#, fuzzy
 msgid "add picture choice group"
-msgstr ""
+msgstr "Bild Auswahl Gruppe hinzufügen "
 
 #: modules/picture_choice/templates/picture_choice/edit_lesson.html:13
 #: modules/textwiki/templates/textwiki/edit_wiki.html:16
@@ -106,9 +118,9 @@ msgid "Log in"
 msgstr "Einloggen"
 
 #: templates/ductus_base.html:66
-#, python-format
+#, python-format, fuzzy
 msgid "%(ductus_site_name)s is powered by <a href=\"http://ductus.us/\">Ductus</a>."
-msgstr ""
+msgstr " %(Ductus_site_name) wird unterstützt von <a href=\"http://ductus.us/\">Ductus</a> ."
 
 #: templates/ductus_base.html:74
 msgid "Go"
@@ -134,7 +146,7 @@ msgstr "Bearbeiten"
 
 #: templates/ductus_document.html:29
 msgid "Copy"
-msgstr ""
+msgstr "Kopie"
 
 #: templates/ductus_document.html:30
 #, fuzzy
@@ -187,8 +199,11 @@ msgid "Change password"
 msgstr "Passwort ändern"
 
 #: templates/registration/password_reset_done.html:5
+#, fuzzy
 msgid "You should receive an email shortly with a link that contains a unique token.  Follow it to reset your password."
 msgstr ""
+"Sie sollten in Kürze eine E-Mail mit einem Link erhalten,\r\n"
+"folgen Sie diesem um Ihr Passwort zurück zusetzen."
 
 #: templates/registration/password_reset_email.html:1
 #, python-format
@@ -206,8 +221,9 @@ msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
 #: user/views.py:74
+#, fuzzy
 msgid "Your account settings have been updated."
-msgstr ""
+msgstr "Ihre Konto-Einstellungen wurden aktualisiert."
 
 #: user/templates/user/user_form.html:9
 msgid "Save settings"
@@ -220,7 +236,7 @@ msgstr ""
 
 #: wiki/models.py:71
 msgid "A user or IP address must be given when saving a revision"
-msgstr ""
+msgstr "Ein Benutzer oder eine IP-Adresse muss zum sichern der Änderungen angegeben werden"
 
 #: wiki/views.py:280
 msgid "wiki location of the new resource"
