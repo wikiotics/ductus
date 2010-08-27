@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import re
 from urllib2 import urlopen, HTTPError as urllib2_HTTPError
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotModified, Http404
@@ -29,7 +30,7 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 from django.conf import settings
 
 from ductus.resource import determine_header
-from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, user_has_edit_permission, user_has_unlink_permission
+from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, is_legal_wiki_pagename, user_has_edit_permission, user_has_unlink_permission
 from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view, unvarying
 from ductus.util.http import query_string_not_found, render_json_response, ImmediateResponse
@@ -199,7 +200,7 @@ def view_wikipage(request, pagename):
     else:
         revision = None
 
-    if revision is None and getattr(settings, "DUCTUS_WIKI_REMOTE", None):
+    if revision is None and getattr(settings, "DUCTUS_WIKI_REMOTE", None) and is_legal_wiki_pagename(pagename):
         # See if DUCTUS_WIKI_REMOTE has the page
         try:
             remote_url = "%s%s?view=urn" % (settings.DUCTUS_WIKI_REMOTE, iri_to_uri(urlquote(pagename)))
@@ -238,6 +239,8 @@ def view_wikipage(request, pagename):
                 response = f(request)
 
     if response is None:
+        if not is_legal_wiki_pagename(pagename):
+            raise Http404
         response = implicit_new_wikipage(request, pagename)
 
     patch_cache_control(response, must_revalidate=True)
@@ -260,6 +263,8 @@ def creation_view(request, page_type):
 
     response = view_func(request)
     if "target" in request.GET:
+        if not is_legal_wiki_pagename(request.GET["target"]):
+            raise Http404
         check_edit_permission(request, request.GET["target"])
     if "target" in request.GET and isinstance(response, SuccessfulEditRedirect):
         page, page_created = WikiPage.objects.get_or_create(name=request.GET["target"])
@@ -289,7 +294,14 @@ def view_copy_resource(request):
                 return source_urn
 
         def clean_target_pagename(self):
-            target_pagename = self.cleaned_data['target_pagename']
+            target_pagename = self.cleaned_data['target_pagename'].strip()
+
+            # convert spaces to underscores
+            r = re.compile('\s+', re.UNICODE)
+            target_pagename = r.sub(u'_', target_pagename)
+
+            if not is_legal_wiki_pagename(target_pagename):
+                raise forms.ValidationError(_(u'Invalid page name')) # would be nice to tell the user why it's invalid...
             if not user_has_edit_permission(request.user, target_pagename):
                 raise forms.ValidationError(_('you do not have permission to create/write to this resource')) 
             return target_pagename
@@ -351,7 +363,6 @@ def urn_linkify(html):
         urn = matchobj.group(0)
         return u'<a href="%s">%s</a>' % (resolve_urn(urn), urn)
 
-    import re
     return re.sub(r'urn:[_\-A-Za-z0-9\:]*', repl, html)
 
 def allow_line_wrap(html):
