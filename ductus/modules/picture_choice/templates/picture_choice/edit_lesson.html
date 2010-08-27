@@ -15,7 +15,7 @@ var DUCTUS_FLICKR_GROUP_ID = {{ DUCTUS_FLICKR_GROUP_ID|jsonize }};
 <div id="pcl_editor"></div>
 <div><a id="append_new_pcg_button">{% trans "add picture choice group" %}</a></div>
 <div style="margin-top: 1em;">
-  Log message: <input type="text" id="log_message" maxlength="400"/>
+  {% trans "Log message:" %} <input type="text" id="log_message" maxlength="400"/>
   <form id="save_form" style="display: inline"><input type="submit" value="{% trans "Save" %}"/></form>
 </div>
 {% endblock %}

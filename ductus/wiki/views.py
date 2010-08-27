@@ -282,7 +282,7 @@ def view_copy_resource(request):
 
     class CopyPageForm(forms.Form):
         source_urn = forms.CharField(widget=forms.HiddenInput())
-        target_pagename = forms.CharField(help_text=_('wiki location of the new resource'))
+        target_pagename = forms.CharField(label=_('Target page name'), help_text=_('wiki location of the new resource'))
 
         def clean_source_urn(self):
             source_urn = self.cleaned_data['source_urn']

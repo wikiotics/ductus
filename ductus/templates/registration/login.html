@@ -15,13 +15,14 @@
 <form method="post" action="{{ request.path }}">
 <table>
 <tr><td><label for="id_username">{% trans "Username" %}:</label></td><td>{{ form.username }}</td></tr>
-<tr><td><label for="id_password">{% trans "Password" %}:</label></td><td>{{ form.password }} <a href="{% url django.contrib.auth.views.password_reset %}">Forget your password</a>?</td></tr>
+<tr><td><label for="id_password">{% trans "Password" %}:</label></td><td>{{ form.password }} {% url django.contrib.auth.views.password_reset as password_reset_url %}{% blocktrans %}<a href="{{ password_reset_url }}">Forget your password</a>?{% endblocktrans %}</td></tr>
 </table>
 <input type="submit" value="{% trans "Log in" %}" />
 {% url django.contrib.auth.views.logout as logout_url %}
 {% ifnotequal next logout_url %}{% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}{% endifnotequal %}
 </form>
-<p>Need to <a href="{% url ductus.user.views.user_creation %}">create an account</a>?</p>
+{% url ductus.user.views.user_creation as user_creation_url %}
+<p>{% blocktrans %}Need to <a href="{{ user_creation_url }}">create an account</a>?{% endblocktrans %}</p>
 {% endblock %}
 
 {% block javascript %}

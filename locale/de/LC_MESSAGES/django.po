@@ -2,12 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-12 00:04-0500\n"
+"POT-Creation-Date: 2010-08-27 15:19-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,75 +60,105 @@ msgstr "Creative Commons Attribution 2.5"
 msgid "Creative Commons Attribution 3.0"
 msgstr "Creative Commons Attribution 3.0"
 
-#: modules/picture/flickr.py:114
+#: modules/picture/flickr.py:117
 #, fuzzy
 msgid "a URL from Flickr"
 msgstr "eine URL aus Flickr"
 
-#: modules/picture/flickr.py:127
+#: modules/picture/flickr.py:130
 #, python-format
 msgid "must be a photo, not '%s'"
 msgstr ""
 
-#: modules/picture/flickr.py:129
+#: modules/picture/flickr.py:132
 #, fuzzy
 msgid "This photo is not available under an acceptable license for this wiki."
-msgstr "Dieses Foto ist nicht verfügbar unter einer akzeptablen Lizenz für dieses Wiki."
+msgstr ""
+"Dieses Foto ist nicht verfügbar unter einer akzeptablen Lizenz für dieses "
+"Wiki."
 
-#: modules/picture/forms.py:103
+#: modules/picture/forms.py:56
 msgid "Unrecogized uri type"
 msgstr ""
 
-#: modules/picture/forms.py:122
+#: modules/picture/forms.py:75
 msgid "a URN available on this site"
 msgstr ""
 
-#: modules/picture/forms.py:142
+#: modules/picture/forms.py:95
 msgid "This urn cannot be found on the server you are currently accessing."
 msgstr ""
 
-#: modules/picture/forms.py:146
+#: modules/picture/forms.py:99
 msgid "This urn represents content that is not a picture."
 msgstr ""
 
-#: modules/picture_choice/templates/picture_choice/edit_lesson.html:12
+#: modules/picture_choice/templates/picture_choice/edit_lesson.html:16
 #, fuzzy
 msgid "add picture choice group"
 msgstr "Bild Auswahl Gruppe hinzufügen "
 
-#: modules/picture_choice/templates/picture_choice/edit_lesson.html:13
-#: modules/textwiki/templates/textwiki/edit_wiki.html:16
+#: modules/picture_choice/templates/picture_choice/edit_lesson.html:18
+#: modules/textwiki/templates/textwiki/edit_wiki.html:15
+msgid "Log message:"
+msgstr ""
+
+#: modules/picture_choice/templates/picture_choice/edit_lesson.html:19
+#: modules/textwiki/templates/textwiki/edit_wiki.html:17
 #, fuzzy
 msgid "Save"
 msgstr "Sichern"
 
-#: modules/textwiki/templates/textwiki/edit_wiki.html:16
+#: modules/picture_choice/templates/picture_choice/lesson.html:44
+#, python-format
+msgid ""
+"\n"
+"Frame %(current_frame)s of %(number_of_frames)s\n"
+msgstr ""
+
+#: modules/picture_choice/templates/picture_choice/lesson.html:47
+#, python-format
+msgid ""
+"\n"
+"(%(correct_count)s correct, %(incorrect_count)s incorrect).\n"
+msgstr ""
+
+#: modules/textwiki/templates/textwiki/edit_wiki.html:17
 #, fuzzy
 msgid "Preview"
 msgstr "Vorschau"
 
-#: templates/ductus_base.html:42
+#: templates/ductus_base.html:46
 #, fuzzy
 msgid "Log out"
 msgstr "Ausloggen"
 
-#: templates/ductus_base.html:45 templates/registration/login.html:15
+#: templates/ductus_base.html:49 templates/registration/login.html:20
 #, fuzzy
 msgid "Log in"
 msgstr "Einloggen"
 
-#: templates/ductus_base.html:66
-#, python-format, fuzzy
-msgid "%(ductus_site_name)s is powered by <a href=\"http://ductus.us/\">Ductus</a>."
-msgstr " %(Ductus_site_name) wird unterstützt von <a href=\"http://ductus.us/\">Ductus</a> ."
+#: templates/ductus_base.html:72
+msgid "user interface language:"
+msgstr ""
 
-#: templates/ductus_base.html:74
+#: templates/ductus_base.html:78
 msgid "Go"
 msgstr ""
 
+#: templates/ductus_base.html:81
+#, fuzzy, python-format
+msgid ""
+"%(ductus_site_name)s is powered by <a href=\"http://ductus.us/\">Ductus</a>."
+msgstr ""
+" %(Ductus_site_name) wird unterstützt von <a href=\"http://ductus.us/"
+"\">Ductus</a> ."
+
 #: templates/ductus_document.html:19
 #, python-format
-msgid "You may be viewing an old version of this page.  <a href=\"%(current_url)s\">Click here to see the most up-to-date version.</a>"
+msgid ""
+"You may be viewing an old version of this page.  <a href=\"%(current_url)s"
+"\">Click here to see the most up-to-date version.</a>"
 msgstr ""
 
 #: templates/ductus_document.html:20
@@ -172,20 +202,34 @@ msgstr "Konto erstellen"
 msgid "You are logged out!"
 msgstr "Sie sind abgemeldet!"
 
-#: templates/registration/login.html:8
+#: templates/registration/login.html:13
 #, fuzzy
 msgid "Your username and password did not match. Please try again."
-msgstr "Ihr Benutzername und Passwort stimmen nicht überein. Bitte versuchen Sie es erneut."
+msgstr ""
+"Ihr Benutzername und Passwort stimmen nicht überein. Bitte versuchen Sie es "
+"erneut."
 
-#: templates/registration/login.html:12
+#: templates/registration/login.html:17
 #, fuzzy
 msgid "Username"
 msgstr "Benutzername"
 
-#: templates/registration/login.html:13
+#: templates/registration/login.html:18
 #, fuzzy
 msgid "Password"
 msgstr "Passwort"
+
+#: templates/registration/login.html:18
+#, python-format
+msgid "<a href=\"%(password_reset_url)s\">Forget your password</a>?"
+msgstr ""
+
+#: templates/registration/login.html:25
+#: templates/registration/password_reset_confirm.html:17
+#: templates/registration/password_reset_form.html:12
+#, python-format
+msgid "Need to <a href=\"%(user_creation_url)s\">create an account</a>?"
+msgstr ""
 
 #: templates/registration/password_change_done.html:5
 #, fuzzy
@@ -198,11 +242,27 @@ msgstr "Ihr Passwort wurde geändert."
 msgid "Change password"
 msgstr "Passwort ändern"
 
+#: templates/registration/password_reset_complete.html:5
+#, python-format
+msgid ""
+"Your password has been reset.  You may now <a href=\"%(login_url)s\">log in</"
+"a>."
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:14
+#, python-format
+msgid ""
+"The link you followed is invalid or expired.  You may wish to <a href=\"%"
+"(password_reset_url)s\">request that your password be reset</a> again."
+msgstr ""
+
 #: templates/registration/password_reset_done.html:5
 #, fuzzy
-msgid "You should receive an email shortly with a link that contains a unique token.  Follow it to reset your password."
+msgid ""
+"You should receive an email shortly with a link that contains a unique "
+"token.  Follow it to reset your password."
 msgstr ""
-"Sie sollten in Kürze eine E-Mail mit einem Link erhalten,\r\n"
+"Sie sollten in Kürze eine E-Mail mit einem Link erhalten,\n"
 "folgen Sie diesem um Ihr Passwort zurück zusetzen."
 
 #: templates/registration/password_reset_email.html:1
@@ -220,6 +280,12 @@ msgstr ""
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
+#: templates/registration/user_created.html:6
+#, python-format
+msgid ""
+"Created user %(username)s.  Now you may <a href=\"%(login_url)s\">log in</a>."
+msgstr ""
+
 #: user/views.py:74
 #, fuzzy
 msgid "Your account settings have been updated."
@@ -236,16 +302,35 @@ msgstr ""
 
 #: wiki/models.py:71
 msgid "A user or IP address must be given when saving a revision"
-msgstr "Ein Benutzer oder eine IP-Adresse muss zum sichern der Änderungen angegeben werden"
+msgstr ""
+"Ein Benutzer oder eine IP-Adresse muss zum sichern der Änderungen angegeben "
+"werden"
 
-#: wiki/views.py:280
+#: wiki/views.py:285
+msgid "Target page name"
+msgstr ""
+
+#: wiki/views.py:285
 msgid "wiki location of the new resource"
 msgstr ""
 
-#: wiki/views.py:287
+#: wiki/views.py:292
 msgid "source resource does not exist"
 msgstr ""
 
-#: wiki/views.py:294
+#: wiki/views.py:304
+msgid "Invalid page name"
+msgstr ""
+
+#: wiki/views.py:306
 msgid "you do not have permission to create/write to this resource"
 msgstr ""
+
+#: wiki/templates/wiki/view_index.html:5
+msgid "Content-specific views"
+msgstr ""
+
+#: wiki/templates/wiki/view_index.html:18
+#, fuzzy
+msgid "Generic views"
+msgstr "Weitere Ansichten"

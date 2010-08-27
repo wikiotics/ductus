@@ -1,7 +1,8 @@
 {% extends "ductus_document.html" %}
+{% load i18n %}
 
 {% block content %}
-<h4>Content-specific views</h4>
+<h4>{% trans "Content-specific views" %}</h4>
 <ul>
 {% for view in special_views %}
 <li>
@@ -14,7 +15,7 @@
 {% endfor %}
 </ul>
 
-<h4>Generic views</h4>
+<h4>{% trans "Generic views" %}</h4>
 <ul>
 {% for view in generic_views %}
 <li><a href="?view={{ view }}{{ oldid_str_amp }}">{{ view }}</a></li>

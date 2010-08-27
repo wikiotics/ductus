@@ -52,9 +52,9 @@ ADMIN_MEDIA_PREFIX = '/media/'
 # see django/conf/global_settings.py
 gettext_noop = lambda s: s
 LANGUAGES = (
-    ('cs',  gettext_noop('Czech')),
-    ('de', gettext_noop('German')),
-    ('en', gettext_noop('English')),
+    ('cs', 'Czech'),
+    ('de', 'German'),
+    ('en', 'English'),
 )
 
 # List of callables that know how to import templates from various sources.
