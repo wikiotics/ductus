@@ -53,18 +53,23 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
 def is_legal_wiki_pagename(pagename):
     """Call this before creating a new wikipage.
 
-    This function returns False for special pages, since they cannot be
-    created.
+    In addition to doing various legality checks, this function returns False
+    for special pages, since they aren't normal wiki pages (as they cannot be
+    created or edited, and revisions are not stored in the system).
     """
     if not pagename:
         return False
 
-    if pagename[-1] == u'/':
-        # pages shouldn't end with a slash
+    if pagename[0] in (u'/', u'_') or pagename[-1] in (u'/', u'_'):
+        # page names shouldn't begin or end with a slash or underscore
         return False
 
-    if u'//' in pagename:
-        # pages shouldn't contain multiple adjacent slashes
+    if u'//' in pagename or u'__' in pagename:
+        # page names shouldn't contain multiple adjacent slashes or underscores
+        return False
+
+    if u'/_' in pagename or u'_/' in pagename:
+        # a portion of the path should not begin or end with an underscore
         return False
 
     if __whitespace_re.search(pagename):

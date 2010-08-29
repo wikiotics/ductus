@@ -294,11 +294,14 @@ def view_copy_resource(request):
                 return source_urn
 
         def clean_target_pagename(self):
-            target_pagename = self.cleaned_data['target_pagename'].strip()
+            target_pagename = self.cleaned_data['target_pagename']
 
             # convert spaces to underscores
-            r = re.compile('\s+', re.UNICODE)
+            r = re.compile('[\s_]+', re.UNICODE)
             target_pagename = r.sub(u'_', target_pagename)
+            # remove leading and trailing underscores from each portion of
+            # path; remove extra slashes
+            target_pagename = u'/'.join(filter(lambda x: x, [a.strip(u'_') for a in target_pagename.split(u'/')]))
 
             if not is_legal_wiki_pagename(target_pagename):
                 raise forms.ValidationError(_(u'Invalid page name')) # would be nice to tell the user why it's invalid...
