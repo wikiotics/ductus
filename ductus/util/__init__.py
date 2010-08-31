@@ -78,12 +78,13 @@ def iterator_to_tempfile(data_iterator):
     Returns: the name of the file
     """
     fd, tmpfile = mkstemp()
+    f = os.fdopen(fd, 'wb')
     try:
         try:
             for data in data_iterator:
-                os.write(fd, data)
+                f.write(data)
         finally:
-            os.close(fd)
+            f.close()
     except:
         with ignore(OSError):
             os.remove(tmpfile)
