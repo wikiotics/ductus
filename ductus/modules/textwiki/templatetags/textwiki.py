@@ -82,6 +82,9 @@ __title_right_re = re.compile(r'[\s=]*$', re.UNICODE)
 @register.filter
 @stringfilter
 def creole_guess_title(value):
-    first_line = value.splitlines()[0]
+    try:
+        first_line = (a for a in value.splitlines() if a).next()
+    except StopIteration:
+        return ''
     title = __title_left_re.sub('', __title_right_re.sub('', first_line))
     return title

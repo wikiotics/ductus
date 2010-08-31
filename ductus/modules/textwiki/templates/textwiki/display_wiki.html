@@ -5,7 +5,7 @@
 {% block title %}
 {{ block.super }}
 {% with text|creole_guess_title|truncatewords:"20" as guessed_title %}
-{% title guessed_title %}
+{% if guessed_title %}{% title guessed_title %}{% endif %}
 {% endwith %}
 {% endblock %}
 
