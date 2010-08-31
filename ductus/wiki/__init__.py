@@ -21,7 +21,7 @@ from django.utils.encoding import iri_to_uri
 
 from ductus.resource import ResourceDatabase, UnsupportedURN, get_resource_database
 
-__whitespace_re = re.compile('\s', re.UNICODE)
+__whitespace_re = re.compile(r'\s', re.UNICODE)
 
 is_valid_urn = ResourceDatabase.is_valid_urn
 

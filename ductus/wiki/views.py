@@ -297,7 +297,7 @@ def view_copy_resource(request):
             target_pagename = self.cleaned_data['target_pagename']
 
             # convert spaces to underscores
-            r = re.compile('[\s_]+', re.UNICODE)
+            r = re.compile(r'[\s_]+', re.UNICODE)
             target_pagename = r.sub(u'_', target_pagename)
             # remove leading and trailing underscores from each portion of
             # path; remove extra slashes
