@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
@@ -73,3 +75,13 @@ def creole(value):
         return value
     else:
         return mark_safe(creole2html(value))
+
+__title_left_re = re.compile(r'^[\s=]*', re.UNICODE)
+__title_right_re = re.compile(r'[\s=]*$', re.UNICODE)
+
+@register.filter
+@stringfilter
+def creole_guess_title(value):
+    first_line = value.splitlines()[0]
+    title = __title_left_re.sub('', __title_right_re.sub('', first_line))
+    return title
