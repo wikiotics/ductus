@@ -15,10 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+from shutil import copyfile
 
 from django.conf import settings
 
 from ductus.resource.storage.local import split_urn
+from ductus.util import iterator_to_tempfile
 
 def __to_filename(urn, key):
     hash_type, digest = split_urn(urn)
@@ -41,15 +43,14 @@ def put(urn, key, data_iterator):
         if not os.path.isdir(dirname):
             raise
 
+    tmpfile = iterator_to_tempfile(data_iterator)
     try:
-        fd = os.open(filename, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0644)
+        copyfile(tmpfile, filename)
     except OSError:
         return False
+    finally:
+        os.remove(tmpfile)
 
-    f = os.fdopen(fd, "wb")
-    for data in data_iterator:
-        f.write(data)
-    f.close()
     return True
 
 def get(urn, key):
