@@ -28,7 +28,11 @@ class TitleNode(template.Node):
         # Add to title_list in top-level context
         title_list = context.dicts[0].setdefault('title_list', [])
         if isinstance(title_list, list):
-            title_list.append(self.title(context))
+            new_title = self.title(context)
+            # before appending, make sure it does not duplicate the most
+            # recently added title
+            if not (title_list and title_list[-1] == new_title):
+                title_list.append(new_title)
         return ''
 
 @register.tag
