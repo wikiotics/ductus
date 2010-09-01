@@ -509,8 +509,12 @@ def view_diff(request):
         that = get_resource_database().get_resource_object(request.GET["diff"])
     except KeyError:
         # This could mean there is no "diff" in the query string, or that the
-        # resource object doesn't exist.  Either way, we do the same thing.
-        return query_string_not_found(request)
+        # resource object doesn't exist.  Let's first try to diff against one
+        # of the parents, and fail out if that doesn't work.
+        if this.common.parents.array:
+            that = this.common.parents.array[0].get()
+        else:
+            return query_string_not_found(request)
 
     return render_to_response("wiki/diff.html", {
         'diff': Diff(this, that),
