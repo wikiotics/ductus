@@ -23,6 +23,13 @@ class DuctusCommonMiddleware(object):
             return exception.response
 
 def __escaped_full_path(request, **kwargs):
+    """Escaped path that includes the QUERY_STRING
+
+    See http://code.ductus.us/ticket/32
+
+    If kwargs are given, it is possible to override GET parameters in the
+    returned path.
+    """
     path = iri_to_uri(urlquote(request.path))
     if kwargs:
         GET = request.GET.copy()
