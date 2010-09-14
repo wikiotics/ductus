@@ -69,6 +69,8 @@ url_format_map = {
     'square': 'http://farm%(farm)s.static.flickr.com/%(server)s/%(id)s_%(secret)s_s.jpg',
     'thumbnail': 'http://farm%(farm)s.static.flickr.com/%(server)s/%(id)s_%(secret)s_t.jpg',
     'small': 'http://farm%(farm)s.static.flickr.com/%(server)s/%(id)s_%(secret)s_m.jpg',
+    'medium': 'http://farm%(farm)s.static.flickr.com/%(server)s/%(id)s_%(secret)s.jpg',
+    'large': 'http://farm%(farm)s.static.flickr.com/%(server)s/%(id)s_%(secret)s_b.jpg',
     'original': 'http://farm%(farm)s.static.flickr.com/%(server)s/%(id)s_%(originalsecret)s_o.%(originalformat)s',
     'page': 'http://www.flickr.com/photos/%(owner_id)s/%(id)s',
     'userpage': 'http://www.flickr.com/people/%(owner_id)s/',
@@ -91,7 +93,14 @@ class FlickrPhoto(object):
 
         # add list of urls for convenience
         for k, v in url_format_map.iteritems():
-            self.dict[k + "_url"] = v % self.dict
+            try:
+                self.dict[k + "_url"] = v % self.dict
+            except KeyError:
+                # fail safely for photo sizes that may not be given
+                if k in ('original', 'large'):
+                    self.dict[k + "_url"] = None
+                else:
+                    raise
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -136,7 +145,8 @@ class FlickrUriHandler(object):
         photo = self.photo
         if picture is None:
             picture = Picture()
-        picture.blob.store(iterate_file_object(urlopen(photo.original_url)))
+        img_url = photo.original_url or photo.large_url or photo.medium_url
+        picture.blob.store(iterate_file_object(urlopen(img_url)))
         picture.blob.mime_type = 'image/jpeg'
         license_elt = picture.common.licenses.new_item()
         license_elt.href = photo['license']
@@ -145,7 +155,7 @@ class FlickrUriHandler(object):
         picture.credit.original_url.href = photo.page_url
         picture.credit.author.text = "%(realname)s (%(username)s)" % photo['owner']
         picture.credit.author_url.href = photo.userpage_url
-        if photo['rotation']:
+        if photo['rotation'] and photo.original_url:
             picture.rotation = unicode(360 - int(photo['rotation']))
         if return_before_saving:
             return

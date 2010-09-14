@@ -82,7 +82,11 @@ def flickr_search_view(request):
         search_result = search_photos(**kw)["photos"]
         page = int(search_result["page"])
         pages = int(search_result["pages"])
-        photos = [FlickrPhoto(p).dict for p in search_result['photo'] if 'originalsecret' in p]
+        # if we're not searching in a specific group, only return results for
+        # which we are allowed to download the original image.  see ductus
+        # ticket #64 for explanation of why
+        photos = [FlickrPhoto(p).dict for p in search_result['photo']
+                  if 'group' in request.GET or 'originalsecret' in p]
     else:
         photos = None
         page = 0
