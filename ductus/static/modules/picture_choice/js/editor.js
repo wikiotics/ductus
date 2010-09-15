@@ -67,12 +67,6 @@ $(function () {
 	this.elt.data("widget_object", this);
 	this.elt.addClass("ductus_pce_widget");
     }
-    Widget.prototype.cleanup = function () {
-	// call this function when we are done with the object to prevent
-	// memory leaks in IE
-	// fixme: make this function do more
-	delete this.elt;
-    };
 
     function ModelWidget(initial_data, initial_html_code) {
 	Widget.call(this, initial_html_code);
@@ -183,7 +177,7 @@ $(function () {
 	    tolerance: 'pointer',
 	    drop: function (event, ui) {
 		var source_display_widget = ui.draggable.data('widget_object');
-		var source_picture_widget = source_display_widget._picture_widget;
+		var source_picture_widget = source_display_widget.elt.data('_picture_widget');
 		if (source_picture_widget && self._display_widget) {
 		    // swap them, including rotation data
 		    var source_rotation = source_picture_widget.net_rotation;
@@ -209,8 +203,10 @@ $(function () {
 	    return;
 	}
 
+	// using data() deals with circular reference memory leak problem on IE
 	this._display_widget = widget;
-	widget._picture_widget = this; // circular reference
+	widget.elt.data('_picture_widget', this);
+
 	this.image_holder.empty().append(widget.elt);
 	this.set_rotation(0);
 	this.rotation_controls.show();
