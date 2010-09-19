@@ -113,7 +113,6 @@ def edit_picture(request):
                 }
             }
             urn = Picture.save_blueprint(blueprint, save_context)
-            print urn
             return SuccessfulEditRedirect(urn)
     else:
         form = PictureRotationForm()
