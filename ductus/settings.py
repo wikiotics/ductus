@@ -127,7 +127,6 @@ DUCTUS_MEDIA_PREFIX = '/static/ductus/'
 
 DUCTUS_ALLOWED_LICENSES = (
     'http://creativecommons.org/licenses/publicdomain/',
-    'http://creativecommons.org/licenses/by-sa/1.0/',
     'http://creativecommons.org/licenses/by-sa/2.0/',
     'http://creativecommons.org/licenses/by-sa/2.5/',
     'http://creativecommons.org/licenses/by-sa/3.0/',
