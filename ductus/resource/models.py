@@ -384,6 +384,8 @@ class ArrayElement(Element):
             raise ValidationError("too few elements")
         if self.max_size is not None and len(self) > self.max_size:
             raise ValidationError("too many elements")
+        for subelement in self.array:
+            subelement.validate(strict)
 
     def output_json_dict(self):
         rv = super(ArrayElement, self).output_json_dict()
