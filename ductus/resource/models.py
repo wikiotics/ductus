@@ -529,7 +529,7 @@ class TypedBlobElement(BlobElement):
     def validate(self, strict=True):
         super(TypedBlobElement, self).validate(strict)
         if self.mime_type not in self.allowed_mime_types:
-            raise ValidationError()
+            raise ValidationError("not an allowed mime type")
 
 class TextBlobElement(BlobElement):
     # fixme: textual diff
@@ -564,7 +564,7 @@ class DuctusCommonElement(Element):
 
         if strict:
             if not self.author.text:
-                raise Exception("author must be given for the resource")
+                raise ValidationError("author must be given for the resource")
 
             # load each parent; make sure license compatibility is satisfied.
             licenses = [license.href for license in self.licenses]
@@ -573,7 +573,7 @@ class DuctusCommonElement(Element):
                                    for license in parent.get().common.licenses]
 
                 if not is_license_compatibility_satisfied(parent_licenses, licenses):
-                    raise Exception("license compatibility not satisfied")
+                    raise ValidationError("license compatibility not satisfied")
 
     def populate_xml_element(self, element, ns):
         if not self.timestamp:
@@ -646,11 +646,11 @@ class Model(Element):
         if strict:
             for parent in self.common.parents:
                 if type(parent.get()) != type(self):
-                    raise Exception("Resource's parents must be of the same type")
+                    raise ValidationError("Resource's parents must be of the same type")
 
         licenses = [license.href for license in self.common.licenses]
         if self.__allowed_licenses_set.isdisjoint(licenses + [None]):
-            raise Exception("The content is not provided under a license acceptable for this wiki")
+            raise ValidationError("The content is not provided under a license acceptable for this wiki")
 
     def __eq__(self, other):
         return (self.urn is not None and self.urn == other.urn) or super(Model, self).__eq__(other)
