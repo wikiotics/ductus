@@ -1,4 +1,4 @@
-<!DOCTYPE html>{% load i18n %}{% load title %}
+<!DOCTYPE html>{% load i18n %}{% load title %}{% load license_name %}
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="utf-8"/>
@@ -79,6 +79,7 @@
           </p>
         </form>
         <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
+        {% block copyright_info %}<p class="copyright_info">{% blocktrans with ductus_default_license|license_name as default_license_name %}All contributions to this wiki will be licensed under the <a href="{{ ductus_default_license }}">{{ default_license_name }}</a> license.  Certain pieces of content may be available under a more permissive license; see a specific document's license information page for details.{% endblocktrans %}</p>{% endblock %}
       </div>
     </footer>
   </body>

@@ -24,10 +24,13 @@ def site_settings(request):
     """
     dsn = getattr(settings, "DUCTUS_SITE_NAME", "Example Ductus Site")
     dsh = getattr(settings, "DUCTUS_SITE_HEAD", "")
-    return dict(ductus_media_prefix=settings.DUCTUS_MEDIA_PREFIX,
-                ductus_site_name=mark_safe(dsn),
-                ductus_site_head=mark_safe(dsh),
-                ductus_front_page=settings.DUCTUS_FRONT_PAGE)
+    return {
+        'ductus_media_prefix': settings.DUCTUS_MEDIA_PREFIX,
+        'ductus_site_name': mark_safe(dsn),
+        'ductus_site_head': mark_safe(dsh),
+        'ductus_front_page': settings.DUCTUS_FRONT_PAGE,
+        'ductus_default_license': settings.DUCTUS_DEFAULT_LICENSE,
+    }
 
 def oldid(request):
     """Sets `oldid_str_amp` and `oldid_str_qm` in the context.
