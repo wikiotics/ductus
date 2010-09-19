@@ -50,7 +50,7 @@ class Picture(models.Model):
             if FlickrUriHandler.handles(url):
                 fuh = FlickrUriHandler(url)
                 fuh.validate()
-                fuh.save(self, return_before_saving=False)
+                fuh.save(save_context, picture=self, return_before_saving=True)
 
         if 'rotation' in blueprint:
             rotation = blueprint['rotation']

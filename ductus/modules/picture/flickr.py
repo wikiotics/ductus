@@ -141,7 +141,7 @@ class FlickrUriHandler(object):
             raise forms.ValidationError(_("This photo is not available under an acceptable license for this wiki."))
         self.photo = photo
 
-    def save(self, picture=None, return_before_saving=False):
+    def save(self, save_context, picture=None, return_before_saving=False):
         photo = self.photo
         if picture is None:
             picture = Picture()
@@ -151,6 +151,7 @@ class FlickrUriHandler(object):
         license_elt = picture.common.licenses.new_item()
         license_elt.href = photo['license']
         picture.common.licenses.array = [license_elt]
+        picture.common.patch_from_blueprint(None, save_context)
         picture.credit.title.text = photo['title']['_content']
         picture.credit.original_url.href = photo.page_url
         picture.credit.author.text = "%(realname)s (%(username)s)" % photo['owner']
@@ -159,5 +160,4 @@ class FlickrUriHandler(object):
             picture.rotation = unicode(360 - int(photo['rotation']))
         if return_before_saving:
             return
-        # fixme: save log of what we just did ?
         return picture.save()

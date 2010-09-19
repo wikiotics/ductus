@@ -55,8 +55,8 @@ class PictureImportForm(forms.Form):
                 return uri
         raise forms.ValidationError(_("Unrecogized uri type"))
 
-    def save(self):
-        return self.handler.save()
+    def save(self, save_context):
+        return self.handler.save(save_context)
 
     @classmethod
     def get_verbose_input_descriptions(cls):
@@ -105,5 +105,5 @@ class UrnHandler(object):
         # this should never be reached
         assert self.handles(uri)
 
-    def save(self):
+    def save(self, save_context):
         return self.urn

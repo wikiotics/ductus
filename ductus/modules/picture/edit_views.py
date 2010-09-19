@@ -38,7 +38,8 @@ def new_picture(request):
     if request.method == 'POST':
         form = PictureImportForm(request.POST)
         if form.is_valid():
-            urn = form.save()
+            save_context = BlueprintSaveContext.from_request(request)
+            urn = form.save(save_context)
             return SuccessfulEditRedirect(urn)
     else:
         form = PictureImportForm()
