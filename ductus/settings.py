@@ -136,6 +136,8 @@ DUCTUS_ALLOWED_LICENSES = (
     'http://creativecommons.org/licenses/by/3.0/',
 )
 
+DUCTUS_DEFAULT_LICENSE = 'http://creativecommons.org/licenses/by-sa/3.0/'
+
 DUCTUS_FRONT_PAGE = '/wiki/front_page'
 
 #DUCTUS_FLICKR_API_KEY = ""

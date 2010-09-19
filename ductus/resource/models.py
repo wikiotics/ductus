@@ -18,8 +18,13 @@ import re
 import copy
 import datetime
 from itertools import chain
+
 from lxml import etree
+
+from django.conf import settings
 from django.utils.datastructures import SortedDict
+
+from ductus.license import is_license_compatibility_satisfied
 from ductus.util import create_property
 from ductus.resource import register_model, get_resource_database, _registered_models
 
@@ -551,6 +556,22 @@ class DuctusCommonElement(Element):
         rv.author.href = ""
         return rv
 
+    def validate(self, strict=True):
+        super(DuctusCommonElement, self).validate(strict)
+
+        if strict:
+            if not self.author.text:
+                raise Exception("author must be given for the resource")
+
+            # load each parent; make sure license compatibility is satisfied.
+            licenses = [license.href for license in self.licenses]
+            for parent in self.parents:
+                parent_licenses = [license.href
+                                   for license in parent.get().common.licenses]
+
+                if not is_license_compatibility_satisfied(parent_licenses, licenses):
+                    raise Exception("license compatibility not satisfied")
+
     def populate_xml_element(self, element, ns):
         if not self.timestamp:
             self.timestamp = datetime.datetime.utcnow().isoformat()
@@ -570,9 +591,18 @@ class Model(Element):
     urn = None
     common = DuctusCommonElement()
 
+    __allowed_licenses_set = set(settings.DUCTUS_ALLOWED_LICENSES)
+
     def save(self, encoding=None):
         if self.urn:
             return self.urn # no-op
+
+        # for now, let's just set the license to cc-by-sa if one isn't
+        # explicitly given:
+        if not self.common.licenses.array:
+            self.common.licenses.array = [self.common.licenses.new_item()]
+            self.common.licenses.array[0].href = settings.DUCTUS_DEFAULT_LICENSE
+
         self.validate()
         root = etree.Element(self.fqn, nsmap=self.nsmap)
         self.populate_xml_element(root, self.ns)
@@ -596,11 +626,28 @@ class Model(Element):
         return rv
 
     def validate(self, strict=True):
+        """validate the in-memory data model
+
+        `strict` is occasionally False, such as when an existing resource from
+        the ResourceDatabase is loaded into memory.  In this case, we don't
+        want to waste our time checking that all linked resources are of the
+        correct type (as this would involve loading them, and so on), so we
+        just do the minimal checks available with what is in memory.
+
+        Also, it is possible to implement a test that is performed only when
+        strict=True.  This will allow the test to fail without complaint on any
+        existing resources, but the system will only save new resources if they
+        pass the test.
+        """
         super(Model, self).validate(strict)
         if strict:
             for parent in self.common.parents:
                 if type(parent.get()) != type(self):
                     raise Exception("Resource's parents must be of the same type")
+
+        licenses = [license.href for license in self.common.licenses]
+        if self.__allowed_licenses_set.isdisjoint(licenses + [None]):
+            raise Exception("The content is not provided under a license acceptable for this wiki")
 
     def __eq__(self, other):
         return (self.urn is not None and self.urn == other.urn) or super(Model, self).__eq__(other)
