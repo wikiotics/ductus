@@ -3,8 +3,13 @@ import sys
 import traceback
 
 from django.conf import settings
+from django.core.exceptions import MiddlewareNotUsed
 
 class DuctusDebugMiddleware(object):
+    def __init__(self):
+        if not settings.DEBUG:
+            raise MiddlewareNotUsed
+
     def process_exception(self, request, exception):
         "Log AJAX exceptions"
 
