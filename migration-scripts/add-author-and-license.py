@@ -68,6 +68,8 @@ def do_actual_update(tree, default_author):
 # will deal with them in chronological order so we set the author based on the
 # earliest reference to the urn.
 for rev in WikiRevision.objects.order_by('timestamp').all():
+    if not rev.urn:
+        continue
     author = (rev.author and rev.author.username) or rev.author_ip
     urn = 'urn:%s' % rev.urn
     urn = update_object(urn, author)
