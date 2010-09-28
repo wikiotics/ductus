@@ -18,6 +18,7 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy
 from django import forms
 
 from ductus.resource import get_resource_database
@@ -38,9 +39,14 @@ def view_textwiki(request):
                               {'text': request.ductus.resource.text},
                               context_instance=RequestContext(request))
 
+_natural_language_choices = [('', ugettext_lazy('Unspecified'))]
+_natural_language_choices.extend((code, ugettext_lazy(lang)) for code, lang
+                                 in settings.DUCTUS_NATURAL_LANGUAGES)
+
 class WikiEditForm(forms.Form):
     textarea_attrs = {'cols': '80', 'rows': '30'}
     text = forms.CharField(widget=forms.Textarea(attrs=textarea_attrs))
+    natural_language = forms.ChoiceField(required=False, choices=_natural_language_choices)
     log_message = LogMessageField()
 
 def add_author_and_log_message(request, resource):
@@ -88,13 +94,17 @@ def edit_textwiki(request):
             else:
                 resource = Wikitext()
             resource.text = form.cleaned_data['text'].replace('\r', '')
+            resource.blob.natural_language = form.cleaned_data['natural_language']
             add_author_and_log_message(request, resource)
             urn = resource.save()
             return SuccessfulEditRedirect(urn)
 
     else:
         if resource:
-            form = WikiEditForm({'text': resource.text})
+            form = WikiEditForm({
+                'text': resource.text,
+                'natural_language': resource.blob.natural_language or '',
+            })
         else:
             form = WikiEditForm()
 

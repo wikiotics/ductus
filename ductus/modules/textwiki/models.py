@@ -1,9 +1,13 @@
+from django.conf import settings
+
 from ductus.resource import models, register_model
 from ductus.util import create_property
 
 class WikiBlobElement(models.TextBlobElement):
     allowed_markup_languages = ('creole-1.0',)
+    allowed_natural_languages = (None, '') + zip(*settings.DUCTUS_NATURAL_LANGUAGES)[0]
     markup_language = models.Attribute(validator=models.allowed_values_attribute_validator(allowed_markup_languages))
+    natural_language = models.Attribute(validator=models.allowed_values_attribute_validator(allowed_natural_languages), optional=True, blank_is_null=True)
 
     def __init__(self):
         # fixme: if Attribute had a "default" argument, we wouldn't need to

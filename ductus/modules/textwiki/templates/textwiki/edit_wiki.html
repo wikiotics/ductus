@@ -9,6 +9,7 @@
 </div>
 {% endif %}
 <form method="post" action="{{ request.escaped_full_path }}">
+<p>{% trans "Language:" %} {{ form.natural_language }}</p>
 <p>{{ form.text.errors }}</p>
 <p>{{ form.text }}</p>
 {{ captcha }}
