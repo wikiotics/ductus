@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-27 15:19-0500\n"
+"POT-Creation-Date: 2010-10-02 18:31-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -13,62 +13,62 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: license/__init__.py:4
+#: license/__init__.py:35
 #, fuzzy
 msgid "Public Domain"
 msgstr "Public Domain"
 
-#: license/__init__.py:5
+#: license/__init__.py:36
 #, fuzzy
 msgid "Creative Commons Attribution-ShareAlike 1.0"
 msgstr "Creative Commons Attribution-ShareAlike 1.0"
 
-#: license/__init__.py:6
+#: license/__init__.py:37
 #, fuzzy
 msgid "Creative Commons Attribution-ShareAlike 2.0"
 msgstr "Creative Commons Attribution-ShareAlike 2.0"
 
-#: license/__init__.py:7
+#: license/__init__.py:38
 #, fuzzy
 msgid "Creative Commons Attribution-ShareAlike 2.5"
 msgstr "Creative Commons Attribution-ShareAlike 2.5"
 
-#: license/__init__.py:8
+#: license/__init__.py:39
 #, fuzzy
 msgid "Creative Commons Attribution-ShareAlike 3.0"
 msgstr "Creative Commons Attribution-ShareAlike 3.0"
 
-#: license/__init__.py:9
+#: license/__init__.py:40
 #, fuzzy
 msgid "Creative Commons Attribution 1.0"
 msgstr "Creative Commons Attribution 1.0"
 
-#: license/__init__.py:10
+#: license/__init__.py:41
 #, fuzzy
 msgid "Creative Commons Attribution 2.0"
 msgstr "Creative Commons Attribution 2.0"
 
-#: license/__init__.py:11
+#: license/__init__.py:42
 #, fuzzy
 msgid "Creative Commons Attribution 2.5"
 msgstr "Creative Commons Attribution 2.5"
 
-#: license/__init__.py:12
+#: license/__init__.py:43
 #, fuzzy
 msgid "Creative Commons Attribution 3.0"
 msgstr "Creative Commons Attribution 3.0"
 
-#: modules/picture/flickr.py:117
+#: modules/picture/flickr.py:126
 #, fuzzy
 msgid "a URL from Flickr"
 msgstr "eine URL aus Flickr"
 
-#: modules/picture/flickr.py:130
+#: modules/picture/flickr.py:139
 #, python-format
 msgid "must be a photo, not '%s'"
 msgstr ""
 
-#: modules/picture/flickr.py:132
+#: modules/picture/flickr.py:141
 #, fuzzy
 msgid "This photo is not available under an acceptable license for this wiki."
 msgstr ""
@@ -97,12 +97,12 @@ msgid "add picture choice group"
 msgstr "Bild Auswahl Gruppe hinzufügen "
 
 #: modules/picture_choice/templates/picture_choice/edit_lesson.html:18
-#: modules/textwiki/templates/textwiki/edit_wiki.html:15
+#: modules/textwiki/templates/textwiki/edit_wiki.html:16
 msgid "Log message:"
 msgstr ""
 
 #: modules/picture_choice/templates/picture_choice/edit_lesson.html:19
-#: modules/textwiki/templates/textwiki/edit_wiki.html:17
+#: modules/textwiki/templates/textwiki/edit_wiki.html:18
 #, fuzzy
 msgid "Save"
 msgstr "Sichern"
@@ -121,7 +121,15 @@ msgid ""
 "(%(correct_count)s correct, %(incorrect_count)s incorrect).\n"
 msgstr ""
 
-#: modules/textwiki/templates/textwiki/edit_wiki.html:17
+#: modules/textwiki/views.py:44
+msgid "Unspecified"
+msgstr ""
+
+#: modules/textwiki/templates/textwiki/edit_wiki.html:12
+msgid "Language:"
+msgstr ""
+
+#: modules/textwiki/templates/textwiki/edit_wiki.html:18
 #, fuzzy
 msgid "Preview"
 msgstr "Vorschau"
@@ -151,6 +159,19 @@ msgid ""
 msgstr ""
 " %(Ductus_site_name) wird unterstützt von <a href=\"http://ductus.us/"
 "\">Ductus</a> ."
+
+#: templates/ductus_base.html:82
+#, python-format
+msgid ""
+"All contributions to this wiki will be licensed under the <a href=\"%"
+"(ductus_default_license)s\">%(default_license_name)s</a> license.  Certain "
+"pieces of content may be available under a more permissive license; see a "
+"specific document's license information page for details."
+msgstr ""
+
+#: templates/ductus_base_error.html:5
+msgid "Return to front page"
+msgstr ""
 
 #: templates/ductus_document.html:19
 #, python-format
@@ -284,7 +305,7 @@ msgid ""
 "Created user %(username)s.  Now you may <a href=\"%(login_url)s\">log in</a>."
 msgstr ""
 
-#: user/views.py:74
+#: user/views.py:75
 #, fuzzy
 msgid "Your account settings have been updated."
 msgstr "Ihre Konto-Einstellungen wurden aktualisiert."
@@ -293,34 +314,38 @@ msgstr "Ihre Konto-Einstellungen wurden aktualisiert."
 msgid "Save settings"
 msgstr "Einstellungen speichern"
 
-#: wiki/models.py:69
+#: wiki/models.py:74
 #, python-format
 msgid "urn is not in database: urn:%s"
 msgstr ""
 
-#: wiki/models.py:71
+#: wiki/models.py:76
 msgid "A user or IP address must be given when saving a revision"
 msgstr ""
 "Ein Benutzer oder eine IP-Adresse muss zum sichern der Änderungen angegeben "
 "werden"
 
-#: wiki/views.py:285
+#: wiki/views.py:41
+msgid "en:main_page"
+msgstr ""
+
+#: wiki/views.py:361
 msgid "Target page name"
 msgstr ""
 
-#: wiki/views.py:285
+#: wiki/views.py:361
 msgid "wiki location of the new resource"
 msgstr ""
 
-#: wiki/views.py:292
+#: wiki/views.py:368
 msgid "source resource does not exist"
 msgstr ""
 
-#: wiki/views.py:304
+#: wiki/views.py:388
 msgid "Invalid page name"
 msgstr ""
 
-#: wiki/views.py:306
+#: wiki/views.py:390
 msgid "you do not have permission to create/write to this resource"
 msgstr ""
 

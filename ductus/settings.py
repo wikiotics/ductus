@@ -55,6 +55,10 @@ DUCTUS_NATURAL_LANGUAGES = (
     ('cs', 'Czech'),
     ('de', 'German'),
     ('en', 'English'),
+    ('es', 'Spanish'),
+    ('fr', 'French'),
+    ('ru', 'Russian'),
+    ('zh-cn', 'Simplified Chinese'),
 )
 
 # Refers specifically to the languages the user interface can be translated to
