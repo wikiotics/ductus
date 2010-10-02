@@ -24,6 +24,7 @@ from django import forms
 from ductus.resource import get_resource_database
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import SuccessfulEditRedirect
+from ductus.wiki.namespaces import registered_namespaces, split_pagename, WikiPrefixNotProvided
 from ductus.wiki.forms import LogMessageField
 from ductus.modules.textwiki.models import Wikitext
 
@@ -107,7 +108,17 @@ def edit_textwiki(request):
                 'natural_language': resource.blob.natural_language or '',
             })
         else:
-            form = WikiEditForm()
+            # blank form, but try to guess the natural language
+            try:
+                prefix, pagename = split_pagename(request.GET.get('target'))
+            except WikiPrefixNotProvided:
+                prefix = None
+            if (prefix and
+                    prefix in [p for p, n in _natural_language_choices] and
+                    prefix in registered_namespaces):
+                form = WikiEditForm({'natural_language': prefix})
+            else:
+                form = WikiEditForm()
 
     captcha_html = ""
     if recaptcha is not None and not request.user.is_authenticated():
