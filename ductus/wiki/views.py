@@ -317,8 +317,11 @@ class RegularWikiNamespace(BaseWikiNamespace):
     def view_page(self, request, pagename):
         return view_wikipage(request, self.prefix, pagename)
 
+class NaturalLanguageWikiNamespace(RegularWikiNamespace):
+    pass
+
 for __language, __language_name in settings.DUCTUS_NATURAL_LANGUAGES:
-    RegularWikiNamespace(__language)
+    NaturalLanguageWikiNamespace(__language)
 
 class UrnWikiNamespace(BaseWikiNamespace):
     __urn_re = re.compile(r'(?P<hash_type>[-_\w]+)/(?P<hash_digest>[-_\w]+)')
