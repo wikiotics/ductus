@@ -1,5 +1,6 @@
 {% extends "ductus_base.html" %}
+{% load i18n %}
 {% block outer_content %}
   {% block content %}{% endblock %}
-  <p><a href="{{ ductus_front_page }}">Return to front page</a></p>
+  <p><a href="/">{% trans "Return to front page" %}</a></p>
 {% endblock %}

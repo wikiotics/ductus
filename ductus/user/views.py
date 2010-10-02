@@ -24,6 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 from django import forms
 
+from ductus.wiki.views import RegularWikiNamespace
 from ductus.user.forms import UserEditForm
 
 recaptcha = None
@@ -80,8 +81,28 @@ def account_settings(request):
         'form': form,
     }, RequestContext(request))
 
-def view_userpage(request, username):
-    user = get_object_or_404(User, username=username)
-    return render_to_response("user/userpage.html", {
-        'userpage_user': user,
-    }, context_instance=RequestContext(request))
+class UserNamespace(RegularWikiNamespace):
+    def page_exists(self, pagename):
+        if '/' not in pagename:
+            try:
+                if User.objects.get(username=pagename).is_active:
+                    return True
+            except User.DoesNotExist:
+                pass
+
+        return super(UserNamespace, self).page_exists(pagename)
+
+    def allow_edit(self, user, pagename):
+        return (user.is_authenticated()
+                and pagename.partition('/')[0] == user.username)
+
+    def view_page(self, request, pagename):
+        if '/' not in pagename:
+            user = get_object_or_404(User, username=pagename)
+            return render_to_response("user/userpage.html", {
+                'userpage_user': user,
+            }, context_instance=RequestContext(request))
+        else:
+            return super(UserNamespace, self).view_page(request, pagename)
+
+UserNamespace('user')

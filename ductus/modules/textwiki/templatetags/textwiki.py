@@ -24,56 +24,61 @@ from django.utils.http import urlquote
 from django.conf import settings
 
 from ductus.wiki.models import WikiPage
+from ductus.wiki.namespaces import registered_namespaces
 
 register = template.Library()
 
-creole2html = None
+def __wiki_links_class_func(prefix):
+    def _wiki_links_class_func(pagename):
+        pagename = pagename.partition('#')[0].partition('?')[0]
 
-def prepare_parser():
-    global creole2html
-    if creole2html is not None:
+        wns = registered_namespaces[prefix]
+        if wns.page_exists(pagename):
+            return "internal"
+        else:
+            return "internal broken"
+
+    return _wiki_links_class_func
+
+__interwiki_links_base_urls = None
+__interwiki_links_funcs = None
+
+def __prepare_interwiki_links_dicts():
+    global __interwiki_links_base_urls, __interwiki_links_funcs
+
+    if __interwiki_links_base_urls is not None:
         return
 
-    from creoleparser.core import Parser
-    from creoleparser.dialects import create_dialect, creole10_base
-
-    def wiki_links_path_func(page_name):
-        return iri_to_uri(urlquote(page_name))
-
-    def wiki_links_class_func(page_name):
-        page_name = page_name.partition('#')[0].partition('?')[0]
-
-        try:
-            if WikiPage.objects.get(name=page_name).get_latest_revision().urn:
-                return "internal"
-        except Exception:
-            pass
-        return "internal broken"
-
-    interwiki_links_base_urls = dict(
-        DjangoBug='http://code.djangoproject.com/ticket/',
-        UbuntuBug='https://bugs.launchpad.net/ubuntu/+bug/',
-        enWP='http://en.wikipedia.org/wiki/',
-    )
-
-    c = create_dialect(creole10_base,
-                       no_wiki_monospace=True,
-                       wiki_links_base_url='/wiki/',
-                       wiki_links_path_func=wiki_links_path_func,
-                       wiki_links_class_func=wiki_links_class_func,
-                       interwiki_links_base_urls=interwiki_links_base_urls)
-    creole2html = Parser(c)
+    __interwiki_links_base_urls = {}
+    __interwiki_links_funcs = {}
+    for wns in registered_namespaces.itervalues():
+        __interwiki_links_base_urls[wns.prefix] = u'/%s/' % wns.prefix
+        __interwiki_links_funcs[wns.prefix] = wns.path_func
 
 @register.filter
 @stringfilter
-def creole(value):
+def creole(value, default_prefix=None):
     try:
-        prepare_parser()
+        from creoleparser.core import Parser
+        from creoleparser.dialects import create_dialect, creole10_base
     except ImportError:
         if settings.TEMPLATE_DEBUG:
             raise template.TemplateSyntaxError, "Error in {% creole %} filter: The Python creoleparser library isn't installed."
         return value
     else:
+        __prepare_interwiki_links_dicts()
+        default_prefix = default_prefix or u'en'
+        wns = registered_namespaces[default_prefix]
+        parser_kwargs = {
+            'wiki_links_base_url': '/%s/' % default_prefix,
+            'no_wiki_monospace': True,
+            'wiki_links_path_func': wns.path_func,
+            'wiki_links_class_func': __wiki_links_class_func(default_prefix),
+            'interwiki_links_base_urls': __interwiki_links_base_urls,
+            'interwiki_links_funcs': __interwiki_links_funcs,
+        }
+        creole2html = Parser(create_dialect(creole10_base, **parser_kwargs))
+
         return mark_safe(creole2html(value))
 
 __title_left_re = re.compile(r'^[\s=]*', re.UNICODE)

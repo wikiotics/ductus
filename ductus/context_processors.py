@@ -28,7 +28,6 @@ def site_settings(request):
         'ductus_media_prefix': settings.DUCTUS_MEDIA_PREFIX,
         'ductus_site_name': mark_safe(dsn),
         'ductus_site_head': mark_safe(dsh),
-        'ductus_front_page': settings.DUCTUS_FRONT_PAGE,
         'ductus_default_license': settings.DUCTUS_DEFAULT_LICENSE,
     }
 
@@ -61,5 +60,5 @@ def permissions(request):
     if hasattr(request, 'ductus'):
         from ductus.wiki import user_has_edit_permission
         if request.ductus.wiki_page:
-            rv['page_is_editable_by_user'] = user_has_edit_permission(request.user, request.ductus.wiki_page.name)
+            rv['page_is_editable_by_user'] = user_has_edit_permission(request.user, *request.ductus.wiki_page.split_pagename())
     return rv

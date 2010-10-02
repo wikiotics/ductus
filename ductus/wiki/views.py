@@ -19,7 +19,7 @@ import re
 from urllib2 import urlopen, HTTPError as urllib2_HTTPError
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotModified, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext, loader
 from django.views.decorators.vary import vary_on_headers
 from django.utils.safestring import mark_safe
@@ -31,9 +31,14 @@ from django.conf import settings
 
 from ductus.resource import determine_header
 from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, is_legal_wiki_pagename, user_has_edit_permission, user_has_unlink_permission
+from ductus.wiki.namespaces import BaseWikiNamespace, registered_namespaces, split_pagename, join_pagename, WikiPrefixNotProvided
 from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view, unvarying
 from ductus.util.http import query_string_not_found, render_json_response, ImmediateResponse
+
+def view_frontpage(request):
+    "Redirect based on the user's locale"
+    return redirect('/%s' % _('en:main_page').replace(':', '/'))
 
 class DuctusRequestInfo(object):
     def __init__(self, resource, requested_view, wiki_page, wiki_revision):
@@ -63,7 +68,7 @@ def __catch_http304(func):
 
 @__catch_http304
 @vary_on_headers('Cookie', 'Accept-language')
-def main_view(request, urn=None, wiki_page=None, wiki_revision=None):
+def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
     """Dispatches the appropriate view for a resource/page
     """
 
@@ -134,20 +139,20 @@ def main_view(request, urn=None, wiki_page=None, wiki_revision=None):
 
 def view_urn(request, hash_type, hash_digest):
     urn = 'urn:%s:%s' % (hash_type, hash_digest)
-    return main_view(request, urn)
+    return main_document_view(request, urn)
 
-def check_edit_permission(request, pagename, status=403):
-    if not user_has_edit_permission(request.user, pagename):
+def check_edit_permission(request, prefix, pagename, status=403):
+    if not user_has_edit_permission(request.user, prefix, pagename):
         # fixme: real templated message
         raise ImmediateResponse('You do not have permission to edit this page.', status=status)
 
-def check_create_permission(request, pagename, status=404):
-    if not user_has_edit_permission(request.user, pagename):
+def check_create_permission(request, prefix, pagename, status=404):
+    if not user_has_edit_permission(request.user, prefix, pagename):
         # fixme: real templated message
         raise ImmediateResponse('This page does not exist, and you do not have permission to create it.', status=status)
 
-def check_unlink_permission(request, pagename, status=403):
-    if not user_has_unlink_permission(request.user, pagename):
+def check_unlink_permission(request, prefix, pagename, status=403):
+    if not user_has_unlink_permission(request.user, prefix, pagename):
         # fixme: real templated message
         raise ImmediateResponse('You do not have permission to delete this page.', status=status)
 
@@ -174,16 +179,18 @@ def _handle_successful_wikiedit(request, response, page):
         return response
     response.handled = True
 
-    check_edit_permission(request, page.name)
+    check_edit_permission(request, *page.split_pagename())
 
     revision = construct_wiki_revision(page, response.urn[4:], request)
     revision.save()
     response.set_redirect_url(page.get_absolute_url())
     return response
 
-def view_wikipage(request, pagename):
+def view_wikipage(request, prefix, pagename):
+    """Used for pages represented by a WikiPage"""
+    name = join_pagename(prefix, pagename)
     try:
-        page = WikiPage.objects.get(name=pagename)
+        page = WikiPage.objects.get(name=name)
     except WikiPage.DoesNotExist:
         page = None
 
@@ -200,14 +207,14 @@ def view_wikipage(request, pagename):
     else:
         revision = None
 
-    if revision is None and getattr(settings, "DUCTUS_WIKI_REMOTE", None) and is_legal_wiki_pagename(pagename):
+    if revision is None and getattr(settings, "DUCTUS_WIKI_REMOTE", None) and is_legal_wiki_pagename(prefix, pagename):
         # See if DUCTUS_WIKI_REMOTE has the page
         try:
-            remote_url = "%s%s?view=urn" % (settings.DUCTUS_WIKI_REMOTE, iri_to_uri(urlquote(pagename)))
+            remote_url = "%s%s?view=urn" % (settings.DUCTUS_WIKI_REMOTE, iri_to_uri(urlquote(u'%s/%s' % (prefix, pagename))))
             remote_urn = json.loads(urlopen(remote_url).read(1000))["urn"]
             # we never actually save this WikiPage or WikiRevision to the database
             if page is None:
-                page, page_created = WikiPage.objects.get_or_create(name=pagename)
+                page, page_created = WikiPage.objects.get_or_create(name=name)
                 if page_created:
                     page.save()
             revision = WikiRevision(page=page, urn=remote_urn[4:])
@@ -226,7 +233,7 @@ def view_wikipage(request, pagename):
     response = None
 
     if urn:
-        response = main_view(request, urn, page, revision)
+        response = main_document_view(request, urn, page, revision)
         if isinstance(response, SuccessfulEditRedirect):
             return _handle_successful_wikiedit(request, response, page)
         response["X-Ductus-URN"] = urn
@@ -239,19 +246,19 @@ def view_wikipage(request, pagename):
                 response = f(request)
 
     if response is None:
-        if not is_legal_wiki_pagename(pagename):
+        if not is_legal_wiki_pagename(prefix, pagename):
             raise Http404
-        response = implicit_new_wikipage(request, pagename)
+        response = implicit_new_wikipage(request, prefix, pagename)
 
     patch_cache_control(response, must_revalidate=True)
     return response
 
-def implicit_new_wikipage(request, pagename):
+def implicit_new_wikipage(request, prefix, pagename):
     c = RequestContext(request, {
-        'pagename': pagename,
+        'absolute_pagename': join_pagename(prefix, pagename),
         'creation_views': registered_creation_views.keys(),
     })
-    check_create_permission(request, pagename)
+    check_create_permission(request, prefix, pagename)
     t = loader.get_template('wiki/implicit_new_wikipage.html')
     return HttpResponse(t.render(c), status=404)
 
@@ -263,15 +270,81 @@ def creation_view(request, page_type):
 
     response = view_func(request)
     if "target" in request.GET:
-        if not is_legal_wiki_pagename(request.GET["target"]):
+        try:
+            target = split_pagename(request.GET["target"])
+        except WikiPrefixNotProvided:
             raise Http404
-        check_edit_permission(request, request.GET["target"])
+        if not is_legal_wiki_pagename(*target):
+            raise Http404
+        check_edit_permission(request, *target)
     if "target" in request.GET and isinstance(response, SuccessfulEditRedirect):
         page, page_created = WikiPage.objects.get_or_create(name=request.GET["target"])
         if page_created:
             page.save()
         return _handle_successful_wikiedit(request, response, page)
     return response
+
+def wiki_dispatch(request, prefix, pagename):
+    try:
+        wns = registered_namespaces[prefix]
+    except KeyError:
+        raise Http404("prefix not registered")
+
+    request.ductus_prefix = prefix
+
+    return wns.view_page(request, pagename)
+
+class RegularWikiNamespace(BaseWikiNamespace):
+    allow_page_creation = True
+
+    def page_exists(self, pagename):
+        from ductus.wiki.models import WikiPage
+        name = join_pagename(self.prefix, pagename)
+        try:
+            if WikiPage.objects.get(name=name).get_latest_revision().urn:
+                return True
+        except WikiPage.DoesNotExist:
+            pass
+
+        return False
+
+    def allow_edit(self, user, pagename):
+        return True
+
+    def path_func(self, pagename):
+        return iri_to_uri(urlquote(pagename))
+
+    def view_page(self, request, pagename):
+        return view_wikipage(request, self.prefix, pagename)
+
+for __language, __language_name in settings.DUCTUS_NATURAL_LANGUAGES:
+    RegularWikiNamespace(__language)
+
+class UrnWikiNamespace(BaseWikiNamespace):
+    __urn_re = re.compile(r'(?P<hash_type>[-_\w]+)/(?P<hash_digest>[-_\w]+)')
+
+    def page_exists(self, pagename):
+        match = self.__urn_re.match(pagename)
+        if not match:
+            return False
+        hash_type, hash_digest = match.group(1), match.group(2)
+
+        resource_database = get_resource_database()
+        urn = 'urn:%s:%s' % (hash_type, hash_digest)
+        # this will return True for blobs as well.  do we really want this?
+        return urn in resource_database
+
+    def path_func(self, pagename):
+        return pagename.replace(':', '/', 1)
+
+    def view_page(self, request, pagename):
+        match = self.__urn_re.match(pagename)
+        if not match:
+            raise Http404('invalid format for urn')
+        hash_type, hash_digest = match.group(1), match.group(2)
+        return view_urn(request, hash_type, hash_digest)
+
+UrnWikiNamespace('urn')
 
 @register_view(None, 'copy')
 def view_copy_resource(request):
@@ -303,9 +376,14 @@ def view_copy_resource(request):
             # path; remove extra slashes
             target_pagename = u'/'.join(filter(lambda x: x, [a.strip(u'_') for a in target_pagename.split(u'/')]))
 
-            if not is_legal_wiki_pagename(target_pagename):
+            # deal with namespace
+            prefix, pagename = split_pagename(target_pagename, fallback_prefix=request.ductus_prefix)
+            target_pagename = join_pagename(prefix, pagename)
+
+            # make sure we can create the page
+            if not is_legal_wiki_pagename(prefix, pagename):
                 raise forms.ValidationError(_(u'Invalid page name')) # would be nice to tell the user why it's invalid...
-            if not user_has_edit_permission(request.user, target_pagename):
+            if not user_has_edit_permission(request.user, prefix, pagename):
                 raise forms.ValidationError(_('you do not have permission to create/write to this resource')) 
             return target_pagename
 
@@ -438,7 +516,7 @@ def view_history(request):
 
 @register_view(None, 'unlink', requires=lambda d: d.wiki_revision)
 def view_unlink_wikipage(request):
-    check_unlink_permission(request, request.ductus.wiki_page.name)
+    check_unlink_permission(request, *request.ductus.wiki_page.split_pagename())
 
     if request.ductus.wiki_revision.urn == "":
         return HttpResponse("it's already been deleted")

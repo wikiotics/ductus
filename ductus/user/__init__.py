@@ -14,14 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.wiki import register_wiki_permission
-
-@register_wiki_permission(u'~')
-def user_permission_func(user, pagename):
-    return (user.is_authenticated()
-            and pagename[1:].partition('/')[0] == user.username)
-
 from django.contrib.auth.models import User
 
+import ductus.user.views # register the namespace
+
 # fix User.get_absolute_url() to point to the right place
-User.get_absolute_url = lambda self: u'/wiki/~%s' % self.username
+User.get_absolute_url = lambda self: u'/user/%s' % self.username

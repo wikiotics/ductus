@@ -20,6 +20,7 @@ from django.http import HttpResponseRedirect
 from django.utils.encoding import iri_to_uri
 
 from ductus.resource import ResourceDatabase, UnsupportedURN, get_resource_database
+from ductus.wiki.namespaces import registered_namespaces
 
 __whitespace_re = re.compile(r'\s', re.UNICODE)
 
@@ -50,7 +51,7 @@ class SuccessfulEditRedirect(HttpResponseRedirect):
     def set_redirect_url(self, url):
         self['Location'] = iri_to_uri(url)
 
-def is_legal_wiki_pagename(pagename):
+def is_legal_wiki_pagename(prefix, pagename):
     """Call this before creating a new wikipage.
 
     In addition to doing various legality checks, this function returns False
@@ -76,37 +77,33 @@ def is_legal_wiki_pagename(pagename):
         # pages should not contain spaces.  use underscores instead.
         return False
 
-    prefix = pagename[0]
-    if prefix == u'+':
-        # can't edit (or create) special pages
+    # make sure the namespace exists and allows page creation
+    try:
+        wns = registered_namespaces[prefix]
+    except KeyError:
         return False
 
-    return True
+    return wns.allow_page_creation
 
-def user_has_edit_permission(user, pagename):
+def user_has_edit_permission(user, prefix, pagename):
     """Does the given user have permission to edit an existing wiki page?
 
     If you are creating a new page, you should call `is_legal_wiki_pagename`
     first.
     """
-    assert(is_legal_wiki_pagename(pagename))
+    assert(is_legal_wiki_pagename(prefix, pagename))
 
     if not pagename:
         return False
 
-    prefix = pagename[0]
-    if prefix == u'+':
-        # can't edit (or create) special pages
+    try:
+        wns = registered_namespaces[prefix]
+    except KeyError:
         return False
 
-    if prefix in (u'~',):
-        permission_func = __wiki_permissions[prefix]
-        return permission_func(user, pagename)
+    return wns.allow_edit(user, pagename)
 
-    # regular wiki page; anyone can edit (for now)
-    return True
-
-def user_has_unlink_permission(user, pagename):
+def user_has_unlink_permission(user, prefix, pagename):
     """Can a user delete a given page?
 
     This function assumes that `pagename` is a legal pagename.
@@ -115,15 +112,8 @@ def user_has_unlink_permission(user, pagename):
     but we do not rely on this assumption anywhere.  Maybe we will in the
     future, though.
     """
-    assert is_legal_wiki_pagename(pagename)
-    return user.is_authenticated() and user_has_edit_permission(user, pagename)
+    assert is_legal_wiki_pagename(prefix, pagename)
+    return user.is_authenticated() and user_has_edit_permission(user, prefix, pagename)
 
 registered_views = {}
 registered_creation_views = {}
-__wiki_permissions = {}
-
-def register_wiki_permission(prefix):
-    def _register_wiki_permission(func):
-        __wiki_permissions[prefix] = func
-        return func
-    return _register_wiki_permission

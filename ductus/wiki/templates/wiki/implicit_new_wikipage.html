@@ -3,7 +3,7 @@
 There exists no page at <tt>{{ pagename }}</tt>, so you must create one to move forward.  Please choose a type of page to create:
 <ul>
 {% for creation_view in creation_views %}
-<li><a href="/new/{{ creation_view|urlencode }}?target={{ pagename|urlencode }}">{{ creation_view }}</a></li>
+<li><a href="/new/{{ creation_view|urlencode }}?target={{ absolute_pagename|urlencode }}">{{ creation_view }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}

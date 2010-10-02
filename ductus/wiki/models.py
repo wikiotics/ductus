@@ -22,12 +22,14 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 from django.utils.http import urlquote
 
 from ductus.wiki import get_resource_database
+from ductus.wiki.namespaces import split_pagename
 
 class WikiPage(models.Model):
     name = models.CharField(max_length=512)
 
     def get_absolute_url(self):
-        return u'/wiki/%s' % iri_to_uri(urlquote(self.name))
+        slashname = u'/'.join(self.name.split(u':', 1))
+        return u'/%s' % iri_to_uri(urlquote(slashname))
 
     def get_latest_revision(self):
         # fixme: we need a db_index on page/timestamp combo
@@ -39,6 +41,9 @@ class WikiPage(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def split_pagename(self):
+        return split_pagename(self.name)
 
 class WikiRevision(models.Model):
     page = models.ForeignKey(WikiPage)

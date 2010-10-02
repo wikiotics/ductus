@@ -4,14 +4,17 @@ from django.contrib import admin
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
-    url(r'^$', 'django.views.generic.simple.redirect_to', {'url': settings.DUCTUS_FRONT_PAGE, 'permanent': False}),
+urlpatterns = []
+
+if (settings.DEBUG and settings.DUCTUS_MEDIA_PREFIX.startswith('/')):
+    urlpatterns += patterns('',
+        url(r'^%s(?P<path>.*)$' % settings.DUCTUS_MEDIA_PREFIX[1:], 'django.views.static.serve', {'document_root': settings.DUCTUS_SITE_ROOT + '/static'}),
+    )
+
+urlpatterns += patterns('',
+    url(r'^$', 'ductus.wiki.views.view_frontpage'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^new/(.*)', 'ductus.wiki.views.creation_view'),
-    url(r'^urn/(?P<hash_type>[-_\w]+)/(?P<hash_digest>[-_\w]+)$', 'ductus.wiki.views.view_urn'),
-    url(r'^wiki/\+(.*)', 'ductus.special.views.view_special_page'),
-    url(r'^wiki/~(\w+)$', 'ductus.user.views.view_userpage'),
-    url(r'^wiki/(.+)$', 'ductus.wiki.views.view_wikipage'),
     url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
     url(r'^login$', 'django.contrib.auth.views.login'),
     url(r'^logout$', 'django.contrib.auth.views.logout'),
@@ -24,9 +27,6 @@ urlpatterns = patterns('',
     url(r'^reset-password/confirm/(?P<uidb36>[-\w]+)/(?P<token>[-\w]+)$', 'django.contrib.auth.views.password_reset_confirm'),
     url(r'^reset-password/success$', 'django.contrib.auth.views.password_reset_complete'),
     url(r'^setlang$', 'django.views.i18n.set_language'),
+    # this must come last since it matches practically everything...
+    url(r'^(?P<prefix>\w+)/(?P<pagename>.+)$', 'ductus.wiki.views.wiki_dispatch'),
 )
-
-if (settings.DEBUG and settings.DUCTUS_MEDIA_PREFIX.startswith('/')):
-    urlpatterns += patterns('',
-        url(r'^%s(?P<path>.*)$' % settings.DUCTUS_MEDIA_PREFIX[1:], 'django.views.static.serve', {'document_root': settings.DUCTUS_SITE_ROOT + '/static'}),
-    )

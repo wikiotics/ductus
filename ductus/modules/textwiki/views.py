@@ -35,9 +35,10 @@ if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):
 # broken to unbroken and back
 @register_view(Wikitext)
 def view_textwiki(request):
-    return render_to_response('textwiki/display_wiki.html',
-                              {'text': request.ductus.resource.text},
-                              context_instance=RequestContext(request))
+    return render_to_response('textwiki/display_wiki.html', {
+        'text': request.ductus.resource.text,
+        'natural_language': request.ductus.resource.blob.natural_language or None,
+    }, context_instance=RequestContext(request))
 
 _natural_language_choices = [('', ugettext_lazy('Unspecified'))]
 _natural_language_choices.extend((code, ugettext_lazy(lang)) for code, lang
