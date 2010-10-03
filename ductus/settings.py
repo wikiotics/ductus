@@ -52,13 +52,31 @@ ADMIN_MEDIA_PREFIX = '/media/'
 # Allowed language-related namespace prefixes, as well as the languages allowed
 # on a textwiki page
 DUCTUS_NATURAL_LANGUAGES = (
+    ('ar', 'Arabic'),
+    ('ca', 'Catalan'),
     ('cs', 'Czech'),
+    ('da', 'Danish'),
     ('de', 'German'),
     ('en', 'English'),
+    ('eo', 'Esperanto'),
     ('es', 'Spanish'),
+    ('fi', 'Finnish'),
     ('fr', 'French'),
+    ('hu', 'Hungarian'),
+    ('id', 'Indonesian'),
+    ('it', 'Italian'),
+    ('ja', 'Japanese'),
+    ('ko', 'Korean'),
+    ('nl', 'Dutch'),
+    ('no', 'Norwegian'),
+    ('pl', 'Polish'),
+    ('pt', 'Portuguese'),
+    ('ro', 'Romanian'),
     ('ru', 'Russian'),
-    ('zh-cn', 'Simplified Chinese'),
+    ('sv', 'Swedish'),
+    ('tr', 'Turkish'),
+    ('uk', 'Ukrainian'),
+    ('zh', 'Chinese'),
 )
 
 # Refers specifically to the languages the user interface can be translated to
