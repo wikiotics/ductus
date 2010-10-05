@@ -5,7 +5,7 @@
 {% if show_preview %}
 <div class="ductus_textwiki_preview ductus_textwiki_content" lang="">
 {% load textwiki %}
-{{ form.cleaned_data.text|creole }}
+{{ form.cleaned_data.text|creole:form.cleaned_data.natural_language }}
 </div>
 {% endif %}
 <form method="post" action="{{ request.escaped_full_path }}">
