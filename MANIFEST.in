@@ -1,5 +1,6 @@
 include MANIFEST.in
 include COPYING
+include AUTHORS
 recursive-include ductus/static *
 recursive-include ductus/templates *
 recursive-include ductus/special/templates *
@@ -8,3 +9,6 @@ recursive-include ductus/wiki/templates *
 recursive-include ductus/modules/picture/templates *
 recursive-include ductus/modules/picture_choice/templates *
 recursive-include ductus/modules/textwiki/templates *
+recursive-include ductus/locale *
+recursive-include ductus/tests *
+recursive-include ductus/docs *

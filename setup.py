@@ -18,7 +18,7 @@ setup(
     description='Structured wiki system, designed for language instruction at wikiotics.org',
     license='GNU GPLv3 or later',
     author='Jim Garrison',
-    author_email='jim@garrison.cc',
+    author_email='garrison@wikiotics.org',
     url='http://ductus.us/',
     install_requires=(
         'Django >= 1.2',
@@ -44,6 +44,7 @@ setup(
         'ductus.middleware',
         'ductus.license',
         'ductus.modules',
+        'ductus.modules.audio',
         'ductus.modules.picture',
         'ductus.modules.picture_choice',
         'ductus.modules.textwiki',
