@@ -302,7 +302,8 @@ class RegularWikiNamespace(BaseWikiNamespace):
         from ductus.wiki.models import WikiPage
         name = join_pagename(self.prefix, pagename)
         try:
-            if WikiPage.objects.get(name=name).get_latest_revision().urn:
+            latest = WikiPage.objects.get(name=name).get_latest_revision()
+            if latest and latest.urn:
                 return True
         except WikiPage.DoesNotExist:
             pass
