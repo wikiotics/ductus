@@ -1,0 +1,11 @@
+{% extends "wiki/license_info.html" %}
+{% load subview %}
+{% load urn %}
+
+{% block element_identifier %}
+<div><img src="{{ resource.urn|resolve }}?view=image&amp;max_size=50,50" alt="image"/></div>
+{% endblock %}
+
+{% block contributors %}
+{% include "picture/credit.html" %}
+{% endblock %}

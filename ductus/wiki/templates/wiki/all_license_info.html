@@ -1,0 +1,10 @@
+{% extends "ductus_document.html" %}
+{% load subview %}
+
+{% block content %}
+{% for resource in resources %}
+<div class="license_info">
+{{ resource|subview:"license_info" }}
+</div>
+{% endfor %}
+{% endblock %}

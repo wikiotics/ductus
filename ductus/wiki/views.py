@@ -34,6 +34,7 @@ from ductus.wiki import get_resource_database, registered_views, registered_crea
 from ductus.wiki.namespaces import BaseWikiNamespace, registered_namespaces, split_pagename, join_pagename, WikiPrefixNotProvided
 from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view, unvarying
+from ductus.wiki.subviews import subview
 from ductus.util.http import query_string_not_found, render_json_response, ImmediateResponse
 
 def view_frontpage(request):
@@ -533,8 +534,16 @@ def view_unlink_wikipage(request):
 
 @register_view(None, 'license_info')
 def view_license_info(request):
-    return render_to_response('wiki/license_info.html',
-                              context_instance=RequestContext(request))
+    resource_database = get_resource_database()
+
+    resource = request.ductus.resource
+    resources = [resource]
+    resources.extend(resource_database.get_resource_object(urn)
+                     for urn in subview(resource).subresources())
+
+    return render_to_response('wiki/all_license_info.html', {
+        'resources': resources,
+    }, context_instance=RequestContext(request))
 
 class DiffItem(object):
     __slots__ = ('hierarchy', 'different', 'this', 'that')

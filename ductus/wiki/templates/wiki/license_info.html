@@ -1,4 +1,16 @@
-{% extends "ductus_document.html" %}
-{% block content %}
-{% with request.ductus.resource.common.licenses as licenses %}{% include "wiki/license_list.html" %}{% endwith %}
+{% load subview %}
+{% block element_identifier %}
+{% endblock %}
+{% block contributors %}
+<div>
+With contributions from:
+{% for contributor in resource|subview:"contributor_set" %}
+{{ contributor }}{% if not forloop.last %},{% endif %}
+{% endfor %}
+</div>
+{% endblock %}
+{% block licenses %}
+{% with resource.common.licenses as licenses %}
+{% include "wiki/license_list.html" %}
+{% endwith %}
 {% endblock %}

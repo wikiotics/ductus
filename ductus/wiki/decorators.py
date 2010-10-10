@@ -16,7 +16,7 @@
 
 from functools import wraps
 
-from ductus.wiki import registered_views, registered_creation_views
+from ductus.wiki import registered_views, registered_creation_views, registered_subviews
 
 def register_view(model, label=None, requires=(lambda d: d.resource)):
     """Registers a URN view function.
@@ -39,6 +39,16 @@ def register_creation_view(model):
         registered_creation_views[model.root_name] = func
         return func
     return _register_creation_view
+
+def register_subview(model, label):
+    """Registers a URN subview function.
+    """
+
+    fqn = None if model is None else model.fqn
+    def _register_subview(func):
+        registered_subviews.setdefault(fqn, dict())[label] = func
+        return func
+    return _register_subview
 
 def unvarying(func):
     def new_func(*args, **kwargs):

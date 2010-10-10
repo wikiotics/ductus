@@ -117,3 +117,4 @@ def user_has_unlink_permission(user, prefix, pagename):
 
 registered_views = {}
 registered_creation_views = {}
+registered_subviews = {}
