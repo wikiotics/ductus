@@ -44,7 +44,9 @@ class BaseWikiNamespace(object):
 
     def path_func(self, pagename):
         """Format pagename for inclusion in a url"""
-        raise NotImplementedError
+        from django.utils.encoding import iri_to_uri
+        from django.utils.http import urlquote
+        return iri_to_uri(urlquote(pagename))
 
 class WikiPrefixNotProvided(Exception):
     pass

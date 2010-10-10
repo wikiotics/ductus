@@ -313,9 +313,6 @@ class RegularWikiNamespace(BaseWikiNamespace):
     def allow_edit(self, user, pagename):
         return True
 
-    def path_func(self, pagename):
-        return iri_to_uri(urlquote(pagename))
-
     def view_page(self, request, pagename):
         return view_wikipage(request, self.prefix, pagename)
 
