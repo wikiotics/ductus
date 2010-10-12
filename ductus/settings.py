@@ -51,6 +51,7 @@ ADMIN_MEDIA_PREFIX = '/media/'
 # on a textwiki page
 DUCTUS_NATURAL_LANGUAGES = (
     ('ar', 'Arabic'),
+    ('bs', 'Bosnian'),
     ('ca', 'Catalan'),
     ('cs', 'Czech'),
     ('da', 'Danish'),
@@ -60,6 +61,7 @@ DUCTUS_NATURAL_LANGUAGES = (
     ('es', 'Spanish'),
     ('fi', 'Finnish'),
     ('fr', 'French'),
+    ('he', 'Hebrew'),
     ('hi', 'Hindi'),
     ('hu', 'Hungarian'),
     ('id', 'Indonesian'),
@@ -72,6 +74,7 @@ DUCTUS_NATURAL_LANGUAGES = (
     ('pt', 'Portuguese'),
     ('ro', 'Romanian'),
     ('ru', 'Russian'),
+    ('sk', 'Slovak'),
     ('sv', 'Swedish'),
     ('tr', 'Turkish'),
     ('uk', 'Ukrainian'),
