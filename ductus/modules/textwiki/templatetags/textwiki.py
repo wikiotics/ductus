@@ -42,18 +42,21 @@ def __wiki_links_class_func(prefix):
 
 __interwiki_links_base_urls = None
 __interwiki_links_path_funcs = None
+__interwiki_links_class_funcs = None
 
 def __prepare_interwiki_links_dicts():
-    global __interwiki_links_base_urls, __interwiki_links_path_funcs
+    global __interwiki_links_base_urls, __interwiki_links_path_funcs, __interwiki_links_class_funcs
 
     if __interwiki_links_base_urls is not None:
         return
 
     __interwiki_links_base_urls = {}
     __interwiki_links_path_funcs = {}
+    __interwiki_links_class_funcs = {}
     for wns in registered_namespaces.itervalues():
         __interwiki_links_base_urls[wns.prefix] = u'/%s/' % wns.prefix
         __interwiki_links_path_funcs[wns.prefix] = wns.path_func
+        __interwiki_links_class_funcs[wns.prefix] = __wiki_links_class_func(wns.prefix)
 
 @register.filter
 @stringfilter
@@ -76,6 +79,7 @@ def creole(value, default_prefix=None):
             'wiki_links_class_func': __wiki_links_class_func(default_prefix),
             'interwiki_links_base_urls': __interwiki_links_base_urls,
             'interwiki_links_path_funcs': __interwiki_links_path_funcs,
+            'interwiki_links_class_funcs': __interwiki_links_class_funcs,
             'external_links_class': 'external',
             'disable_external_content': True,
         }
