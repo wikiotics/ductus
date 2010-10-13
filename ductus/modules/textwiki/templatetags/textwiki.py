@@ -76,6 +76,7 @@ def creole(value, default_prefix=None):
             'wiki_links_class_func': __wiki_links_class_func(default_prefix),
             'interwiki_links_base_urls': __interwiki_links_base_urls,
             'interwiki_links_path_funcs': __interwiki_links_path_funcs,
+            'external_links_class': 'external',
             'disable_external_content': True,
         }
         creole2html = Parser(create_dialect(creole10_base, **parser_kwargs))
