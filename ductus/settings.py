@@ -50,6 +50,7 @@ ADMIN_MEDIA_PREFIX = '/media/'
 # Allowed language-related namespace prefixes, as well as the languages allowed
 # on a textwiki page
 DUCTUS_NATURAL_LANGUAGES = (
+    ('af', 'Afrikaans'),
     ('ar', 'Arabic'),
     ('bs', 'Bosnian'),
     ('ca', 'Catalan'),
@@ -63,6 +64,7 @@ DUCTUS_NATURAL_LANGUAGES = (
     ('fr', 'French'),
     ('he', 'Hebrew'),
     ('hi', 'Hindi'),
+    ('hr', 'Croatian'),
     ('hu', 'Hungarian'),
     ('id', 'Indonesian'),
     ('is', 'Icelandic'),
