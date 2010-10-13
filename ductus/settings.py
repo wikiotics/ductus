@@ -65,6 +65,7 @@ DUCTUS_NATURAL_LANGUAGES = (
     ('hi', 'Hindi'),
     ('hu', 'Hungarian'),
     ('id', 'Indonesian'),
+    ('is', 'Icelandic'),
     ('it', 'Italian'),
     ('ja', 'Japanese'),
     ('ko', 'Korean'),
