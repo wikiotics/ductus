@@ -323,10 +323,11 @@ for __language, __language_name in settings.DUCTUS_NATURAL_LANGUAGES:
     NaturalLanguageWikiNamespace(__language)
 
 class UrnWikiNamespace(BaseWikiNamespace):
-    __urn_re = re.compile(r'(?P<hash_type>[-_\w]+)/(?P<hash_digest>[-_\w]+)')
+    __urn_slash_re = re.compile(r'(?P<hash_type>[-_\w]+)/(?P<digest>[-_\w]+)')
+    __urn_colon_re = re.compile(r'(?P<hash_type>[-_\w]+):(?P<digest>[-_\w]+)')
 
     def page_exists(self, pagename):
-        match = self.__urn_re.match(pagename)
+        match = self.__urn_colon_re.match(pagename)
         if not match:
             return False
         hash_type, hash_digest = match.group(1), match.group(2)
@@ -340,7 +341,7 @@ class UrnWikiNamespace(BaseWikiNamespace):
         return pagename.replace(':', '/', 1)
 
     def view_page(self, request, pagename):
-        match = self.__urn_re.match(pagename)
+        match = self.__urn_slash_re.match(pagename)
         if not match:
             raise Http404('invalid format for urn')
         hash_type, hash_digest = match.group(1), match.group(2)
