@@ -41,19 +41,19 @@ def __wiki_links_class_func(prefix):
     return _wiki_links_class_func
 
 __interwiki_links_base_urls = None
-__interwiki_links_funcs = None
+__interwiki_links_path_funcs = None
 
 def __prepare_interwiki_links_dicts():
-    global __interwiki_links_base_urls, __interwiki_links_funcs
+    global __interwiki_links_base_urls, __interwiki_links_path_funcs
 
     if __interwiki_links_base_urls is not None:
         return
 
     __interwiki_links_base_urls = {}
-    __interwiki_links_funcs = {}
+    __interwiki_links_path_funcs = {}
     for wns in registered_namespaces.itervalues():
         __interwiki_links_base_urls[wns.prefix] = u'/%s/' % wns.prefix
-        __interwiki_links_funcs[wns.prefix] = wns.path_func
+        __interwiki_links_path_funcs[wns.prefix] = wns.path_func
 
 @register.filter
 @stringfilter
@@ -75,7 +75,7 @@ def creole(value, default_prefix=None):
             'wiki_links_path_func': wns.path_func,
             'wiki_links_class_func': __wiki_links_class_func(default_prefix),
             'interwiki_links_base_urls': __interwiki_links_base_urls,
-            'interwiki_links_funcs': __interwiki_links_funcs,
+            'interwiki_links_path_funcs': __interwiki_links_path_funcs,
         }
         creole2html = Parser(create_dialect(creole10_base, **parser_kwargs))
 

@@ -22,7 +22,7 @@ setup(
     url='http://ductus.us/',
     install_requires=(
         'Django >= 1.2',
-        'Creoleparser >= 0.7.2',
+        'Creoleparser >= 0.7.3',
         'lxml',
         'PIL',
     ),
