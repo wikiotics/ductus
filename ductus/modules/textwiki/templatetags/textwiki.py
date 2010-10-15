@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+from functools import wraps
 
 from django import template
 from django.template.defaultfilters import stringfilter
@@ -39,6 +40,13 @@ def __wiki_links_class_func(prefix):
             return "internal broken"
 
     return _wiki_links_class_func
+
+def create_image_path_func(original_path_func):
+    @wraps(original_path_func)
+    def image_path_func(pagename):
+        pathname = original_path_func(pagename).partition('?')[0]
+        return "%s?view=image&max_size=250,250" % pathname
+    return image_path_func
 
 __interwiki_links_base_urls = None
 __interwiki_links_path_funcs = None
@@ -75,7 +83,7 @@ def creole(value, default_prefix=None):
         parser_kwargs = {
             'wiki_links_base_url': '/%s/' % default_prefix,
             'no_wiki_monospace': True,
-            'wiki_links_path_func': wns.path_func,
+            'wiki_links_path_func': (wns.path_func, create_image_path_func(wns.path_func)),
             'wiki_links_class_func': __wiki_links_class_func(default_prefix),
             'interwiki_links_base_urls': __interwiki_links_base_urls,
             'interwiki_links_path_funcs': __interwiki_links_path_funcs,
