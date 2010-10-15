@@ -9,7 +9,7 @@
 {% block content %}
 <ul>
 {% for revision in revisions %}
-<li>{% if revision.get_absolute_url %}<a href="{{ revision.get_absolute_url }}">{% endif %}{{ revision.page.name }}{% if revision.get_absolute_url %}</a>{% endif %} {% if not revision.get_absolute_url %}(deleted){% endif %} &ndash; {{ revision.timestamp|date:"Y-m-d H:i:s T" }} {% if revision.author %}{{ revision.author }}{% else %}{{ revision.author_ip }}{% endif %} {% if revision.log_message %}&ndash; <i>{{ revision.log_message }}</i>{% endif %}</li>
+<li>{% if revision.get_absolute_url %}<a href="{{ revision.get_absolute_url }}">{% endif %}{{ revision.page.name }}{% if revision.get_absolute_url %}</a>{% endif %} <span dir="{{ LANGUAGE_BIDI|yesno:"rtl,ltr" }}">{% if not revision.get_absolute_url %}(deleted){% endif %} &ndash; {{ revision.timestamp|date:"Y-m-d H:i:s T" }} {% if revision.author %}{{ revision.author }}{% else %}{{ revision.author_ip }}{% endif %} {% if revision.log_message %}&ndash; <i>{{ revision.log_message }}</i>{% endif %}</span></li>
 {% endfor %}
 </ul>
 {% endblock %}
