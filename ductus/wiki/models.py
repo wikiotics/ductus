@@ -83,16 +83,3 @@ class WikiRevision(models.Model):
 
     def __unicode__(self):
         return u'%s (%s)' % (unicode(self.page), self.timestamp)
-
-# admin interface -- for debugging only
-
-from django.contrib import admin
-
-class WikiPageAdmin(admin.ModelAdmin):
-    pass
-
-class WikiRevisionAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(WikiPage, WikiPageAdmin)
-admin.site.register(WikiRevision, WikiRevisionAdmin)
