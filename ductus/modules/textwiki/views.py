@@ -103,7 +103,7 @@ def edit_textwiki(request):
 
     else:
         if resource:
-            form = WikiEditForm({
+            form = WikiEditForm(initial={
                 'text': resource.text,
                 'natural_language': resource.blob.natural_language or '',
             })
@@ -116,7 +116,7 @@ def edit_textwiki(request):
             if (prefix and
                     prefix in [p for p, n in _natural_language_choices] and
                     prefix in registered_namespaces):
-                form = WikiEditForm({'natural_language': prefix})
+                form = WikiEditForm(initial={'natural_language': prefix})
             else:
                 form = WikiEditForm()
 
