@@ -79,7 +79,7 @@ def __prepare_interwiki_links_dicts():
     __interwiki_links_class_funcs = {}
     for wns in registered_namespaces.itervalues():
         __interwiki_links_base_urls[wns.prefix] = u'/%s/' % wns.prefix
-        __interwiki_links_path_funcs[wns.prefix] = wns.path_func
+        __interwiki_links_path_funcs[wns.prefix] = (wns.path_func, create_image_path_func(wns.path_func))
         __interwiki_links_class_funcs[wns.prefix] = __wiki_links_class_func(wns.prefix)
 
 @register.filter
@@ -95,11 +95,10 @@ def creole(value, default_prefix=None):
     else:
         __prepare_interwiki_links_dicts()
         default_prefix = default_prefix or u'en'
-        wns = registered_namespaces[default_prefix]
         parser_kwargs = {
             'wiki_links_base_url': '/%s/' % default_prefix,
             'no_wiki_monospace': True,
-            'wiki_links_path_func': (wns.path_func, create_image_path_func(wns.path_func)),
+            'wiki_links_path_func': __interwiki_links_path_funcs[default_prefix],
             'wiki_links_class_func': __wiki_links_class_func(default_prefix),
             'interwiki_links_base_urls': __interwiki_links_base_urls,
             'interwiki_links_path_funcs': __interwiki_links_path_funcs,
