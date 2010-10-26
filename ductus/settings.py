@@ -156,7 +156,7 @@ DUCTUS_STORAGE_BACKEND = 'ductus_site.storage_backend'
 DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 
 DUCTUS_MEDIA_PREFIX = '/static/ductus/'
-#DUCTUS_SITE_NAME = 'Example Ductus Site'
+DUCTUS_SITE_NAME = 'Example Ductus Site'
 
 DUCTUS_ALLOWED_LICENSES = (
     'http://creativecommons.org/licenses/publicdomain/',
