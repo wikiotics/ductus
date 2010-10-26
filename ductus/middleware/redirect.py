@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.shortcuts import redirect
+from django.core.exceptions import MiddlewareNotUsed
 
 REDIRECT_TABLE = getattr(settings, "REDIRECT_TABLE", None)
 
