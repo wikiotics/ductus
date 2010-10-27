@@ -30,7 +30,8 @@ def _create_resource_database():
 def _register_installed_modules():
     """Register each module in DUCTUS_INSTALLED_MODULES"""
     for module in getattr(settings, "DUCTUS_INSTALLED_MODULES", ()):
-        import_module(module)
+        with ignore(ImportError):
+            import_module(module)
         for submod in ('models', 'subviews', 'views', 'edit_views'):
             with ignore(ImportError):
                 import_module('.' + submod, module)
