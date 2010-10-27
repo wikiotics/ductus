@@ -75,7 +75,7 @@ def view_picture(request):
             for data in data_iterator:
                 p.feed(data)
             im = p.close()
-            if picture.rotation in '0', '90', '180', '270':
+            if picture.rotation in ('0', '90', '180', '270'):
                 im = im.rotate(int(picture.rotation), expand=True)
             else:
                 im = adjust_orientation_from_exif(im)
