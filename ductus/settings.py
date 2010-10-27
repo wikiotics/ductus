@@ -84,8 +84,12 @@ DUCTUS_NATURAL_LANGUAGES = (
     ('zh', 'Chinese'),
 )
 
-# Refers specifically to the languages the user interface can be translated to
-LANGUAGES = DUCTUS_NATURAL_LANGUAGES
+# languages the user interface can be translated to
+LANGUAGES = (
+    ('cs', 'Czech'),
+    ('de', 'German'),
+    ('en', 'English'),
+)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
