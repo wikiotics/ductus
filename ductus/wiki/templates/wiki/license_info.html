@@ -5,7 +5,7 @@
 <div>
 With contributions from:
 {% for contributor in resource|subview:"contributor_set" %}
-{{ contributor }}{% if not forloop.last %},{% endif %}
+{% if contributor.1 %}<a href="{{ contributor.1 }}">{% endif %}{{ contributor.0 }}{% if contributor.1 %}</a>{% endif %}{% if not forloop.last %},{% endif %}
 {% endfor %}
 </div>
 {% endblock %}

@@ -36,12 +36,12 @@ def subview(resource):
 
 @register_subview(None, 'contributor_set')
 def contributor_set(resource):
-    """Returns a set of usernames"""
+    """Returns a set of (username, href) tuples.  href can be None."""
     author = resource.common.author
     s = set()
     s.update(*[subview(p.get()).contributor_set()
              for p in resource.common.parents])
-    s.add(author.text)
+    s.add((author.text, author.href or None))
     return s
 
 @register_subview(None, 'subresources')
