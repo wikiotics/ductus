@@ -54,7 +54,8 @@ class WikiEditForm(forms.Form):
 def add_author_and_log_message(request, resource):
     if request.user.is_authenticated():
         resource.common.author.text = request.user.username
-        #resource.common.author.href = "%s" % urlescape(request.user.username)
+        if getattr(settings, "DUCTUS_SITE_DOMAIN", None):
+            resource.common.author.href = 'http://%s%s' % (settings.DUCTUS_SITE_DOMAIN, request.user.get_absolute_url())
     else:
         resource.common.author.text = request.remote_addr
     resource.common.log_message.text = request.POST.get('log_message', '')

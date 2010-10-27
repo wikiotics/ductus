@@ -161,6 +161,8 @@ DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 
 DUCTUS_MEDIA_PREFIX = '/static/ductus/'
 #DUCTUS_SITE_NAME = 'Example Ductus Site'
+#DUCTUS_SITE_DOMAIN = 'example.com'  # optional; used for linking to user pages
+                                     # in the revision history
 
 DUCTUS_ALLOWED_LICENSES = (
     'http://creativecommons.org/licenses/publicdomain/',

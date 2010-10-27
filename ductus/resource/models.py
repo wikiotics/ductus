@@ -588,6 +588,7 @@ class DuctusCommonElement(Element):
     def patch_from_blueprint(self, blueprint, save_context):
         # we don't allow patching, so we don't call the superclass
         self.author.text = save_context.author_username or save_context.author_ip_address
+        self.author.href = save_context.author_full_absolute_url
         self.log_message.text = save_context.log_message
 
 class Model(Element):
@@ -727,6 +728,7 @@ def blueprint_cast_to_string(blueprint):
 
 class BlueprintSaveContext(object):
     author_username = ""
+    author_full_absolute_url = ""
     author_ip_address = ""
     log_message = ""
 
@@ -735,6 +737,8 @@ class BlueprintSaveContext(object):
         rv = cls()
         if request.user.is_authenticated():
             rv.author_username = request.user.username
+            if getattr(settings, "DUCTUS_SITE_DOMAIN", None):
+                rv.author_full_absolute_url = 'http://%s%s' % (settings.DUCTUS_SITE_DOMAIN, request.user.get_absolute_url())
         rv.author_ip_address = request.remote_addr
         rv.log_message = request.POST.get('log_message', '')
         return rv
