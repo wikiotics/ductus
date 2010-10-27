@@ -66,7 +66,7 @@ def view_picture(request):
         mime_type = 'image/jpeg'
 
         diskcache_key = '%s,%s,%s' % (max_width, max_height,
-                                      picture.rotation or 0)
+                                      picture.rotation)
         cached = diskcache.get(picture.blob.href, diskcache_key)
         if cached is not None:
             data_iterator = cached
@@ -75,7 +75,7 @@ def view_picture(request):
             for data in data_iterator:
                 p.feed(data)
             im = p.close()
-            if picture.rotation:
+            if picture.rotation in '0', '90', '180', '270':
                 im = im.rotate(int(picture.rotation), expand=True)
             else:
                 im = adjust_orientation_from_exif(im)

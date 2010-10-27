@@ -22,6 +22,8 @@ class CreditElement(models.Element):
     author_url = OptionalLinkElement()
 
 def rotation_validator(v):
+    # '' or None means follow EXIF metadata.  an explicit '0' overrides any
+    # metadata and refuses to perform a rotation.
     if not v in (None, '', '0', '90', '180', '270'):
         raise models.ValidationError
 
