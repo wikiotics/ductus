@@ -33,6 +33,7 @@ setup(
     },
     packages=(
         'ductus',
+        'ductus.initialize',
         'ductus.util',
         'ductus.resource',
         'ductus.resource.storage',
