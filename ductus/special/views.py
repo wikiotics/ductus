@@ -18,7 +18,7 @@ import re
 from types import FunctionType
 
 from django.http import Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 
 from ductus.wiki.models import WikiRevision
@@ -78,6 +78,18 @@ def version(request, pagename):
     from ductus import DUCTUS_VERSION
     from django.http import HttpResponse
     return HttpResponse("version %s" % DUCTUS_VERSION, content_type="text/plain")
+
+__django_specialpages = (
+    'create_account',
+    'account_settings',
+    'change_password',
+    'reset_password',
+    'login'
+)
+for __pagename in __django_specialpages:
+    @register_special_page(__pagename)
+    def __redirect_to_django_specialpage(request, pagename):
+        return redirect('/' + pagename.replace('_', '-'))
 
 class SpecialPageNamespace(BaseWikiNamespace):
     def page_exists(self, pagename):
