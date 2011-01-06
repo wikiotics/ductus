@@ -63,8 +63,9 @@
 {% endfor %}
     </div>
 {% endif %}
-    <div id="ductus_content">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
     {% block document_header %}{% endblock %}
+    <div id="ductus_content">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
+    {% block document_footer %}{% endblock %}
     <footer>
       <div id="ductus_footer">
         <hr/>
