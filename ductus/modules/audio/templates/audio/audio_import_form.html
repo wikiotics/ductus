@@ -1,0 +1,12 @@
+{% extends "ductus_base.html" %}
+{% load i18n %}
+
+{% block content %}
+<p>{% trans "Please upload an ogg/vorbis file.  Other file formats are not supported at this time." %}</p>
+<form method="post" action="{{ request.escaped_full_path }}" enctype="multipart/form-data">
+<table>
+{{ form }}
+<tr><td></td><td><input type="submit" value="{% trans "Upload audio file" %}"/></td></tr>
+</table>
+</form>
+{% endblock %}

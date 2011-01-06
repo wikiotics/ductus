@@ -1,0 +1,12 @@
+{% extends "ductus_document.html" %}
+{% load i18n %}
+{% load urn %}
+
+{% block content %}
+{% with request.ductus.resource as resource %}
+<div><audio src="{{ resource.urn|resolve }}?view=audio" controls preload>{% trans "Your browser does not support HTML5 audio/video, so this content is not available." %}</audio></div>
+{% with resource.common.licenses as licenses %}
+{% include "wiki/license_list.html" %}
+{% endwith %}
+{% endwith %}
+{% endblock %}
