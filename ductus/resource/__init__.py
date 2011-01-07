@@ -21,7 +21,7 @@ import os
 
 from lxml import etree
 
-from ductus.util import iterator_to_tempfile
+from ductus.util import iterator_to_tempfile, create_property
 
 hash_name = "sha384"
 hash_encode = base64.urlsafe_b64encode
@@ -111,6 +111,13 @@ class ResourceDatabase(object):
             _resource_database = self
         else:
             raise Exception("A ResourceDatabase has already been initialized.")
+
+    @create_property
+    def max_blob_size():
+        def fget(self):
+            return self.max_resource_size - len(b'blob\0')
+        doc = 'Maximum size of a blob allowed in the system'
+        return locals()
 
     def __contains__(self, key):
         return key in self.storage_backend

@@ -38,9 +38,9 @@ class AudioField(forms.FileField):
 
         # make sure the blob is small enough to fit in the ResourceDatabase
         # without raising SizeTooLargeError
-        max_resource_size = get_resource_database().max_resource_size
-        if data.size > max_resource_size:
-            raise forms.ValidationError(self.error_messages['file_too_large'] % max_resource_size)
+        max_blob_size = get_resource_database().max_blob_size
+        if data.size > max_blob_size:
+            raise forms.ValidationError(self.error_messages['file_too_large'] % max_blob_size)
 
         filename_requires_cleanup = False
 
