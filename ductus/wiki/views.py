@@ -39,7 +39,7 @@ from ductus.util.http import query_string_not_found, render_json_response, Immed
 
 def view_frontpage(request):
     "Redirect based on the user's locale"
-    return redirect('/%s' % _('en:main_page').replace(':', '/'))
+    return redirect('/%s' % _('en:main_page').replace(':', '/', 1))
 
 class DuctusRequestInfo(object):
     def __init__(self, resource, requested_view, wiki_page, wiki_revision):
