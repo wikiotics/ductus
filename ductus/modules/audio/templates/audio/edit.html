@@ -1,0 +1,12 @@
+{% extends "ductus_document.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<p>{% trans "It is currently not possible to edit an existing audio file in the wiki." %}</p>
+
+{% if request.ductus.wiki_page %}
+<p>{% blocktrans with request.ductus.wiki_page.name|urlencode as escaped_page_name %}You may instead wish to <a href="/new/{{ creation_view_key }}?target={{ escaped_page_name }}">replace this audio file with another recording</a>.{% endblocktrans %}</p>
+{% endif %}
+
+{% endblock %}

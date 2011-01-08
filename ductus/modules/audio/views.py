@@ -52,3 +52,9 @@ def view_audio(request):
 @register_view(Audio)
 def view_audio_info(request):
     return render_to_response('audio/display.html', {}, RequestContext(request))
+
+@register_view(Audio, 'edit')
+def edit_audio(request):
+    return render_to_response('audio/edit.html', {
+        'creation_view_key': 'audio',
+    }, RequestContext(request))
