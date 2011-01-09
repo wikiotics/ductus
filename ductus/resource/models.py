@@ -501,9 +501,12 @@ class ResourceElement(LinkElement):
     def patch_from_blueprint(self, blueprint, save_context):
         super(ResourceElement, self).patch_from_blueprint(blueprint, save_context)
         if 'resource' in blueprint:
-            self.href = Model.save_blueprint({
-                'resource': blueprint['resource']
-            }, save_context)
+            if blueprint['resource'] is None:
+                self.href = None
+            else:
+                self.href = Model.save_blueprint({
+                    'resource': blueprint['resource']
+                }, save_context)
 
 class BlobElement(LinkElement):
     "Verify it is a blob" # (fixme)
