@@ -472,11 +472,11 @@ class ResourceElement(LinkElement):
     def get(self):
         if self.href == "":
             return None
-        if hasattr(self, "_cached_resource"):
-            return self._cached_resource
+        if hasattr(self, "_cached_resource") and self._cached_resource[0] == self.href:
+            return self._cached_resource[1]
         resource = get_resource_database().get_resource_object(self.href)
         self.__check_type(resource)
-        self._cached_resource = resource
+        self._cached_resource = (self.href, resource)
         return resource
 
     #resource = property(get, store)
