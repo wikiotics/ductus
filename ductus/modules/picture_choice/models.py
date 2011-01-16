@@ -1,7 +1,14 @@
 from ductus.resource import models, register_model
 from ductus.modules.picture.models import Picture
+from ductus.modules.audio.models import Audio
 
 _ns = 'http://wikiotics.org/ns/2009/picture_choice'
+
+class OptionalResourceElement(models.ResourceElement):
+    optional = True
+
+    def is_null_xml_element(self):
+        return not self.href
 
 class PictureChoiceElement(models.Element):
     ns = _ns
@@ -9,6 +16,8 @@ class PictureChoiceElement(models.Element):
 
     phrase = models.TextElement()
     picture = models.ResourceElement(Picture)
+
+    audio = OptionalResourceElement(Audio)
 
 @register_model
 class PictureChoiceGroup(models.Model):

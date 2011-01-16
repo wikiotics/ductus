@@ -6,4 +6,7 @@
     <tr><td></td><td></td><td></td></tr>
     <tr><td class="picture_choice_picture{% ifequal object.picture_urns.2 object.correct_picture_urn %} correct{% endifequal %}"><div><img alt="" src="{{ object.picture_urns.2|resolve }}?view=image&amp;max_size=250,250"/></div></td><td></td><td class="picture_choice_picture{% ifequal object.picture_urns.3 object.correct_picture_urn %} correct{% endifequal %}"><div><img alt="" src="{{ object.picture_urns.3|resolve }}?view=image&amp;max_size=250,250"/></div></td></tr>
   </table>
+{% if object.audio %}
+  <audio src="{{ object.audio.urn|resolve }}?view=audio" controls autoplay></audio>
+{% endif %}
 </div>

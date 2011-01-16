@@ -23,6 +23,7 @@ from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view, register_view, unvarying
 from ductus.modules.audio.models import Audio
 from ductus.modules.audio.forms import AudioImportForm
+from ductus.util.http import render_json_response
 
 @register_creation_view(Audio)
 def new_audio(request):
@@ -32,6 +33,9 @@ def new_audio(request):
             save_context = BlueprintSaveContext.from_request(request)
             urn = form.save(save_context)
             return SuccessfulEditRedirect(urn)
+        else:
+            if request.is_ajax():
+                return render_json_response({'errors': form.errors})
     else:
         form = AudioImportForm()
 

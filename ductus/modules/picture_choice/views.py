@@ -71,6 +71,7 @@ def view_picture_choice_groups(request, groups):
         'picture_urns': picture_urns,
         'correct_picture_urn': correct.picture.href,
         'phrase': correct.phrase,
+        'audio': correct.audio.get(),
     }
 
     if request.is_ajax():

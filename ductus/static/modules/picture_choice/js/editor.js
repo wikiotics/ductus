@@ -286,6 +286,147 @@ $(function () {
 	this.elt.remove();
     };
 
+    function AudioWidget(audio) {
+        // if new, create default nested json
+        if (!audio) {
+            audio = {href: ''};
+        }
+
+        ModelWidget.call(this, audio, '<span><span class="control"></span><span class="status"></span></span>');
+        this.control_elt = this.elt.find('.control');
+        this.status_elt = this.elt.find('.status');
+        if (audio.href) {
+            this._set_state_remote_urn(audio.href);
+        } else {
+            this._set_state_empty();
+        }
+
+        // we don't call this.record_initial_json_repr() since we never call blueprint_repr() on this object
+    }
+    AudioWidget.prototype = chain_clone(ModelWidget.prototype);
+    AudioWidget.prototype.json_repr = function () {
+        if (this.file) {
+            alert('Please upload all audio before attempting to save');
+            throw 'File has not been uploaded yet.';
+        }
+        return {href: (this._urn || '')};
+    };
+    AudioWidget.prototype.fqn = '{http://wikiotics.org/ns/2010/audio}audio';
+    AudioWidget.prototype._reset = function () {
+        // don't call this; call _set_state_* instead, which will automatically call this
+        this.control_elt.empty();
+        this.status_elt.empty();
+        this._urn = undefined;
+        this.file = null;
+    };
+    AudioWidget.prototype._set_state_empty = function () {
+        // i.e. no audio file has been selected
+        this._reset();
+        this.upload_widget = $('<input type="file" accept="audio/ogg">');
+        var _this = this;
+        this.upload_widget.change(function () {
+            var file = this.files[0];
+            _this._set_state_localfile(file);
+        });
+        this.control_elt.append(this.upload_widget);
+    };
+    AudioWidget.prototype._set_state_localfile = function (file) {
+        // i.e. the user has selected a local file but has not yet uploaded it.
+        // we'd like to preview it if possible.
+        this._reset();
+        this.file = file;
+        if (file.type !== 'audio/ogg') {
+            this.status_elt.append($('<span class="error"></span>').text('Warning: expected audio/ogg, but selected file is of type ' + file.type));
+        }
+        var reader = new FileReader();
+        var _this = this;
+        reader.onload = function (e) {
+            _this._append_audio_control(e.target.result);
+            var upload_button = $('<a>upload</a>');
+            upload_button.click(function () {
+                _this.attempt_upload();
+            });
+            _this.control_elt.append(upload_button);
+            _this._append_trash_icon();
+        };
+        reader.readAsDataURL(file);
+    };
+    AudioWidget.prototype._set_state_remote_urn = function (urn) {
+        this._reset();
+        this._urn = urn;
+        this._append_audio_control(resolve_urn(urn) + '?view=audio');
+        this._append_trash_icon();
+    };
+    AudioWidget.prototype.attempt_upload = function (success_cb, error_cb) {
+        var file = this.file;
+        if (!file) {
+            // no file selected, so this should not have been called
+            error_cb();
+            return;
+        }
+        if (this._upload_in_progress) {
+            // note: no callback will be called... FIXME
+            return;
+        }
+        var _this = this;
+        this._upload_in_progress = true;
+        var progress_elt = $('<progress max="100"><span>0</span>%</progress>');
+        this.status_elt.empty().append(progress_elt);
+        function handle_upload_errors(errors) {
+            progress_elt.remove();
+            for (var i = 0; i < errors.length; ++i) {
+                _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
+            }
+            this._upload_in_progress = false;
+            if (error_cb) error_cb();
+        }
+        $.ductusFileUpload({
+            url: '/new/audio',
+            onLoad: function (e, files, index, xhr) {
+                progress_elt.attr('value', 100).find('span').text(100);
+                var data;
+                try {
+                    data = $.parseJSON(xhr.responseText);
+                } catch (error) {
+                    handle_upload_errors();
+                    return;
+                }
+                if (data.errors) {
+                    var key, errors = [];
+                    for (key in data.errors) {
+                        errors.push(data.errors[key]);
+                    }
+                    handle_upload_errors(errors);
+                    return;
+                }
+                _this._set_state_remote_urn(data.urn);
+                _this._upload_in_progress = false;
+                if (success_cb) success_cb();
+            },
+            onProgress: function (e, files, index, xhr) {
+                var percent = parseInt(100 * e.loaded / e.total, 10);
+                progress_elt.attr('value', percent).find('span').text(percent);
+            },
+            onError: function (e, files, index, xhr) {
+                handle_upload_errors();
+            },
+            onAbort: function (e, files, index, xhr) {
+                handle_upload_errors();
+            }
+        }).handleFiles([file]);
+    };
+    AudioWidget.prototype._append_audio_control = function (src) {
+        var html5_audio_element = $('<audio controls></audio>');
+        html5_audio_element.attr('src', src);
+        this.control_elt.append(html5_audio_element);
+    };
+    AudioWidget.prototype._append_trash_icon = function () {
+        var trash_icon = $('<a>trash</a>');
+        var that = this;
+        trash_icon.click(function () { that._set_state_empty(); });
+        this.control_elt.append(trash_icon);
+    };
+
     function PictureChoiceElementWidget(pce) {
 	// default nested json
 	if (!pce) {
@@ -295,13 +436,16 @@ $(function () {
 	Widget.call(this, '<li class="picture_choice_element_item"><input class="phrase" type="text"></input></li>');
 	this.picture = new PictureWidget(pce.picture);
 	this.elt.append(this.picture.elt);
+	this.audio = new AudioWidget(pce.audio || null);
+	this.elt.append("Audio: ").append(this.audio.elt);
         this.elt.find(".phrase").val(pce.phrase.text);
     }
     PictureChoiceElementWidget.prototype = chain_clone(Widget.prototype);
     PictureChoiceElementWidget.prototype.json_repr = function () {
 	return {
 	    phrase: {text: this.elt.find(".phrase").val()},
-	    picture: ModelWidget.blueprint_repr(this.picture)
+	    picture: ModelWidget.blueprint_repr(this.picture),
+	    audio: this.audio.json_repr() // we don't use blueprint_repr here, since we are in direct control of the 'href' given
 	};
     };
 
