@@ -502,6 +502,9 @@ class ResourceElement(LinkElement):
         super(ResourceElement, self).patch_from_blueprint(blueprint, save_context)
         if 'resource' in blueprint:
             if blueprint['resource'] is None:
+                # (it's possible to remove reference to the resource by setting
+                # href to the empty string, but we support setting the resource
+                # to null as well)
                 self.href = None
             else:
                 self.href = Model.save_blueprint({
