@@ -20,6 +20,7 @@ from types import FunctionType
 from django.http import Http404
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
+from django.views.generic.list_detail import object_list
 
 from ductus.wiki.models import WikiRevision
 from ductus.wiki.namespaces import BaseWikiNamespace
@@ -40,7 +41,7 @@ def register_special_page(x):
 @register_special_page
 def recent_changes(request, pagename):
     # fixme: also be able to query a certain page or something
-    revisions = WikiRevision.objects.order_by('-timestamp')[:20]
+    revisions = WikiRevision.objects.order_by('-timestamp')
     rss_url = request.escaped_full_path(view='rss')
 
     if request.GET.get('view') == 'rss':
@@ -51,7 +52,7 @@ def recent_changes(request, pagename):
             description = u'Recent changes'
 
             def items(self):
-                return revisions
+                return revisions[:20]
 
             def item_title(self, item):
                 return item.page.name
@@ -66,12 +67,11 @@ def recent_changes(request, pagename):
 
         return RecentChangesFeed()(request)
 
-    # fixme: we should probably just use a generic view here to get pagination
-
-    return render_to_response('special/recent_changes.html', {
-        'revisions': revisions,
-        'rss_url': rss_url,
-    }, RequestContext(request))
+    return object_list(request, queryset=revisions,
+                       paginate_by=25,
+                       extra_context={'rss_url': rss_url},
+                       template_name='special/recent_changes.html',
+                       template_object_name='revision')
 
 @register_special_page
 def version(request, pagename):
