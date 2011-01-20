@@ -19,7 +19,7 @@ import re
 from urllib2 import urlopen, HTTPError as urllib2_HTTPError
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotModified, Http404
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext, loader
 from django.views.decorators.vary import vary_on_headers
 from django.utils.safestring import mark_safe

@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.shortcuts import get_object_or_404
-
 from ductus.wiki.views import RegularWikiNamespace
 from ductus.group.models import Group
 
@@ -25,7 +23,10 @@ class GroupNamespace(RegularWikiNamespace):
             return False
 
         groupname = pagename.partition('/')[0]
-        group = get_object_or_404(Group, slug=groupname)
+        try:
+            group = Group.objects.get(slug=groupname)
+        except Group.DoesNotExist:
+            return False
 
         return group.users.filter(id=user.id).exists()
 
