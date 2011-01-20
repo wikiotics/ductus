@@ -24,10 +24,12 @@ def site_settings(request):
     """
     dsn = getattr(settings, "DUCTUS_SITE_NAME", "Example Ductus Site")
     dsh = getattr(settings, "DUCTUS_SITE_HEAD", "")
+    dsf = getattr(settings, "DUCTUS_SITE_FOOTER", "")
     return {
         'ductus_media_prefix': settings.DUCTUS_MEDIA_PREFIX,
         'ductus_site_name': mark_safe(dsn),
         'ductus_site_head': mark_safe(dsh),
+        'ductus_site_footer': mark_safe(dsf),
         'ductus_default_license': settings.DUCTUS_DEFAULT_LICENSE,
     }
 
