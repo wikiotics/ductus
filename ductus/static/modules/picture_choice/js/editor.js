@@ -322,6 +322,10 @@ $(function () {
     AudioWidget.prototype._set_state_empty = function () {
         // i.e. no audio file has been selected
         this._reset();
+        if (typeof FileReader == 'undefined') {
+            // File API is not supported, so don't provide file selection element
+            return;
+        }
         this.upload_widget = $('<input type="file" accept="audio/ogg">');
         var _this = this;
         this.upload_widget.change(function () {
