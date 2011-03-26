@@ -55,19 +55,10 @@ def __handle_etag(request, key):
     from django.utils.hashcompat import md5_constructor
     etag = '"%s"' % md5_constructor(repr(key)).hexdigest()
     if etag == request.META.get('HTTP_IF_NONE_MATCH', None):
-        raise __Http304
+        raise ImmediateResponse(HttpResponseNotModified())
     return etag
     # fixme: we may also want to set last-modified, expires, max-age
 
-def __catch_http304(func):
-    def new_func(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except __Http304:
-            return HttpResponseNotModified()
-    return new_func
-
-@__catch_http304
 @vary_on_headers('Cookie', 'Accept-language')
 def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
     """Dispatches the appropriate view for a resource/page
