@@ -51,9 +51,11 @@ class DuctusRequestInfo(object):
 class __Http304(Exception):
     pass
 
-def __handle_etag(request, key):
+def __handle_etag(request, key, weak=True):
     from django.utils.hashcompat import md5_constructor
     etag = '"%s"' % md5_constructor(repr(key)).hexdigest()
+    if weak: # use a "weak entity tag" since byte equality is not guaranteed
+        etag = 'W/' + etag
     if etag == request.META.get('HTTP_IF_NONE_MATCH', None):
         raise ImmediateResponse(HttpResponseNotModified())
     return etag
@@ -67,7 +69,7 @@ def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
     requested_view = request.GET.get('view', None)
 
     if requested_view == 'raw':
-        etag = __handle_etag(request, ['raw', urn])
+        etag = __handle_etag(request, ['raw', urn], weak=False)
         # fixme: we may also want to set last-modified, expires, max-age
 
     resource_database = get_resource_database()
@@ -84,7 +86,7 @@ def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
         return response
 
     if header == 'blob':
-        etag = __handle_etag(request, ['blob', urn])
+        etag = __handle_etag(request, ['blob', urn], weak=False)
         header, data_iterator = determine_header(data_iterator, False)
         response = HttpResponse(list(data_iterator), # see django #6527
                                 content_type='application/octet-stream')
