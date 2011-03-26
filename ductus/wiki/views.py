@@ -23,7 +23,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext, loader
 from django.views.decorators.vary import vary_on_headers
 from django.utils.safestring import mark_safe
-from django.utils.cache import patch_cache_control
+from django.utils.cache import patch_cache_control, patch_response_headers
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy, ugettext as _
@@ -244,7 +244,10 @@ def view_wikipage(request, prefix, pagename):
             raise Http404
         response = implicit_new_wikipage(request, prefix, pagename)
 
+    # wikipage urls expire immediately since they can frequently be edited
+    patch_response_headers(response, cache_timeout=0)
     patch_cache_control(response, must_revalidate=True)
+
     return response
 
 def implicit_new_wikipage(request, prefix, pagename):
