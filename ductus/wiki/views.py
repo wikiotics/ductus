@@ -48,9 +48,6 @@ class DuctusRequestInfo(object):
         self.wiki_page = wiki_page
         self.wiki_revision = wiki_revision
 
-class __Http304(Exception):
-    pass
-
 def __handle_etag(request, key, weak=True):
     from django.utils.hashcompat import md5_constructor
     etag = '"%s"' % md5_constructor(repr(key)).hexdigest()
