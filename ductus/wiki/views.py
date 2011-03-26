@@ -56,7 +56,6 @@ def __handle_etag(request, key, weak=True):
     if etag == request.META.get('HTTP_IF_NONE_MATCH', None):
         raise ImmediateResponse(HttpResponseNotModified())
     return etag
-    # fixme: we may also want to set last-modified, expires, max-age
 
 @vary_on_headers('Cookie', 'Accept-language')
 def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
