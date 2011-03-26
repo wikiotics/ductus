@@ -95,15 +95,13 @@ def creole(value, default_prefix=None):
 
         return mark_safe(creole2html(value))
 
-__title_left_re = re.compile(r'^[\s=]*', re.UNICODE)
-__title_right_re = re.compile(r'[\s=]*$', re.UNICODE)
+__title_re = re.compile(r'^\s*=+\s*(.*?)\s*=*\s*$', re.MULTILINE | re.UNICODE)
 
 @register.filter
 @stringfilter
 def creole_guess_title(value):
-    try:
-        first_line = (a for a in value.splitlines() if a).next()
-    except StopIteration:
-        return ''
-    title = __title_left_re.sub('', __title_right_re.sub('', first_line))
-    return title
+    s = __title_re.search(value)
+    if s:
+        return s.group(1)
+    else:
+        return u''
