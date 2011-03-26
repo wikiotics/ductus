@@ -88,7 +88,7 @@ def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
         header, data_iterator = determine_header(data_iterator, False)
         response = HttpResponse(list(data_iterator), # see django #6527
                                 content_type='application/octet-stream')
-        response["Etag"] = etag
+        response["ETag"] = etag
         return response
 
     if header == 'xml':
