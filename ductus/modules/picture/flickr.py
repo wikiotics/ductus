@@ -40,7 +40,7 @@ class FlickrJSON(flickrapi.FlickrAPI):
             return j
         return f
 
-flickr = FlickrJSON(settings.DUCTUS_FLICKR_API_KEY)
+flickr = FlickrJSON(getattr(settings, "DUCTUS_FLICKR_API_KEY", ""))
 
 def lazy_memoize(f):
     """Returns an object that when called returns the value of the given function.
