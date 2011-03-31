@@ -32,7 +32,7 @@ def _register_installed_modules():
     for module in getattr(settings, "DUCTUS_INSTALLED_MODULES", ()):
         with ignore(ImportError):
             import_module(module)
-        for submod in ('models', 'subviews', 'views', 'edit_views'):
+        for submod in ('ductmodels', 'subviews', 'views', 'edit_views'):
             with ignore(ImportError):
                 import_module('.' + submod, module)
 

@@ -25,8 +25,8 @@ from django.core.paginator import Paginator
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view, register_view
 from ductus.util.http import render_json_response
-from ductus.resource.models import BlueprintSaveContext
-from ductus.modules.picture.models import Picture
+from ductus.resource.ductmodels import BlueprintSaveContext
+from ductus.modules.picture.ductmodels import Picture
 from ductus.modules.picture.flickr import flickr, FlickrPhoto, license_map, url_format_map, valid_sort_methods
 from ductus.modules.picture.forms import PictureRotationForm, PictureImportForm
 

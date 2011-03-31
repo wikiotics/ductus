@@ -21,10 +21,10 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseBadRequest
 
-from ductus.resource.models import BlueprintSaveContext, BlueprintError, ValidationError
+from ductus.resource.ductmodels import BlueprintSaveContext, BlueprintError, ValidationError
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_view, register_creation_view
-from ductus.modules.picture_choice.models import PictureChoiceLesson
+from ductus.modules.picture_choice.ductmodels import PictureChoiceLesson
 
 HttpTextResponseBadRequest = partial(HttpResponseBadRequest,
                                      content_type="text/plain; charset=utf-8")

@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.resource import models, register_model
+from ductus.resource import ductmodels, register_ductmodel
 
-@register_model
-class Audio(models.Model):
+@register_ductmodel
+class Audio(ductmodels.DuctModel):
     ns = 'http://wikiotics.org/ns/2010/audio'
-    blob = models.TypedBlobElement(allowed_mime_types=['audio/ogg'])
+    blob = ductmodels.TypedBlobElement(allowed_mime_types=['audio/ogg'])

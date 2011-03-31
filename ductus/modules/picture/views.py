@@ -21,7 +21,7 @@ from django.template import RequestContext
 from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view, unvarying
 from ductus.wiki import diskcache
-from ductus.modules.picture.models import Picture
+from ductus.modules.picture.ductmodels import Picture
 
 from PIL import Image, ImageFile
 from cStringIO import StringIO

@@ -14,37 +14,37 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.resource import models, register_model
-from ductus.modules.picture.models import Picture
-from ductus.modules.audio.models import Audio
+from ductus.resource import ductmodels, register_ductmodel
+from ductus.modules.picture.ductmodels import Picture
+from ductus.modules.audio.ductmodels import Audio
 
 _ns = 'http://wikiotics.org/ns/2009/picture_choice'
 
-class OptionalResourceElement(models.ResourceElement):
+class OptionalResourceElement(ductmodels.ResourceElement):
     optional = True
 
     def is_null_xml_element(self):
         return not self.href
 
-class PictureChoiceElement(models.Element):
+class PictureChoiceElement(ductmodels.Element):
     ns = _ns
     nsmap = {'picture_choice': ns}
 
-    phrase = models.TextElement()
-    picture = models.ResourceElement(Picture)
+    phrase = ductmodels.TextElement()
+    picture = ductmodels.ResourceElement(Picture)
 
     audio = OptionalResourceElement(Audio)
 
-@register_model
-class PictureChoiceGroup(models.Model):
+@register_ductmodel
+class PictureChoiceGroup(ductmodels.DuctModel):
     ns = _ns
     nsmap = {'picture_choice': ns}
 
-    group = models.ArrayElement(PictureChoiceElement(), min_size=4, max_size=4)
+    group = ductmodels.ArrayElement(PictureChoiceElement(), min_size=4, max_size=4)
 
-@register_model
-class PictureChoiceLesson(models.Model):
+@register_ductmodel
+class PictureChoiceLesson(ductmodels.DuctModel):
     ns = _ns
     nsmap = {'picture_choice': ns}
 
-    groups = models.ArrayElement(models.ResourceElement(PictureChoiceGroup))
+    groups = ductmodels.ArrayElement(ductmodels.ResourceElement(PictureChoiceGroup))

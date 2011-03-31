@@ -14,21 +14,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.resource import models, register_model
+from ductus.resource import ductmodels, register_ductmodel
 
-class OptionalTextElement(models.TextElement):
+class OptionalTextElement(ductmodels.TextElement):
     optional = True
 
     def is_null_xml_element(self):
         return not self.text
 
-class OptionalLinkElement(models.LinkElement):
+class OptionalLinkElement(ductmodels.LinkElement):
     optional = True
 
     def is_null_xml_element(self):
         return not self.href
 
-class CreditElement(models.Element):
+class CreditElement(ductmodels.Element):
     ns = 'http://wikiotics.org/ns/2009/credit'
     nsmap = {'credit': ns}
 
@@ -41,18 +41,18 @@ def rotation_validator(v):
     # '' or None means follow EXIF metadata.  an explicit '0' overrides any
     # metadata and refuses to perform a rotation.
     if not v in (None, '', '0', '90', '180', '270'):
-        raise models.ValidationError
+        raise ductmodels.ValidationError
 
-@register_model
-class Picture(models.Model):
+@register_ductmodel
+class Picture(ductmodels.DuctModel):
     ns = 'http://wikiotics.org/ns/2009/picture'
-    blob = models.TypedBlobElement(allowed_mime_types=['image/jpeg'])
+    blob = ductmodels.TypedBlobElement(allowed_mime_types=['image/jpeg'])
     credit = CreditElement()
-    rotation = models.Attribute(optional=True, blank_is_null=True,
+    rotation = ductmodels.Attribute(optional=True, blank_is_null=True,
                                 validator=rotation_validator)
 
     def patch_from_blueprint(self, blueprint, save_context):
-        models.blueprint_expects_dict(blueprint)
+        ductmodels.blueprint_expects_dict(blueprint)
         blueprint = dict(blueprint)
         if "credit" in blueprint:
             del blueprint["credit"]
@@ -61,7 +61,7 @@ class Picture(models.Model):
 
         if 'flickr_photo_id' in blueprint:
             flickr_photo_id = blueprint['flickr_photo_id']
-            flickr_photo_id = models.blueprint_cast_to_string(flickr_photo_id)
+            flickr_photo_id = ductmodels.blueprint_cast_to_string(flickr_photo_id)
             # FIXME TEMPORARY
             from ductus.modules.picture.flickr import FlickrUriHandler
             url = 'http://flickr.com/photos/0/%s' % flickr_photo_id
@@ -72,13 +72,13 @@ class Picture(models.Model):
 
         if 'rotation' in blueprint:
             rotation = blueprint['rotation']
-            rotation = models.blueprint_cast_to_string(rotation)
+            rotation = ductmodels.blueprint_cast_to_string(rotation)
             rotation_validator(rotation)
             self.rotation = rotation
 
         if 'net_rotation' in blueprint:
             net_rotation = blueprint['net_rotation']
-            net_rotation = models.blueprint_cast_to_string(net_rotation)
+            net_rotation = ductmodels.blueprint_cast_to_string(net_rotation)
             rotation_validator(net_rotation)
             self.rotation = str((int(self.rotation or 0) +
                                  int(net_rotation or 0)) % 360)

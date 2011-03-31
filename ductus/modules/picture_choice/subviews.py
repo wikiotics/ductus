@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from ductus.wiki.subviews import register_subview, subview
-from ductus.modules.picture_choice.models import PictureChoiceLesson
+from ductus.modules.picture_choice.ductmodels import PictureChoiceLesson
 
 @register_subview(PictureChoiceLesson, 'subresources')
 def subresources(resource):

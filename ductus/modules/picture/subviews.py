@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from ductus.wiki.subviews import register_subview, subview
-from ductus.modules.picture.models import Picture
+from ductus.modules.picture.ductmodels import Picture
 
 @register_subview(Picture, 'license_info')
 def license_info(resource):

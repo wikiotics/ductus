@@ -191,7 +191,7 @@ class ResourceDatabase(object):
         # Make sure we recognize the root node and the document is valid
         # fixme: combine below lines with get_resource_object function
         root = tree.getroot()
-        resource = _registered_models[root.tag]() # fixme: may raise KeyError
+        resource = _registered_ductmodels[root.tag]() # fixme: may raise KeyError
         resource.populate_from_xml(root)
         resource.validate()
 
@@ -241,7 +241,7 @@ class ResourceDatabase(object):
     def get_resource_object(self, urn):
         tree = self.get_xml_tree(urn) # fixme: what exceptions can this throw?
         root = tree.getroot()
-        model_class = _registered_models[root.tag] # fixme: may raise KeyError
+        model_class = _registered_ductmodels[root.tag] # fixme: may raise KeyError
         resource = model_class()
         resource.urn = urn
         resource.resource_database = self
@@ -277,24 +277,24 @@ def determine_header(data_iterator, replace_header=True):
 
     return unicode(header), data_iterator
 
-def register_model(model):
+def register_ductmodel(model):
     """Registers a model.
 
     This function can be used as a class decorator in Python >= 2.6
 
     Or, we could decide to call this automatically from
-    ductus.resource.models.ModelMetaclass (fixme)
+    ductus.resource.ductmodels.DuctModelMetaclass (fixme)
     """
     if __debug__:
-        from ductus.resource.models import Model
-        assert issubclass(model, Model)
-    if model.fqn in _registered_models and _registered_models[model.fqn] != model:
-        raise Exception("Models '%s' and '%s' have conflicting fully-qualified XML names."
-                        % (model, _registered_models[model.fqn]))
-    _registered_models[model.fqn] = model
+        from ductus.resource.ductmodels import DuctModel
+        assert issubclass(model, DuctModel)
+    if model.fqn in _registered_ductmodels and _registered_ductmodels[model.fqn] != model:
+        raise Exception("DuctModels '%s' and '%s' have conflicting fully-qualified XML names."
+                        % (model, _registered_ductmodels[model.fqn]))
+    _registered_ductmodels[model.fqn] = model
     return model
 
-_registered_models = {}
+_registered_ductmodels = {}
 
 def get_resource_database():
     return _resource_database

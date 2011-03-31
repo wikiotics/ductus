@@ -18,10 +18,10 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from ductus.resource.models import BlueprintSaveContext
+from ductus.resource.ductmodels import BlueprintSaveContext
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view, register_view, unvarying
-from ductus.modules.audio.models import Audio
+from ductus.modules.audio.ductmodels import Audio
 from ductus.modules.audio.forms import AudioImportForm
 from ductus.util.http import render_json_response
 

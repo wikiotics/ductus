@@ -22,7 +22,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from ductus.wiki import get_resource_database, resolve_urn, UnsupportedURN
-from ductus.modules.picture.models import Picture
+from ductus.modules.picture.ductmodels import Picture
 
 class PictureRotationForm(forms.Form):
     choices = (
@@ -83,7 +83,7 @@ class UrnHandler(object):
 
     def validate(self):
         from ductus.resource import get_resource_database
-        from ductus.resource.models import ModelMismatchError
+        from ductus.resource.ductmodels import DuctModelMismatchError
         resource_database = get_resource_database()
 
         for r in self._re_objects:
@@ -95,7 +95,7 @@ class UrnHandler(object):
                     raise forms.ValidationError(_(u"This urn cannot be found on the server you are currently accessing."))
                 try:
                     Picture.load(urn)
-                except ModelMismatchError:
+                except DuctModelMismatchError:
                     raise forms.ValidationError(_(u"This urn represents content that is not a picture."))
                 # fixme: handle exception raised by get_resource_object if it's
                 # actually a blob

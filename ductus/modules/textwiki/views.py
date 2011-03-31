@@ -26,7 +26,7 @@ from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.namespaces import registered_namespaces, split_pagename, WikiPrefixNotProvided
 from ductus.wiki.forms import LogMessageField
-from ductus.modules.textwiki.models import Wikitext
+from ductus.modules.textwiki.ductmodels import Wikitext
 
 recaptcha = None
 if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):

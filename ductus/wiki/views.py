@@ -551,7 +551,7 @@ class Diff(list):
         self.__do_diff(this, that)
 
     def __do_diff(self, this, that, hierarchy=()):
-        from ductus.resource.models import TextElement, ArrayElement
+        from ductus.resource.ductmodels import TextElement, ArrayElement
 
         if type(this) is not type(that):
             self.append(DiffItem(hierarchy, True,

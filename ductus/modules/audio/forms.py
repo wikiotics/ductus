@@ -22,7 +22,7 @@ from django.conf import settings
 from django import forms
 from django.utils.translation import ugettext_lazy, ugettext as _
 
-from ductus.modules.audio.models import Audio
+from ductus.modules.audio.ductmodels import Audio
 from ductus.resource import get_resource_database
 
 OGGINFO_PATH = getattr(settings, "OGGINFO_PATH", '/usr/bin/ogginfo')

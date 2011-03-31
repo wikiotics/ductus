@@ -26,7 +26,7 @@ from django.utils.datastructures import SortedDict
 
 from ductus.license import is_license_compatibility_satisfied
 from ductus.util import create_property
-from ductus.resource import register_model, get_resource_database, _registered_models
+from ductus.resource import register_ductmodel, get_resource_database, _registered_ductmodels
 
 # fixme: we could just not "follow" parents instead of excluding them.  If we
 # change it to work this way, the browser will be aware of the parents in case
@@ -36,7 +36,7 @@ from ductus.resource import register_model, get_resource_database, _registered_m
 class ValidationError(Exception):
     pass
 
-class ModelMismatchError(Exception):
+class DuctModelMismatchError(Exception):
     pass
 
 class BlueprintError(Exception):
@@ -118,10 +118,10 @@ class NoChildElementMetaclass(ElementMetaclass):
         if cls.subelements:
             raise Exception("%s does not allow subelements" % cls.__name__)
 
-class ModelMetaclass(ElementMetaclass):
+class DuctModelMetaclass(ElementMetaclass):
     def __init__(cls, name, bases, attrs):
-        super(ModelMetaclass, cls).__init__(name, bases, attrs)
-        if name == "Model":
+        super(DuctModelMetaclass, cls).__init__(name, bases, attrs)
+        if name == "DuctModel":
             return
 
         # Deal with root_name, fqn
@@ -226,7 +226,7 @@ class Element(object):
 
     def populate_from_xml(self, xml_node, ns=None):
         if ns is None:
-            # we must be a Model
+            # we must be a DuctModel
             ns = self.ns
         self._populate_subelements_from_xml(xml_node, ns)
         self._populate_attributes_from_xml(xml_node, ns)
@@ -507,7 +507,7 @@ class ResourceElement(LinkElement):
                 # to null as well)
                 self.href = None
             else:
-                self.href = Model.save_blueprint({
+                self.href = DuctModel.save_blueprint({
                     'resource': blueprint['resource']
                 }, save_context)
 
@@ -597,8 +597,8 @@ class DuctusCommonElement(Element):
         self.author.href = save_context.author_full_absolute_url
         self.log_message.text = save_context.log_message
 
-class Model(Element):
-    __metaclass__ = ModelMetaclass
+class DuctModel(Element):
+    __metaclass__ = DuctModelMetaclass
 
     urn = None
     common = DuctusCommonElement()
@@ -626,11 +626,11 @@ class Model(Element):
     def load(cls, urn):
         resource = get_resource_database().get_resource_object(urn)
         if type(resource) != cls:
-            raise ModelMismatchError("Expecting %s, got %s" % (cls, type(resource)))
+            raise DuctModelMismatchError("Expecting %s, got %s" % (cls, type(resource)))
         return resource
 
     def clone(self):
-        rv = super(Model, self).clone()
+        rv = super(DuctModel, self).clone()
         rv.urn = None
         if self.urn:
             rv.common.parents.array = [rv.common.parents.new_item()]
@@ -651,7 +651,7 @@ class Model(Element):
         existing resources, but the system will only save new resources if they
         pass the test.
         """
-        super(Model, self).validate(strict)
+        super(DuctModel, self).validate(strict)
         if strict:
             for parent in self.common.parents:
                 if type(parent.get()) != type(self):
@@ -662,7 +662,7 @@ class Model(Element):
             raise ValidationError("The content is not provided under a license acceptable for this wiki")
 
     def __eq__(self, other):
-        return (self.urn is not None and self.urn == other.urn) or super(Model, self).__eq__(other)
+        return (self.urn is not None and self.urn == other.urn) or super(DuctModel, self).__eq__(other)
 
     @classmethod
     def save_blueprint(cls, blueprint, save_context):
@@ -697,7 +697,7 @@ class Model(Element):
         elif '@create' in resource_blueprint:
             fqn = resource_blueprint.pop('@create')
             try:
-                resource_class = _registered_models[fqn]
+                resource_class = _registered_ductmodels[fqn]
             except KeyError:
                 raise BlueprintError("invalid argument to `@create`", resource_blueprint)
             if not issubclass(resource_class, cls):
