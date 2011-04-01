@@ -125,6 +125,8 @@ class DuctModelMetaclass(ElementMetaclass):
             return
 
         # Deal with root_name, fqn
+        if cls.ns is None:
+            raise Exception("You must define an XML namespace for %s" % name)
         if 'root_name' not in attrs:
             cls.root_name = camelcase_to_underscores(name)
         cls.fqn = '{%s}%s' % (cls.ns, cls.root_name)
