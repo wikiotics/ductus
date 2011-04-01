@@ -286,8 +286,8 @@ def register_ductmodel(model):
     ductus.resource.ductmodels.DuctModelMetaclass (fixme)
     """
     if __debug__:
-        from ductus.resource.ductmodels import DuctModel
-        assert issubclass(model, DuctModel)
+        from ductus.resource.ductmodels import BaseDuctModel
+        assert issubclass(model, BaseDuctModel)
     if model.fqn in _registered_ductmodels and _registered_ductmodels[model.fqn] != model:
         raise Exception("DuctModels '%s' and '%s' have conflicting fully-qualified XML names."
                         % (model, _registered_ductmodels[model.fqn]))

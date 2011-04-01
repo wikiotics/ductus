@@ -121,7 +121,7 @@ class NoChildElementMetaclass(ElementMetaclass):
 class DuctModelMetaclass(ElementMetaclass):
     def __init__(cls, name, bases, attrs):
         super(DuctModelMetaclass, cls).__init__(name, bases, attrs)
-        if name == "DuctModel":
+        if name in ("BaseDuctModel", "DuctModel"):
             return
 
         # Deal with root_name, fqn
@@ -597,23 +597,16 @@ class DuctusCommonElement(Element):
         self.author.href = save_context.author_full_absolute_url
         self.log_message.text = save_context.log_message
 
-class DuctModel(Element):
+class BaseDuctModel(Element):
+    """all functionality of DuctModel, but without the `common` element"""
+
     __metaclass__ = DuctModelMetaclass
 
     urn = None
-    common = DuctusCommonElement()
-
-    __allowed_licenses_set = set(settings.DUCTUS_ALLOWED_LICENSES)
 
     def save(self, encoding=None):
         if self.urn:
             return self.urn # no-op
-
-        # for now, let's just set the license to cc-by-sa if one isn't
-        # explicitly given:
-        if not self.common.licenses.array:
-            self.common.licenses.array = [self.common.licenses.new_item()]
-            self.common.licenses.array[0].href = settings.DUCTUS_DEFAULT_LICENSE
 
         self.validate()
         root = etree.Element(self.fqn, nsmap=self.nsmap)
@@ -630,39 +623,12 @@ class DuctModel(Element):
         return resource
 
     def clone(self):
-        rv = super(DuctModel, self).clone()
+        rv = super(BaseDuctModel, self).clone()
         rv.urn = None
-        if self.urn:
-            rv.common.parents.array = [rv.common.parents.new_item()]
-            rv.common.parents.array[0].href = self.urn
         return rv
 
-    def validate(self, strict=True):
-        """validate the in-memory data model
-
-        `strict` is occasionally False, such as when an existing resource from
-        the ResourceDatabase is loaded into memory.  In this case, we don't
-        want to waste our time checking that all linked resources are of the
-        correct type (as this would involve loading them, and so on), so we
-        just do the minimal checks available with what is in memory.
-
-        Also, it is possible to implement a test that is performed only when
-        strict=True.  This will allow the test to fail without complaint on any
-        existing resources, but the system will only save new resources if they
-        pass the test.
-        """
-        super(DuctModel, self).validate(strict)
-        if strict:
-            for parent in self.common.parents:
-                if type(parent.get()) != type(self):
-                    raise ValidationError("Resource's parents must be of the same type")
-
-        licenses = [license.href for license in self.common.licenses]
-        if self.__allowed_licenses_set.isdisjoint(licenses + [None]):
-            raise ValidationError("The content is not provided under a license acceptable for this wiki")
-
     def __eq__(self, other):
-        return (self.urn is not None and self.urn == other.urn) or super(DuctModel, self).__eq__(other)
+        return (self.urn is not None and self.urn == other.urn) or super(BaseDuctModel, self).__eq__(other)
 
     @classmethod
     def save_blueprint(cls, blueprint, save_context):
@@ -707,8 +673,59 @@ class DuctModel(Element):
             raise BlueprintError("resource blueprint must contain '@patch' or '@create'", resource_blueprint)
 
         resource.patch_from_blueprint(resource_blueprint, save_context)
-        resource.common.patch_from_blueprint(None, save_context)
         return resource.save()
+
+class DuctModel(BaseDuctModel):
+    common = DuctusCommonElement()
+
+    __allowed_licenses_set = set(settings.DUCTUS_ALLOWED_LICENSES)
+
+    def save(self, encoding=None):
+        if self.urn:
+            return self.urn # no-op
+
+        # for now, let's just set the license to cc-by-sa if one isn't
+        # explicitly given:
+        if not self.common.licenses.array:
+            self.common.licenses.array = [self.common.licenses.new_item()]
+            self.common.licenses.array[0].href = settings.DUCTUS_DEFAULT_LICENSE
+
+        return super(DuctModel, self).save(encoding)
+
+    def clone(self):
+        rv = super(DuctModel, self).clone()
+        if self.urn:
+            rv.common.parents.array = [rv.common.parents.new_item()]
+            rv.common.parents.array[0].href = self.urn
+        return rv
+
+    def validate(self, strict=True):
+        """validate the in-memory data model
+
+        `strict` is occasionally False, such as when an existing resource from
+        the ResourceDatabase is loaded into memory.  In this case, we don't
+        want to waste our time checking that all linked resources are of the
+        correct type (as this would involve loading them, and so on), so we
+        just do the minimal checks available with what is in memory.
+
+        Also, it is possible to implement a test that is performed only when
+        strict=True.  This will allow the test to fail without complaint on any
+        existing resources, but the system will only save new resources if they
+        pass the test.
+        """
+        super(DuctModel, self).validate(strict)
+        if strict:
+            for parent in self.common.parents:
+                if type(parent.get()) != type(self):
+                    raise ValidationError("Resource's parents must be of the same type")
+
+        licenses = [license.href for license in self.common.licenses]
+        if self.__allowed_licenses_set.isdisjoint(licenses + [None]):
+            raise ValidationError("The content is not provided under a license acceptable for this wiki")
+
+    def patch_from_blueprint(self, blueprint, save_context):
+        super(DuctModel, self).patch_from_blueprint(blueprint, save_context)
+        self.common.patch_from_blueprint(None, save_context)
 
 def blueprint_expects_dict(blueprint):
     if not isinstance(blueprint, dict):
