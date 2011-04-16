@@ -36,9 +36,9 @@ def edit_picture_choice_lesson(request):
         try:
             blueprint = json.loads(request.POST['blueprint'])
         except KeyError:
-            raise HttpTextResponseBadRequest(u"no blueprint given")
+            return HttpTextResponseBadRequest(u"no blueprint given")
         except ValueError:
-            raise HttpTextResponseBadRequest(u"json fails to parse")
+            return HttpTextResponseBadRequest(u"json fails to parse")
         save_context = BlueprintSaveContext.from_request(request)
         try:
             urn = PictureChoiceLesson.save_blueprint(blueprint, save_context)
