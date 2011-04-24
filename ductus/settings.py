@@ -105,6 +105,7 @@ MIDDLEWARE_CLASSES = (
     'ductus.middleware.cache.UpdateCacheMiddleware',
     'ductus.middleware.unvarying.UnvaryingResponseMiddleware',
     'ductus.middleware.remote_addr.RemoteAddrMiddleware',
+    'ductus.middleware.blacklist.IPAddressBlacklistMiddleware',
     'django.contrib.csrf.middleware.CsrfMiddleware',
     'ductus.middleware.common.DuctusCommonMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -143,6 +144,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.markup',
     'ductus.initialize',
+    'ductus.blacklist',
     'ductus.wiki',
     'ductus.user',
     'ductus.group',
@@ -181,6 +183,9 @@ DUCTUS_DEFAULT_LICENSE = 'http://creativecommons.org/licenses/by-sa/3.0/'
 DUCTUS_FRONT_PAGE = '/wiki/front_page'
 
 #DUCTUS_FLICKR_API_KEY = ""
+
+DUCTUS_BLACKLIST_FILE = DUCTUS_SITE_ROOT + '/ip_blacklist.data'
+DUCTUS_BLACKLIST_STRICT = False # if True, will error on failure to load blacklist data
 
 CACHE_BACKEND = 'dummy:///'
 CACHE_MIDDLEWARE_SECONDS = 86400
