@@ -513,10 +513,11 @@ $(function () {
     $("#append_new_pcg_button").click(function () {
 	pclw.append_new_pcg();
     });
-    $("#save_form").submit(function (event) {
+    $(".save_form").submit(function (event) {
+	var this_ = this;
 	event.preventDefault(); // cancel normal submit event handling
 	var blueprint = JSON.stringify(ModelWidget.blueprint_repr(pclw));
-	$(this).find("input:submit").attr("disabled", "disabled");
+	$(".save_form").find("input:submit").attr("disabled", "disabled");
         $.ajax({
 	    url: document.URL,
 	    data: {
@@ -531,13 +532,17 @@ $(function () {
 		    return;
 		}
 		// go to the newly-saved page
-		window.location = (data.page_url || resolve_urn(data.urn));
+		if (event.srcElement.id === 'save_and_return') {
+		    window.location = (data.page_url || resolve_urn(data.urn));
+		} else {
+		    $('<span class="ductus_save_notice">saved!</span>').appendTo(this_).delay(3000).fadeOut(400, function () { $(this).remove(); });
+		}
 	    },
 	    error: function (xhr, textStatus, errorThrown) {
 		alert(xhr.status + " error. save failed.");
 	    },
 	    complete: function (xhr, textStatus) {
-		$("#save_form").find("input:submit").removeAttr("disabled");
+		$(".save_form").find("input:submit").removeAttr("disabled");
 	    },
 	    type: 'POST',
 	    dataType: 'json'
