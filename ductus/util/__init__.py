@@ -24,12 +24,14 @@ def iterate_file_object(file_object):
     """This generator function iterates a file-like object, then closes it.
     """
 
-    while True:
-        x = file_object.read(BLOCK_SIZE)
-        if x == '':
-            file_object.close()
-            return
-        yield x
+    try:
+        while True:
+            x = file_object.read(BLOCK_SIZE)
+            if x == '':
+                return
+            yield x
+    finally:
+        file_object.close()
 
 def iterate_file(filename):
     """This generator function reads a binary file in chunks.
