@@ -97,45 +97,84 @@ $(function () {
 	}
     };
 
-    function UrnPictureDisplayWidget(picture) {
-	Widget.call(this, '<img src="' + resolve_urn(picture.href) + '?view=image&amp;max_size=50,50"/>');
-	this.picture_json = picture;
-
-	this.elt.draggable({helper: 'clone'});
-	this.elt.addClass('ductus_draggable_picture');
+    function UrnPictureSource(urn) {
+        this.urn = urn;
     }
-    UrnPictureDisplayWidget.prototype = chain_clone(Widget.prototype);
-    UrnPictureDisplayWidget.prototype.clone_display_widget = function () {
-	return new UrnPictureDisplayWidget(this.picture_json);
+    UrnPictureSource.prototype.get_images = function () {
+        var resolved_urn = resolve_urn(this.urn);
+        return {
+            '250x250': resolved_urn + '?view=image&amp;max_size=250,250',
+            '100x100': resolved_urn + '?view=image&amp;max_size=100,100',
+            '50x50': resolved_urn + '?view=image&amp;max_size=50,50'
+        };
     };
-    UrnPictureDisplayWidget.prototype.do_json_repr = function () {
-	return {'@patch': this.picture_json.href};
+    UrnPictureSource.prototype.blueprint = function () {
+        return {'@patch': this.urn};
+    };
+    UrnPictureSource.prototype.clone = function () {
+        return this;
     };
 
-    function FlickrPictureDisplayWidget(flickr_photo) {
-	Widget.call(this, '<img/>');
-	this.elt.attr("src", flickr_photo.square_url);
-	this.elt.attr("title", '"' + flickr_photo.title + '" by [' + flickr_photo.owner + '] ' + flickr_photo.license);
-	this.flickr_photo = flickr_photo;
-
-	this.elt.draggable({helper: 'clone'});
-	this.elt.addClass('ductus_draggable_picture');
+    function FlickrPictureSource(flickr_photo) {
+        this.flickr_photo = flickr_photo;
     }
-    FlickrPictureDisplayWidget.prototype = chain_clone(Widget.prototype);
-    FlickrPictureDisplayWidget.prototype.clone_display_widget = function () {
-	return new FlickrPictureDisplayWidget(this.flickr_photo);
+    FlickrPictureSource.prototype.get_images = function () {
+        return {
+            '75x75': this.flickr_photo.small_url,
+            '100x100': this.flickr_photo.thumbnail_url,
+            '240x240': this.flickr_photo.small_url,
+            '500x500': this.flickr_photo.medium_url,
+            '1024x1024': this.flickr_photo.large_url
+        };
     };
-    FlickrPictureDisplayWidget.prototype.do_json_repr = function () {
-	return {
-	    '@create': PictureWidget.prototype.fqn,
+    FlickrPictureSource.prototype.blueprint = function () {
+        return {
+	    '@create': PictureModelWidget.prototype.fqn,
 	    'flickr_photo_id': this.flickr_photo.id
 	};
     };
+    FlickrPictureSource.prototype.clone = function () {
+        return this;
+    };
 
-    function PictureWidget(picture) {
+    function PictureModelWidget(picture) {
+	ModelWidget.call(this, picture, '<span></span>');
+	var picture_source = picture && (new UrnPictureSource(picture.href));
+        this._picture_widget = new PictureWidget(picture_source);
+        this.elt.append(this._picture_widget.elt);
+
+	this.record_initial_json_repr();
+    }
+    PictureModelWidget.prototype = chain_clone(ModelWidget.prototype);
+    PictureModelWidget.prototype.json_repr = function () {
+	if (!this._picture_widget._picture_source) {
+	    throw {
+		name: 'json_repr_error',
+		message: 'Not all pictures are filled in'
+	    };
+	}
+	var repr = this._picture_widget._picture_source.blueprint();
+	if (this._picture_widget.net_rotation)
+	    repr.net_rotation = this._picture_widget.net_rotation;
+	return repr;
+    };
+    PictureModelWidget.prototype.fqn = '{http://wikiotics.org/ns/2009/picture}picture';
+
+    function PictureWidget(picture_source, editable, show_rotation_controls) {
 	var self = this;
 
-	ModelWidget.call(this, picture, '<span></span>');
+	if (editable === undefined)
+	    // the user can rotate even if it is not editable, as that is useful for preview.
+	    // editable pictures will receive drop events, and will be swapped with another picture when dragged there.
+	    // fixme: we could probably just have a set_editable() method.
+	    // we should never allow a null picture source if it is not editable.
+	    editable = true;
+	this._is_editable = editable;
+	if (show_rotation_controls === undefined)
+	    show_rotation_controls = editable;
+	this._show_rotation_controls = show_rotation_controls;
+
+	Widget.call(this, '<span></span>');
 	this.image_holder = $('<span style="display: inline-block">drag image here</span>');
 	this.rotation_controls = $('<span></span>');
 	this.elt.append(this.image_holder).append(this.rotation_controls);
@@ -146,13 +185,15 @@ $(function () {
 	    $(this).hide();
 	    var search_box = new PictureSearchWidget(function (result) {
 		self.replace_image_button.show();
-		self.set_display_widget(result);
+		self.set_picture_source(result._picture_source.clone());
+		self.set_rotation(result.net_rotation);
 		search_box.destroy(); // we should just hide it, but that will store lots of memory if you work for a while... hmm
 	    });
 	    self.elt.append(search_box.elt.hide());
 	    search_box.elt.slideDown();
 	});
-	this.elt.append(this.replace_image_button);
+	if (editable) // fixme, why make the control if we don't add it?
+	    this.elt.append(this.replace_image_button);
 
 	// rotation controls
 	var rotate_left_button = $('<img alt="rotate left" title="rotate left" src="' + ductus_media_prefix + '/modules/picture/img/object-rotate-left.png"/>');
@@ -166,62 +207,51 @@ $(function () {
 	this.rotation_number_display = $("<span></span>");
 	this.rotation_controls.append(this.rotation_number_display);
 
-	// set initial picture display widget
-	if (picture) {
-	    this.set_display_widget(new UrnPictureDisplayWidget(picture));
-	}
+	// show the initial picture by setting the picture source
+	this.set_picture_source(picture_source);
 
 	// image_holder should receive drop events
 	this.image_holder.droppable({
 	    accept: '.ductus_draggable_picture',
 	    tolerance: 'pointer',
 	    drop: function (event, ui) {
-		var source_display_widget = ui.draggable.data('widget_object');
-		var source_picture_widget = source_display_widget.elt.data('_picture_widget');
-		if (source_picture_widget && self._display_widget) {
+		var source_picture_widget = ui.draggable.data('widget_object');
+		if (source_picture_widget && self._picture_source && source_picture_widget._is_editable) {
 		    // swap them, including rotation data
 		    var source_rotation = source_picture_widget.net_rotation;
 		    var target_rotation = self.net_rotation;
-		    source_picture_widget.set_display_widget(self._display_widget.clone_display_widget());
-		    self.set_display_widget(source_display_widget.clone_display_widget());
+		    var source_picture_source = source_picture_widget._picture_source;
+		    source_picture_widget.set_picture_source(self._picture_source.clone());
+		    self.set_picture_source(source_picture_source.clone());
 		    self.set_rotation(source_rotation);
 		    source_picture_widget.set_rotation(target_rotation);
 		} else {
 		    // clone the source and show an effect
-		    self.set_display_widget(source_display_widget.clone_display_widget());
+		    self.set_picture_source(source_picture_widget._picture_source.clone());
+		    self.set_rotation(source_picture_widget.net_rotation);
 		    ui.draggable.effect("transfer", {to: this}, 500);
 		}
 	    }
 	});
-
-	this.record_initial_json_repr();
     }
-    PictureWidget.prototype = chain_clone(ModelWidget.prototype);
-    PictureWidget.prototype.set_display_widget = function (widget) { // fixme: This is a terrible function name!
-	if (!widget) {
-	    // in the future we may also want to allow null as an argument, which would reset the widget to uninitialized
+    PictureWidget.prototype = chain_clone(Widget.prototype);
+    PictureWidget.prototype.set_picture_source = function (picture_source) {
+	if (!picture_source) {
+	    // in the future we may also want to allow null as an argument, which would reset it to be uninitialized
 	    return;
 	}
 
-	// using data() deals with circular reference memory leak problem on IE
-	this._display_widget = widget;
-	widget.elt.data('_picture_widget', this);
+	this._picture_source = picture_source;
 
-	this.image_holder.empty().append(widget.elt);
+	var img_url = picture_source.get_images()['100x100'];
+	var img = $('<img src="" class="ductus_draggable_picture"/>');
+	img.attr('src', img_url);
+	img.data("widget_object", this); // so the drop event can find the widget
+	img.draggable({helper: 'clone'}).data('_picture_widget', this).data('_picture_source', picture_source);
+	this.image_holder.empty().append(img);
 	this.set_rotation(0);
-	this.rotation_controls.show();
-    };
-    PictureWidget.prototype.json_repr = function () {
-	if (!this._display_widget) {
-	    throw {
-		name: 'json_repr_error',
-		message: 'Not all pictures are filled in'
-	    };
-	}
-	var repr = this._display_widget.do_json_repr();
-	if (this.net_rotation)
-	    repr.net_rotation = this.net_rotation;
-	return repr;
+	if (this._show_rotation_controls)
+	    this.rotation_controls.show();
     };
     PictureWidget.prototype.rotate_left = function () {
 	this.set_rotation((this.net_rotation + 90) % 360);
@@ -234,7 +264,6 @@ $(function () {
 	this.net_rotation = degrees;
 	this.rotation_number_display.text(degrees ? (degrees + "") : "");
     };
-    PictureWidget.prototype.fqn = '{http://wikiotics.org/ns/2009/picture}picture';
 
     function PictureSearchWidget(result_callback, initial_query_data) {
 	this.result_callback = result_callback;
@@ -265,11 +294,13 @@ $(function () {
 		    }
 		    for (var i = 0; i < data.photos.length; ++i) {
 			var photo = data.photos[i];
-			var display_widget = new FlickrPictureDisplayWidget(photo);
-			display_widget.elt.click(function () {
-			    result_callback($(this).data('widget_object').clone_display_widget());
+			var picture_source = new FlickrPictureSource(photo);
+			var picture_widget = new PictureWidget(picture_source, false);
+			// fixme: we really only want to trap clicks on the image itself, not anywhere on the widget.  this will affect the this.data(widgetobject) as well...
+			picture_widget.elt.find(".ductus_draggable_picture").click(function () { // fixme: we aren't using this for dragging here, so maybe we should give the class a more general name
+			    result_callback($(this).data('widget_object'));
 			});
-			search_results_elt.append(display_widget.elt);
+			search_results_elt.append(picture_widget.elt);
 		    }
 		},
 		error: function (xhr, textStatus, errorThrown) {
@@ -438,7 +469,7 @@ $(function () {
 	}
 
 	Widget.call(this, '<li class="picture_choice_element_item"><input class="phrase" type="text"></input></li>');
-	this.picture = new PictureWidget(pce.picture);
+	this.picture = new PictureModelWidget(pce.picture);
 	this.elt.append(this.picture.elt);
 	this.audio = new AudioWidget(pce.audio || null);
 	this.elt.append("Audio: ").append(this.audio.elt);
