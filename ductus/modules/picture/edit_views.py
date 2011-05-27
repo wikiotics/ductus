@@ -27,7 +27,7 @@ from ductus.wiki.decorators import register_creation_view, register_view
 from ductus.util.http import render_json_response
 from ductus.resource.ductmodels import BlueprintSaveContext
 from ductus.modules.picture.ductmodels import Picture
-from ductus.modules.picture.flickr import flickr, FlickrPhoto, license_map, url_format_map, valid_sort_methods
+from ductus.modules.picture.flickr import flickr, FlickrPhoto, license_map, url_format_map, valid_sort_methods, FlickrUriHandler
 from ductus.modules.picture.forms import PictureRotationForm, PictureImportForm
 
 @register_creation_view(Picture)
@@ -88,6 +88,17 @@ def flickr_search_view(request):
         # ticket #64 for explanation of why
         photos = [FlickrPhoto(p).dict for p in search_result['photo']
                   if 'group' in request.GET or 'originalsecret' in p]
+
+        # if somebody entered a flickr url in the search box, return that image
+        if FlickrUriHandler.handles(request.GET['q']):
+            from django import forms
+            handler = FlickrUriHandler(request.GET['q'])
+            try:
+                handler.validate()
+            except forms.ValidationError:
+                pass
+            else:
+                photos.insert(0, handler.photo.dict)
     else:
         photos = None
         page = 0
