@@ -21,7 +21,7 @@ import os
 
 from lxml import etree
 
-from ductus.util import iterator_to_tempfile, create_property
+from ductus.util import iterator_to_tempfile, create_property, sequence_contains_only
 
 hash_name = "sha384"
 hash_encode = base64.urlsafe_b64encode

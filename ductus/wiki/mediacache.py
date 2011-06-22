@@ -21,9 +21,9 @@ from shutil import copyfile
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 
-from ductus.resource import split_urn
+from ductus.resource import get_resource_database, split_urn
 from ductus.util import iterator_to_tempfile
-from ductus.wiki import registered_mediacache_views, get_resource_database
+from ductus.wiki import registered_mediacache_views
 from ductus.decorators import unvarying
 
 # the whole mediacache subsystem currently assumes that there are no illegal

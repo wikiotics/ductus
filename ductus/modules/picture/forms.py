@@ -21,7 +21,8 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
 
-from ductus.wiki import get_resource_database, resolve_urn, UnsupportedURN
+from ductus.resource import get_resource_database, UnsupportedURN
+from ductus.wiki import resolve_urn
 from ductus.modules.picture.ductmodels import Picture
 
 class PictureRotationForm(forms.Form):

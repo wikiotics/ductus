@@ -21,7 +21,7 @@ from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.utils.http import urlquote
 
-from ductus.wiki import get_resource_database
+from ductus.resource import get_resource_database
 from ductus.wiki.namespaces import split_pagename
 
 class WikiPage(models.Model):

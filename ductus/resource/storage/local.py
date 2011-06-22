@@ -18,7 +18,7 @@ import os
 from shutil import copyfile
 
 from ductus.resource import split_urn, UnsupportedURN
-from ductus.util import iterate_file, sequence_contains_only, BLOCK_SIZE
+from ductus.util import iterate_file, BLOCK_SIZE
 
 class LocalStorageBackend(object):
     """Local storage backend.
