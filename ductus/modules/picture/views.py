@@ -14,24 +14,48 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from ductus.util.http import query_string_not_found
-from ductus.wiki.decorators import register_view, unvarying
-from ductus.wiki import diskcache
+from ductus.wiki.decorators import register_view, register_mediacache_view, unvarying
+from ductus.wiki.mediacache import mediacache_redirect
 from ductus.modules.picture.ductmodels import Picture
 
-from PIL import Image, ImageFile
 from cStringIO import StringIO
 
-__allowed_thumbnail_sizes = set([(250, 250), (100, 100), (50, 50)])
+__allowed_thumbnail_sizes = sorted([(250, 250), (100, 100), (50, 50)],
+                                   reverse=True)
 
 @register_view(Picture)
 def view_picture_info(request):
     return render_to_response('picture/display.html',
                               context_instance=RequestContext(request))
+
+@register_view(Picture, 'image')
+@unvarying
+def view_picture(request):
+    picture = request.ductus.resource
+    mime_type = picture.blob.mime_type
+
+    # figure out size to send
+    if 'max_size' in request.GET:
+        try:
+            max_width, max_height = [int(n) for n in
+                                     request.GET['max_size'].split(',')]
+        except ValueError:
+            return query_string_not_found(request)
+
+        try:
+            thumbnail_size = iter(s for s in __allowed_thumbnail_sizes
+                                  if s <= (max_width, max_height)).next()
+        except StopIteration:
+            # refuse to make a thumbnail this small
+            return query_string_not_found(request)
+
+    return mediacache_redirect(request, picture.blob.href, 'image/jpeg',
+                               '_'.join(str(s) for s in thumbnail_size),
+                               picture)
 
 def adjust_orientation_from_exif(image):
     rotation_table = {6: 270, 8: 90}
@@ -44,46 +68,52 @@ def adjust_orientation_from_exif(image):
         pass
     return image
 
-@register_view(Picture, 'image')
-@unvarying
-def view_picture(request):
-    picture = request.ductus.resource
-    mime_type = picture.blob.mime_type
-    data_iterator = iter(picture.blob) # fixme: lazyiter
+@register_mediacache_view(Picture)
+def mediacache_picture(blob_urn, mime_type, additional_args, picture):
+    from PIL import Image, ImageFile
 
-    # resize if requested
-    if 'max_size' in request.GET:
+    # for now this code assumes all pictures are jpegs
+    assert picture.blob.mime_type == 'image/jpeg'
+
+    if picture.blob.href != blob_urn:
+        return None
+    if mime_type != 'image/jpeg':
+        return None
+    if additional_args:
         try:
-            max_width, max_height = [int(n) for n in
-                                     request.GET['max_size'].split(',')]
-        except ValueError:
-            return query_string_not_found(request)
-        if (max_width, max_height) not in __allowed_thumbnail_sizes:
-            # fixme: once we cache things, we can just return any image with a
-            # smaller size in most cases
-            return query_string_not_found(request)
-
-        mime_type = 'image/jpeg'
-
-        diskcache_key = '%s,%s,%s' % (max_width, max_height,
-                                      picture.rotation)
-        cached = diskcache.get(picture.blob.href, diskcache_key)
-        if cached is not None:
-            data_iterator = cached
-        else:
-            p = ImageFile.Parser()
-            for data in data_iterator:
-                p.feed(data)
-            im = p.close()
-            if picture.rotation in ('0', '90', '180', '270'):
-                im = im.rotate(int(picture.rotation), expand=True)
+            if picture.rotation:
+                max_width, max_height, rotation = additional_args.split('_')
             else:
-                im = adjust_orientation_from_exif(im)
-            im.thumbnail((max_width, max_height), Image.ANTIALIAS)
-            output = StringIO()
-            im.save(output, 'JPEG', quality=90) # PIL manual says avoid quality > 95
-            data_iterator = iter([output.getvalue()])
-            diskcache.put(picture.blob.href, diskcache_key, [output.getvalue()])
+                max_width, max_height = additional_args.split('_')
+                rotation = None
+        except ValueError:
+            return None
+        allowed_sizes = ('_'.join(str(s) for s in x)
+                         for x in __allowed_thumbnail_sizes)
+        if '%s_%s' % (max_width, max_height) not in allowed_sizes:
+            return None
+        if picture.rotation and picture.rotation != rotation:
+            return None
 
-    return HttpResponse(list(data_iterator), # see django #6527
-                        content_type=mime_type)
+        max_width, max_height = int(max_width), int(max_height)
+
+    data_iterator = iter(picture.blob)
+
+    # resize or rotate if needed
+    if additional_args:
+        p = ImageFile.Parser()
+        for data in data_iterator:
+            p.feed(data)
+        im = p.close()
+        if picture.rotation in ('0', '90', '180', '270'):
+            im = im.rotate(int(picture.rotation), expand=True)
+        else:
+            im = adjust_orientation_from_exif(im)
+        im.thumbnail((max_width, max_height), Image.ANTIALIAS)
+        output = StringIO()
+        im.save(output, 'JPEG', quality=90) # PIL manual says avoid quality > 95
+        return iter([output.getvalue()])
+
+    # otherwise, just send it along
+    else:
+        return data_iterator

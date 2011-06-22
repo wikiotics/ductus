@@ -16,7 +16,7 @@
 
 from functools import wraps
 
-from ductus.wiki import registered_views, registered_creation_views, registered_subviews
+from ductus.wiki import registered_views, registered_creation_views, registered_subviews, registered_mediacache_views
 
 def register_view(model, label=None, requires=(lambda d: d.resource)):
     """Registers a URN view function.
@@ -49,6 +49,15 @@ def register_subview(model, label):
         registered_subviews.setdefault(fqn, dict())[label] = func
         return func
     return _register_subview
+
+def register_mediacache_view(model):
+    """Registers a mediacache view
+    """
+
+    def _register_mediacache_view(func):
+        registered_mediacache_views[model.fqn] = func
+        return func
+    return _register_mediacache_view
 
 def unvarying(func):
     def new_func(*args, **kwargs):

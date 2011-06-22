@@ -182,6 +182,10 @@ DUCTUS_DEFAULT_LICENSE = 'http://creativecommons.org/licenses/by-sa/3.0/'
 
 DUCTUS_FRONT_PAGE = '/wiki/front_page'
 
+#DUCTUS_MEDIACACHE_DIR = ''
+DUCTUS_MEDIACACHE_URL = None # no trailing slash
+#DUCTUS_MEDIACACHE_URL_SECURE = None
+
 #DUCTUS_FLICKR_API_KEY = ""
 
 DUCTUS_BLACKLIST_FILE = DUCTUS_SITE_ROOT + '/ip_blacklist.data'
