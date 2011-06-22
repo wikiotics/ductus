@@ -300,3 +300,32 @@ def get_resource_database():
     return _resource_database
 
 _resource_database = None
+
+__b64_chrs = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+__contains_only_base64_chrs = sequence_contains_only(__b64_chrs)
+
+def split_urn(urn):
+    """Checks to make sure it is a URN we could possibly support
+
+    URN must be in form 'urn:hash_type:hash_value' with base64 characters.
+    Otherwise, UnsupportedURN will be raised as an exception.
+
+    Returns (hash_type, digest) as a tuple.
+    """
+
+    if not isinstance(urn, basestring):
+        raise UnsupportedURN(urn)
+
+    urn_split = urn.split(':')
+    if len(urn_split) != 3:
+        raise UnsupportedURN(urn)
+
+    urn_str, hash_type, digest = urn_split
+    if not (urn_str == 'urn'
+            and hash_type != ''
+            and digest != ''
+            and __contains_only_base64_chrs(hash_type)
+            and __contains_only_base64_chrs(digest)):
+        raise UnsupportedURN(urn)
+
+    return hash_type, digest

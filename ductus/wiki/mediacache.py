@@ -21,7 +21,7 @@ from shutil import copyfile
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 
-from ductus.resource.storage.local import split_urn
+from ductus.resource import split_urn
 from ductus.util import iterator_to_tempfile
 from ductus.wiki import registered_mediacache_views, get_resource_database
 from ductus.decorators import unvarying
