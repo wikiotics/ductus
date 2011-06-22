@@ -33,8 +33,9 @@ from ductus.resource import determine_header
 from ductus.wiki import get_resource_database, registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, is_legal_wiki_pagename, user_has_edit_permission, user_has_unlink_permission
 from ductus.wiki.namespaces import BaseWikiNamespace, registered_namespaces, split_pagename, join_pagename, WikiPrefixNotProvided
 from ductus.wiki.models import WikiPage, WikiRevision
-from ductus.wiki.decorators import register_view, unvarying
+from ductus.wiki.decorators import register_view
 from ductus.wiki.subviews import subview
+from ductus.decorators import unvarying
 from ductus.util.http import query_string_not_found, render_json_response, ImmediateResponse
 
 def view_frontpage(request):

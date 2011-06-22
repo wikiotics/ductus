@@ -20,7 +20,9 @@ from django.template import RequestContext
 
 from ductus.resource.ductmodels import BlueprintSaveContext
 from ductus.wiki import SuccessfulEditRedirect
-from ductus.wiki.decorators import register_creation_view, register_view, unvarying
+from ductus.wiki.decorators import register_creation_view, register_view
+from ductus.decorators import unvarying
+
 from ductus.modules.audio.ductmodels import Audio
 from ductus.modules.audio.forms import AudioImportForm
 from ductus.util.http import render_json_response

@@ -24,7 +24,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from ductus.resource.storage.local import split_urn
 from ductus.util import iterator_to_tempfile
 from ductus.wiki import registered_mediacache_views, get_resource_database
-from ductus.wiki.decorators import unvarying
+from ductus.decorators import unvarying
 
 # the whole mediacache subsystem currently assumes that there are no illegal
 # characters in additional_args.  if we later decide we want to allow illegal

@@ -18,7 +18,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from ductus.util.http import query_string_not_found
-from ductus.wiki.decorators import register_view, register_mediacache_view, unvarying
+from ductus.wiki.decorators import register_view, register_mediacache_view
+from ductus.decorators import unvarying
 from ductus.wiki.mediacache import mediacache_redirect
 from ductus.modules.picture.ductmodels import Picture
 

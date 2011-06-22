@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from functools import wraps
-
 from ductus.wiki import registered_views, registered_creation_views, registered_subviews, registered_mediacache_views
 
 def register_view(model, label=None, requires=(lambda d: d.resource)):
@@ -58,10 +56,3 @@ def register_mediacache_view(model):
         registered_mediacache_views[model.fqn] = func
         return func
     return _register_mediacache_view
-
-def unvarying(func):
-    def new_func(*args, **kwargs):
-        response = func(*args, **kwargs)
-        response._unvarying = True
-        return response
-    return wraps(func)(new_func)
