@@ -123,7 +123,10 @@ __contains_only_base64_chrs = sequence_contains_only(__b64_chrs)
 def split_urn(urn):
     """Checks to make sure it is a URN we can support
 
-    URN must be in form 'urn:hash_type:hash_value' with base64 characters
+    URN must be in form 'urn:hash_type:hash_value' with base64 characters.
+    Otherwise, UnsupportedURN will be raised as an exception.
+
+    Returns (hash_type, digest) as a tuple.
     """
 
     if not isinstance(urn, basestring):
