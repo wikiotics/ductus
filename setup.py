@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
-# this file is likely to be out of date at any given time
+# If you find that Ductus fails to work with a setup that is valid according to
+# the requirements given below, please report a bug at
+# <http://code.ductus.us/>.  See also requirements.txt, which lists the
+# specific packages this version of Ductus has been tested against.
+
+# Python >= 2.6 (< 3.0) is also a dependency.
 
 # fixme: recursive-include's in MANIFEST.in don't ignore text editor backup
 # files (such as *~)
-
-# fixme: depend on Python >= 2.6 somehow
 
 try:
     from setuptools import setup
@@ -14,7 +17,7 @@ except ImportError:
 
 setup(
     name='Ductus',
-    version='0.1pre',
+    version='0.2pre',
     description='Structured wiki system, designed for language instruction at wikiotics.org',
     license='GNU GPLv3 or later',
     author='Jim Garrison',

@@ -1,0 +1,26 @@
+# This file is not a list of "requirements," per se (see setup.py if
+# that's what you need), but rather the specific versions of packages
+# that were tested with this version of Ductus.  These packages can be
+# easily installed by running (preferably inside a virtualenv):
+#
+# $ pip install -r requirements.txt
+#
+# Before using deploying Ductus on top of package versions given in
+# this file, it is recommended that one verify that there are no
+# security issues with any of the releases given below.
+
+Creoleparser==0.7.3
+Django==1.3
+Genshi==0.6
+Pygments==1.4
+flickrapi==1.4.2
+recaptcha-client==1.0.6
+
+# You probably don't want to bother compiling PIL and lxml, so the
+# following lines are commented out.  But the relevant versions used
+# are included here for completeness.  Probably any versions of these
+# packages that come with a recent distribution of GNU/Linux will
+# work.
+
+#PIL==1.1.7
+#lxml==2.2.6

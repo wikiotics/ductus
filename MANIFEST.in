@@ -1,6 +1,8 @@
 include MANIFEST.in
 include COPYING
 include AUTHORS
+include README.rst
+include requirements.txt
 recursive-include ductus/static *
 recursive-include ductus/templates *
 recursive-include ductus/special/templates *
