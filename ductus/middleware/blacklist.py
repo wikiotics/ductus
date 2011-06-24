@@ -15,11 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from socket import inet_aton
-from logging import warning
+import logging
 
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+
+logger = logging.getLogger(__name__)
 
 class IPAddressBlacklistMiddleware(object):
     def process_request(self, request):
@@ -31,7 +33,7 @@ class IPAddressBlacklistMiddleware(object):
                 if settings.DUCTUS_BLACKLIST_STRICT:
                     raise
                 else:
-                    warning("blacklist file cannot be read")
+                    logger.warning("blacklist file cannot be read")
                     return
             if binary_search(ip, banned_ips):
                 return render_to_response("blacklist/blacklisted_ip.html", {

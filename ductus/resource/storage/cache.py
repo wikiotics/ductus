@@ -15,7 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import logging
+
 from ductus.util import iterate_file_then_delete, iterator_to_tempfile
+
+logger = logging.getLogger(__name__)
 
 class CacheStorageBackend(object):
     """
@@ -58,8 +62,7 @@ class CacheStorageBackend(object):
         try:
             del self.__cache[key]
         except KeyError:
-            from logging import warning
-            warning("Error while removing %s from cache." % key)
+            logger.warning("Error while removing %s from cache." % key)
 
     def keys(self):
         # Assume all items in cache are in backing_store

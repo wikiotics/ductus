@@ -5,6 +5,8 @@ import traceback
 from django.conf import settings
 from django.core.exceptions import MiddlewareNotUsed
 
+logger = logging.getLogger(__name__)
+
 class DuctusDebugMiddleware(object):
     def __init__(self):
         if not settings.DEBUG:
@@ -18,4 +20,4 @@ class DuctusDebugMiddleware(object):
             msg = list(traceback.format_tb(tb))
             msg.append(exc_type.__name__)
             msg.append(repr(exc_info))
-            logging.error("\n".join(msg))
+            logger.error("\n".join(msg))
