@@ -127,6 +127,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'ductus.middleware.debug.DuctusDebugMiddleware',
+    'ductus.middleware.upstream_ssl_proxy.UpstreamSslProxyMiddleware',
     'ductus.middleware.redirect.RedirectMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
     'ductus.middleware.cache.UpdateCacheMiddleware',
