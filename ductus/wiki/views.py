@@ -134,18 +134,21 @@ def view_urn(request, hash_type, hash_digest):
 
 def check_edit_permission(request, prefix, pagename, status=403):
     if not user_has_edit_permission(request.user, prefix, pagename):
-        # fixme: real templated message
-        raise ImmediateResponse('You do not have permission to edit this page.', status=status)
+        t = loader.get_template('wiki/no_edit_permission.html')
+        raise ImmediateResponse(t.render(RequestContext(request)),
+                                status=status)
 
 def check_create_permission(request, prefix, pagename, status=404):
     if not user_has_edit_permission(request.user, prefix, pagename):
-        # fixme: real templated message
-        raise ImmediateResponse('This page does not exist, and you do not have permission to create it.', status=status)
+        t = loader.get_template('wiki/no_create_permission.html')
+        raise ImmediateResponse(t.render(RequestContext(request)),
+                                status=status)
 
 def check_unlink_permission(request, prefix, pagename, status=403):
     if not user_has_unlink_permission(request.user, prefix, pagename):
-        # fixme: real templated message
-        raise ImmediateResponse('You do not have permission to delete this page.', status=status)
+        t = loader.get_template('wiki/no_unlink_permission.html')
+        raise ImmediateResponse(t.render(RequestContext(request)),
+                                status=status)
 
 def construct_wiki_revision(page, urn, request):
     # the 'urn:' should already be chopped off
