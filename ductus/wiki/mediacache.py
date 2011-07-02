@@ -136,7 +136,7 @@ def _do_mediacache_view_serve(blob_urn, mime_type, additional_args, resource):
     mcv = registered_mediacache_views[resource.fqn]
     data_iterator = mcv(blob_urn, mime_type, additional_args, resource)
     if data_iterator is None:
-        raise Http404
+        raise Http404("mediacache view returned None")
 
     # store to filesystem
     data_iterator = list(data_iterator) # fixme: this is suboptimal if we ever manage to get around #6527
