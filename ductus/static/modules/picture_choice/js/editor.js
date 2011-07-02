@@ -117,7 +117,7 @@ $(function () {
 		    return;
 		}
 		// go to the newly-saved page
-		if (event.srcElement.id === 'save_and_return') {
+		if (event.target.id === 'save_and_return') {
 		    window.location = (data.page_url || resolve_urn(data.urn));
 		} else {
 		    $('<span class="ductus_save_notice">saved!</span>').appendTo(this_).delay(3000).fadeOut(400, function () { $(this).remove(); });
