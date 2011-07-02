@@ -40,6 +40,7 @@ def view_picture(request):
     mime_type = picture.blob.mime_type
 
     # figure out size to send
+    thumbnail_str = ''
     if 'max_size' in request.GET:
         try:
             max_width, max_height = [int(n) for n in
@@ -54,9 +55,12 @@ def view_picture(request):
             # refuse to make a thumbnail this small
             return query_string_not_found(request)
 
+        thumbnail_str = '_'.join(str(s) for s in thumbnail_size)
+        if picture.rotation:
+            thumbnail_str += '_' + picture.rotation
+
     return mediacache_redirect(request, picture.blob.href, 'image/jpeg',
-                               '_'.join(str(s) for s in thumbnail_size),
-                               picture)
+                               thumbnail_str, picture)
 
 def adjust_orientation_from_exif(image):
     rotation_table = {6: 270, 8: 90}
