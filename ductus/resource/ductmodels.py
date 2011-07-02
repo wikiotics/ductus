@@ -509,7 +509,7 @@ class ResourceElement(LinkElement):
                 # to null as well)
                 self.href = None
             else:
-                self.href = DuctModel.save_blueprint({
+                self.href = BaseDuctModel.save_blueprint({
                     'resource': blueprint['resource']
                 }, save_context)
 
