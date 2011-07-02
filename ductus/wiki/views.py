@@ -432,16 +432,19 @@ def view_xml_as_text(request):
     return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
                         content_type='text/plain; charset=utf-8')
 
-def urn_linkify(html):
+def urn_linkify(html, query_string=''):
     """linkifies URNs
 
     This function assumes no URNs occur inside HTML tags, as it will attempt to
     linkify them anyway.
     """
 
+    if query_string:
+        query_string = '?' + query_string
+
     def repl(matchobj):
         urn = matchobj.group(0)
-        return u'<a href="%s">%s</a>' % (resolve_urn(urn), urn)
+        return u'<a href="%s">%s</a>' % (resolve_urn(urn) + query_string, urn)
 
     return re.sub(r'urn:[_\-A-Za-z0-9\:]*', repl, html)
 
@@ -463,7 +466,8 @@ else:
 
         lexer = pygments.lexers.XmlLexer()
         formatter = pygments.formatters.HtmlFormatter()
-        html = urn_linkify(allow_line_wrap(pygments.highlight(xml, lexer, formatter)))
+        html = allow_line_wrap(pygments.highlight(xml, lexer, formatter))
+        html = urn_linkify(html, query_string='view=xml_as_html')
         css = formatter.get_style_defs('.highlight')
 
         return render_to_response('wiki/xml_display.html',
