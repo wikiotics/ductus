@@ -37,6 +37,8 @@ def subview(resource):
 @register_subview(None, 'contributor_set')
 def contributor_set(resource):
     """Returns a set of (username, href) tuples.  href can be None."""
+    if not hasattr(resource, "common"):
+        return set()
     author = resource.common.author
     s = set()
     s.update(*[subview(p.get()).contributor_set()
