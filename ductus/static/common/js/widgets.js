@@ -64,7 +64,7 @@
     function Widget(initial_html_code) {
 	this.elt = $(initial_html_code);
 	this.elt.data("widget_object", this);
-	this.elt.addClass("ductus_pce_widget");
+	this.elt.addClass("ductus_widget");
     }
 
     function ModelWidget(initial_data, initial_html_code) {
