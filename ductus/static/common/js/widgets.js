@@ -218,12 +218,11 @@
 		if (source_picture_widget && self._picture_source && source_picture_widget._is_editable) {
 		    // swap them, including rotation data
 		    var source_rotation = source_picture_widget.net_rotation;
-		    var target_rotation = self.net_rotation;
 		    var source_picture_source = source_picture_widget._picture_source;
 		    source_picture_widget.set_picture_source(self._picture_source.clone());
+		    source_picture_widget.set_rotation(self.net_rotation);
 		    self.set_picture_source(source_picture_source.clone());
 		    self.set_rotation(source_rotation);
-		    source_picture_widget.set_rotation(target_rotation);
 		} else {
 		    // clone the source and show an effect
 		    self.set_picture_source(source_picture_widget._picture_source.clone());
@@ -243,11 +242,12 @@
 	this._picture_source = picture_source;
 
 	var img_url = picture_source.get_images()['100x100'];
-	var img = $('<img src="" class="ductus_draggable_picture"/>');
-	img.attr('src', img_url);
-	img.data("widget_object", this); // so the drop event can find the widget
-	img.draggable({helper: 'clone'}).data('_picture_widget', this).data('_picture_source', picture_source);
-	this.image_holder.empty().append(img);
+	this.img = $('<img src="" class="ductus_draggable_picture"/>');
+	this.img.attr('src', img_url);
+	this.img.data("widget_object", this); // so the drop event can find the widget
+	this.img.draggable({helper: 'clone'});
+	this.canvas = undefined;
+	this.image_holder.empty().append(this.img);
 	this.set_rotation(0);
 	if (this._show_rotation_controls)
 	    this.rotation_controls.show();
@@ -260,8 +260,59 @@
     };
     PictureWidget.prototype.set_rotation = function (degrees) {
 	assert(function () { return $.inArray(degrees, [0, 90, 180, 270]) !== -1; });
+	if (this.net_rotation === degrees)
+	    return; // no-op
 	this.net_rotation = degrees;
-	this.rotation_number_display.text(degrees ? (degrees + "") : "");
+	this.rotation_number_display.text("");
+	if (degrees === 0) {
+	    this.image_holder.children().detach().end().append(this.img);
+	} else {
+	    try {
+	        if (!this.canvas) {
+		    this.canvas = $('<canvas class="ductus_draggable_picture"></canvas>');
+		    this.canvas.data("widget_object", this); // so the drop event can find the widget
+		    this.canvas.draggable({
+		        helper: function () {
+		            // cloning a canvas doesn't clone its contents, so we do that here
+		            var old_canvas = $(this);
+		            var new_canvas = $('<canvas></canvas>');
+		            var w = old_canvas.attr('width'), h = old_canvas.attr('height');
+		            new_canvas.attr('width', w).attr('height', h);
+		            var canvas_ctx = new_canvas[0].getContext('2d');
+		            canvas_ctx.drawImage(this, 0, 0);
+		            return new_canvas;
+		        }
+		    });
+	        }
+	        if (this.img.attr('width') != 0) {
+	            this._draw_canvas();
+	        } else {
+	            // the image hasn't loaded yet
+	            var this_ = this;
+	            this.img.load(function () {
+	                this_._draw_canvas();
+	            });
+	        }
+	    } catch (e) {
+		this.rotation_number_display.text(degrees + "");
+	    }
+	}
+    };
+    PictureWidget.prototype._draw_canvas = function () {
+	var w = this.img[0].width, h = this.img[0].height;
+	var dx = w / 2, dy = h / 2;
+	var canvas_ctx = this.canvas[0].getContext('2d');
+	if (this.net_rotation === 180) {
+	    this.canvas.attr({width: w, height: h});
+	    canvas_ctx.translate(dx, dy);
+	} else {
+	    this.canvas.attr({width: h, height: w});
+	    canvas_ctx.translate(dy, dx);
+	}
+	canvas_ctx.rotate(-this.net_rotation * Math.PI / 180);
+	canvas_ctx.translate(-dx, -dy);
+	canvas_ctx.drawImage(this.img[0], 0, 0);
+	this.image_holder.children().detach().end().append(this.canvas);
     };
 
     function PictureSearchWidget(result_callback, initial_query_data) {
