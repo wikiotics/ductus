@@ -265,7 +265,9 @@
 	this.net_rotation = degrees;
 	this.rotation_number_display.text("");
 	if (degrees === 0) {
-	    this.image_holder.children().detach().end().append(this.img);
+	    this.img.show();
+	    if (this.canvas)
+	        this.canvas.hide();
 	} else {
 	    try {
 	        if (!this.canvas) {
@@ -283,7 +285,10 @@
 		            return new_canvas;
 		        }
 		    });
+		    this.image_holder.append(this.canvas);
 	        }
+	        this.img.hide();
+	        this.canvas.show();
 	        if (this.img.attr('width') != 0) {
 	            this._draw_canvas();
 	        } else {
@@ -312,7 +317,6 @@
 	canvas_ctx.rotate(-this.net_rotation * Math.PI / 180);
 	canvas_ctx.translate(-dx, -dy);
 	canvas_ctx.drawImage(this.img[0], 0, 0);
-	this.image_holder.children().detach().end().append(this.canvas);
     };
 
     function PictureSearchWidget(result_callback, initial_query_data) {
