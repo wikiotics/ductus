@@ -20,12 +20,6 @@ from ductus.modules.audio.ductmodels import Audio
 
 _ns = 'http://wikiotics.org/ns/2009/picture_choice'
 
-class OptionalResourceElement(ductmodels.ResourceElement):
-    optional = True
-
-    def is_null_xml_element(self):
-        return not self.href
-
 class PictureChoiceElement(ductmodels.Element):
     ns = _ns
     nsmap = {'picture_choice': ns}
@@ -33,7 +27,7 @@ class PictureChoiceElement(ductmodels.Element):
     phrase = ductmodels.TextElement()
     picture = ductmodels.ResourceElement(Picture)
 
-    audio = OptionalResourceElement(Audio)
+    audio = ductmodels.OptionalResourceElement(Audio)
 
 @register_ductmodel
 class PictureChoiceGroup(ductmodels.DuctModel):

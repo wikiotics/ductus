@@ -513,6 +513,12 @@ class ResourceElement(LinkElement):
                     'resource': blueprint['resource']
                 }, save_context)
 
+class OptionalResourceElement(ResourceElement):
+    optional = True
+
+    def is_null_xml_element(self):
+        return not self.href
+
 class BlobElement(LinkElement):
     "Verify it is a blob" # (fixme)
 
