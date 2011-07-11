@@ -507,7 +507,7 @@ class ResourceElement(LinkElement):
                 # (it's possible to remove reference to the resource by setting
                 # href to the empty string, but we support setting the resource
                 # to null as well)
-                self.href = None
+                self.href = ''
             else:
                 self.href = BaseDuctModel.save_blueprint({
                     'resource': blueprint['resource']
