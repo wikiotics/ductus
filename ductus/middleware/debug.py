@@ -21,3 +21,9 @@ class DuctusDebugMiddleware(object):
             msg.append(exc_type.__name__)
             msg.append(repr(exc_info))
             logger.error("\n".join(msg))
+
+    def process_response(self, request, response):
+        if request.is_ajax():
+            if response.status_code in (400, 403):
+                logger.error(response.content)
+        return response
