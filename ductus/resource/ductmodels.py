@@ -632,6 +632,11 @@ class BaseDuctModel(Element):
     def __eq__(self, other):
         return (self.urn is not None and self.urn == other.urn) or super(BaseDuctModel, self).__eq__(other)
 
+    def output_json_dict(self):
+        rv = super(BaseDuctModel, self).output_json_dict()
+        rv['fqn'] = self.fqn
+        return rv
+
     @classmethod
     def save_blueprint(cls, blueprint, save_context):
         """`blueprint` is a json object. Returns a URN"""
