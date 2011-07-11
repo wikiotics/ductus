@@ -731,17 +731,17 @@ class DuctModel(BaseDuctModel):
 
 def blueprint_expects_dict(blueprint):
     if not isinstance(blueprint, dict):
-        raise BlueprintTypeError("expected dict, got %s" % type(blueprint), blueprint)
+        raise BlueprintTypeError("expected dict, got %s" % type(blueprint).__name__, blueprint)
     return blueprint
 
 def blueprint_expects_list(blueprint):
     if not isinstance(blueprint, list):
-        raise BlueprintTypeError("expected list, got %s" % type(blueprint), blueprint)
+        raise BlueprintTypeError("expected list, got %s" % type(blueprint).__name__, blueprint)
     return blueprint
 
 def blueprint_expects_string(blueprint):
     if not isinstance(blueprint, basestring):
-        raise BlueprintTypeError("expected string, got %s" % type(blueprint), blueprint)
+        raise BlueprintTypeError("expected string, got %s" % type(blueprint).__name__, blueprint)
     return blueprint
 
 def blueprint_cast_to_string(blueprint):
