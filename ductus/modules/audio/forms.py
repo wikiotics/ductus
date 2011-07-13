@@ -30,6 +30,7 @@ OGGINFO_PATH = getattr(settings, "OGGINFO_PATH", '/usr/bin/ogginfo')
 class AudioField(forms.FileField):
     default_error_messages = {
         'invalid_vorbis': _(u'Not a valid ogg/vorbis file.'),
+        'theora_stream_included': _(u'The given file contains a theora (video) stream, but only audio is expected.'),
         'file_too_large': _(u'The file you chose is too large.  Please select a file that contains fewer than %d bytes.'),
     }
 
@@ -57,18 +58,15 @@ class AudioField(forms.FileField):
                 finally:
                     f.close()
 
-            # /dev/null exists only on unix systems, sadly; see
-            # http://mail.python.org/pipermail/python-dev/2006-June/066111.html
-            # for lack of a better solution
-            devnull = file('/dev/null', 'w')
-            try:
-                retcode = subprocess.call([OGGINFO_PATH, '-q', '-q', filename],
-                                          stdout=devnull, stderr=devnull)
-                if retcode != 0:
-                    raise forms.ValidationError(self.error_messages['invalid_vorbis'])
+            popen = subprocess.Popen([OGGINFO_PATH, filename],
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+            lower_stdout = popen.communicate()[0].lower()
 
-            finally:
-                devnull.close()
+            if popen.returncode != 0 or 'vorbis' not in lower_stdout:
+                raise forms.ValidationError(self.error_messages['invalid_vorbis'])
+            if 'theora' in lower_stdout:
+                raise forms.ValidationError(self.error_messages['theora_stream_included'])
 
             return rv
 
