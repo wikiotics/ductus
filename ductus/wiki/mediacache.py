@@ -35,6 +35,8 @@ MEDIACACHE_VIEW_DISABLED = getattr(settings, "MEDIACACHE_VIEW_DISABLED", False)
 
 mime_types = (
     ('jpg', 'image/jpeg'),
+    ('oga', 'audio/ogg'),
+    ('m4a', 'audio/mp4'),
 )
 ext_to_mime = dict(mime_types)
 mime_to_ext = dict([(_b, _a) for (_a, _b) in mime_types])

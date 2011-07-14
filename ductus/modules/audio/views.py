@@ -20,7 +20,8 @@ from django.template import RequestContext
 
 from ductus.resource.ductmodels import BlueprintSaveContext
 from ductus.wiki import SuccessfulEditRedirect
-from ductus.wiki.decorators import register_creation_view, register_view
+from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
+from ductus.wiki.mediacache import mediacache_redirect
 from ductus.decorators import unvarying
 
 from ductus.modules.audio.ductmodels import Audio
@@ -49,11 +50,9 @@ def new_audio(request):
 @unvarying
 def view_audio(request):
     audio = request.ductus.resource
-    mime_type = audio.blob.mime_type
-    data_iterator = iter(audio.blob)
 
-    return HttpResponse(list(data_iterator), # see django #6527
-                        content_type=mime_type)
+    return mediacache_redirect(request, audio.blob.href, audio.blob.mime_type,
+                               '', audio)
 
 @register_view(Audio)
 def view_audio_info(request):
@@ -64,3 +63,15 @@ def edit_audio(request):
     return render_to_response('audio/edit.html', {
         'creation_view_key': 'audio',
     }, RequestContext(request))
+
+@register_mediacache_view(Audio)
+def mediacache_audio(blob_urn, mime_type, additional_args, audio):
+    if additional_args:
+        return None
+    if blob_urn != audio.blob.href:
+        return None
+
+    if mime_type != audio.blob.mime_type:
+        return None # we don't support conversion (yet)
+
+    return iter(audio.blob)
