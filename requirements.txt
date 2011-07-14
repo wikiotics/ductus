@@ -16,6 +16,12 @@ Pygments==1.4
 flickrapi==1.4.2
 recaptcha-client==1.0.6
 
+# The current version of python-magic will error when trying to install
+# ctypes (which is not needed for python >=2.5 anyway), so until a new
+# release is made we install a specific revision which removes the
+# dependency.
+-e git://github.com/ahupp/python-magic.git@a75cf0a4a7790eb106155c947af9612f15693b6e#egg=python-magic
+
 # You probably don't want to bother compiling PIL and lxml, so the
 # following lines are commented out.  But the relevant versions used
 # are included here for completeness.  Probably any versions of these

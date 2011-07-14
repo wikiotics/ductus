@@ -26,10 +26,46 @@ from ductus.modules.audio.ductmodels import Audio
 from ductus.resource import get_resource_database
 
 OGGINFO_PATH = getattr(settings, "OGGINFO_PATH", '/usr/bin/ogginfo')
+FAAD_PATH = getattr(settings, "FAAD_PATH", '/usr/bin/faad')
+
+try:
+    DEVNULL = subprocess.DEVNULL
+except AttributeError:
+    DEVNULL = subprocess.PIPE
+
+def verify_aac_lc(filename, error_messages):
+    popen = subprocess.Popen([FAAD_PATH, '-i', filename],
+                             stdout=DEVNULL, stderr=subprocess.PIPE)
+    stderr_output = popen.communicate()[1]
+
+    if "LC AAC" not in stderr_output:
+        raise forms.ValidationError(error_messages['invalid_lc_aac'])
+
+    return 'audio/mp4'
+
+def verify_ogg_vorbis(filename, error_messages):
+    popen = subprocess.Popen([OGGINFO_PATH, filename],
+                             stdout=subprocess.PIPE, stderr=DEVNULL)
+    lower_stdout = popen.communicate()[0].lower()
+
+    if popen.returncode != 0 or 'vorbis' not in lower_stdout:
+        raise forms.ValidationError(error_messages['invalid_vorbis'])
+    if 'theora' in lower_stdout:
+        raise forms.ValidationError(error_messages['theora_stream_included'])
+
+    return 'audio/ogg'
+
+verification_map = {
+    'audio/ogg': verify_ogg_vorbis,
+    'application/ogg': verify_ogg_vorbis,
+    'audio/mp4': verify_aac_lc,
+}
 
 class AudioField(forms.FileField):
     default_error_messages = {
+        'unrecognized_file_type': _(u'Unrecognized file type.  Please upload an ogg/vorbis file or mp4/AAC file.'),
         'invalid_vorbis': _(u'Not a valid ogg/vorbis file.'),
+        'invalid_lc_aac': _(u'Not a valid low-complexity AAC file in mp4 container.'),
         'theora_stream_included': _(u'The given file contains a theora (video) stream, but only audio is expected.'),
         'file_too_large': _(u'The file you chose is too large.  Please select a file that contains fewer than %d bytes.'),
     }
@@ -58,15 +94,15 @@ class AudioField(forms.FileField):
                 finally:
                     f.close()
 
-            popen = subprocess.Popen([OGGINFO_PATH, filename],
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
-            lower_stdout = popen.communicate()[0].lower()
+            from magic import Magic
+            mime_type = Magic(mime=True).from_file(filename)
+            try:
+                verify_file_type = verification_map[mime_type]
+            except KeyError:
+                raise forms.ValidationError(self.error_messages['unrecognized_file_type'])
 
-            if popen.returncode != 0 or 'vorbis' not in lower_stdout:
-                raise forms.ValidationError(self.error_messages['invalid_vorbis'])
-            if 'theora' in lower_stdout:
-                raise forms.ValidationError(self.error_messages['theora_stream_included'])
+            mime_type = verify_file_type(filename, self.error_messages)
+            rv.ductus_mime_type = mime_type
 
             return rv
 
@@ -80,6 +116,6 @@ class AudioImportForm(forms.Form):
     def save(self, save_context):
         audio = Audio()
         audio.blob.store(iter(self.cleaned_data['file'].chunks()))
-        audio.blob.mime_type = 'audio/ogg'
+        audio.blob.mime_type = self.cleaned_data['file'].ductus_mime_type
         audio.common.patch_from_blueprint(None, save_context)
         return audio.save()

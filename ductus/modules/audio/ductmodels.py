@@ -19,4 +19,4 @@ from ductus.resource import ductmodels, register_ductmodel
 @register_ductmodel
 class Audio(ductmodels.DuctModel):
     ns = 'http://wikiotics.org/ns/2010/audio'
-    blob = ductmodels.TypedBlobElement(allowed_mime_types=['audio/ogg'])
+    blob = ductmodels.TypedBlobElement(allowed_mime_types=['audio/ogg', 'audio/mp4'])

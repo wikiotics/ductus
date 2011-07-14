@@ -28,6 +28,7 @@ setup(
         'Creoleparser >= 0.7.3',
         'lxml',
         'PIL',
+        'python-magic',
     ),
     extras_require={
         'flickr': ['flickrapi >= 1.2'],
