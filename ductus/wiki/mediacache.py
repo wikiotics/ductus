@@ -85,7 +85,9 @@ def _mediacache_view(pathname, query_string):
     data_iterator = get(blob_urn, mime_type, additional_args)
     if data_iterator:
         # fixme: possibly log a warning if we're in deploy mode
-        return HttpResponse(list(data_iterator), content_type=mime_type) # see django #6527
+        response = HttpResponse(list(data_iterator), content_type=mime_type) # see django #6527
+        response["X-Ductus-Mediacache"] = "served"
+        return response
 
     if not query_string:
         raise Http404("the urn of the resource that references this blob should be given as the query string")
@@ -147,7 +149,9 @@ def _do_mediacache_view_serve(blob_urn, mime_type, additional_args, resource):
         put(blob_urn, mime_type, additional_args, data_iterator)
 
     # send it off
-    return HttpResponse(list(data_iterator), content_type=mime_type) # see django #6527
+    response = HttpResponse(list(data_iterator), content_type=mime_type) # see django #6527
+    response["X-Ductus-Mediacache"] = "generated"
+    return response
 
 def __to_filename(urn, mime_type, additional_args):
     hash_type, digest = split_urn(urn)
