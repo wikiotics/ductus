@@ -48,6 +48,7 @@ def _dotstr(additional_args):
         return ''
 
 _pathname_re = re.compile(r'^(?P<hash_type>\w+)/(?P<digest>[A-Za-z0-9_-]+)(?:\.(?P<additional_args>\w+))?\.(?P<extension>\w+)$')
+_alternate_pathname_re = re.compile(r'^(?P<hash_type>\w+)/([A-Za-z0-9_-]{2})/([A-Za-z0-9_-]{2})/(?P<digest>\2\3[A-Za-z0-9_-]+)(?:\.(?P<additional_args>\w+))?\.(?P<extension>\w+)$')
 _legal_additional_args_re = re.compile(r'^[\w]*$')
 
 @unvarying
@@ -65,7 +66,7 @@ def mediacache_wsgi_view(*args):
         return None  # fixme
 
 def _mediacache_view(pathname, query_string):
-    m = _pathname_re.match(pathname)
+    m = _pathname_re.match(pathname) or _alternate_pathname_re.match(pathname)
     if m is None:
         raise Http404("pathname does not match mediacache re")
 
