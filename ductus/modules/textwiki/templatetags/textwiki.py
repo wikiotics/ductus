@@ -22,12 +22,28 @@ from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
+from django.utils.importlib import import_module
 from django.conf import settings
 
 from ductus.wiki.models import WikiPage
 from ductus.wiki.namespaces import registered_namespaces
 
 register = template.Library()
+
+def __get_dict_of_possible_module_variables(module_variable_dict):
+    if not module_variable_dict:
+        return None
+    rv = {}
+    for key, value in module_variable_dict.iteritems():
+        if isinstance(value, basestring):
+            mod_name, junk, var_name = value.rpartition('.')
+            rv[key] = getattr(import_module(mod_name), var_name)
+        else:
+            rv[key] = value
+    return rv
+
+CREOLEPARSER_BODIED_MACROS = __get_dict_of_possible_module_variables(getattr(settings, "CREOLEPARSER_BODIED_MACROS", None))
+CREOLEPARSER_NON_BODIED_MACROS = __get_dict_of_possible_module_variables(getattr(settings, "CREOLEPARSER_NON_BODIED_MACROS", None))
 
 def __wiki_links_class_func(prefix):
     def _wiki_links_class_func(pagename):
@@ -71,7 +87,7 @@ def __prepare_interwiki_links_dicts():
 def creole(value, default_prefix=None):
     try:
         from creoleparser.core import Parser
-        from creoleparser.dialects import create_dialect, creole10_base
+        from creoleparser.dialects import create_dialect, creole11_base
     except ImportError:
         if settings.TEMPLATE_DEBUG:
             raise template.TemplateSyntaxError, "Error in {% creole %} filter: The Python creoleparser library isn't installed."
@@ -91,7 +107,11 @@ def creole(value, default_prefix=None):
             'external_links_class': 'external',
             'disable_external_content': True,
         }
-        creole2html = Parser(create_dialect(creole10_base, **parser_kwargs))
+        if CREOLEPARSER_BODIED_MACROS:
+            parser_kwargs['bodied_macros'] = CREOLEPARSER_BODIED_MACROS
+        if CREOLEPARSER_NON_BODIED_MACROS:
+            parser_kwargs['non_bodied_macros'] = CREOLEPARSER_NON_BODIED_MACROS
+        creole2html = Parser(create_dialect(creole11_base, **parser_kwargs))
 
         return mark_safe(creole2html(value))
 
