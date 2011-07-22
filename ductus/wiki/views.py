@@ -206,8 +206,27 @@ def handle_blueprint_post(request, expected_model=DuctModel):
         return HttpTextResponseBadRequest(u"validation failed")
     return SuccessfulEditRedirect(urn)
 
+def _fully_handle_blueprint_post(request, prefix, pagename):
+    if not is_legal_wiki_pagename(prefix, pagename):
+        raise Http404
+    check_edit_permission(request, prefix, pagename)
+
+    response = handle_blueprint_post(request)
+
+    if isinstance(response, SuccessfulEditRedirect):
+        page, page_created = WikiPage.objects.get_or_create(name=join_pagename(prefix, pagename))
+        if page_created:
+            page.save()
+        return _handle_successful_wikiedit(request, response, page)
+
+    return response
+
 def view_wikipage(request, prefix, pagename):
     """Used for pages represented by a WikiPage"""
+
+    if request.method == 'POST' and not request.GET.get('view', None):
+        return _fully_handle_blueprint_post(request, prefix, pagename)
+
     name = join_pagename(prefix, pagename)
     try:
         page = WikiPage.objects.get(name=name)
