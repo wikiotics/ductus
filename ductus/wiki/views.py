@@ -275,7 +275,7 @@ def creation_view(request, page_type):
             raise Http404
         check_edit_permission(request, *target)
     if "target" in request.GET and isinstance(response, SuccessfulEditRedirect):
-        page, page_created = WikiPage.objects.get_or_create(name=request.GET["target"])
+        page, page_created = WikiPage.objects.get_or_create(name=join_pagename(*target))
         if page_created:
             page.save()
         return _handle_successful_wikiedit(request, response, page)
