@@ -215,8 +215,6 @@ def _fully_handle_blueprint_post(request, prefix, pagename):
 
     if isinstance(response, SuccessfulEditRedirect):
         page, page_created = WikiPage.objects.get_or_create(name=join_pagename(prefix, pagename))
-        if page_created:
-            page.save()
         return _handle_successful_wikiedit(request, response, page)
 
     return response
@@ -254,8 +252,6 @@ def view_wikipage(request, prefix, pagename):
             # we never actually save this WikiPage or WikiRevision to the database
             if page is None:
                 page, page_created = WikiPage.objects.get_or_create(name=name)
-                if page_created:
-                    page.save()
             revision = WikiRevision(page=page, urn=remote_urn[4:])
         except urllib2_HTTPError:
             pass
@@ -321,8 +317,6 @@ def creation_view(request, page_type):
         check_edit_permission(request, *target)
     if "target" in request.GET and isinstance(response, SuccessfulEditRedirect):
         page, page_created = WikiPage.objects.get_or_create(name=join_pagename(*target))
-        if page_created:
-            page.save()
         return _handle_successful_wikiedit(request, response, page)
     return response
 
@@ -438,8 +432,6 @@ def view_copy_resource(request):
             source_resource = get_resource_database().get_resource_object(source_urn)
             target_pagename = form.cleaned_data['target_pagename']
             page, page_created = WikiPage.objects.get_or_create(name=target_pagename)
-            if page_created:
-                page.save()
             response = SuccessfulEditRedirect(source_urn)
             return _handle_successful_wikiedit(request, response, page)
     else:
