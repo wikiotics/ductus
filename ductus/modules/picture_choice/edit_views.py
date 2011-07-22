@@ -25,7 +25,7 @@ from ductus.modules.picture_choice.ductmodels import PictureChoiceLesson
 @register_view(PictureChoiceLesson, 'edit')
 def edit_picture_choice_lesson(request):
     if request.method == 'POST':
-        return handle_blueprint_post(request)
+        return handle_blueprint_post(request, PictureChoiceLesson)
 
     if hasattr(request, "ductus"):
         # set ourselves up to edit an existing lesson
