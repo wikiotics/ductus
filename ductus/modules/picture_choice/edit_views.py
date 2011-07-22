@@ -14,39 +14,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
-from functools import partial
-
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.http import HttpResponseBadRequest
 
-from ductus.resource.ductmodels import BlueprintSaveContext, BlueprintError, ValidationError
-from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_view, register_creation_view
+from ductus.wiki.views import handle_blueprint_post
 from ductus.modules.picture_choice.ductmodels import PictureChoiceLesson
-
-HttpTextResponseBadRequest = partial(HttpResponseBadRequest,
-                                     content_type="text/plain; charset=utf-8")
 
 @register_creation_view(PictureChoiceLesson)
 @register_view(PictureChoiceLesson, 'edit')
 def edit_picture_choice_lesson(request):
     if request.method == 'POST':
-        try:
-            blueprint = json.loads(request.POST['blueprint'])
-        except KeyError:
-            return HttpTextResponseBadRequest(u"no blueprint given")
-        except ValueError:
-            return HttpTextResponseBadRequest(u"json fails to parse")
-        save_context = BlueprintSaveContext.from_request(request)
-        try:
-            urn = PictureChoiceLesson.save_blueprint(blueprint, save_context)
-        except BlueprintError, e:
-            return HttpTextResponseBadRequest(str(e))
-        except ValidationError, e:
-            return HttpTextResponseBadRequest(u"validation failed")
-        return SuccessfulEditRedirect(urn)
+        return handle_blueprint_post(request)
 
     if hasattr(request, "ductus"):
         # set ourselves up to edit an existing lesson

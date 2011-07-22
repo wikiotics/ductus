@@ -30,6 +30,7 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 from django.conf import settings
 
 from ductus.resource import get_resource_database, determine_header
+from ductus.resource.ductmodels import DuctModel
 from ductus.wiki import registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, is_legal_wiki_pagename, user_has_edit_permission, user_has_unlink_permission
 from ductus.wiki.namespaces import BaseWikiNamespace, registered_namespaces, split_pagename, join_pagename, WikiPrefixNotProvided
 from ductus.wiki.models import WikiPage, WikiRevision
@@ -179,6 +180,31 @@ def _handle_successful_wikiedit(request, response, page):
     revision.save()
     response.set_redirect_url(page.get_absolute_url())
     return response
+
+def handle_blueprint_post(request, expected_model=DuctModel):
+    # this is not a view, but rather a function that is meant to be called by
+    # views.  should be put such functions somewhere else?
+    from functools import partial
+    from django.http import HttpResponseBadRequest
+    HttpTextResponseBadRequest = partial(HttpResponseBadRequest,
+                                         content_type="text/plain; charset=utf-8")
+
+    from ductus.resource.ductmodels import BlueprintSaveContext, BlueprintError, ValidationError
+
+    try:
+        blueprint = json.loads(request.POST['blueprint'])
+    except KeyError:
+        return HttpTextResponseBadRequest(u"no blueprint given")
+    except ValueError:
+        return HttpTextResponseBadRequest(u"json fails to parse")
+    save_context = BlueprintSaveContext.from_request(request)
+    try:
+        urn = expected_model.save_blueprint(blueprint, save_context)
+    except BlueprintError, e:
+        return HttpTextResponseBadRequest(str(e))
+    except ValidationError, e:
+        return HttpTextResponseBadRequest(u"validation failed")
+    return SuccessfulEditRedirect(urn)
 
 def view_wikipage(request, prefix, pagename):
     """Used for pages represented by a WikiPage"""
