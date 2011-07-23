@@ -222,6 +222,9 @@ def _fully_handle_blueprint_post(request, prefix, pagename):
 def view_wikipage(request, prefix, pagename):
     """Used for pages represented by a WikiPage"""
 
+    if not is_legal_wiki_pagename(prefix, pagename):
+        raise Http404
+
     if request.method == 'POST' and not request.GET.get('view', None):
         return _fully_handle_blueprint_post(request, prefix, pagename)
 
@@ -244,7 +247,7 @@ def view_wikipage(request, prefix, pagename):
     else:
         revision = None
 
-    if revision is None and getattr(settings, "DUCTUS_WIKI_REMOTE", None) and is_legal_wiki_pagename(prefix, pagename):
+    if revision is None and getattr(settings, "DUCTUS_WIKI_REMOTE", None):
         # See if DUCTUS_WIKI_REMOTE has the page
         try:
             remote_url = "%s%s?view=urn" % (settings.DUCTUS_WIKI_REMOTE, iri_to_uri(urlquote(u'%s/%s' % (prefix, pagename))))
@@ -281,8 +284,6 @@ def view_wikipage(request, prefix, pagename):
                 response = f(request)
 
     if response is None:
-        if not is_legal_wiki_pagename(prefix, pagename):
-            raise Http404
         response = implicit_new_wikipage(request, prefix, pagename)
 
     # wikipage urls expire immediately since they can frequently be edited
