@@ -18,6 +18,7 @@ import re
 
 from django.http import HttpResponseRedirect
 from django.utils.encoding import iri_to_uri
+from django.conf import settings
 
 from ductus.resource import ResourceDatabase, UnsupportedURN, get_resource_database
 from ductus.wiki.namespaces import registered_namespaces
@@ -114,6 +115,17 @@ def user_has_unlink_permission(user, prefix, pagename):
     """
     assert is_legal_wiki_pagename(prefix, pagename)
     return user.is_authenticated() and user_has_edit_permission(user, prefix, pagename)
+
+def get_writable_directories_for_user(user):
+    """Each entry is a tuple (directory, directory_type, description)"""
+    rv = []
+    if user.is_authenticated():
+        rv.append(('user:%s/' % user.username, 'user', user.username))
+        rv.extend(('group:%s/' % group.slug, 'group', group.name)
+                  for group in user.groups.all())
+    rv.extend(('%s:' % lang, 'language_namespace', lang_name)
+              for lang, lang_name in settings.DUCTUS_NATURAL_LANGUAGES)
+    return tuple(rv)
 
 registered_views = {}
 registered_creation_views = {}
