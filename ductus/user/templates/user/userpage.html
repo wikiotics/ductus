@@ -1,7 +1,14 @@
 {% extends "ductus_base.html" %}
 
 {% block content %}
-<p>This is the user page of {{ userpage_user.username }}.</p>
+<p>This is the user page of {{ userpage_user.username }}.
+{% if pages_contributed_to %}This user has contributed to the following pages:{% endif %}</p>
+
+<ul>
+{% for page in pages_contributed_to %}
+<li><a href="{{ page.get_absolute_url }}">{{ page.name }}</a></li>
+{% endfor %}
+</ul>
 
 {% ifequal userpage_user user %}
 <div><a href="{% url ductus.user.views.account_settings %}">Edit my account settings</a></div>

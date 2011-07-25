@@ -24,6 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 from django import forms
 
+from ductus.wiki.models import WikiPage
 from ductus.wiki.views import RegularWikiNamespace
 from ductus.user.forms import UserEditForm
 
@@ -99,8 +100,10 @@ class UserNamespace(RegularWikiNamespace):
     def view_page(self, request, pagename):
         if '/' not in pagename:
             user = get_object_or_404(User, username=pagename)
+            pages_contributed_to = WikiPage.objects.filter(wikirevision__author=user).distinct().order_by('name')
             return render_to_response("user/userpage.html", {
                 'userpage_user': user,
+                'pages_contributed_to': pages_contributed_to,
             }, context_instance=RequestContext(request))
         else:
             return super(UserNamespace, self).view_page(request, pagename)
