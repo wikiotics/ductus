@@ -1,0 +1,17 @@
+{% extends "ductus_base.html" %}
+
+{% block head %}
+{{ block.super }}
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+
+<form method="post" action="{{ request.escaped_full_path }}">
+<table>
+{{ form }}
+</table>
+<input type="submit" />
+</form>
+
+{% endblock %}

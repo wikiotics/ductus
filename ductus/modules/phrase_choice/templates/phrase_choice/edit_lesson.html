@@ -1,0 +1,28 @@
+{% extends "ductus_document.html" %}
+{% load i18n %}
+{% load jsonize %}
+
+{% block head %}
+{{ block.super }}
+<script type="text/javascript">
+var resource_json = {{ resource_json|jsonize }};
+var DUCTUS_FLICKR_GROUP_ID = {{ DUCTUS_FLICKR_GROUP_ID|jsonize }};
+</script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.fileupload.modified.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/widgets.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}modules/phrase_choice/js/editor.js"></script>
+{% endblock %}
+
+{% block content %}
+<div id="pcl_editor"></div>
+<div><a id="append_new_pcg_button">{% trans "add phrase choice group" %}</a></div>
+<div style="margin-top: 1em;">
+  {% trans "Log message:" %} <input type="text" id="log_message" name="log_message" maxlength="400"/>
+  <form class="save_form" id="save_and_return" style="display: inline">
+    <input type="submit" value="{% trans "Save" %}"/>
+  </form>
+  <form class="save_form" id="save_and_continue" style="display: inline">
+    <input type="submit" value="{% trans "Save and continue editing" %}"/>
+  </form>
+</div>
+{% endblock %}

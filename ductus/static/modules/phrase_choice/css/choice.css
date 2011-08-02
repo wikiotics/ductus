@@ -1,0 +1,16 @@
+.ductus_phrase_choice h2 {
+    text-align: center;
+}
+.ductus_phrase_choice * td div {
+    width: 250px;
+    display: table-cell;
+    vertical-align: middle;
+    background: #eee;
+    padding: 1em;
+    text-align: center;
+    font-size: 125%;
+}
+.ductus_phrase_choice table {
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -1,0 +1,51 @@
+{% extends "phrase_choice/choice.html" %}
+{% load i18n %}
+{% load urn %}
+{% load jsonize %}
+
+{% block javascript %}
+var frames = {{ frames|jsonize }};
+$(function () {
+    var frame = 0;
+    var correct = 0;
+    var incorrect = 0;
+    var current_frame_incorrect_guess = false;
+    phrase_choice_correct_callbacks.push(function () {
+        if (!current_frame_incorrect_guess) {
+            correct = correct + 1;
+            $("#pcl_correct_count").html(correct + '');
+        }
+        setTimeout(function () {
+            frame = frame + 1;
+            if (frame < frames.length) {
+                $("#pcl_html_block").load("{{ request.ductus.resource.urn|resolve }}?frame=" + frames[frame], function () {
+                    pc_connect_click_actions();
+                    $("#frame_number").html(frame + 1 + '');
+                    current_frame_incorrect_guess = false;
+                });
+            }
+        }, 2500);
+    });
+    phrase_choice_incorrect_callbacks.push(function () {
+        if (!current_frame_incorrect_guess) {
+            incorrect = incorrect + 1;
+            $("#pcl_incorrect_count").html(incorrect + '');
+            current_frame_incorrect_guess = true;
+        }
+    });
+});
+{% endblock %}
+
+{% block content %}
+<div id="pcl_html_block">
+{{ block.super }}
+</div>
+<p class="pcl_frame_count">
+{% blocktrans with '<span id="frame_number">1</span>' as current_frame and frames|length as number_of_frames %}
+Frame {{ current_frame }} of {{ number_of_frames }}
+{% endblocktrans %}
+{% blocktrans with '<span id="pcl_correct_count">0</span>' as correct_count and '<span id="pcl_incorrect_count">0</span>' as incorrect_count %}
+({{ correct_count }} correct, {{ incorrect_count }} incorrect).
+{% endblocktrans %}
+</p>
+{% endblock %}
