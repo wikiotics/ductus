@@ -14,6 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from functools import wraps
+
+from django.utils.decorators import available_attrs
+
 from ductus.wiki import registered_views, registered_creation_views, registered_subviews, registered_mediacache_views
 
 def register_view(model, label=None, requires=(lambda d: d.resource)):
@@ -24,8 +28,11 @@ def register_view(model, label=None, requires=(lambda d: d.resource)):
     if requires is None:
         requires = lambda d: True # accept everything; no requirements
     def _register_view(func):
-        func.meets_requirements = requires # boolean function
-        registered_views.setdefault(fqn, dict())[label] = func
+        # make a new function so the decorator doesn't have side effects
+        def wrapped_func(*args, **kwargs):
+            return func(*args, **kwargs)
+        wrapped_func.meets_requirements = requires # boolean function
+        registered_views.setdefault(fqn, dict())[label] = wraps(func, assigned=available_attrs(func))(wrapped_func)
         return func
     return _register_view
 
