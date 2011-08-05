@@ -472,6 +472,10 @@
         $.ductusFileUpload({
             url: '/new/audio',
             onLoad: function (e, files, index, xhr) {
+                if (xhr.status != 200) {
+                    handle_upload_errors(['http status ' + xhr.status]);
+                    return;
+                }
                 progress_elt.attr('value', 100).find('span').text(100);
                 var data;
                 try {
