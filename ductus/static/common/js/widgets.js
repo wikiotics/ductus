@@ -468,7 +468,7 @@
                     _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
                 }
             }
-            this._upload_in_progress = false;
+            _this._upload_in_progress = false;
             if (error_cb) error_cb();
         }
         $.ductusFileUpload({
