@@ -560,14 +560,18 @@ def view_unlink_wikipage(request):
     check_unlink_permission(request, *request.ductus.wiki_page.split_pagename())
 
     if request.ductus.wiki_revision.urn == "":
-        return HttpResponse("it's already been deleted")
+        return render_to_response('wiki/unlink_deleted.html', {
+            'already_deleted': True,
+        }, RequestContext(request))
 
     if request.method == 'POST':
         revision = construct_wiki_revision(request.ductus.wiki_page, "", request)
         revision.save()
-        return HttpResponse("page deleted.")
+        return render_to_response('wiki/unlink_deleted.html', {
+        }, RequestContext(request))
 
-    return HttpResponse('log message: <form method="post"><input name="log_message"/><input type="submit" value="Delete"/></form>')
+    return render_to_response('wiki/unlink_confirm.html', {
+    }, RequestContext(request))
 
 @register_view(None, 'license_info')
 def view_license_info(request):

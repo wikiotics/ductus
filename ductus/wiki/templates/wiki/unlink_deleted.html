@@ -1,0 +1,6 @@
+{% extends "ductus_document.html" %}
+{% load i18n %}
+
+{% block content %}
+<p>{% blocktrans with request.ductus.wiki_page.name as absolute_pagename %}The page at <tt>{{ absolute_pagename }}</tt> has been deleted.{% endblocktrans %}</p>
+{% endblock %}

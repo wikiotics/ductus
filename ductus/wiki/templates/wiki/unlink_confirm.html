@@ -1,0 +1,11 @@
+{% extends "ductus_document.html" %}
+{% load i18n %}
+
+{% block content %}
+<h2>Delete page</h2>
+<form method="post">
+  {% trans "Log message:" %}
+  <input name="log_message"/>
+  <input type="submit" value="{% trans "Delete" %}"/>
+</form>
+{% endblock %}
