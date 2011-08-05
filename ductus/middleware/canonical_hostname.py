@@ -31,6 +31,10 @@ class CanonicalHostnameMiddleware(object):
             raise MiddlewareNotUsed
 
     def process_request(self, request):
+        # it's possible that HTTP_HOST may not be set for HTTP/1.0 requests
+        if 'HTTP_HOST' not in request.META:
+            return
+
         host = request.META['HTTP_HOST']
         if host == CANONICAL_HOSTNAME or request.method in ('POST', 'PUT'):
             return
