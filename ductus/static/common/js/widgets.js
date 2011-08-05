@@ -463,8 +463,10 @@
         this.status_elt.empty().append(progress_elt);
         function handle_upload_errors(errors) {
             progress_elt.remove();
-            for (var i = 0; i < errors.length; ++i) {
-                _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
+            if (errors) {
+                for (var i = 0; i < errors.length; ++i) {
+                    _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
+                }
             }
             this._upload_in_progress = false;
             if (error_cb) error_cb();
