@@ -7,6 +7,7 @@
     display: table-cell;
     vertical-align: middle;
     background: #eee;
+    cursor: pointer;
 }
 .ductus_picture_choice * td div img {
     display: block;

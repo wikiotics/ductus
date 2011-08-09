@@ -9,6 +9,7 @@
     padding: 1em;
     text-align: center;
     font-size: 125%;
+    cursor: pointer;
 }
 .ductus_phrase_choice table {
     margin-left: auto;
