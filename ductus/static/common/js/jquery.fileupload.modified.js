@@ -97,6 +97,7 @@
             xhr.open(settings.method, settings.url, true);
             if (sameDomain) {
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken')); // modified for ductus to deal with django csrf handling
             } else if (settings.withCredentials) {
                 xhr.withCredentials = true;
             }
