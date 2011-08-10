@@ -277,7 +277,7 @@ def view_wikipage(request, prefix, pagename):
         response["X-Ductus-URN"] = urn
     else:
         requested_view = request.GET.get("view", None)
-        request.ductus = DuctusRequestInfo(None, requested_view, page, None)
+        request.ductus = DuctusRequestInfo(None, requested_view, page, revision)
         if requested_view:
             f = registered_views[None].get(requested_view, None)
             if f and f.meets_requirements(request.ductus):
