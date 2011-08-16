@@ -1,4 +1,4 @@
 # Don't index "special" pages or URNs
 User-agent: *
-Disallow: /+*
+Disallow: /special/
 Disallow: /urn/
