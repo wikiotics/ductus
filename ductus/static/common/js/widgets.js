@@ -730,7 +730,7 @@
     SaveWidget.prototype.perform_save = function (save_and_return) {
 	var this_ = this;
 	var blueprint = JSON.stringify(ModelWidget.blueprint_repr(this.toplevel_blueprint_object));
-	this.save_buttons.attr("disabled", true);
+	this.elt.block({ message: "saving ..." });
         $.ajax({
 	    url: this.destination_chooser.get_destination().get_pathname(),
 	    data: {
@@ -755,7 +755,7 @@
 		alert(xhr.status + " error. save failed.");
 	    },
 	    complete: function (xhr, textStatus) {
-		this_.save_buttons.attr("disabled", false);
+		this_.elt.unblock();
 	    },
 	    type: 'POST',
 	    dataType: 'json'
