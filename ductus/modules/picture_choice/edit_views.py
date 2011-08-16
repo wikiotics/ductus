@@ -19,6 +19,7 @@ from django.template import RequestContext
 
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki.views import handle_blueprint_post
+from ductus.wiki import get_writable_directories_for_user
 from ductus.modules.picture_choice.ductmodels import PictureChoiceLesson
 
 @register_creation_view(PictureChoiceLesson)
@@ -43,4 +44,5 @@ def edit_picture_choice_lesson(request):
     return render_to_response('picture_choice/edit_lesson.html', {
         'resource_json': resource_json,
         'DUCTUS_FLICKR_GROUP_ID': DUCTUS_FLICKR_GROUP_ID,
+        'writable_directories': get_writable_directories_for_user(request.user),
     }, RequestContext(request))

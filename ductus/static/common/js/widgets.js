@@ -61,6 +61,11 @@
 	}
     }
 
+    window.__current_ductus_unique_id = 0;
+    function ductus_unique_dom_id () {
+        return 'ductus_unique_dom_id' + (window.__current_ductus_unique_id++);
+    }
+
     function Widget(initial_html_code) {
 	this.elt = $(initial_html_code);
 	this.elt.data("widget_object", this);
@@ -522,3 +527,237 @@
         this.control_elt.append(trash_icon);
     };
 
+    function FullPagename (arg) {
+        if (typeof arg === 'string') {
+            this.__fqpagename = arg;
+        } else if (arg.prefix && arg.pagename) {
+            this.__fqpagename = '' + arg.prefix + ':' + arg.pagename;
+        } else if (arg.directory && arg.remainder) {
+            this.__fqpagename = '' + arg.directory + arg.remainder;
+        } else if (arg.pathname && arg.pathname.charAt(0) == '/' && arg.pathname.length > 3) {
+            this.__fqpagename = decodeURIComponent(arg.pathname.substring(1)).replace(/\//, ':');
+        } else {
+            throw 'invalid arguments given to FullPagename constructor';
+        }
+
+        this.__colon_index = this.__fqpagename.indexOf(':');
+        if (this.__colon_index < 0) {
+            throw 'invalid pagename; it contains no ":"';
+        }
+    }
+    FullPagename.prototype.get_fqpagename = function () {
+        return this.__fqpagename;
+    };
+    FullPagename.prototype.get_pathname = function () {
+        return '/' + encodeURIComponent(this.__fqpagename.replace(/:/, '/'));
+    };
+    FullPagename.prototype.get_directory = function () {
+        var prefix = this.get_prefix();
+        if ($.inArray(prefix, ['user', 'group']) !== -1) {
+            return prefix + ':' + this.get_pagename().split(/\//, 1) + '/';
+        } else {
+            return prefix + ':';
+        }
+    };
+    FullPagename.prototype.get_remainder = function () {
+        var fqpagename = this.get_fqpagename();
+        var directory = this.get_directory();
+        assert(function () { return directory.length <= fqpagename.length && fqpagename.substring(0, directory.length) === directory; });
+        return fqpagename.substring(directory.length);
+    };
+    FullPagename.prototype.get_prefix = function () {
+        return this.__fqpagename.substring(0, this.__colon_index);
+    };
+    FullPagename.prototype.get_pagename = function () {
+        return this.__fqpagename.substring(this.__colon_index + 1);
+    };
+
+    function SaveDestinationChooserWidget (original_pagename, suggested_pagename) {
+        Widget.call(this, '<div></div>');
+        this.form = $('<form style="display: inline"></form>').appendTo(this.elt);
+        var this_ = this;
+
+        var initial_pagename_selection = (original_pagename || suggested_pagename)
+        var initial_directory_selection = initial_pagename_selection ? initial_pagename_selection.get_directory() : null;
+
+        // figure out directories
+        var i, directories = {'user': [], 'group': [], 'language_namespace': []};
+        for (i = 0; i < writable_directories.length; ++i) {
+            var dir = writable_directories[i];
+            if (dir[1] in directories) {
+                directories[dir[1]].push(dir);
+            }
+        }
+
+        // directory chooser
+        var ul = $('<ul class="radio_ul"></ul>').appendTo(this.form);
+        for (i = 0; i < directories.user.length; ++i) {
+            var dir = directories.user[i];
+            var id = ductus_unique_dom_id();
+            var div = $('<li></li>').appendTo(ul);
+            div.append($('<input type="radio" name="grp" id="' + id + '"/>').attr('value', dir[0]));
+            div.append($('<label for="' + id + '"></label>').text('Save within my user directory (' + dir[2] + ') '));
+            if (dir[0] === initial_directory_selection) {
+                div.find("#" + id).attr("checked", true);
+            }
+            div.append('<span class="quiet">Only you will be able to edit the lesson in place, but others can make improvements and save them elsewhere.</span>')
+        }
+        for (i = 0; i < directories.group.length; ++i) {
+            var dir = directories.group[i];
+            var id = ductus_unique_dom_id();
+            var div = $('<li></li>').appendTo(ul);
+            div.append($('<input type="radio" name="grp" id="' + id + '"/>').attr('value', dir[0]));
+            div.append($('<label for="' + id + '"></label>').text('Save to group: ' + dir[2]));
+            if (dir[0] === initial_directory_selection) {
+                div.find("#" + id).attr("checked", true);
+            }
+            div.append('<span class="quiet">Only group members will be able to edit the lesson in place.</span>')
+        }
+        if (directories.language_namespace) {
+            var select = $('<select></select>');
+            var id = ductus_unique_dom_id();
+            var lns_div = $('<li></li>').appendTo(ul);
+            lns_div.append('<input type="radio" name="grp" id="' + id + '" value="///see_select///"/>');
+            lns_div.append('<label for="' + id + '">Save to community wiki for language: </label>');
+            lns_div.find("label").after(select);
+            var directory_selected = false;
+            for (i = 0; i < directories.language_namespace.length; ++i) {
+                var dir = directories.language_namespace[i];
+                var option = $('<option></option>').attr("value", dir[0]).text(dir[2]);
+                if (dir[0] === initial_directory_selection) {
+                    option.attr("selected", true);
+                    lns_div.find("#" + id).attr("checked", true);
+                    directory_selected = true;
+                }
+                select.append(option);
+            }
+            if (!directory_selected) {
+                select.prepend($('<option disabled selected></option>'));
+            }
+            select.bind('change keyup keypress', function () {
+                lns_div.find("input").attr("checked", "checked");
+                this_._destination_changed();
+            });
+            lns_div.append('<span class="quiet">Choose the language to be taught.  Anyone will be able to edit the lesson in place.</span>');
+        }
+        this.elt.find("input[name='grp']").change(function () {
+            this_._destination_changed();
+        });
+
+        // page name chooser
+        this.elt.append('<span>Page title:</span> ');
+        this._page_name_input = $('<input name="page_name"/>').appendTo(this.elt);
+        this._page_name_input.bind('change keyup keypress drop', function () {
+            this_._destination_changed();
+        });
+        if (original_pagename) {
+            this._page_name_input.val(original_pagename.get_remainder());
+        }
+
+        this._destination_display = $('<span class="destination_display"></span>').appendTo(this.elt);
+
+        this._destination_changed();
+    }
+    SaveDestinationChooserWidget.prototype = chain_clone(Widget.prototype);
+    SaveDestinationChooserWidget.prototype._destination_changed = function () {
+        var destination = this.get_destination();
+        this._destination_display.text(destination ? destination.get_fqpagename() : "");
+        this.elt.trigger("ductus_SaveDestinationChooserWidget_destination_changed", [destination]);
+    };
+    SaveDestinationChooserWidget.prototype.get_destination = function () {
+        // figure out directory
+        var checked = this.form.find("input[name=grp]:checked");
+        var directory = checked.val();
+        if (directory == '///see_select///') {
+            directory = checked.parent().find("option:selected").val();
+        }
+        if (!directory)
+            return null;
+
+        // figure out remainder of page name
+        var page_name_remainder = this._page_name_input.val();
+        if (!page_name_remainder)
+            return null;
+
+        // split prefix, pagename
+        var candidate = directory + page_name_remainder;
+        var colon_index = candidate.indexOf(':');
+        if (colon_index < 0)
+            return null;
+        var prefix = candidate.substring(0, colon_index);
+        var pagename = candidate.substring(colon_index + 1);
+
+        // normalize and validate, according to ductus.wiki.is_legal_wiki_pagename()
+        // (as done in clean_target_pagename(), remove leading and trailing
+        // underscores from each portion of path; remove extra slashes)
+        pagename = pagename.replace(/[\s_]+/g, '_');
+        var pagename_array = pagename.split(/\//);
+        var new_pagename_array = [];
+        for (var i = 0; i < pagename_array.length; ++i) {
+            var x = pagename_array[i].replace(/^__*/, '').replace(/__*$/, '');
+            if (x)
+                new_pagename_array.push(x);
+        }
+        pagename = new_pagename_array.join('/');
+
+        // (since the prefix is given by the directory list, we assume it is valid)
+
+        return new FullPagename({prefix: prefix, pagename: pagename});
+    };
+
+    function SaveWidget (toplevel_blueprint_object) {
+        this.toplevel_blueprint_object = toplevel_blueprint_object;
+        Widget.call(this, '<div></div>');
+        var this_ = this;
+        this.destination_chooser = new SaveDestinationChooserWidget(new FullPagename({pathname: location.pathname}));
+        this.elt.append(this.destination_chooser.elt);
+        this.elt.append('<div>Log message: <input type="text" class="log_message" name="log_message" maxlength="400"/></div>');
+        this.elt.append('<form class="save_form save_and_return" style="display: inline"><input type="submit" value="Save"/></form>');
+        //this.elt.append('<form class="save_form save_and_continue" style="display: inline"><input type="submit" value="Save and continue editing"/></form>');
+        this.elt.find(".save_form").submit(function (event) {
+	    event.preventDefault(); // cancel normal submit event handling
+	    this_.perform_save($(event.target).hasClass('save_and_return'));
+        });
+        this.save_buttons = this.elt.find("input:submit");
+
+        function handle_destination_changed(event, destination) {
+            this_.save_buttons.attr("disabled", !destination);
+        }
+        this.destination_chooser.elt.bind("ductus_SaveDestinationChooserWidget_destination_changed", handle_destination_changed);
+        handle_destination_changed(null, this.destination_chooser.get_destination());
+    }
+    SaveWidget.prototype = chain_clone(Widget.prototype);
+    SaveWidget.prototype.perform_save = function (save_and_return) {
+	var this_ = this;
+	var blueprint = JSON.stringify(ModelWidget.blueprint_repr(this.toplevel_blueprint_object));
+	this.save_buttons.attr("disabled", true);
+        $.ajax({
+	    url: this.destination_chooser.get_destination().get_pathname(),
+	    data: {
+		blueprint: blueprint,
+		log_message: this_.elt.find(".log_message").val()
+	    },
+	    success: function (data) {
+		if (!data) {
+		    // something failed, but jquery 1.4.2 gives "success"
+		    // (see http://dev.jquery.com/ticket/6060)
+		    alert("unknown error while saving; please try again");
+		    return;
+		}
+		// go to the newly-saved page
+		if (save_and_return) {
+		    window.location = (data.page_url || resolve_urn(data.urn));
+		} else {
+		    $('<span class="ductus_save_notice">saved!</span>').appendTo(this_.elt).delay(3000).fadeOut(400, function () { $(this).remove(); });
+		}
+	    },
+	    error: function (xhr, textStatus, errorThrown) {
+		alert(xhr.status + " error. save failed.");
+	    },
+	    complete: function (xhr, textStatus) {
+		this_.save_buttons.attr("disabled", false);
+	    },
+	    type: 'POST',
+	    dataType: 'json'
+	});
+    };

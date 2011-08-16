@@ -150,6 +150,16 @@ a.broken {
     cursor: move;
 }
 
+.quiet {
+    font-size: 66%;
+    color: #444;
+}
+
+ul.radio_ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
 .license_info {
     border-bottom: 1px solid #ddd;
     margin: 1.5em 0;

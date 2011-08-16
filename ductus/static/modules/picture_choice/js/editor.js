@@ -94,43 +94,9 @@ $(function () {
     PictureChoiceLessonWidget.prototype.fqn = '{http://wikiotics.org/ns/2009/picture_choice}picture_choice_lesson';
 
     var pclw = new PictureChoiceLessonWidget(resource_json);
-    $("#pcl_editor").append(pclw.elt);
+    var save_widget = new SaveWidget(pclw);
+    $("#pcl_editor").append(pclw.elt).append($("#append_new_pcg_button")).append(save_widget.elt);
     $("#append_new_pcg_button").click(function () {
 	pclw.append_new_pcg();
-    });
-    $(".save_form").submit(function (event) {
-	var this_ = this;
-	event.preventDefault(); // cancel normal submit event handling
-	var blueprint = JSON.stringify(ModelWidget.blueprint_repr(pclw));
-	$(".save_form").find("input:submit").attr("disabled", "disabled");
-        $.ajax({
-	    url: document.URL,
-	    data: {
-		blueprint: blueprint,
-		log_message: $("#log_message").val()
-	    },
-	    success: function (data) {
-		if (!data) {
-		    // something failed, but jquery 1.4.2 gives "success"
-		    // (see http://dev.jquery.com/ticket/6060)
-		    alert("unknown error while saving; please try again");
-		    return;
-		}
-		// go to the newly-saved page
-		if (event.target.id === 'save_and_return') {
-		    window.location = (data.page_url || resolve_urn(data.urn));
-		} else {
-		    $('<span class="ductus_save_notice">saved!</span>').appendTo(this_).delay(3000).fadeOut(400, function () { $(this).remove(); });
-		}
-	    },
-	    error: function (xhr, textStatus, errorThrown) {
-		alert(xhr.status + " error. save failed.");
-	    },
-	    complete: function (xhr, textStatus) {
-		$(".save_form").find("input:submit").removeAttr("disabled");
-	    },
-	    type: 'POST',
-	    dataType: 'json'
-	});
     });
 });
