@@ -28,21 +28,10 @@ def edit_picture_choice_lesson(request):
     if request.method == 'POST':
         return handle_blueprint_post(request, PictureChoiceLesson)
 
-    if hasattr(request, "ductus"):
-        # set ourselves up to edit an existing lesson
-        resource_json = {
-            'href': request.ductus.resource.urn,
-            'resource': request.ductus.resource.output_json_dict(),
-        }
-    else:
-        # set ourselves up to create a new lesson
-        resource_json = None
-
     from django.conf import settings
     DUCTUS_FLICKR_GROUP_ID = getattr(settings, "DUCTUS_FLICKR_GROUP_ID", None)
 
     return render_to_response('picture_choice/edit_lesson.html', {
-        'resource_json': resource_json,
         'DUCTUS_FLICKR_GROUP_ID': DUCTUS_FLICKR_GROUP_ID,
         'writable_directories': get_writable_directories_for_user(request.user),
     }, RequestContext(request))

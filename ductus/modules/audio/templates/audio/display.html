@@ -7,12 +7,7 @@
 {{ block.super }}
 <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jQuery.jPlayer.2.0.0/jquery.jplayer.min.js"></script>
 <script type="text/javascript">
-{% with request.ductus.resource as resource %}
-    var resource_json = {
-        resource: {{ resource.output_json_dict|jsonize }},
-        href: {{ resource.urn|jsonize }}
-    };
-{% endwith %}
+var resource_json = {{ request.ductus.resource|resource_json }};
 $(function () {
     var audio_mime_map = {
         "audio/mp4": "m4a",

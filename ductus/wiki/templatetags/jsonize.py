@@ -25,3 +25,15 @@ register = Library()
 def jsonize(value):
     """Returns a json representation of an object"""
     return mark_safe(json.dumps(value))
+
+@register.filter
+def resource_json(resource):
+    """Returns the json representation of a resource"""
+    if resource:
+        resource_json = {
+            'href': resource.urn,
+            'resource': resource.output_json_dict(),
+        }
+    else:
+        resource_json = None
+    return mark_safe(json.dumps(resource_json))
