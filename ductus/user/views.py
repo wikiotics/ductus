@@ -95,6 +95,7 @@ class UserNamespace(RegularWikiNamespace):
 
     def allow_edit(self, user, pagename):
         return (user.is_authenticated()
+                and user.is_active
                 and pagename.partition('/')[0] == user.username)
 
     def view_page(self, request, pagename):
