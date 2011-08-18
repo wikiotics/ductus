@@ -577,7 +577,7 @@
         this.form = $('<form style="display: inline"></form>').appendTo(this.elt);
         var this_ = this;
 
-        var initial_pagename_selection = (original_pagename || suggested_pagename)
+        var initial_pagename_selection = (original_pagename || suggested_pagename);
         var initial_directory_selection = initial_pagename_selection ? initial_pagename_selection.get_directory() : null;
 
         // figure out directories
@@ -600,7 +600,7 @@
             if (dir[0] === initial_directory_selection) {
                 div.find("#" + id).attr("checked", true);
             }
-            div.append('<span class="quiet">Only you will be able to edit the lesson in place, but others can make improvements and save them elsewhere.</span>')
+            div.append('<span class="quiet">Only you will be able to edit the lesson in place, but others can make improvements and save them elsewhere.</span>');
         }
         for (i = 0; i < directories.group.length; ++i) {
             var dir = directories.group[i];
@@ -611,7 +611,7 @@
             if (dir[0] === initial_directory_selection) {
                 div.find("#" + id).attr("checked", true);
             }
-            div.append('<span class="quiet">Only group members will be able to edit the lesson in place.</span>')
+            div.append('<span class="quiet">Only group members will be able to edit the lesson in place.</span>');
         }
         if (directories.language_namespace) {
             var select = $('<select></select>');
