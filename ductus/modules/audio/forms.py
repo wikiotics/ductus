@@ -16,6 +16,7 @@
 
 import subprocess
 import os
+import logging
 from tempfile import mkstemp
 
 from django.conf import settings
@@ -32,6 +33,8 @@ try:
     DEVNULL = subprocess.DEVNULL
 except AttributeError:
     DEVNULL = subprocess.PIPE
+
+logger = logging.getLogger(__name__)
 
 def verify_aac_lc(filename, error_messages):
     popen = subprocess.Popen([FAAD_PATH, '-i', filename],
@@ -98,6 +101,7 @@ class AudioField(forms.FileField):
             from magic import Magic
             mime_type = Magic(mime=True).from_file(filename)
             try:
+                logger.debug("Mime type detected: %s", mime_type)
                 verify_file_type = verification_map[mime_type]
             except KeyError:
                 raise forms.ValidationError(self.error_messages['unrecognized_file_type'])
