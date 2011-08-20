@@ -59,6 +59,7 @@ verification_map = {
     'audio/ogg': verify_ogg_vorbis,
     'application/ogg': verify_ogg_vorbis,
     'audio/mp4': verify_aac_lc,
+    'video/mp4': verify_aac_lc, # as reported by Magic, sometimes
 }
 
 class AudioField(forms.FileField):
