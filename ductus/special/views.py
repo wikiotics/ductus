@@ -101,6 +101,13 @@ class SpecialPageNamespace(BaseWikiNamespace):
         except KeyError:
             raise Http404
 
-        return view_func(request, pagename)
+        response = view_func(request, pagename)
+
+        # special pages expire immediately since they frequently change
+        from django.utils.cache import patch_cache_control, patch_response_headers
+        patch_response_headers(response, cache_timeout=0)
+        patch_cache_control(response, must_revalidate=True)
+
+        return response
 
 SpecialPageNamespace('special')
