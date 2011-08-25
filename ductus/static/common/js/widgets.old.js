@@ -143,19 +143,8 @@
 
     function PictureModelWidget(picture) {
 	ModelWidget.call(this, picture, '<span></span>');
-
-	var picture_source = null;
-	if (picture.href)
-	    picture_source = new UrnPictureSource(picture.href);
-	else if (picture.resource && picture.resource._picture_source)
-	    picture_source = picture.resource._picture_source.clone();
-	assert(function () { return !!picture_source; });
-
+	var picture_source = picture && (new UrnPictureSource(picture.href));
         this._picture_widget = new PictureWidget(picture_source);
-
-        if (picture && picture.resource && picture.resource.net_rotation)
-            this._picture_widget.set_rotation(picture.resource.net_rotation);
-
         this.elt.append(this._picture_widget.elt);
 
 	this.record_initial_json_repr();
@@ -174,14 +163,8 @@
 	return repr;
     };
     PictureModelWidget.prototype.fqn = '{http://wikiotics.org/ns/2009/picture}picture';
-    PictureModelWidget.creation_ui_widget = function () {
-        return new PictureSearchWidget;
-    };
-    PictureModelWidget.prototype.edit_ui_widget = function () {
-        return { elt: this._picture_widget.rotation_controls };
-    };
 
-    function PictureWidget(picture_source, editable) {
+    function PictureWidget(picture_source, editable, show_rotation_controls) {
 	var self = this;
 
 	if (editable === undefined)
@@ -191,20 +174,40 @@
 	    // we should never allow a null picture source if it is not editable.
 	    editable = true;
 	this._is_editable = editable;
+	if (show_rotation_controls === undefined)
+	    show_rotation_controls = editable;
+	this._show_rotation_controls = show_rotation_controls;
 
 	Widget.call(this, '<span></span>');
 	this.image_holder = $('<span style="display: inline-block">drag image here</span>');
-	this.elt.append(this.image_holder);
+	this.rotation_controls = $('<span></span>');
+	this.elt.append(this.image_holder).append(this.rotation_controls);
+
+	// replace image control
+	this.replace_image_button = $('<a>find new image</a>');
+	this.replace_image_button.click(function () {
+	    $(this).hide();
+	    var search_box = new PictureSearchWidget(function (result) {
+		self.replace_image_button.show();
+		self.set_picture_source(result._picture_source.clone());
+		self.set_rotation(result.net_rotation);
+		search_box.destroy(); // we should just hide it, but that will store lots of memory if you work for a while... hmm
+	    });
+	    self.elt.append(search_box.elt.hide());
+	    search_box.elt.slideDown();
+	});
+	if (editable) // fixme, why make the control if we don't add it?
+	    this.elt.append(this.replace_image_button);
 
 	// rotation controls
-	var rotate_left_button = $('<img alt="rotate left" title="rotate left" src="' + ductus_media_prefix + '/modules/picture/img/object-rotate-left.png" class="ductus_rotate_button"/>');
-	var rotate_right_button = $('<img alt="rotate right" title="rotate right" src="' + ductus_media_prefix + '/modules/picture/img/object-rotate-right.png" class="ductus_rotate_button"/>');
+	var rotate_left_button = $('<img alt="rotate left" title="rotate left" src="' + ductus_media_prefix + '/modules/picture/img/object-rotate-left.png"/>');
+	var rotate_right_button = $('<img alt="rotate right" title="rotate right" src="' + ductus_media_prefix + '/modules/picture/img/object-rotate-right.png"/>');
 	rotate_left_button.click(function () { self.rotate_left(); });
 	rotate_right_button.click(function () { self.rotate_right(); });
-	this.rotation_controls = $('<span></span>').append(rotate_left_button).append(rotate_right_button);
+	this.rotation_controls.append(rotate_left_button).append(rotate_right_button).hide();
 	this.net_rotation = 0;
 
-	// numerical rotation display, which acts as a fallback if canvas fails
+	// rotation display, until we implement on-the-fly rotation w/ canvas
 	this.rotation_number_display = $("<span></span>");
 	this.rotation_controls.append(this.rotation_number_display);
 
@@ -251,6 +254,8 @@
 	this.canvas = undefined;
 	this.image_holder.empty().append(this.img);
 	this.set_rotation(0);
+	if (this._show_rotation_controls)
+	    this.rotation_controls.show();
     };
     PictureWidget.prototype.rotate_left = function () {
 	this.set_rotation((this.net_rotation + 90) % 360);
@@ -319,18 +324,18 @@
 	canvas_ctx.drawImage(this.img[0], 0, 0);
     };
 
-    function PictureSearchWidget(initial_query_data) {
+    function PictureSearchWidget(result_callback, initial_query_data) {
+	this.result_callback = result_callback;
 	if (!initial_query_data) {
 	    initial_query_data = {};
 	}
 
-	Widget.call(this, '<div><form>What: <input name="q" class="input-query"/> Where: <input name="place"/><input type="submit" value="search"/><br/><input type="radio" name="sort" value="date-posted-desc"/>Recent <input type="radio" name="sort" value="interestingness-desc"/>Interesting <input type="radio" name="sort" value="relevance" checked/>Relevant | Search by <input type="radio" name="search_by" value="text" checked/>Text <input type="radio" name="search_by" value="tags"/>Tags</form></div>');
+	Widget.call(this, '<div><form>What: <input name="q"/> Where: <input name="place"/><input type="submit" value="search"/><br/><input type="radio" name="sort" value="date-posted-desc"/>Recent <input type="radio" name="sort" value="interestingness-desc"/>Interesting <input type="radio" name="sort" value="relevance" checked/>Relevant | Search by <input type="radio" name="search_by" value="text" checked/>Text <input type="radio" name="search_by" value="tags"/>Tags</form></div>');
 	if (DUCTUS_FLICKR_GROUP_ID) {
 	    $(this.elt).find("form").append('<div><input type="checkbox" name="group" value="' + DUCTUS_FLICKR_GROUP_ID + '"/> Restrict to project\'s Flickr group</div>');
 	}
 	this.elt.addClass("ductus_PictureSearchWidget");
 	var search_results_elt = $('<div class="search_results"></div>');
-	var this_ = this;
 	this.elt.find("form").submit(function () {
 	    $.ajax({
 		url: "/new/picture",
@@ -352,14 +357,7 @@
 			var picture_widget = new PictureWidget(picture_source, false);
 			// fixme: we really only want to trap clicks on the image itself, not anywhere on the widget.  this will affect the this.data(widgetobject) as well...
 			picture_widget.elt.find(".ductus_draggable_picture").click(function () { // fixme: we aren't using this for dragging here, so maybe we should give the class a more general name
-			    var result = $(this).data('widget_object');
-			    this_.elt.trigger("ductus_element_selected", [{
-			        resource: {
-			            fqn: PictureModelWidget.prototype.fqn,
-			            _picture_source: result._picture_source,
-			            net_rotation: result.net_rotation // FIXME (?)
-			        }
-			    }]);
+			    result_callback($(this).data('widget_object'));
 			});
 			search_results_elt.append(picture_widget.elt);
 		    }
@@ -376,9 +374,6 @@
     PictureSearchWidget.prototype = chain_clone(Widget.prototype);
     PictureSearchWidget.prototype.destroy = function () {
 	this.elt.remove();
-    };
-    PictureSearchWidget.prototype.do_focus = function () {
-        this.elt.find(".input-query").focus();
     };
 
     function AudioWidget(audio) {
@@ -473,8 +468,10 @@
         this.status_elt.empty().append(progress_elt);
         function handle_upload_errors(errors) {
             progress_elt.remove();
-            for (var i = 0; i < errors.length; ++i) {
-                _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
+            if (errors) {
+                for (var i = 0; i < errors.length; ++i) {
+                    _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
+                }
             }
             _this._upload_in_progress = false;
             if (error_cb) error_cb();
@@ -764,4 +761,3 @@
 	    dataType: 'json'
 	});
     };
-

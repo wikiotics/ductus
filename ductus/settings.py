@@ -190,6 +190,7 @@ DUCTUS_INSTALLED_MODULES = (
     'ductus.modules.picture_choice',
     'ductus.modules.phrase_choice',
     'ductus.modules.textwiki',
+    'ductus.modules.flashcards',
 )
 
 DUCTUS_STORAGE_BACKEND = 'ductus_site.storage_backend'
