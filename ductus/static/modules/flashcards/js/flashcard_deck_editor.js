@@ -373,6 +373,11 @@ $(function () {
             return this_.elt.find("th, td");
         });
 
+        // when the widget first loads, select the first cell
+        if (this.rows && this.columns) {
+            this.rows[0].elt.find('td:not(.row_td)').first().click();
+        }
+
         this.record_initial_json_repr();
     }
     FlashcardDeck.prototype = chain_clone(ModelWidget.prototype);
