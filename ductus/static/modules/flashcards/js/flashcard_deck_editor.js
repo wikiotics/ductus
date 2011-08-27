@@ -54,7 +54,7 @@ $(function () {
     };
 
     function PhraseWidget(phrase) {
-        ModelWidget.call(this, phrase, '<div></div>');
+        ModelWidget.call(this, phrase, '<div class="ductus_PhraseWidget"></div>');
 
         this.input = $('<input/>');
         if (phrase)
@@ -84,7 +84,8 @@ $(function () {
     };
 
     function PhraseCreator() {
-        Widget.call(this, '<div><form><input/></form></div>');
+        Widget.call(this, '<div class="ductus_PhraseCreator"><form><input/></form></div>');
+
         var this_ = this;
         this.input = this.elt.find('input');
         this.elt.find('form').submit(function (event) {
@@ -104,7 +105,8 @@ $(function () {
     };
 
     function FlashcardSideEditor(fcsw) {
-        Widget.call(this, '<div><ul></ul></div>');
+        Widget.call(this, '<div class="ductus_FlashcardSideEditor"><ul></ul></div>');
+
         var this_ = this;
         var ul = this.elt.find("ul");
 
@@ -171,7 +173,7 @@ $(function () {
     };
 
     function FlashcardEditor(fcw) {
-        Widget.call(this, '<div>flashcard editor; coming soon</div>');
+        Widget.call(this, '<div class="ductus_FlashcardEditor">flashcard editor; coming soon</div>');
         // may allow moving a flashcard up and down
         // allow deleting a flashcard
         // allow putting a divider above or below?
@@ -184,7 +186,7 @@ $(function () {
     };
 
     function FlashcardColumnEditor(fcdw, column) {
-        Widget.call(this, '<div>Column header: <input/></div>');
+        Widget.call(this, '<div class="ductus_FlashcardColumnEditor">Column header: <input/></div>');
         // allow user to edit heading
         // future: may allow superficial moving of column order
         // future: should also allow one to delete an entire column, after confirmation (but we will have undo soon)
@@ -229,7 +231,7 @@ $(function () {
         // * number of rows and columns
         // whether all constraints are fulfilled
 
-        Widget.call(this, '<div>flashcard deck editor; coming soon</div>');
+        Widget.call(this, '<div class="ductus_FlashcardDeckEditor">flashcard deck editor; coming soon</div>');
     }
     FlashcardDeckEditor.prototype = chain_clone(Widget.prototype);
 
@@ -287,7 +289,7 @@ $(function () {
     });
 
     function Flashcard(fc, columns) {
-        ModelWidget.call(this, fc, '<tr><td class="row_td"></td></tr>');
+        ModelWidget.call(this, fc, '<tr class="ductus_Flashcard"><td class="row_td"></td></tr>');
 
         var this_ = this;
         $.each(columns, function (i, column) {
@@ -351,7 +353,7 @@ $(function () {
             };
         }
 
-        ModelWidget.call(this, fcd, '<table border="1"></table>');
+        ModelWidget.call(this, fcd, '<table border="1" class="ductus_FlashcardDeck"></table>');
 
         this.rows = [];
         this.columns = [];

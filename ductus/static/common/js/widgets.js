@@ -68,12 +68,13 @@
 
     function Widget(initial_html_code) {
 	this.elt = $(initial_html_code);
+	this.elt.addClass("ductus_Widget");
 	this.elt.data("widget_object", this);
-	this.elt.addClass("ductus_widget");
     }
 
     function ModelWidget(initial_data, initial_html_code) {
 	Widget.call(this, initial_html_code);
+	this.elt.addClass("ductus_ModelWidget");
 	this.initial_href = initial_data ? initial_data.href : null;
     }
     ModelWidget.prototype = chain_clone(Widget.prototype);
@@ -142,7 +143,7 @@
     };
 
     function PictureModelWidget(picture) {
-	ModelWidget.call(this, picture, '<span></span>');
+	ModelWidget.call(this, picture, '<span class="ductus_PictureModelWidget"></span>');
 
 	var picture_source = null;
 	if (picture.href)
@@ -192,7 +193,7 @@
 	    editable = true;
 	this._is_editable = editable;
 
-	Widget.call(this, '<span></span>');
+	Widget.call(this, '<span class="ductus_PictureWidget"></span>');
 	this.image_holder = $('<span style="display: inline-block">drag image here</span>');
 	this.elt.append(this.image_holder);
 
@@ -324,11 +325,10 @@
 	    initial_query_data = {};
 	}
 
-	Widget.call(this, '<div><form>What: <input name="q" class="input-query"/> Where: <input name="place"/><input type="submit" value="search"/><br/><input type="radio" name="sort" value="date-posted-desc"/>Recent <input type="radio" name="sort" value="interestingness-desc"/>Interesting <input type="radio" name="sort" value="relevance" checked/>Relevant | Search by <input type="radio" name="search_by" value="text" checked/>Text <input type="radio" name="search_by" value="tags"/>Tags</form></div>');
+	Widget.call(this, '<div class="ductus_PictureSearchWidget"><form>What: <input name="q" class="input-query"/> Where: <input name="place"/><input type="submit" value="search"/><br/><input type="radio" name="sort" value="date-posted-desc"/>Recent <input type="radio" name="sort" value="interestingness-desc"/>Interesting <input type="radio" name="sort" value="relevance" checked/>Relevant | Search by <input type="radio" name="search_by" value="text" checked/>Text <input type="radio" name="search_by" value="tags"/>Tags</form></div>');
 	if (DUCTUS_FLICKR_GROUP_ID) {
 	    $(this.elt).find("form").append('<div><input type="checkbox" name="group" value="' + DUCTUS_FLICKR_GROUP_ID + '"/> Restrict to project\'s Flickr group</div>');
 	}
-	this.elt.addClass("ductus_PictureSearchWidget");
 	var search_results_elt = $('<div class="search_results"></div>');
 	var this_ = this;
 	this.elt.find("form").submit(function () {
@@ -387,7 +387,8 @@
             audio = {href: ''};
         }
 
-        ModelWidget.call(this, audio, '<span><span class="control"></span><span class="status"></span></span>');
+        ModelWidget.call(this, audio, '<span class="ductus_AudioWidget"><span class="control"></span><span class="status"></span></span>');
+
         this.control_elt = this.elt.find('.control');
         this.status_elt = this.elt.find('.status');
         if (audio.href) {
@@ -576,7 +577,8 @@
     };
 
     function SaveDestinationChooserWidget (original_pagename, suggested_pagename) {
-        Widget.call(this, '<div></div>');
+        Widget.call(this, '<div class="ductus_SaveDestinationChooserWidget"></div>');
+
         this.form = $('<form style="display: inline"></form>').appendTo(this.elt);
         var this_ = this;
 
@@ -710,7 +712,7 @@
 
     function SaveWidget (toplevel_blueprint_object) {
         this.toplevel_blueprint_object = toplevel_blueprint_object;
-        Widget.call(this, '<div></div>');
+        Widget.call(this, '<div class="ductus_SaveWidget"></div>');
         var this_ = this;
         this.destination_chooser = new SaveDestinationChooserWidget(new FullPagename({pathname: location.pathname}));
         this.elt.append(this.destination_chooser.elt);
