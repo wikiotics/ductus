@@ -90,12 +90,14 @@ $(function () {
         return rv;
     }
 
-    var prepared_frame = null;
+    var prepared_frame;
 
     function prepare_frame () {
         var index = lesson_iterator.get_next();
-        if (index == -1)
+        if (index == -1) {
+            prepared_frame = null;
             return;
+        }
 
         var display_indices = get_wrong_indices(index).slice(0, 3);
         display_indices.push(index);
@@ -154,8 +156,8 @@ $(function () {
     var current_frame_incorrect_guess = false;
 
     function advance_frame () {
-        frame = frame + 1;
         if (prepared_frame) {
+            frame = frame + 1;
             $("#choice_frame_container").empty().append(prepared_frame);
             pc_connect_click_actions();
             $("#frame_number").html(frame + 1 + '');
