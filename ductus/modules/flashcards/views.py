@@ -32,3 +32,8 @@ def edit_flashcard_deck(request):
     return render_to_response('flashcards/edit_flashcard_deck.html', {
         'writable_directories': get_writable_directories_for_user(request.user),
     }, RequestContext(request))
+
+@register_view(FlashcardDeck, 'tmp_choice')
+def choice(request):
+    return render_to_response('flashcards/choice.html', {
+    }, RequestContext(request))
