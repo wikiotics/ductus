@@ -19,6 +19,9 @@
 .topleft_th {
     width: 20px;
 }
+.ductus_FlashcardDeck_anonymous_column_name {
+    font-style: italic;
+}
 
 /* Vertical Tabs (adapted from view-source:http://jquery-ui.googlecode.com/svn/trunk/demos/tabs/vertical.html) */
 .ui-tabs-vertical {

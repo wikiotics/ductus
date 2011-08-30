@@ -405,7 +405,7 @@ $(function () {
         if (heading)
             column.th.text(heading);
         else
-            column.th.html('&nbsp;');
+            column.th.html('<span class="ductus_FlashcardDeck_anonymous_column_name">Side ' + column.th.index() + '</span>');
     };
     FlashcardDeck.prototype.add_column = function (heading) {
         var this_ = this;
