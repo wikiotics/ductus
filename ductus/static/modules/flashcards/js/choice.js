@@ -104,7 +104,15 @@ $(function () {
         shuffle(display_indices);
 
         prepared_frame = $('<div class="ductus_choice"></div>');
-        prepared_frame.append($('<h2 lang=""></h2>').append(display_resource(resource_json.resource.cards.array[index].resource.sides.array[0])));
+        var cards_array = resource_json.resource.cards.array;
+        // prompt
+        var prompt_sides_array = cards_array[index].resource.sides.array;
+        for (var k = 0; k < prompt_columns.length; ++k) {
+            var header_number = Math.min(k + 2, 6);
+            var header_element = $('<h' + header_number +' class="prompt" lang=""></h' + header_number + '>').appendTo(prepared_frame);
+            header_element.append(display_resource(prompt_sides_array[prompt_columns[k]]));
+        }
+        // answer choices
         var table = $('<table></table>').appendTo(prepared_frame);
         for (var i = 0; i < 2; ++i) {
             var tr = $('<tr></tr>').appendTo(table);
@@ -112,7 +120,7 @@ $(function () {
                 var td = $('<td></td>').appendTo(tr);
                 var display_index = display_indices[i * 2 + j];
                 if (display_index !== undefined) {
-                    var res = resource_json.resource.cards.array[display_index].resource.sides.array[1];
+                    var res = cards_array[display_index].resource.sides.array[answer_column];
                     var div = $('<div></div>').append(display_resource(res));
                     td.addClass("choice_item").append(div);
                     if (display_index == index)

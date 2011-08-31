@@ -19,12 +19,14 @@ from django.template import RequestContext
 
 from ductus.wiki.decorators import register_creation_view, register_view
 from ductus.wiki import get_writable_directories_for_user
-from ductus.modules.flashcards.ductmodels import FlashcardDeck
 from ductus.wiki.views import handle_blueprint_post
+from ductus.util.http import query_string_not_found
+from ductus.modules.flashcards.ductmodels import FlashcardDeck, ChoiceInteraction
+from ductus.modules.flashcards.decorators import register_interaction_view
+from ductus.modules.flashcards import registered_interaction_views
 
 @register_creation_view(FlashcardDeck)
 @register_view(FlashcardDeck, 'edit')
-@register_view(FlashcardDeck)
 def edit_flashcard_deck(request):
     if request.method == 'POST':
         return handle_blueprint_post(request, FlashcardDeck)
@@ -33,7 +35,25 @@ def edit_flashcard_deck(request):
         'writable_directories': get_writable_directories_for_user(request.user),
     }, RequestContext(request))
 
-@register_view(FlashcardDeck, 'tmp_choice')
-def choice(request):
+@register_view(FlashcardDeck)
+def view_flashcard_deck(request):
+    interactions_array = request.ductus.resource.interactions.array
+
+    if not interactions_array:
+        return edit_flashcard_deck(request)
+
+    try:
+        interaction = interactions_array[int(request.GET.get('interaction', 0))]
+    except (ValueError, KeyError):
+        return query_string_not_found(request)
+    else:
+        interaction = interaction.get()
+        interaction_view = registered_interaction_views[interaction.fqn]
+        return interaction_view(request, interaction)
+
+@register_interaction_view(ChoiceInteraction)
+def choice(request, interaction):
     return render_to_response('flashcards/choice.html', {
+        'prompt_columns': [int(a) for a in interaction.prompt.split(',')],
+        'answer_column': int(interaction.answer),
     }, RequestContext(request))

@@ -11,6 +11,8 @@
 
 {% block javascript %}
 var resource_json = {{ request.ductus.resource|resource_json }};
+var prompt_columns = {{ prompt_columns|jsonize }};
+var answer_column = {{ answer_column|jsonize }};
 {% endblock %}
 
 {% block content %}

@@ -27,6 +27,50 @@ class Phrase(ductmodels.BaseDuctModel):
     phrase = ductmodels.TextElement()
 # end of other models
 
+class OptionalArrayElement(ductmodels.ArrayElement):
+    optional = True
+
+    def is_null_xml_element(self):
+        return len(self) == 0
+
+def _is_canonical_int(string):
+    try:
+        x = int(string)
+    except ValueError:
+        return False
+    else:
+        return str(x) == string
+
+def _prompt_validator(v):
+    # FlashcardDeck's validator will automatically make sure the columns exist,
+    # so we need not worry about that here
+    prompts = v.split(',')
+    if len(prompts) == 0:
+        # this code path should never be reached since ''.split(',') == [''],
+        # but we leave it for completeness
+        raise ductmodels.ValidationError("at least one prompt column must be given")
+    if len(frozenset(prompts)) != len(prompts):
+        raise ductmodels.ValidationError("each prompt must be from a unique column")
+    if not all(_is_canonical_int(a) for a in prompts):
+        raise ductmodels.ValidationError("each `prompt` must be an integer in canonical form")
+
+def _answer_validator(v):
+    # FlashcardDeck's validator will automatically make sure the column exists
+    # so we need not worry about that here
+    if not _is_canonical_int(v):
+        raise ductmodels.ValidationError("`answer` must be an integer in canonical form")
+
+@register_ductmodel
+class ChoiceInteraction(ductmodels.BaseDuctModel):
+    ns = 'http://wikiotics.org/ns/2011/flashcards'
+    nsmap = {'flashcards': ns}
+
+    prompt = ductmodels.Attribute(validator=_prompt_validator)
+    answer = ductmodels.Attribute(validator=_answer_validator)
+
+    def get_columns_referenced(self):
+        return [int(a) for a in (self.prompt.split(',') + [self.answer])]
+
 @register_ductmodel
 class Flashcard(ductmodels.DuctModel):
     ns = 'http://wikiotics.org/ns/2011/flashcards'
@@ -49,6 +93,8 @@ class FlashcardDeck(ductmodels.DuctModel):
     headings = ductmodels.ArrayElement(ductmodels.TextElement())
     column_order = ductmodels.Attribute(optional=True)
 
+    interactions = OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction))
+
     def validate(self, strict=True):
         super(FlashcardDeck, self).validate(strict)
 
@@ -63,3 +109,8 @@ class FlashcardDeck(ductmodels.DuctModel):
         nonempty_headings = [h.text for h in self.headings if h.text]
         if len(frozenset(nonempty_headings)) != len(nonempty_headings):
             raise ductmodels.ValidationError("all nonempty headings must be unique")
+
+        r = set(range(headings_length))
+        for interaction in self.interactions.array:
+            if not all(c in r for c in interaction.get().get_columns_referenced()):
+                raise ductmodels.ValidationError("all referenced columns must exist in the FlashcardDeck")
