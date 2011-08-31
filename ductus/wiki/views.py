@@ -16,6 +16,7 @@
 
 import json
 import re
+import logging
 from urllib2 import urlopen, HTTPError as urllib2_HTTPError
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotModified, Http404
@@ -38,6 +39,8 @@ from ductus.wiki.decorators import register_view
 from ductus.wiki.subviews import subview
 from ductus.decorators import unvarying
 from ductus.util.http import query_string_not_found, render_json_response, ImmediateResponse
+
+logger = logging.getLogger(__name__)
 
 def view_frontpage(request):
     "Redirect based on the user's locale"
@@ -203,6 +206,7 @@ def handle_blueprint_post(request, expected_model=DuctModel):
     except BlueprintError, e:
         return HttpTextResponseBadRequest(str(e))
     except ValidationError, e:
+        logger.debug("validation failed: %s", e)
         return HttpTextResponseBadRequest(u"validation failed")
     return SuccessfulEditRedirect(urn)
 
