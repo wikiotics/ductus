@@ -33,7 +33,7 @@ $(function () {
 {% block content %}
 {% with request.ductus.resource as resource %}
 <div id="ductus_audio"></div>
-<div id="jp_interface_1"><a href="" class="jp-play">play</a></div>
+<div id="jp_interface_1"><a href="javascript:void(0)" class="jp-play">play</a></div>
 {% with resource.common.licenses as licenses %}
 {% include "wiki/license_list.html" %}
 {% endwith %}

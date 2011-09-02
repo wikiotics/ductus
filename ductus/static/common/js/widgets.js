@@ -442,7 +442,7 @@
         var _this = this;
         reader.onload = function (e) {
             _this._append_audio_control(e.target.result);
-            var upload_button = $('<a>upload</a>');
+            var upload_button = $('<a href="javascript:void(0)">upload</a>');
             upload_button.click(function () {
                 _this.attempt_upload();
             });
@@ -525,7 +525,7 @@
         this.control_elt.append(html5_audio_element);
     };
     AudioWidget.prototype._append_trash_icon = function () {
-        var trash_icon = $('<a>trash</a>');
+        var trash_icon = $('<a href="javascript:void(0)">trash</a>');
         var that = this;
         trash_icon.click(function () { that._set_state_empty(); });
         this.control_elt.append(trash_icon);
