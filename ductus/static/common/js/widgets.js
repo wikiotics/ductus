@@ -655,8 +655,8 @@
         this._page_name_input.bind('change keyup keypress drop', function () {
             this_._destination_changed();
         });
-        if (original_pagename) {
-            this._page_name_input.val(original_pagename.get_remainder());
+        if (initial_pagename_selection) {
+            this._page_name_input.val(initial_pagename_selection.get_remainder());
         }
 
         this._destination_display = $('<span class="destination_display"></span>').appendTo(this.elt);
@@ -714,7 +714,9 @@
         this.toplevel_blueprint_object = toplevel_blueprint_object;
         Widget.call(this, '<div class="ductus_SaveWidget"></div>');
         var this_ = this;
-        this.destination_chooser = new SaveDestinationChooserWidget(new FullPagename({pathname: location.pathname}));
+        var original_pagename = resource_json && new FullPagename({pathname: location.pathname});
+        var target_pagename = urlParams['target'] && new FullPagename(urlParams['target']);
+        this.destination_chooser = new SaveDestinationChooserWidget(original_pagename, target_pagename);
         this.elt.append(this.destination_chooser.elt);
         this.elt.append('<div>Log message: <input type="text" class="log_message" name="log_message" maxlength="400"/></div>');
         this.elt.append('<form class="save_form save_and_return" style="display: inline"><input type="submit" value="Save"/></form>');
