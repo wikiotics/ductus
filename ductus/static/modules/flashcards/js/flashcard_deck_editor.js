@@ -332,6 +332,55 @@ $(function () {
         });
     };
 
+    function ChoiceInteractionWidget(ci) {
+        ModelWidget.call(this, ci, '<div class="ductus_ChoiceInteractionWidget"></div>');
+        this.elt.append('Prompt: <input name="prompt" class="prompt"/> Answer: <input name="answer" class="answer"/>');
+        this.prompt = this.elt.find('.prompt');
+        this.answer = this.elt.find('.answer');
+        if (ci) {
+            this.prompt.val(ci.resource.prompt);
+            this.answer.val(ci.resource.answer);
+        }
+
+        this.record_initial_json_repr();
+    }
+    ChoiceInteractionWidget.prototype = chain_clone(ModelWidget.prototype);
+    ChoiceInteractionWidget.prototype.json_repr = function () {
+        return this.add_json_repr_constructor({
+            prompt: this.prompt.val(),
+            answer: this.answer.val()
+        });
+    };
+    ChoiceInteractionWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}choice_interaction';
+
+    function InteractionChooserWidget(ic) {
+        Widget.call(this, '<div class="ductus_InteractionChooserWidget"></div>');
+        this.interactions = $('<ul class="ductus_InteractionChooserWidget_interactions"></ul>').appendTo(this.elt);
+        this.new_interaction_buttons = $('<ul class="ductus_InteractionChooserWidget_add_buttons"></ul>').appendTo(this.elt);
+        var this_ = this;
+        $('<a href="javascript:void(0)">Add a "choice" interaction</a>').click(function () {
+            var widget = new ChoiceInteractionWidget();
+            this_.interactions.append($('<li></li>').append(widget.elt));
+        }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
+
+        if (ic) {
+            for (var i = 0; i < ic.array.length; ++i) {
+                var interaction = ic.array[i];
+                if (interaction.resource.fqn == ChoiceInteractionWidget.prototype.fqn) {
+                    $('<li></li>').appendTo(this.interactions).append((new ChoiceInteractionWidget(interaction)).elt);
+                }
+            }
+        }
+    }
+    InteractionChooserWidget.prototype = chain_clone(InteractionChooserWidget.prototype);
+    InteractionChooserWidget.prototype.json_repr = function () {
+        var interactions = [];
+        this.interactions.children().each(function () {
+            interactions.push(ModelWidget.blueprint_repr($(this).children().first().data("widget_object")));
+        });
+        return { array: interactions };
+    };
+
     function FlashcardDeck(fcd) {
         // if new, create default nested json with one column and one row
         if (!fcd) {
@@ -353,12 +402,13 @@ $(function () {
             };
         }
 
-        ModelWidget.call(this, fcd, '<table border="1" class="ductus_FlashcardDeck"></table>');
+        ModelWidget.call(this, fcd, '<div class="ductus_FlashcardDeck"></div>');
 
         this.rows = [];
         this.columns = [];
+        this.table = $('<table border="1"></table>').appendTo(this.elt);
         this.header_elt = $('<tr><th class="topleft_th"></th></tr>');
-        this.elt.append(this.header_elt);
+        this.table.append(this.header_elt);
 
         var this_ = this;
         $.each(fcd.resource.headings.array, function (i, heading) {
@@ -368,17 +418,28 @@ $(function () {
             this_.add_row(card);
         });
 
-        this.elt.find(".topleft_th").ductus_selectable(function () {
+        this.table.find(".topleft_th").ductus_selectable(function () {
             return this_.ui_widget();
         }, function () {
             // fixme: this will do weird things if a widget itself contains a table; we should have a class that we use for all th and td's here
-            return this_.elt.find("th, td");
+            return this_.table.find("th, td");
         });
+
+        $('<a class="new_row_button" href="javascript:void(0)">add new row</a>').click(function () {
+            this_.add_row();
+        }).appendTo($('<div></div>').appendTo(this.elt));
+        $('<a class="new_column_button" href="javascript:void(0)">add new column</a>').click(function () {
+            this_.add_column();
+        }).appendTo($('<div></div>').appendTo(this.elt));
 
         // when the widget first loads, select the first cell
         if (this.rows && this.columns) {
             this.rows[0].elt.find('td:not(.row_td)').first().click();
         }
+
+        // interaction chooser
+        this.interaction_chooser = new InteractionChooserWidget(fcd.resource.interactions);
+        this.interaction_chooser.elt.appendTo(this.elt);
 
         this.record_initial_json_repr();
     }
@@ -392,13 +453,17 @@ $(function () {
         $.each(this.columns, function (i, column) {
             headings.push({text: column.heading});
         });
-        return this.add_json_repr_constructor({cards: {array: cards}, headings: {array: headings}});
+        return this.add_json_repr_constructor({
+            cards: {array: cards},
+            headings: {array: headings},
+            interactions: this.interaction_chooser.json_repr()
+        });
     };
     FlashcardDeck.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}flashcard_deck';
     FlashcardDeck.prototype.add_row = function (fc) {
         var row = new Flashcard(fc, this.columns);
         this.rows.push(row);
-        this.elt.append(row.elt);
+        this.table.append(row.elt);
     };
     FlashcardDeck.prototype._set_column_heading = function (column, heading) {
         column.heading = heading;
@@ -417,7 +482,7 @@ $(function () {
             return this_.column_ui_widget(column);
         }, function () {
             var display_index = column.th.index() + 1;
-            return this_.elt.find("th:nth-child(" + display_index + "), td:nth-child(" + display_index + ")");
+            return this_.table.find("th:nth-child(" + display_index + "), td:nth-child(" + display_index + ")");
         });
         $.each(this.rows, function (i, row) {
             row._append_new_cell(null, column);
@@ -440,14 +505,7 @@ $(function () {
 
     var fcdw = new FlashcardDeck(resource_json);
     var save_widget = new SaveWidget(fcdw);
-    $("#flashcard_deck_editor").append(fcdw.elt).append($("#new_row_button").parent()).append($("#new_column_button").parent()).append(save_widget.elt);
-
-    $("#new_row_button").click(function () {
-	fcdw.add_row();
-    });
-    $("#new_column_button").click(function () {
-	fcdw.add_column();
-    });
+    $("#flashcard_deck_editor").append(fcdw.elt).append(save_widget.elt);
 
     $("#bottom_toolbar_spacer").appendTo("body");
 });
