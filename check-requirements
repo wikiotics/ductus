@@ -16,13 +16,13 @@ pypi = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
 def main():
     if not sys.argv[1:]:
-        requirements_files = [os.path.join(os.path.dirname(__file__),
-                                           'requirements.txt')]
+        input_lines = fileinput.input(os.path.join(os.path.dirname(__file__),
+                                                   'requirements.txt'))
     else:
-        requirements_files = []
+        input_lines = fileinput.input()
 
     upgrade_needed = False
-    for line in fileinput.input(requirements_files):
+    for line in input_lines:
         m = r.match(line)
         if not m:
             continue
