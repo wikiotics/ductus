@@ -5,7 +5,8 @@ Droppable
 Resizable
 Selectable
 Sortable
-Dialog
+Autocomplete
+Button
 Tabs
 Progressbar
 Effects Core
