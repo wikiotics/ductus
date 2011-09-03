@@ -44,7 +44,7 @@ def view_flashcard_deck(request):
 
     try:
         interaction = interactions_array[int(request.GET.get('interaction', 0))]
-    except (ValueError, KeyError):
+    except (ValueError, IndexError):
         return query_string_not_found(request)
     else:
         interaction = interaction.get()
