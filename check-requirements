@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+
+"""Checks pypi for whether there are any upgrades available for packages
+given in requirements.txt
+"""
+
+import xmlrpclib
+import fileinput
+import pip
+import sys
+import re
+import os
+
+r = re.compile(r'^([\w\-\.]+)\=\=([\w\.]+)$')
+pypi = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
+
+def main():
+    if not sys.argv[1:]:
+        requirements_files = [os.path.join(os.path.dirname(__file__),
+                                           'requirements.txt')]
+    else:
+        requirements_files = []
+
+    upgrade_needed = False
+    for line in fileinput.input(requirements_files):
+        m = r.match(line)
+        if not m:
+            continue
+        package, installed_version = m.group(1), m.group(2)
+        latest_version = get_pypi_version(package)
+        if latest_version != installed_version:
+            print "{0:40}{1:20}{2:20}".format(package, installed_version, latest_version)
+            upgrade_needed = True
+    sys.exit(1 if upgrade_needed else 0)
+
+def get_pypi_version(package_name):
+    pypi_package = pypi.package_releases(package_name)
+    if not pypi_package:
+        # try it capitalized
+        pypi_package = pypi.package_releases(package_name.capitalize())
+
+    if not pypi_package:
+        raise Exception("no release of '{0}' at pypi".format(package))
+    return pypi_package[0]
+
+if __name__ == '__main__':
+    main()
