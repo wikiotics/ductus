@@ -123,8 +123,7 @@ $(function () {
                     var res = cards_array[display_index].resource.sides.array[answer_column];
                     var div = $('<div></div>').append(display_resource(res));
                     td.addClass("choice_item").append(div);
-                    if (display_index == index)
-                        td.addClass("correct");
+                    td.addClass(display_index == index ? "correct": "incorrect");
                 }
             }
         }
@@ -141,14 +140,14 @@ $(function () {
             var already_called = false;
             if ($(this).hasClass("correct")) {
                 choice_actions_enabled = false;
-                $('.ductus_choice table tr td').not('.correct').hide(500, function () {
+                $('.ductus_choice td.incorrect div').hide(500, "linear", function () {
                     if (!already_called) {
                         choice_correct_callback();
                     }
                     already_called = true;
                 });
             } else {
-                $(this).fadeTo(200, .25, function () {
+                $(this).fadeTo(200, .25, "linear", function () {
                     if (!already_called) {
                         choice_incorrect_callback();
                     }

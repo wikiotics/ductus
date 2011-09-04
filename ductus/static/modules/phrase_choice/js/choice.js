@@ -11,7 +11,7 @@ var pc_connect_click_actions = function () {
         var already_called = false;
         if ($(this).parent().hasClass("correct")) {
             phrase_choice_actions_enabled = false;
-            $('.ductus_phrase_choice table tr td').not('.correct').hide(500, function () {
+            $('.ductus_phrase_choice table tr td:not(.correct) div').hide(500, "linear", function () {
                 if (!already_called) {
                     $.each(phrase_choice_correct_callbacks, function(i, cb) { cb(); });
                 }
