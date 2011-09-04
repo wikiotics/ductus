@@ -198,8 +198,8 @@
 	this.elt.append(this.image_holder);
 
 	// rotation controls
-	var rotate_left_button = $('<img alt="rotate left" title="rotate left" src="' + ductus_media_prefix + '/modules/picture/img/object-rotate-left.png" class="ductus_rotate_button"/>');
-	var rotate_right_button = $('<img alt="rotate right" title="rotate right" src="' + ductus_media_prefix + '/modules/picture/img/object-rotate-right.png" class="ductus_rotate_button"/>');
+	var rotate_left_button = $('<img alt="rotate left" title="rotate left" src="' + ductus_media_prefix + 'modules/picture/img/object-rotate-left.png" class="ductus_rotate_button"/>');
+	var rotate_right_button = $('<img alt="rotate right" title="rotate right" src="' + ductus_media_prefix + 'modules/picture/img/object-rotate-right.png" class="ductus_rotate_button"/>');
 	rotate_left_button.click(function () { self.rotate_left(); });
 	rotate_right_button.click(function () { self.rotate_right(); });
 	this.rotation_controls = $('<span></span>').append(rotate_left_button).append(rotate_right_button);
