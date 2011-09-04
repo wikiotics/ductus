@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <title>{% block title %}{% title ductus_site_name %}{% endblock %}{% for title in title_list reversed %}{{ title }}{% if not forloop.last %} - {% endif %}{% endfor %}</title>
     <meta name="HandheldFriendly" content="True"/>
+    <link type="text/css" href="{{ ductus_media_prefix }}common/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" media="screen, projection" href="{{ ductus_media_prefix }}common/css/base.css" />
     {# include local (site-specific) css #}
     <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery-1.4.2.min.js"></script>
