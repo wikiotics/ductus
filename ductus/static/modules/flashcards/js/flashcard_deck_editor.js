@@ -359,15 +359,14 @@ $(function () {
         this.new_interaction_buttons = $('<ul class="ductus_InteractionChooserWidget_add_buttons"></ul>').appendTo(this.elt);
         var this_ = this;
         $('<a href="javascript:void(0)">Add a "choice" interaction</a>').click(function () {
-            var widget = new ChoiceInteractionWidget();
-            this_.interactions.append($('<li></li>').append(widget.elt));
+            this_.__add_interaction(new ChoiceInteractionWidget());
         }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
 
         if (ic) {
             for (var i = 0; i < ic.array.length; ++i) {
                 var interaction = ic.array[i];
                 if (interaction.resource.fqn == ChoiceInteractionWidget.prototype.fqn) {
-                    $('<li></li>').appendTo(this.interactions).append((new ChoiceInteractionWidget(interaction)).elt);
+                    this.__add_interaction(new ChoiceInteractionWidget(interaction));
                 }
             }
         }
@@ -379,6 +378,12 @@ $(function () {
             interactions.push(ModelWidget.blueprint_repr($(this).children().first().data("widget_object")));
         });
         return { array: interactions };
+    };
+    InteractionChooserWidget.prototype.__add_interaction = function (widget) {
+        var li = $('<li></li>').append(widget.elt).appendTo(this.interactions);
+        $('<span>delete interaction</span>').button({text: false, icons: {primary: 'ui-icon-close'}}).click(function () {
+            $(this).parent('li').remove();
+        }).appendTo(li);
     };
 
     function FlashcardDeck(fcd) {
