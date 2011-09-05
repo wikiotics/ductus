@@ -35,6 +35,15 @@ class GridfsStorageBackend(object):
         return iterate_file_object(self.__get_file_object(key))
 
     def put_file(self, key, tmpfile):
+        # ResourceDatabase will check to make sure the file doesn't already
+        # exist before calling this, but in the event of a race condition this
+        # may be called twice for a given key.  Fortunately this will cause no
+        # issues, but it seems to result in two "versions" of the file being in
+        # gridfs, which wastes some space (but not very much, if race
+        # conditions are rare).
+        #
+        # FIXME: look into whether it is possible to drop old versions
+        # automatically in gridfs
         with file(tmpfile) as f:
             self.fs.put(f, filename=key)
 
