@@ -78,27 +78,33 @@
 	this.initial_href = initial_data ? initial_data.href : null;
     }
     ModelWidget.prototype = chain_clone(Widget.prototype);
-    ModelWidget.prototype.record_initial_json_repr = function () {
-	this.initial_json_repr = this.initial_href ? this.json_repr() : null;
+    ModelWidget.prototype.record_initial_inner_blueprint = function () {
+        // This function should be called at the end of initialization if we ever plan to call ModelWidget.blueprint_repr()
+        // on the object (i.e. we do not plan to override blueprint_repr() in the subclass)
+        //
+        // the {} recorded in the default case evaluates to true, which allows us to assert below
+        // that this function has actually been called
+	this.initial_inner_blueprint = this.initial_href ? this.inner_blueprint_repr() : {};
     };
-    ModelWidget.prototype.add_json_repr_constructor = function (json_repr) {
+    ModelWidget.prototype.add_inner_blueprint_constructor = function (inner_blueprint_repr) {
 	// yes, this modifies the dictionary in place
 	if (this.initial_href) {
-	    json_repr['@patch'] = this.initial_href;
+	    inner_blueprint_repr['@patch'] = this.initial_href;
 	} else {
-	    json_repr['@create'] = this.fqn;
+	    inner_blueprint_repr['@create'] = this.fqn;
 	}
-	return json_repr;
+	return inner_blueprint_repr;
     };
-    ModelWidget.blueprint_repr = function (obj) {
-	// fixme: we could save some bandwidth by doing a similar thing for
-	// elements/attributes as well (right now we just do it for models)
-	var json_repr = obj.json_repr();
-	if (obj.initial_json_repr
-	        && compare_nested_objects(obj.initial_json_repr, json_repr)) {
-	    return {'href': obj.initial_href};
+    ModelWidget.prototype.blueprint_repr = function () {
+	var inner_blueprint = this.inner_blueprint_repr();
+	var initial_inner_blueprint = this.initial_inner_blueprint;
+	// we shouldn't be calling this unless record_initial_inner_blueprint() has been called
+	assert(function () { return !!initial_inner_blueprint; });
+
+	if (compare_nested_objects(initial_inner_blueprint, inner_blueprint)) {
+	    return {'href': this.initial_href};
 	} else {
-	    return {'resource': json_repr};
+	    return {'resource': inner_blueprint};
 	}
     };
 
@@ -113,7 +119,7 @@
             '50x50': resolved_urn + '?view=image&amp;max_size=50,50'
         };
     };
-    UrnPictureSource.prototype.blueprint = function () {
+    UrnPictureSource.prototype.inner_blueprint_repr = function () {
         return {'@patch': this.urn};
     };
     UrnPictureSource.prototype.clone = function () {
@@ -132,7 +138,7 @@
             '1024x1024': this.flickr_photo.large_url
         };
     };
-    FlickrPictureSource.prototype.blueprint = function () {
+    FlickrPictureSource.prototype.inner_blueprint_repr = function () {
         return {
 	    '@create': PictureModelWidget.prototype.fqn,
 	    'flickr_photo_id': this.flickr_photo.id
@@ -159,17 +165,11 @@
 
         this.elt.append(this._picture_widget.elt);
 
-	this.record_initial_json_repr();
+	this.record_initial_inner_blueprint();
     }
     PictureModelWidget.prototype = chain_clone(ModelWidget.prototype);
-    PictureModelWidget.prototype.json_repr = function () {
-	if (!this._picture_widget._picture_source) {
-	    throw {
-		name: 'json_repr_error',
-		message: 'Not all pictures are filled in'
-	    };
-	}
-	var repr = this._picture_widget._picture_source.blueprint();
+    PictureModelWidget.prototype.inner_blueprint_repr = function () {
+	var repr = this._picture_widget._picture_source.inner_blueprint_repr();
 	if (this._picture_widget.net_rotation)
 	    repr.net_rotation = this._picture_widget.net_rotation;
 	return repr;
@@ -397,10 +397,10 @@
             this._set_state_empty();
         }
 
-        // we don't call this.record_initial_json_repr() since we never call blueprint_repr() on this object
+        // we don't call this.record_initial_inner_blueprint() since we override blueprint_repr() directly (see below)
     }
     AudioWidget.prototype = chain_clone(ModelWidget.prototype);
-    AudioWidget.prototype.json_repr = function () {
+    AudioWidget.prototype.blueprint_repr = function () {
         if (this.file) {
             alert('Please upload all audio before attempting to save');
             throw 'File has not been uploaded yet.';
@@ -736,7 +736,7 @@
     SaveWidget.prototype = chain_clone(Widget.prototype);
     SaveWidget.prototype.perform_save = function (save_and_return) {
 	var this_ = this;
-	var blueprint = JSON.stringify(ModelWidget.blueprint_repr(this.toplevel_blueprint_object));
+	var blueprint = JSON.stringify(this.toplevel_blueprint_object.blueprint_repr());
 	this.elt.block({ message: "saving ..." });
         $.ajax({
 	    url: this.destination_chooser.get_destination().get_pathname(),

@@ -61,10 +61,10 @@ $(function () {
             this.input.val(phrase.resource.phrase.text);
         this.elt.append(this.input);
 
-        this.record_initial_json_repr();
+        this.record_initial_inner_blueprint();
     }
     PhraseWidget.prototype = chain_clone(ModelWidget.prototype);
-    PhraseWidget.prototype.json_repr = function () {
+    PhraseWidget.prototype.inner_blueprint_repr = function () {
         return {
 	    '@create': PhraseWidget.prototype.fqn,
 	    'phrase': {text: this.input.val()}
@@ -240,9 +240,9 @@ $(function () {
         this.set_from_json(fcs);
     }
     FlashcardSide.prototype = chain_clone(Widget.prototype);
-    FlashcardSide.prototype.json_repr = function () {
+    FlashcardSide.prototype.blueprint_repr = function () {
         if (this.wrapped) {
-            return ModelWidget.blueprint_repr(this.wrapped);
+            return this.wrapped.blueprint_repr();
         } else {
             return {resource: null};
         }
@@ -280,7 +280,7 @@ $(function () {
     };
     FlashcardSide.widgets = [
         ['picture', PictureModelWidget],
-        //['audio', AudioWidget], // fixme: AudioWidget's json_repr is all messed up.  see audio.json_repr()
+        //['audio', AudioWidget],
         ['phrase', PhraseWidget]
     ];
     FlashcardSide.widgets_by_fqn = {};
@@ -302,15 +302,15 @@ $(function () {
             return this_.elt.find("td");
         });
 
-        this.record_initial_json_repr();
+        this.record_initial_inner_blueprint();
     }
     Flashcard.prototype = chain_clone(ModelWidget.prototype);
-    Flashcard.prototype.json_repr = function () {
+    Flashcard.prototype.inner_blueprint_repr = function () {
         var sides = [];
         this.elt.find("td").children().each(function (i) {
-            sides.push($(this).data("widget_object").json_repr());
+            sides.push($(this).data("widget_object").blueprint_repr());
         });
-        return this.add_json_repr_constructor({ sides: { array: sides } });
+        return this.add_inner_blueprint_constructor({ sides: { array: sides } });
     };
     Flashcard.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}flashcard';
     Flashcard.prototype.ui_widget = function () {
@@ -342,11 +342,11 @@ $(function () {
             this.answer.val(ci.resource.answer);
         }
 
-        this.record_initial_json_repr();
+        this.record_initial_inner_blueprint();
     }
     ChoiceInteractionWidget.prototype = chain_clone(ModelWidget.prototype);
-    ChoiceInteractionWidget.prototype.json_repr = function () {
-        return this.add_json_repr_constructor({
+    ChoiceInteractionWidget.prototype.inner_blueprint_repr = function () {
+        return this.add_inner_blueprint_constructor({
             prompt: this.prompt.val(),
             answer: this.answer.val()
         });
@@ -372,10 +372,10 @@ $(function () {
         }
     }
     InteractionChooserWidget.prototype = chain_clone(InteractionChooserWidget.prototype);
-    InteractionChooserWidget.prototype.json_repr = function () {
+    InteractionChooserWidget.prototype.blueprint_repr = function () {
         var interactions = [];
         this.interactions.children().each(function () {
-            interactions.push(ModelWidget.blueprint_repr($(this).children().first().data("widget_object")));
+            interactions.push($(this).children().first().data("widget_object").blueprint_repr());
         });
         return { array: interactions };
     };
@@ -446,22 +446,22 @@ $(function () {
         this.interaction_chooser = new InteractionChooserWidget(fcd.resource.interactions);
         this.interaction_chooser.elt.appendTo(this.elt);
 
-        this.record_initial_json_repr();
+        this.record_initial_inner_blueprint();
     }
     FlashcardDeck.prototype = chain_clone(ModelWidget.prototype);
-    FlashcardDeck.prototype.json_repr = function () {
+    FlashcardDeck.prototype.inner_blueprint_repr = function () {
         var cards = [];
         $.each(this.rows, function (i, row) {
-            cards.push(ModelWidget.blueprint_repr(row));
+            cards.push(row.blueprint_repr());
         });
         var headings = [];
         $.each(this.columns, function (i, column) {
             headings.push({text: column.heading});
         });
-        return this.add_json_repr_constructor({
+        return this.add_inner_blueprint_constructor({
             cards: {array: cards},
             headings: {array: headings},
-            interactions: this.interaction_chooser.json_repr()
+            interactions: this.interaction_chooser.blueprint_repr()
         });
     };
     FlashcardDeck.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}flashcard_deck';
