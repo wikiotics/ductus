@@ -14,15 +14,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gridfs import GridFS, NoFile
+# Note: We do not import gridfs in the global namespace of this module to
+# prevent ImportError's when it is not installed
 
 from ductus.util import iterate_file_object
 
 class GridfsStorageBackend(object):
     def __init__(self, db, collection_name="storage"):
+        from gridfs import GridFS
         self.fs = GridFS(db, collection_name)
 
     def __get_file_object(self, key):
+        from gridfs import NoFile
         try:
             return self.fs.get_version(filename=key)
         except NoFile:
