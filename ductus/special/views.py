@@ -79,6 +79,20 @@ def version(request, pagename):
     from django.http import HttpResponse
     return HttpResponse("version %s" % DUCTUS_VERSION, content_type="text/plain")
 
+@register_special_page
+def user_count(request, pagename):
+    from django.contrib.auth.models import User
+    from django.http import HttpResponse
+    from django.db.models import F
+    from datetime import datetime, timedelta
+    week_ago = datetime.now() - timedelta(days=7)
+    statements = [
+        "There are {0} registered users.".format(User.objects.count()),
+        "{0} of those users have at some point returned to the site.".format(User.objects.filter(last_login__gt=(F('date_joined') + timedelta(days=1))).count()),
+        "{0} have returned in the past week.".format(User.objects.filter(last_login__gte=week_ago).count()),
+    ]
+    return HttpResponse("\n".join(statements), content_type="text/plain")
+
 __django_specialpages = (
     'create_account',
     'account_settings',
