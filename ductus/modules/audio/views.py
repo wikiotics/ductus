@@ -36,6 +36,10 @@ from ductus.util import iterator_to_tempfile
 
 AUDIO_CONVERSION_COMMANDS = getattr(settings, "AUDIO_CONVERSION_COMMANDS", None) or {}
 
+available_audio_formats = {}
+for __in, __out in AUDIO_CONVERSION_COMMANDS.keys():
+    available_audio_formats.setdefault(__in, []).append(__out)
+
 @register_creation_view(Audio)
 def new_audio(request):
     if request.method == 'POST':
@@ -64,7 +68,9 @@ def view_audio(request):
 
 @register_view(Audio)
 def view_audio_info(request):
-    return render_to_response('audio/display.html', {}, RequestContext(request))
+    return render_to_response('audio/display.html', {
+        'available_audio_formats': available_audio_formats,
+    }, RequestContext(request))
 
 @register_view(Audio, 'edit')
 def edit_audio(request):
