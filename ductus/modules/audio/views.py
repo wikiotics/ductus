@@ -14,19 +14,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+from shutil import rmtree
+import subprocess
+from tempfile import mkdtemp
+
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.conf import settings
 
 from ductus.resource.ductmodels import BlueprintSaveContext
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
-from ductus.wiki.mediacache import mediacache_redirect
+from ductus.wiki.mediacache import mediacache_redirect, mime_to_ext
 from ductus.decorators import unvarying
-
 from ductus.modules.audio.ductmodels import Audio
 from ductus.modules.audio.forms import AudioImportForm
 from ductus.util.http import render_json_response
+from ductus.util import iterator_to_tempfile
+
+AUDIO_CONVERSION_COMMANDS = getattr(settings, "AUDIO_CONVERSION_COMMANDS", None) or {}
 
 @register_creation_view(Audio)
 def new_audio(request):
@@ -71,7 +79,29 @@ def mediacache_audio(blob_urn, mime_type, additional_args, audio):
     if blob_urn != audio.blob.href:
         return None
 
-    if mime_type != audio.blob.mime_type:
-        return None # we don't support conversion (yet)
+    if mime_type == audio.blob.mime_type:
+        return iter(audio.blob)
 
-    return iter(audio.blob)
+    input_suffix = '.' + mime_to_ext[audio.blob.mime_type]
+    output_suffix = '.' + mime_to_ext[mime_type]
+    try:
+        cmd = AUDIO_CONVERSION_COMMANDS[(audio.blob.mime_type, mime_type)]
+    except KeyError:
+        return None # we don't support this converstion
+    else:
+        input_filename = iterator_to_tempfile(iter(audio.blob), suffix=input_suffix)
+        try:
+            tmpdir = mkdtemp()
+            def delete_tmpdir(filename=None):
+                rmtree(tmpdir, ignore_errors=True)
+            output_filename = os.path.join(tmpdir, "audio" + output_suffix)
+            cmd = cmd.format(input_filename=input_filename,
+                             output_filename=output_filename)
+            try:
+                subprocess.check_call(cmd, shell=True)
+            except Exception:
+                delete_tmpdir()
+                raise
+            return iterate_file_then_delete(output_filename, delete_func=delete_tmpdir)
+        finally:
+            os.remove(input_filename)

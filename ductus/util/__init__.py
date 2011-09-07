@@ -44,7 +44,11 @@ def iterate_file(filename):
                 return
             yield x
 
-def iterate_file_then_delete(filename, ignore_failed_delete=True):
+def _default_delete_func(filename):
+    with ignore(OSError):
+        os.remove(filename)
+
+def iterate_file_then_delete(filename, delete_func=_default_delete_func):
     """Reads a binary file in chunks and then deletes it.
 
     Delete occurs when the iterator is garbage-collected or if an exception
@@ -60,11 +64,7 @@ def iterate_file_then_delete(filename, ignore_failed_delete=True):
                 yield data
         finally:
             del data_iterator
-            try:
-                os.remove(filename)
-            except OSError:
-                if not ignore_failed_delete:
-                    raise
+            delete_func(filename)
 
     retval = gen()
     retval.next() # Execute the generator until the first yield statement.
@@ -73,12 +73,12 @@ def iterate_file_then_delete(filename, ignore_failed_delete=True):
                   # garbage-collected before it is used.
     return retval
 
-def iterator_to_tempfile(data_iterator):
+def iterator_to_tempfile(data_iterator, **kwargs):
     """Saves an iterator to a new temporary file.
 
     Returns: the name of the file
     """
-    fd, tmpfile = mkstemp()
+    fd, tmpfile = mkstemp(**kwargs)
     f = os.fdopen(fd, 'wb')
     try:
         try:
