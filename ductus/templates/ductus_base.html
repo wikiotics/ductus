@@ -13,6 +13,8 @@
     <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/base.js"></script>
     <script type="text/javascript">
       var ductus_media_prefix = '{{ ductus_media_prefix }}';
+      var ductus_mediacache_prefix = '{{ ductus_mediacache_prefix }}';
+      var ductus_mime_to_ext = {% load jsonize %}{{ ductus_mime_to_ext|jsonize }};
       var RecaptchaOptions = {'theme': 'white', 'lang': '{{ LANGUAGE_CODE|slice:':2' }}'};
       {% block javascript %}{% endblock %}
     </script>

@@ -9,16 +9,11 @@
 <script type="text/javascript">
 var resource_json = {{ request.ductus.resource|resource_json }};
 $(function () {
-    var audio_mime_map = {
-        "audio/mp4": "m4a",
-        "audio/ogg": "oga"
-    };
-
-    var filetype = audio_mime_map[resource_json.resource.blob.mime_type];
+    var filetype = ductus_mime_to_ext[resource_json.resource.blob.mime_type];
     $("#ductus_audio").jPlayer({
         ready: function () {
             media_map = {};
-            media_map[filetype] = resolve_urn(resource_json.href) + "?view=audio";
+            media_map[filetype] = resolve_mediacache_urn(resource_json);
             $(this).jPlayer("setMedia", media_map);
             // autoplay
             $(this).jPlayer("play");

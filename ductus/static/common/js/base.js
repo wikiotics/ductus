@@ -2,6 +2,15 @@ function resolve_urn(urn) {
     return '/' + urn.split(':').join('/');
 }
 
+function resolve_mediacache_urn(resource, mime_type, additional_args) {
+    var split_urn = resource.resource.blob.href.split(':');
+    var hash_type = split_urn[1];
+    var digest = split_urn[2];
+    var dotstr = additional_args ? '.' + additional_args : '';
+    var mime_ext = ductus_mime_to_ext[mime_type || resource.resource.blob.mime_type];
+    return ductus_mediacache_prefix + hash_type + '/' + digest + dotstr + '.' + mime_ext + '?' + resource.href;
+}
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {

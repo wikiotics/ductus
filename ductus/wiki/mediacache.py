@@ -53,7 +53,7 @@ _legal_additional_args_re = re.compile(r'^[\w]*$')
 
 @unvarying
 def mediacache_django_view(request, pathname):
-    if MEDIACACHE_VIEW_DISABLED or not settings.DUCTUS_MEDIACACHE_URL:
+    if MEDIACACHE_VIEW_DISABLED:
         raise Http404("mediacache view is not enabled")
 
     return _mediacache_view(pathname, request.META['QUERY_STRING'])
@@ -99,12 +99,11 @@ def _mediacache_view(pathname, query_string):
     return _do_mediacache_view_serve(blob_urn, mime_type, additional_args, resource)
 
 def mediacache_redirect(request, blob_urn, mime_type, additional_args, resource):
-    """Redirect to or serve a mediacache resource (depending on settings)
+    """Redirect to a mediacache resource
 
-    If DUCTUS_MEDIACACHE_URL is defined, this will issue a redirect to the
-    mediacache url that serves this resource.  Otherwise, the resource will be
-    served directly.  The latter should only be used for debugging, as Django
-    is 'not meant to serve static files.'
+    This will issue a redirect to the mediacache url that serves this resource,
+    given by DUCTUS_MEDIACACHE_URL.  If DUCTUS_MEDIACACHE_URL is not defined,
+    it will be assumed to be '/mediacache'.
     """
 
     # as an additional layer of protection, make sure each mediacache module
@@ -113,28 +112,21 @@ def mediacache_redirect(request, blob_urn, mime_type, additional_args, resource)
         if not _legal_additional_args_re.match(additional_args):
             raise Exception("illegal characters given in additional_args!")
 
-    if settings.DUCTUS_MEDIACACHE_URL:
-        hash_type, digest = split_urn(blob_urn)
+    hash_type, digest = split_urn(blob_urn)
 
-        pathname = "%s/%s%s.%s" % (hash_type, digest,
-                                   _dotstr(additional_args),
-                                   mime_to_ext[mime_type])
+    pathname = "%s/%s%s.%s" % (hash_type, digest,
+                               _dotstr(additional_args),
+                               mime_to_ext[mime_type])
 
-        if request.is_secure() and getattr(settings, "DUCTUS_MEDIACACHE_URL_SECURE", None):
-            mediacache_url = settings.DUCTUS_MEDIACACHE_URL_SECURE
-        else:
-            mediacache_url = settings.DUCTUS_MEDIACACHE_URL
-
-        url = "%s/%s?%s" % (mediacache_url, pathname, resource.urn)
-        return HttpResponseRedirect(url)
-
+    if request.is_secure() and getattr(settings, "DUCTUS_MEDIACACHE_URL_SECURE", None):
+        mediacache_url = settings.DUCTUS_MEDIACACHE_URL_SECURE
+    elif settings.DUCTUS_MEDIACACHE_URL:
+        mediacache_url = settings.DUCTUS_MEDIACACHE_URL
     else:
-        # try to get from filesystem
-        data_iterator = get(blob_urn, mime_type, additional_args)
-        if data_iterator:
-            return HttpResponse(list(data_iterator), content_type=mime_type) # see django #6527
+        mediacache_url = '/mediacache'
 
-        return _do_mediacache_view_serve(blob_urn, mime_type, additional_args, resource)
+    url = "%s/%s?%s" % (mediacache_url, pathname, resource.urn)
+    return HttpResponseRedirect(url)
 
 def _do_mediacache_view_serve(blob_urn, mime_type, additional_args, resource):
     # call the mediacache view to generate the bits
