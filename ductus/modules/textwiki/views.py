@@ -60,7 +60,7 @@ def add_author_and_log_message(request, resource):
         resource.common.author.text = request.remote_addr
     resource.common.log_message.text = request.POST.get('log_message', '')
 
-@register_creation_view(Wikitext)
+@register_creation_view(Wikitext, description=ugettext_lazy('a "regular" text-based wiki page, using wiki-creole as markup'))
 @register_view(Wikitext, 'edit')
 def edit_textwiki(request):
     resource_database = get_resource_database()

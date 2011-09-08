@@ -297,10 +297,15 @@ def view_wikipage(request, prefix, pagename):
     return response
 
 def implicit_new_wikipage(request, prefix, pagename):
+    creation_views = sorted(registered_creation_views.values(), key=lambda v: v.name)
+    # work around not having `do_not_call_in_templates` in django < 1.4
+    creation_views = [{'name': v.name, 'description': v.description}
+                      for v in creation_views]
     c = RequestContext(request, {
         'absolute_pagename': join_pagename(prefix, pagename),
-        'creation_views': registered_creation_views.keys(),
+        'creation_views': creation_views,
     })
+    print sorted(registered_creation_views.values(), key=lambda v: v.name)
     check_create_permission(request, prefix, pagename)
     t = loader.get_template('wiki/implicit_new_wikipage.html')
     return HttpResponse(t.render(c), status=404)

@@ -21,6 +21,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import QueryDict, HttpResponse
 from django.core.paginator import Paginator
+from django.utils.translation import ugettext_lazy
 
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view, register_view
@@ -30,7 +31,7 @@ from ductus.modules.picture.ductmodels import Picture
 from ductus.modules.picture.flickr import flickr, FlickrPhoto, license_map, url_format_map, valid_sort_methods, FlickrUriHandler
 from ductus.modules.picture.forms import PictureRotationForm, PictureImportForm
 
-@register_creation_view(Picture)
+@register_creation_view(Picture, description=ugettext_lazy('a standalone image'))
 def new_picture(request):
     if request.GET.get('view') == 'flickr_search':
         return flickr_search_view(request)

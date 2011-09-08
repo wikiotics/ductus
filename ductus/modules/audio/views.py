@@ -23,6 +23,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
+from django.utils.translation import ugettext_lazy
 
 from ductus.resource.ductmodels import BlueprintSaveContext
 from ductus.wiki import SuccessfulEditRedirect
@@ -40,7 +41,7 @@ available_audio_formats = {}
 for __in, __out in AUDIO_CONVERSION_COMMANDS.keys():
     available_audio_formats.setdefault(__in, []).append(__out)
 
-@register_creation_view(Audio)
+@register_creation_view(Audio, description=ugettext_lazy('a standalone audio file'))
 def new_audio(request):
     if request.method == 'POST':
         form = AudioImportForm(request.POST, request.FILES)
