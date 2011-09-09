@@ -1,7 +1,7 @@
 {% extends "ductus_document.html" %}
 {% block content %}
 There exists no page at <tt>{{ absolute_pagename }}</tt>, so you must create one to move forward.  Please choose a type of page to create:
-<dl>
+<dl class="ductus_creation_views">
 {% for creation_view in creation_views %}
 <dt><a href="/new/{{ creation_view.name|urlencode }}?target={{ absolute_pagename|urlencode }}">{{ creation_view.name }}</a></dt>
 <dd>{{ creation_view.description }}</dd>

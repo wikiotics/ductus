@@ -142,6 +142,16 @@ a.broken {
     max-width: 30em;
 }
 
+dl.ductus_creation_views {
+    padding-left: 2em;
+}
+dl.ductus_creation_views dd {
+    color: #666;
+    margin-left: 0;
+    padding-left: 2em;
+    margin-bottom: 1em;
+}
+
 .clear {
     clear: both;
 }
