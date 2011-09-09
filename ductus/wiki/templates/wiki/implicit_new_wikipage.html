@@ -1,9 +1,11 @@
 {% extends "ductus_document.html" %}
+{% load underscores %}
+
 {% block content %}
 There exists no page at <tt>{{ absolute_pagename }}</tt>, so you must create one to move forward.  Please choose a type of page to create:
 <dl class="ductus_creation_views">
 {% for creation_view in creation_views %}
-<dt><a href="/new/{{ creation_view.name|urlencode }}?target={{ absolute_pagename|urlencode }}">{{ creation_view.name }}</a></dt>
+<dt><a href="/new/{{ creation_view.name|urlencode }}?target={{ absolute_pagename|urlencode }}">{{ creation_view.name|underscores_to_spaces }}</a></dt>
 <dd>{{ creation_view.description }}</dd>
 {% endfor %}
 </dl>
