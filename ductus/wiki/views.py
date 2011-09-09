@@ -297,7 +297,11 @@ def view_wikipage(request, prefix, pagename):
     return response
 
 def implicit_new_wikipage(request, prefix, pagename):
-    creation_views = sorted(registered_creation_views.values(), key=lambda v: v.name)
+    order = dict([(x, i + 1) for i, x in enumerate(['wikitext', 'lesson', 'standalone-media'])])
+    def sort_key(creation_view):
+        given_order = order.get(creation_view.name, None) or order.get(creation_view.category, None) or (len(order) + 1)
+        return (given_order, creation_view.name)
+    creation_views = sorted(registered_creation_views.values(), key=sort_key)
     # work around not having `do_not_call_in_templates` in django < 1.4
     creation_views = [{'name': v.name, 'description': v.description}
                       for v in creation_views]
@@ -305,7 +309,6 @@ def implicit_new_wikipage(request, prefix, pagename):
         'absolute_pagename': join_pagename(prefix, pagename),
         'creation_views': creation_views,
     })
-    print sorted(registered_creation_views.values(), key=lambda v: v.name)
     check_create_permission(request, prefix, pagename)
     t = loader.get_template('wiki/implicit_new_wikipage.html')
     return HttpResponse(t.render(c), status=404)

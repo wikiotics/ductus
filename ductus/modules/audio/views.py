@@ -41,7 +41,7 @@ available_audio_formats = {}
 for __in, __out in AUDIO_CONVERSION_COMMANDS.keys():
     available_audio_formats.setdefault(__in, []).append(__out)
 
-@register_creation_view(Audio, description=ugettext_lazy('a standalone audio file'))
+@register_creation_view(Audio, description=ugettext_lazy('a standalone audio file'), category='standalone-media')
 def new_audio(request):
     if request.method == 'POST':
         form = AudioImportForm(request.POST, request.FILES)

@@ -31,7 +31,7 @@ from ductus.modules.picture.ductmodels import Picture
 from ductus.modules.picture.flickr import flickr, FlickrPhoto, license_map, url_format_map, valid_sort_methods, FlickrUriHandler
 from ductus.modules.picture.forms import PictureRotationForm, PictureImportForm
 
-@register_creation_view(Picture, description=ugettext_lazy('a standalone image'))
+@register_creation_view(Picture, description=ugettext_lazy('a standalone image'), category='standalone-media')
 def new_picture(request):
     if request.GET.get('view') == 'flickr_search':
         return flickr_search_view(request)

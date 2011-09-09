@@ -22,7 +22,7 @@ from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki.views import handle_blueprint_post
 from ductus.modules.phrase_choice.ductmodels import PhraseChoiceLesson
 
-@register_creation_view(PhraseChoiceLesson, description=ugettext_lazy('a phrase is displayed as a prompt with four other phrases as possible answers (this will soon be deprecated in favor of the new flashcard lesson format)'))
+@register_creation_view(PhraseChoiceLesson, description=ugettext_lazy('a phrase is displayed as a prompt with four other phrases as possible answers (this will soon be deprecated in favor of the new flashcard lesson format)'), category='lesson')
 @register_view(PhraseChoiceLesson, 'edit')
 def edit_phrase_choice_lesson(request):
     if request.method == 'POST':

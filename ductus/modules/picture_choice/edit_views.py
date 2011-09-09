@@ -23,7 +23,7 @@ from ductus.wiki.views import handle_blueprint_post
 from ductus.wiki import get_writable_directories_for_user
 from ductus.modules.picture_choice.ductmodels import PictureChoiceLesson
 
-@register_creation_view(PictureChoiceLesson, description=ugettext_lazy('a phrase is displayed as a prompt with four pictures as possible answers (this will soon be deprecated in favor of the new flashcard lesson format)'))
+@register_creation_view(PictureChoiceLesson, description=ugettext_lazy('a phrase is displayed as a prompt with four pictures as possible answers (this will soon be deprecated in favor of the new flashcard lesson format)'), category='lesson')
 @register_view(PictureChoiceLesson, 'edit')
 def edit_picture_choice_lesson(request):
     if request.method == 'POST':

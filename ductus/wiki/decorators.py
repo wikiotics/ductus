@@ -36,7 +36,7 @@ def register_view(model, label=None, requires=(lambda d: d.resource)):
         return func
     return _register_view
 
-def register_creation_view(model, description=None):
+def register_creation_view(model, description=None, category=None):
     def _register_creation_view(func):
         if model.root_name in registered_creation_views:
             raise Exception("A model is already registered with this root_name: %s"
@@ -46,6 +46,7 @@ def register_creation_view(model, description=None):
             return func(*args, **kwargs)
         wrapped_func.name = model.root_name
         wrapped_func.description = description
+        wrapped_func.category = category
         wrapped_func.do_not_call_in_templates = True
         registered_creation_views[model.root_name] = wraps(func, assigned=available_attrs(func))(wrapped_func)
         return func

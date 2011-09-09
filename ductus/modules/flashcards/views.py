@@ -26,7 +26,7 @@ from ductus.modules.flashcards.ductmodels import FlashcardDeck, ChoiceInteractio
 from ductus.modules.flashcards.decorators import register_interaction_view
 from ductus.modules.flashcards import registered_interaction_views
 
-@register_creation_view(FlashcardDeck, description=ugettext_lazy('a flexible lesson type arranged as a series of flashcards in a grid'))
+@register_creation_view(FlashcardDeck, description=ugettext_lazy('a flexible lesson type arranged as a series of flashcards in a grid'), category='lesson')
 @register_view(FlashcardDeck, 'edit')
 def edit_flashcard_deck(request):
     if request.method == 'POST':
