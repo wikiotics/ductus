@@ -253,6 +253,8 @@ class ResourceDatabase(object):
         return self.storage_backend.keys()
 
     def __getitem__(self, key):
+        if not self.is_valid_urn(key):
+            raise KeyError('invalid urn: {0}'.format(repr(key)))
         return self.storage_backend[key]
 
 def determine_header(data_iterator, replace_header=True):
