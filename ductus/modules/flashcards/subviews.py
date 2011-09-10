@@ -20,7 +20,7 @@ from ductus.modules.flashcards.ductmodels import Flashcard, FlashcardDeck
 @register_subview(Flashcard, 'subresources')
 def flashcard_subresources(resource):
     s = set()
-    s.update([side.href for side in resource.sides])
+    s.update([side.href for side in resource.sides if side.href])
     return s
 
 @register_subview(FlashcardDeck, 'subresources')
