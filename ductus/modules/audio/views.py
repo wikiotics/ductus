@@ -18,6 +18,7 @@ import os
 from shutil import rmtree
 import subprocess
 from tempfile import mkdtemp
+import logging
 
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
@@ -36,6 +37,8 @@ from ductus.util.http import render_json_response
 from ductus.util import iterator_to_tempfile, iterate_file_then_delete
 
 AUDIO_CONVERSION_COMMANDS = getattr(settings, "AUDIO_CONVERSION_COMMANDS", None) or {}
+
+logger = logging.getLogger(__name__)
 
 available_audio_formats = {}
 for __in, __out in AUDIO_CONVERSION_COMMANDS.keys():
@@ -102,6 +105,7 @@ def mediacache_audio(blob_urn, mime_type, additional_args, audio):
             def delete_tmpdir(filename=None):
                 rmtree(tmpdir, ignore_errors=True)
             output_filename = os.path.join(tmpdir, "audio" + output_suffix)
+            logger.info("Converting %s to %s", input_filename, output_filename)
             cmd = cmd.format(input_filename=input_filename,
                              output_filename=output_filename)
             try:
