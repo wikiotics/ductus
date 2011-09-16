@@ -111,7 +111,7 @@ def edit_textwiki(request):
         else:
             # blank form, but try to guess the natural language
             try:
-                prefix, pagename = split_pagename(request.GET.get('target'))
+                prefix, pagename = split_pagename(request.GET.get('target', ''))
             except WikiPrefixNotProvided:
                 prefix = None
             if (prefix and
