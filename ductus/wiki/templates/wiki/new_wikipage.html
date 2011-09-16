@@ -1,0 +1,18 @@
+{% extends "ductus_document.html" %}
+{% load underscores %}
+{% load i18n %}
+
+{% block content %}
+<p>
+{% if absolute_pagename %}
+{% blocktrans %}There exists no page at <tt>{{ absolute_pagename }}</tt>, so you must create one to move forward.{% endblocktrans %}
+{% endif %}
+{% trans "Please choose a type of page to create:" %}
+</p>
+<dl class="ductus_creation_views">
+{% for creation_view in creation_views %}
+<dt><a href="/new/{{ creation_view.name|urlencode }}{% if absolute_pagename %}?target={{ absolute_pagename|urlencode }}{% endif %}">{{ creation_view.name|underscores_to_spaces }}</a></dt>
+<dd>{{ creation_view.description }}</dd>
+{% endfor %}
+</dl>
+{% endblock %}
