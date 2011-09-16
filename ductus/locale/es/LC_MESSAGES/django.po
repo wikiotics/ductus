@@ -6,10 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-02 18:31-0500\n"
+"POT-Creation-Date: 2011-09-16 07:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -51,6 +52,114 @@ msgstr ""
 msgid "Creative Commons Attribution 3.0"
 msgstr ""
 
+#: modules/audio/forms.py:70
+msgid ""
+"Unrecognized file type.  Please upload an ogg/vorbis file or mp4/AAC file."
+msgstr ""
+
+#: modules/audio/forms.py:71
+msgid "Not a valid ogg/vorbis file."
+msgstr ""
+
+#: modules/audio/forms.py:72
+msgid "Not a valid low-complexity AAC file in mp4 container."
+msgstr ""
+
+#: modules/audio/forms.py:73
+msgid ""
+"The given file contains a theora (video) stream, but only audio is expected."
+msgstr ""
+
+#: modules/audio/forms.py:74
+#, python-format
+msgid ""
+"The file you chose is too large.  Please select a file that contains fewer "
+"than %d bytes."
+msgstr ""
+
+#: modules/audio/views.py:47
+msgid "a standalone audio file"
+msgstr ""
+
+#: modules/audio/templates/audio/audio_import_form.html:5
+msgid "Please upload an ogg/vorbis file (preferably), or a mp4/aac file."
+msgstr ""
+
+#: modules/audio/templates/audio/audio_import_form.html:9
+msgid "Upload audio file"
+msgstr ""
+
+#: modules/audio/templates/audio/edit.html:6
+msgid ""
+"It is currently not possible to edit an existing audio file in the wiki."
+msgstr ""
+
+#: modules/audio/templates/audio/edit.html:9
+#, python-format
+msgid ""
+"You may instead wish to <a href=\"/new/%(creation_view_key)s?target="
+"%(escaped_page_name)s\">replace this audio file with another recording</a>."
+msgstr ""
+
+#: modules/flashcards/views.py:29
+msgid "a flexible lesson type arranged as a series of flashcards in a grid"
+msgstr ""
+
+#: modules/flashcards/templates/flashcards/choice.html:22
+#, python-format
+msgid ""
+"\n"
+"Frame %(current_frame)s <span id=\"total_frames_text\">of "
+"%(number_of_frames)s</span>\n"
+msgstr ""
+
+#: modules/flashcards/templates/flashcards/choice.html:25
+#: modules/phrase_choice/templates/phrase_choice/lesson.html:47
+#: modules/picture_choice/templates/picture_choice/lesson.html:47
+#, python-format
+msgid ""
+"\n"
+"(%(correct_count)s correct, %(incorrect_count)s incorrect).\n"
+msgstr ""
+
+#: modules/phrase_choice/edit_views.py:25
+msgid ""
+"a phrase is displayed as a prompt with four other phrases as possible "
+"answers (this will soon be deprecated in favor of the new flashcard lesson "
+"format)"
+msgstr ""
+
+#: modules/phrase_choice/templates/phrase_choice/edit_lesson.html:18
+msgid "add phrase choice group"
+msgstr ""
+
+#: modules/phrase_choice/templates/phrase_choice/edit_lesson.html:20
+#: modules/textwiki/templates/textwiki/edit_wiki.html:16
+#: wiki/templates/wiki/unlink_confirm.html:7
+msgid "Log message:"
+msgstr ""
+
+#: modules/phrase_choice/templates/phrase_choice/edit_lesson.html:22
+#: modules/textwiki/templates/textwiki/edit_wiki.html:18
+msgid "Save"
+msgstr ""
+
+#: modules/phrase_choice/templates/phrase_choice/edit_lesson.html:25
+msgid "Save and continue editing"
+msgstr ""
+
+#: modules/phrase_choice/templates/phrase_choice/lesson.html:44
+#: modules/picture_choice/templates/picture_choice/lesson.html:44
+#, python-format
+msgid ""
+"\n"
+"Frame %(current_frame)s of %(number_of_frames)s\n"
+msgstr ""
+
+#: modules/picture/edit_views.py:34
+msgid "a standalone image"
+msgstr ""
+
 #: modules/picture/flickr.py:126
 msgid "a URL from Flickr"
 msgstr ""
@@ -64,52 +173,38 @@ msgstr ""
 msgid "This photo is not available under an acceptable license for this wiki."
 msgstr ""
 
-#: modules/picture/forms.py:56
+#: modules/picture/forms.py:57
 msgid "Unrecogized uri type"
 msgstr ""
 
-#: modules/picture/forms.py:75
+#: modules/picture/forms.py:76
 msgid "a URN available on this site"
 msgstr ""
 
-#: modules/picture/forms.py:95
+#: modules/picture/forms.py:96
 msgid "This urn cannot be found on the server you are currently accessing."
 msgstr ""
 
-#: modules/picture/forms.py:99
+#: modules/picture/forms.py:100
 msgid "This urn represents content that is not a picture."
 msgstr ""
 
-#: modules/picture_choice/templates/picture_choice/edit_lesson.html:16
+#: modules/picture_choice/edit_views.py:26
+msgid ""
+"a phrase is displayed as a prompt with four pictures as possible answers "
+"(this will soon be deprecated in favor of the new flashcard lesson format)"
+msgstr ""
+
+#: modules/picture_choice/templates/picture_choice/edit_lesson.html:20
 msgid "add picture choice group"
-msgstr ""
-
-#: modules/picture_choice/templates/picture_choice/edit_lesson.html:18
-#: modules/textwiki/templates/textwiki/edit_wiki.html:16
-msgid "Log message:"
-msgstr ""
-
-#: modules/picture_choice/templates/picture_choice/edit_lesson.html:19
-#: modules/textwiki/templates/textwiki/edit_wiki.html:18
-msgid "Save"
-msgstr ""
-
-#: modules/picture_choice/templates/picture_choice/lesson.html:44
-#, python-format
-msgid ""
-"\n"
-"Frame %(current_frame)s of %(number_of_frames)s\n"
-msgstr ""
-
-#: modules/picture_choice/templates/picture_choice/lesson.html:47
-#, python-format
-msgid ""
-"\n"
-"(%(correct_count)s correct, %(incorrect_count)s incorrect).\n"
 msgstr ""
 
 #: modules/textwiki/views.py:44
 msgid "Unspecified"
+msgstr ""
+
+#: modules/textwiki/views.py:63
+msgid "a \"regular\" text-based wiki page, using wiki-creole as markup"
 msgstr ""
 
 #: modules/textwiki/templates/textwiki/edit_wiki.html:12
@@ -120,35 +215,43 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: templates/ductus_base.html:46
+#: special/templates/special/recent_changes.html:17
+msgid "&laquo; Newer"
+msgstr ""
+
+#: special/templates/special/recent_changes.html:18
+msgid "Older &raquo;"
+msgstr ""
+
+#: templates/ductus_base.html:47
 msgid "Log out"
 msgstr ""
 
-#: templates/ductus_base.html:49 templates/registration/login.html:20
+#: templates/ductus_base.html:50 templates/registration/login.html:20
 msgid "Log in"
 msgstr ""
 
-#: templates/ductus_base.html:72
+#: templates/ductus_base.html:74
 msgid "user interface language:"
 msgstr ""
 
-#: templates/ductus_base.html:78
-msgid "Go"
+#: templates/ductus_base.html:80
+msgid "Apply"
 msgstr ""
 
-#: templates/ductus_base.html:81
+#: templates/ductus_base.html:83
 #, python-format
 msgid ""
 "%(ductus_site_name)s is powered by <a href=\"http://ductus.us/\">Ductus</a>."
 msgstr ""
 
-#: templates/ductus_base.html:82
+#: templates/ductus_base.html:84
 #, python-format
 msgid ""
-"All contributions to this wiki will be licensed under the <a href=\"%"
-"(ductus_default_license)s\">%(default_license_name)s</a> license.  Certain "
-"pieces of content may be available under a more permissive license; see a "
-"specific document's license information page for details."
+"All contributions to this wiki will be licensed under the <a href="
+"\"%(ductus_default_license)s\">%(default_license_name)s</a> license.  "
+"Certain pieces of content may be available under a more permissive license; "
+"see a specific document's &lsquo;credits&rsquo; page for details."
 msgstr ""
 
 #: templates/ductus_base_error.html:5
@@ -166,28 +269,32 @@ msgstr ""
 msgid "You are viewing a URN.  This page is static and will never change."
 msgstr ""
 
-#: templates/ductus_document.html:24
-msgid "Document"
+#: templates/ductus_document.html:31
+msgid "document"
 msgstr ""
 
-#: templates/ductus_document.html:28
-msgid "Edit"
-msgstr ""
-
-#: templates/ductus_document.html:29
-msgid "Copy"
-msgstr ""
-
-#: templates/ductus_document.html:30
-msgid "Delete"
-msgstr ""
-
-#: templates/ductus_document.html:34
-msgid "History"
+#: templates/ductus_document.html:35
+msgid "edit"
 msgstr ""
 
 #: templates/ductus_document.html:36
-msgid "More views"
+msgid "copy"
+msgstr ""
+
+#: templates/ductus_document.html:37
+msgid "delete"
+msgstr ""
+
+#: templates/ductus_document.html:41
+msgid "history"
+msgstr ""
+
+#: templates/ductus_document.html:43
+msgid "credits"
+msgstr ""
+
+#: templates/ductus_document.html:45
+msgid "more views"
 msgstr ""
 
 #: templates/registration/create_user.html:9
@@ -241,8 +348,8 @@ msgstr ""
 #: templates/registration/password_reset_confirm.html:14
 #, python-format
 msgid ""
-"The link you followed is invalid or expired.  You may wish to <a href=\"%"
-"(password_reset_url)s\">request that your password be reset</a> again."
+"The link you followed is invalid or expired.  You may wish to <a href="
+"\"%(password_reset_url)s\">request that your password be reset</a> again."
 msgstr ""
 
 #: templates/registration/password_reset_done.html:5
@@ -271,7 +378,7 @@ msgid ""
 "Created user %(username)s.  Now you may <a href=\"%(login_url)s\">log in</a>."
 msgstr ""
 
-#: user/views.py:75
+#: user/views.py:76
 msgid "Your account settings have been updated."
 msgstr ""
 
@@ -288,28 +395,60 @@ msgstr ""
 msgid "A user or IP address must be given when saving a revision"
 msgstr ""
 
-#: wiki/views.py:41
+#: wiki/views.py:47
 msgid "en:main_page"
 msgstr ""
 
-#: wiki/views.py:361
+#: wiki/views.py:417
 msgid "Target page name"
 msgstr ""
 
-#: wiki/views.py:361
+#: wiki/views.py:417
 msgid "wiki location of the new resource"
 msgstr ""
 
-#: wiki/views.py:368
+#: wiki/views.py:424
 msgid "source resource does not exist"
 msgstr ""
 
-#: wiki/views.py:388
+#: wiki/views.py:444
 msgid "Invalid page name"
 msgstr ""
 
-#: wiki/views.py:390
+#: wiki/views.py:446
 msgid "you do not have permission to create/write to this resource"
+msgstr ""
+
+#: wiki/templates/wiki/new_wikipage.html:8
+#, python-format
+msgid ""
+"There exists no page at <tt>%(absolute_pagename)s</tt>, so you must create "
+"one to move forward."
+msgstr ""
+
+#: wiki/templates/wiki/new_wikipage.html:10
+msgid "Please choose a type of page to create:"
+msgstr ""
+
+#: wiki/templates/wiki/no_create_permission.html:5
+msgid "This page does not exist, and you do not have permission to create it."
+msgstr ""
+
+#: wiki/templates/wiki/no_edit_permission.html:5
+msgid "You do not have permission to edit this page."
+msgstr ""
+
+#: wiki/templates/wiki/no_unlink_permission.html:5
+msgid "You do not have permission to delete this page."
+msgstr ""
+
+#: wiki/templates/wiki/unlink_confirm.html:9
+msgid "Delete"
+msgstr ""
+
+#: wiki/templates/wiki/unlink_deleted.html:5
+#, python-format
+msgid "The page at <tt>%(absolute_pagename)s</tt> has been deleted."
 msgstr ""
 
 #: wiki/templates/wiki/view_index.html:5
