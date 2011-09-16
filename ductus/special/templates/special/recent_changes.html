@@ -14,8 +14,8 @@
 {% endfor %}
 </ul>
 <div>
-   {% if page_obj.has_previous %}<div style="float: left"><a href="?page={{ page_obj.previous_page_number }}">{% trans "&laquo; Newer" %}</a></div>{% endif %}
-   {% if page_obj.has_next %}<div style="float: right"><a href="?page={{ page_obj.next_page_number }}">{% trans "Older &raquo;" %}</a></div>{% endif %}
+   {% if page_obj.has_previous %}<div style="float: left"><a href="?page={{ page_obj.previous_page_number }}" rel="prev">{% trans "&laquo; Newer" %}</a></div>{% endif %}
+   {% if page_obj.has_next %}<div style="float: right"><a href="?page={{ page_obj.next_page_number }}" rel="next">{% trans "Older &raquo;" %}</a></div>{% endif %}
 </div>
 <div class="clear"></div>
 {% endblock %}
