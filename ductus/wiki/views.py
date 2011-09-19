@@ -405,6 +405,18 @@ class UrnWikiNamespace(BaseWikiNamespace):
 
 UrnWikiNamespace('urn')
 
+class NewPageNamespace(BaseWikiNamespace):
+    def __init__(self):
+        super(NewPageNamespace, self).__init__('new')
+
+    def page_exists(self, pagename):
+        return bool(pagename in registered_creation_views)
+
+    def view_page(self, request, pagename):
+        return creation_view(request, pagename)
+
+NewPageNamespace()
+
 @register_view(None, 'copy')
 def view_copy_resource(request):
     """Copies/forks the resource to a new location on the wiki
