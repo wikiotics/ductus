@@ -107,6 +107,21 @@
 	    return {'resource': inner_blueprint};
 	}
     };
+    ModelWidget.prototype.get_outstanding_presave_steps = function () {
+        return [];
+    };
+    ModelWidget.combine_presave_steps = function (widgets, additional_steps) {
+        var i, rv = [];
+        for (i = 0; i < widgets.length; ++i) {
+            $.merge(rv, widgets[i].get_outstanding_presave_steps());
+        }
+        if (additional_steps) {
+            for (i = 0; i < additional_steps.length; ++i) {
+                rv.push(additional_steps[i]);
+            }
+        }
+        return rv;
+    };
 
     function UrnPictureSource(urn) {
         this.urn = urn;
@@ -337,11 +352,6 @@
 		data: "view=flickr_search&" + $(this).serialize(),
 		dataType: "json",
 		success: function (data, textStatus) {
-		    if (!data) {
-			// something failed, but jquery 1.4.2 gives "success"
-			// (see http://dev.jquery.com/ticket/6060)
-			return;
-		    }
 		    search_results_elt.empty();
 		    if (data.place) {
 			search_results_elt.append($("<div></div>").text(data.place));
@@ -382,30 +392,32 @@
     };
 
     function AudioWidget(audio) {
-        // if new, create default nested json
-        if (!audio) {
-            audio = {href: ''};
-        }
-
         ModelWidget.call(this, audio, '<span class="ductus_AudioWidget"><span class="control"></span><span class="status"></span></span>');
 
         this.control_elt = this.elt.find('.control');
         this.status_elt = this.elt.find('.status');
         if (audio.href) {
             this._set_state_remote_urn(audio.href);
-        } else {
-            this._set_state_empty();
+        } else if (audio.resource && audio.resource._file) {
+            this._set_state_localfile(audio.resource._file);
         }
 
         // we don't call this.record_initial_inner_blueprint() since we override blueprint_repr() directly (see below)
     }
     AudioWidget.prototype = chain_clone(ModelWidget.prototype);
     AudioWidget.prototype.blueprint_repr = function () {
-        if (this.file) {
-            alert('Please upload all audio before attempting to save');
+        if (!this._urn) {
             throw 'File has not been uploaded yet.';
         }
-        return {href: (this._urn || '')};
+        return { href: this._urn };
+    };
+    AudioWidget.prototype.get_outstanding_presave_steps = function () {
+        if (this.file) {
+            var this_ = this;
+            return [function (success_cb, error_cb) { return this_.attempt_upload(success_cb, error_cb); }];
+        }
+
+        return [];
     };
     AudioWidget.prototype.fqn = '{http://wikiotics.org/ns/2010/audio}audio';
     AudioWidget.prototype._reset = function () {
@@ -414,21 +426,6 @@
         this.status_elt.empty();
         this._urn = undefined;
         this.file = null;
-    };
-    AudioWidget.prototype._set_state_empty = function () {
-        // i.e. no audio file has been selected
-        this._reset();
-        if (typeof FileReader == 'undefined') {
-            // File API is not supported, so don't provide file selection element
-            return;
-        }
-        this.upload_widget = $('<input type="file" accept="audio/ogg">');
-        var _this = this;
-        this.upload_widget.change(function () {
-            var file = this.files[0];
-            _this._set_state_localfile(file);
-        });
-        this.control_elt.append(this.upload_widget);
     };
     AudioWidget.prototype._set_state_localfile = function (file) {
         // i.e. the user has selected a local file but has not yet uploaded it.
@@ -447,7 +444,6 @@
                 _this.attempt_upload();
             });
             _this.control_elt.append(upload_button);
-            _this._append_trash_icon();
         };
         reader.readAsDataURL(file);
     };
@@ -455,13 +451,12 @@
         this._reset();
         this._urn = urn;
         this._append_audio_control(resolve_urn(urn) + '?view=audio');
-        this._append_trash_icon();
     };
     AudioWidget.prototype.attempt_upload = function (success_cb, error_cb) {
         var file = this.file;
         if (!file) {
             // no file selected, so this should not have been called
-            error_cb();
+            if (error_cb) error_cb();
             return;
         }
         if (this._upload_in_progress) {
@@ -478,7 +473,7 @@
                 _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
             }
             _this._upload_in_progress = false;
-            if (error_cb) error_cb();
+            if (error_cb) error_cb("error uploading audio");
         }
         $.ductusFileUpload({
             url: '/new/audio',
@@ -524,11 +519,20 @@
         html5_audio_element.attr('src', src);
         this.control_elt.append(html5_audio_element);
     };
-    AudioWidget.prototype._append_trash_icon = function () {
-        var trash_icon = $('<a href="javascript:void(0)">trash</a>');
-        var that = this;
-        trash_icon.click(function () { that._set_state_empty(); });
-        this.control_elt.append(trash_icon);
+    AudioWidget.creation_ui_widget = function () {
+        if (typeof FileReader == 'undefined') {
+            // File API is not supported, so don't provide file selection eleme
+            return { elt: $('<div>Your browser does not support File API, so you will not be able to upload anything.</div>') };
+        }
+        var upload_widget_elt = $('<div class="AudioWidget_creation_widget"></div>');
+        var input = $('<input type="file" accept="audio/ogg">').appendTo(upload_widget_elt);
+        input.change(function () {
+            var file = this.files[0];
+            upload_widget_elt.trigger("ductus_element_selected", [{
+                resource: { fqn: AudioWidget.prototype.fqn, _file: file }
+            }]);
+        });
+        return { elt: upload_widget_elt };
     };
 
     function FullPagename (arg) {
@@ -736,36 +740,47 @@
     SaveWidget.prototype = chain_clone(Widget.prototype);
     SaveWidget.prototype.perform_save = function (save_and_return) {
 	var this_ = this;
-	var blueprint = JSON.stringify(this.toplevel_blueprint_object.blueprint_repr());
-	this.elt.block({ message: "saving ..." });
-        $.ajax({
-	    url: this.destination_chooser.get_destination().get_pathname(),
-	    data: {
-		blueprint: blueprint,
-		log_message: this_.elt.find(".log_message").val()
-	    },
-	    success: function (data) {
-		if (!data) {
-		    // something failed, but jquery 1.4.2 gives "success"
-		    // (see http://dev.jquery.com/ticket/6060)
-		    alert("unknown error while saving; please try again");
-		    return;
-		}
-		// go to the newly-saved page
-		if (save_and_return) {
-		    window.location = (data.page_url || resolve_urn(data.urn));
-		} else {
-		    $('<span class="ductus_save_notice">saved!</span>').appendTo(this_.elt).delay(3000).fadeOut(400, function () { $(this).remove(); });
-		}
-	    },
-	    error: function (xhr, textStatus, errorThrown) {
-		alert(xhr.status + " error. save failed.");
-	    },
-	    complete: function (xhr, textStatus) {
-		this_.elt.unblock();
-	    },
-	    type: 'POST',
-	    dataType: 'json'
-	});
+	var blocking_elements = this.elt.add(this.toplevel_blueprint_object.elt);
+	blocking_elements.block({ message: "saving ..." });
+	var presave_steps = this.toplevel_blueprint_object.get_outstanding_presave_steps();
+	function perform_final_save () {
+	    var blueprint = JSON.stringify(this_.toplevel_blueprint_object.blueprint_repr());
+            $.ajax({
+	        url: this_.destination_chooser.get_destination().get_pathname(),
+	        data: {
+		    blueprint: blueprint,
+		    log_message: this_.elt.find(".log_message").val()
+	        },
+	        success: function (data) {
+		    // go to the newly-saved page
+		    if (save_and_return) {
+		        window.location = (data.page_url || resolve_urn(data.urn));
+		    } else {
+		        $('<span class="ductus_save_notice">saved!</span>').appendTo(this_.elt).delay(3000).fadeOut(400, function () { $(this).remove(); });
+		    }
+	        },
+	        error: function (xhr, textStatus, errorThrown) {
+		    alert(xhr.status + " error. save failed.");
+	        },
+	        complete: function (xhr, textStatus) {
+		    blocking_elements.unblock();
+	        },
+	        type: 'POST',
+	        dataType: 'json'
+	    });
+	}
+	var i = 0;
+	function do_next_step () {
+	    if (i == presave_steps.length) {
+	        perform_final_save();
+	    } else {
+	        var next_step = presave_steps[i++];
+	        next_step(do_next_step, function (error) {
+	            alert("an error occurred: " + error);
+	            blocking_elements.unblock();
+	        });
+	    }
+	}
+	do_next_step();
     };
 

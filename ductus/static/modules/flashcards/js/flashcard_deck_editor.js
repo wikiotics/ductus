@@ -160,7 +160,10 @@ $(function () {
 
         // bring up editor widget
         if (this.fcsw.wrapped) {
-            this.editor_widget = this.fcsw.wrapped.edit_ui_widget();
+            if (this.fcsw.wrapped.edit_ui_widget) {
+                this.editor_widget = this.fcsw.wrapped.edit_ui_widget();
+            }
+            this.elt.find('#fcs-edit-tab').parent().toggle(!!this.fcsw.wrapped.edit_ui_widget);
             this.edit_tab_body.children().detach().end().append(this.editor_widget.elt);
         }
     };
@@ -247,6 +250,9 @@ $(function () {
             return {resource: null};
         }
     };
+    FlashcardSide.prototype.get_outstanding_presave_steps = function () {
+        return this.wrapped ? this.wrapped.get_outstanding_presave_steps() : [];
+    };
     FlashcardSide.prototype.reset = function () {
         this.wrapped = null;
         this.elt.empty().html("&nbsp;");
@@ -280,7 +286,7 @@ $(function () {
     };
     FlashcardSide.widgets = [
         ['picture', PictureModelWidget],
-        //['audio', AudioWidget],
+        ['audio', AudioWidget],
         ['phrase', PhraseWidget]
     ];
     FlashcardSide.widgets_by_fqn = {};
@@ -311,6 +317,13 @@ $(function () {
             sides.push($(this).data("widget_object").blueprint_repr());
         });
         return this.add_inner_blueprint_constructor({ sides: { array: sides } });
+    };
+    Flashcard.prototype.get_outstanding_presave_steps = function () {
+        var sides = [];
+        this.elt.find("td").children().each(function (i) {
+            sides.push($(this).data("widget_object"));
+        });
+        return ModelWidget.combine_presave_steps(sides);
     };
     Flashcard.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}flashcard';
     Flashcard.prototype.ui_widget = function () {
@@ -463,6 +476,9 @@ $(function () {
             headings: {array: headings},
             interactions: this.interaction_chooser.blueprint_repr()
         });
+    };
+    FlashcardDeck.prototype.get_outstanding_presave_steps = function () {
+        return ModelWidget.combine_presave_steps(this.rows);
     };
     FlashcardDeck.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}flashcard_deck';
     FlashcardDeck.prototype.add_row = function (fc) {

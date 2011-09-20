@@ -52,6 +52,9 @@ var resource_displayer = {
     },
     '{http://wikiotics.org/ns/2011/phrase}phrase': function (resource) {
         return $('<span class="phrase"></span>').text(resource.resource.phrase.text);
+    },
+    '{http://wikiotics.org/ns/2010/audio}audio': function (resource) {
+        return $('<span class="audio">(audio coming soon)</span>');
     }
 };
 
