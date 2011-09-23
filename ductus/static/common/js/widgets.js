@@ -580,7 +580,7 @@
         return this.__fqpagename.substring(this.__colon_index + 1);
     };
 
-    function SaveDestinationChooserWidget (original_pagename, suggested_pagename) {
+    function SaveDestinationChooserWidget (original_pagename, suggested_pagename, wikipage_type_shortname) {
         Widget.call(this, '<div class="ductus_SaveDestinationChooserWidget"></div>');
 
         this.form = $('<form style="display: inline"></form>').appendTo(this.elt);
@@ -588,6 +588,7 @@
 
         var initial_pagename_selection = (original_pagename || suggested_pagename);
         var initial_directory_selection = initial_pagename_selection ? initial_pagename_selection.get_directory() : null;
+        var pagetype = wikipage_type_shortname || 'the wiki page';
 
         // figure out directories
         var i, directories = {'user': [], 'group': [], 'language_namespace': []};
@@ -609,7 +610,7 @@
             if (dir[0] === initial_directory_selection) {
                 div.find("#" + id).attr("checked", true);
             }
-            div.append('<span class="quiet">Only you will be able to edit the lesson in place, but others can make improvements and save them elsewhere.</span>');
+            div.append('<span class="quiet">Only you will be able to edit ' + pagetype + ' in place, but others can make improvements and save them elsewhere.</span>');
         }
         for (i = 0; i < directories.group.length; ++i) {
             var dir = directories.group[i];
@@ -620,7 +621,7 @@
             if (dir[0] === initial_directory_selection) {
                 div.find("#" + id).attr("checked", true);
             }
-            div.append('<span class="quiet">Only group members will be able to edit the lesson in place.</span>');
+            div.append('<span class="quiet">Only group members will be able to edit ' + pagetype + ' in place.</span>');
         }
         if (directories.language_namespace) {
             var select = $('<select></select>');
@@ -647,7 +648,7 @@
                 lns_div.find("input").attr("checked", "checked");
                 this_._destination_changed();
             });
-            lns_div.append('<span class="quiet">Choose the language to be taught.  Anyone will be able to edit the lesson in place.</span>');
+            lns_div.append('<span class="quiet">Choose the language to be taught.  Anyone will be able to edit ' + pagetype + ' in place.</span>');
         }
         this.elt.find("input[name='grp']").change(function () {
             this_._destination_changed();
@@ -714,13 +715,13 @@
         return new FullPagename({prefix: prefix, pagename: pagename});
     };
 
-    function SaveWidget (toplevel_blueprint_object) {
+    function SaveWidget (toplevel_blueprint_object, wikipage_type_shortname) {
         this.toplevel_blueprint_object = toplevel_blueprint_object;
         Widget.call(this, '<div class="ductus_SaveWidget"></div>');
         var this_ = this;
         var original_pagename = resource_json && new FullPagename({pathname: location.pathname});
         var target_pagename = urlParams['target'] && new FullPagename(urlParams['target']);
-        this.destination_chooser = new SaveDestinationChooserWidget(original_pagename, target_pagename);
+        this.destination_chooser = new SaveDestinationChooserWidget(original_pagename, target_pagename, wikipage_type_shortname);
         this.elt.append(this.destination_chooser.elt);
         this.elt.append('<div>Log message: <input type="text" class="log_message" name="log_message" maxlength="400"/></div>');
         this.elt.append('<form class="save_form save_and_return" style="display: inline"><input type="submit" value="Save"/></form>');

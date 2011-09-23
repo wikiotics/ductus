@@ -525,7 +525,7 @@ $(function () {
     };
 
     var fcdw = new FlashcardDeck(resource_json);
-    var save_widget = new SaveWidget(fcdw);
+    var save_widget = new SaveWidget(fcdw, 'the lesson');
     $("#flashcard_deck_editor").append(fcdw.elt).append(save_widget.elt);
 
     $("#bottom_toolbar_spacer").appendTo("body");
