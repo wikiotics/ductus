@@ -451,7 +451,7 @@ $(function () {
         }).appendTo($('<div></div>').appendTo(this.elt));
 
         // when the widget first loads, select the first cell
-        if (this.rows && this.columns) {
+        if (this.rows.length && this.columns.length) {
             this.rows[0].elt.find('td:not(.row_td)').first().click();
         }
 
