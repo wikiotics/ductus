@@ -16,7 +16,7 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import ugettext_lazy, ugettext as _
 
 from ductus.wiki.decorators import register_creation_view, register_view
 from ductus.wiki import get_writable_directories_for_user
@@ -26,14 +26,42 @@ from ductus.modules.flashcards.ductmodels import FlashcardDeck, ChoiceInteractio
 from ductus.modules.flashcards.decorators import register_interaction_view
 from ductus.modules.flashcards import registered_interaction_views
 
+def picture_choice_flashcard_template():
+    deck = FlashcardDeck()
+    for heading in (_('Phrase'), _('Picture'), _('Audio')):
+        new_heading = deck.headings.new_item()
+        new_heading.text = heading
+        deck.headings.array.append(new_heading)
+    return deck
+
+def phrase_choice_flashcard_template():
+    deck = FlashcardDeck()
+    for heading in (_('Prompt'), _('Answer')):
+        new_heading = deck.headings.new_item()
+        new_heading.text = heading
+        deck.headings.array.append(new_heading)
+    return deck
+
+flashcard_templates = {
+    'picture_choice': picture_choice_flashcard_template,
+    'phrase_choice': phrase_choice_flashcard_template,
+}
+
 @register_creation_view(FlashcardDeck, description=ugettext_lazy('a flexible lesson type arranged as a series of flashcards in a grid'), category='lesson')
 @register_view(FlashcardDeck, 'edit')
 def edit_flashcard_deck(request):
     if request.method == 'POST':
         return handle_blueprint_post(request, FlashcardDeck)
 
+    resource_or_template = None
+    if hasattr(request, 'ductus') and getattr(request.ductus, 'resource', None):
+        resource_or_template = request.ductus.resource
+    elif request.GET.get('template') in flashcard_templates:
+        resource_or_template = flashcard_templates[request.GET['template']]()
+
     return render_to_response('flashcards/edit_flashcard_deck.html', {
         'writable_directories': get_writable_directories_for_user(request.user),
+        'resource_or_template': resource_or_template,
     }, RequestContext(request))
 
 @register_view(FlashcardDeck)
