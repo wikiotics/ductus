@@ -16,6 +16,8 @@ var writable_directories = {{ writable_directories|jsonize }};
 <link type="text/css" href="{{ ductus_media_prefix }}modules/flashcards/css/flashcard_editor.css" rel="stylesheet"/>
 {% endblock %}
 
+{% block body_classes %}ductus_wide{% endblock %}
+
 {% block content %}
 <div id="flashcard_deck_editor"></div>
 <div id="bottom_toolbar"></div>
