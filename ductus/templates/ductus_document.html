@@ -25,6 +25,7 @@
 {% block document_footer %}
 <footer>
 {% with request.ductus as ductus %}
+{% if ductus.resource or ductus.wiki_page %}
   <nav>
     <div class="ductus_wrap1" id="ductus_document_header">
       <div class="ductus_wrap2">
@@ -54,6 +55,7 @@
       </div>
     </div>
   </nav>
+{% endif %}
 {% endwith %}
 </footer>
 {% endblock %}
