@@ -143,6 +143,8 @@ $(function () {
             var already_called = false;
             if ($(this).hasClass("correct")) {
                 choice_actions_enabled = false;
+                var dc = $('.ductus_choice');
+                dc.height(dc.height()); // prevent the entire page from resizing
                 $('.ductus_choice td.incorrect div').hide(500, "linear", function () {
                     if (!already_called) {
                         choice_correct_callback();
