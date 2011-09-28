@@ -6,8 +6,10 @@
     display: table-cell;
     vertical-align: middle;
     background: #eee;
-    cursor: pointer;
     text-align: center;
+}
+.ductus_choice * td.clickable div {
+    cursor: pointer;
 }
 .ductus_choice * td div .picture {
     height: 250px;

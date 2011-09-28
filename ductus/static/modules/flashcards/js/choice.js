@@ -125,7 +125,7 @@ $(function () {
                 if (display_index !== undefined) {
                     var res = cards_array[display_index].resource.sides.array[answer_column];
                     var div = $('<div></div>').append(display_resource(res));
-                    td.addClass("choice_item").append(div);
+                    td.addClass("choice_item clickable").append(div);
                     td.addClass(display_index == index ? "correct": "incorrect");
                 }
             }
@@ -139,6 +139,8 @@ $(function () {
         $(".choice_item").click(function () {
             if (!choice_actions_enabled)
                 return;
+
+            $(this).removeClass('clickable');
 
             var already_called = false;
             if ($(this).hasClass("correct")) {
