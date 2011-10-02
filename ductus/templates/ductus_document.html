@@ -14,39 +14,58 @@
 {% endblock %}
 
 {% block document_header %}
-<header>
 {% with request.ductus as ductus %}
+{% if oldid_str_qm or ductus.resource and not ductus.wiki_page %}
+<header>
+  <div class="ductus_wrap1" id="ductus_document_infoheader">
+    <div class="ductus_wrap2">
+      <div class="ductus_wrap3_all">
+        <div class="ductus_wrap4">
 {% if oldid_str_qm %}{% with request.path|urlencode|iriencode as current_url %}{% blocktrans %}You may be viewing an old version of this page.  <a href="{{ current_url }}">Click here to see the most up-to-date version.</a>{% endblocktrans %}{% endwith %}{% endif %}
 {% if ductus.resource and not ductus.wiki_page %}{% trans "You are viewing a URN.  This page is static and will never change." %}{% endif %}
-{% endwith %}
+        </div>
+      </div>
+    </div>
+  </div>
 </header>
+{% endif %}
+{% endwith %}
 {% endblock %}
 
 {% block document_footer %}
 <footer>
 {% with request.ductus as ductus %}
+{% if ductus.resource or ductus.wiki_page %}
   <nav>
-    <div id="ductus_document_header">
-      <ul>
-        {% if ductus.resource %}<li{% if not request.GET.view %} class="selected"{% endif %}><a href="{{ request.path|urlencode|iriencode }}{{ oldid_str_qm }}">{% trans "document" %}</a></li>{% endif %}
-        {# <li>Talk (location)</li> #}
-        {% if ductus.resource %}
-          {# <li>Talk (document)</li> #}
-          <li{% ifequal request.GET.view "edit" %} class="selected"{% endifequal %}><a href="?view=edit{{ oldid_str_amp }}">{% trans "edit" %}</a></li>
-          <li{% ifequal request.GET.view "copy" %} class="selected"{% endifequal %}><a href="?view=copy{{ oldid_str_amp }}">{% trans "copy" %}</a></li>
-          {% if 0 and ductus.wiki_revision %}<li><a href="?view=unlink{{ oldid_str_amp }}">{% trans "delete" %}</a></li>{% endif %} {# fixme: poor name since it doesn't permanently delete #}
-          {# <li>Flag</li> #}
-        {% endif %}
-        {% if ductus.resource or ductus.wiki_page %}
-          <li{% ifequal request.GET.view "history" %} class="selected"{% endifequal %}><a href="?view=history{{ oldid_str_amp }}">{% trans "history" %}</a></li>
-        {% endif %}
-        {% if ductus.resource %}<li{% ifequal request.GET.view "license_info" %} class="selected"{% endifequal %}><a href="?view=license_info{{ oldid_str_amp }}">{% trans "credits" %}</a></li>{% endif %}
+    <div class="ductus_wrap1" id="ductus_document_header">
+      <div class="ductus_wrap2">
+        <div class="ductus_wrap3_all">
+          <div class="ductus_wrap4">
+            <ul>
+              {% if ductus.resource %}<li{% if not request.GET.view %} class="selected"{% endif %}><a href="{{ request.path|urlencode|iriencode }}{{ oldid_str_qm }}">{% trans "document" %}</a></li>{% endif %}
+              {# <li>Talk (location)</li> #}
+              {% if ductus.resource %}
+                {# <li>Talk (document)</li> #}
+                <li{% ifequal request.GET.view "edit" %} class="selected"{% endifequal %}><a href="?view=edit{{ oldid_str_amp }}">{% trans "edit" %}</a></li>
+                <li{% ifequal request.GET.view "copy" %} class="selected"{% endifequal %}><a href="?view=copy{{ oldid_str_amp }}">{% trans "copy" %}</a></li>
+                {% if 0 and ductus.wiki_revision %}<li><a href="?view=unlink{{ oldid_str_amp }}">{% trans "delete" %}</a></li>{% endif %} {# fixme: poor name since it doesn't permanently delete #}
+                {# <li>Flag</li> #}
+              {% endif %}
+              {% if ductus.resource or ductus.wiki_page %}
+                <li{% ifequal request.GET.view "history" %} class="selected"{% endifequal %}><a href="?view=history{{ oldid_str_amp }}">{% trans "history" %}</a></li>
+              {% endif %}
+              {% if ductus.resource %}<li{% ifequal request.GET.view "license_info" %} class="selected"{% endifequal %}><a href="?view=license_info{{ oldid_str_amp }}">{% trans "credits" %}</a></li>{% endif %}
 {% if 0 %}
-        <li{% ifequal request.GET.view "view_index" %} class="selected"{% endifequal %}><a href="?view=view_index{{ oldid_str_amp }}">{% trans "more views" %}</a></li>
+              <li{% ifequal request.GET.view "view_index" %} class="selected"{% endifequal %}><a href="?view=view_index{{ oldid_str_amp }}">{% trans "more views" %}</a></li>
 {% endif %}
-      </ul>
+            </ul>
+          </div>
+        </div>
+        <div style="clear: both"></div>
+      </div>
     </div>
   </nav>
+{% endif %}
 {% endwith %}
 </footer>
 {% endblock %}

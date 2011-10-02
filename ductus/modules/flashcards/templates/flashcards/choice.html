@@ -1,4 +1,4 @@
-{% extends "ductus_document.html" %}
+{% extends "ductus_document_columns.html" %}
 {% load i18n %}
 {% load urn %}
 {% load jsonize %}
@@ -26,4 +26,8 @@ Frame {{ current_frame }} <span id="total_frames_text">of {{ number_of_frames }}
 ({{ correct_count }} correct, {{ incorrect_count }} incorrect).
 {% endblocktrans %}
 </p>
+{% endblock %}
+
+{% block sidebar %}
+{% include "sidebar_welcome_message.html" %}
 {% endblock %}

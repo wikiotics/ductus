@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <title>{% block title %}{% title ductus_site_name %}{% endblock %}{% for title in title_list reversed %}{{ title }}{% if not forloop.last %} - {% endif %}{% endfor %}</title>
     <meta name="HandheldFriendly" content="True"/>
+    <link type="text/css" href="{{ ductus_media_prefix }}common/css/normalize.css" rel="stylesheet"/>
     <link type="text/css" href="{{ ductus_media_prefix }}common/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" media="screen, projection" href="{{ ductus_media_prefix }}common/css/base.css" />
     {# include local (site-specific) css #}
@@ -11,6 +12,9 @@
     <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery-ui-1.8.16.custom.min.js"></script>
     <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/json2.min.js"></script>
     <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/base.js"></script>
+    <!--[if IE]>
+      <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/respond.min.js"></script>
+    <![endif]-->
     <script type="text/javascript">
       var ductus_media_prefix = '{{ ductus_media_prefix }}';
       var ductus_mediacache_prefix = '{{ ductus_mediacache_prefix }}';
@@ -24,36 +28,43 @@
     {{ ductus_site_head }}
     {% block head %}{% endblock %}
   </head>
-  <body>
+  <body class="ductus {% block body_classes %}{% endblock %}">
     <header>
-      <div id="ductus_header">
-        <nav>
-          <ul class="ductus_header_tabs">
+      <div class="ductus_wrap1" id="ductus_header">
+        <div class="ductus_wrap2">
+          <div class="ductus_wrap3_all">
+            <div class="ductus_wrap4">
+              <nav>
+                <ul class="ductus_header_tabs">
 {% if 0 %}
-            <li>Community
-              <ul>
+                  <li>Community
+                    <ul>
 {% if user.is_authenticated %}
-                <li>My Page</li>
-                <li>My Groups</li>
-                <li></li>
+                      <li>My Page</li>
+                      <li>My Groups</li>
+                      <li></li>
 {% endif %}
-                <li>Contribute</li>
-                <li>Help</li>
-              </ul>
-            </li>
+                      <li>Contribute</li>
+                      <li>Help</li>
+                    </ul>
+                  </li>
 {% endif %}
 {% if user.is_authenticated %}
-            <li><a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
-              &mdash; <a href="{% url django.contrib.auth.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
+                  <li><a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
+                    &mdash; <a href="{% url django.contrib.auth.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
 {% else %}
-            {% block login_button %}
-              <li><a href="{% url django.contrib.auth.views.login %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
-            {% endblock %}
+                  {% block login_button %}
+                    <li><a href="{% url django.contrib.auth.views.login %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
+                  {% endblock %}
 {% endif %}
-          </ul>
-        </nav>
-        <h1><a href="/">{{ ductus_site_name }}</a></h1>
-        <hr/>
+                </ul>
+              </nav>
+              <h1><a href="/"><span>{{ ductus_site_name }}</span></a></h1>
+              <hr/>
+            </div>
+          </div>
+          <div style="clear: both"></div>
+        </div>
       </div>
     </header>
 {% if messages %}
@@ -64,27 +75,43 @@
     </div>
 {% endif %}
     {% block document_header %}{% endblock %}
-    <div id="ductus_content">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
+    <div class="ductus_wrap1" id="ductus_content">
+      <div class="ductus_wrap2">
+{% block content_wrapping %}
+        <div class="ductus_wrap3_all">
+          <div class="ductus_wrap4">{% block outer_content %}{% block content %}{% endblock %}{% endblock %}</div>
+        </div>
+        <div style="clear: both"></div>
+{% endblock content_wrapping %}
+      </div>
+    </div>
     {% block document_footer %}{% endblock %}
     <footer>
-      <div id="ductus_footer">
-        <hr/>
-        <form action="{% url django.views.i18n.set_language %}" method="post">
-          <p>
-            {% trans "user interface language:" %}
-            <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />
-            <select name="language">
-              {% for lang in LANGUAGES %}
-              <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.0 }} {% trans lang.1 %}</option>{% endfor %}
-            </select>
-            <input type="submit" value="{% trans "Apply" %}"/>
-          </p>
-        </form>
-        <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
-        {% block copyright_info %}<p class="copyright_info">{% blocktrans with ductus_default_license|license_name as default_license_name %}All contributions to this wiki will be licensed under the <a href="{{ ductus_default_license }}">{{ default_license_name }}</a> license.  Certain pieces of content may be available under a more permissive license; see a specific document's &lsquo;credits&rsquo; page for details.{% endblocktrans %}</p>{% endblock %}
+      <div class="ductus_wrap1" id="ductus_footer">
+        <div class="ductus_wrap2">
+          <div class="ductus_wrap3_all">
+            <div class="ductus_wrap4">
+              <hr/>
+              <form action="{% url django.views.i18n.set_language %}" method="post">
+                <p>
+                  {% trans "user interface language:" %}
+                  <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />
+                  <select name="language">
+                    {% for lang in LANGUAGES %}
+                    <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.0 }} {% trans lang.1 %}</option>{% endfor %}
+                  </select>
+                  <input type="submit" value="{% trans "Apply" %}"/>
+                </p>
+              </form>
+              <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
+              {% block copyright_info %}<p class="copyright_info">{% blocktrans with ductus_default_license|license_name as default_license_name %}All contributions to this wiki will be licensed under the <a href="{{ ductus_default_license }}">{{ default_license_name }}</a> license.  Certain pieces of content may be available under a more permissive license; see a specific document's &lsquo;credits&rsquo; page for details.{% endblocktrans %}</p>{% endblock %}
 {% if ductus_site_footer %}
-        <p class="ductus_site_footer">{{ ductus_site_footer }}</p>
+              <p class="ductus_site_footer">{{ ductus_site_footer }}</p>
 {% endif %}
+            </div>
+          </div>
+          <div style="clear: both"></div>
+        </div>
       </div>
     </footer>
   </body>

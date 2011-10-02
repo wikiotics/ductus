@@ -1,11 +1,59 @@
+html {
+    /* normalize.css sets this to "scroll" for some reason, but I hate
+     * seeing the scrollbar when it is unnecessary
+     */
+    overflow-y: auto;
+}
+
 body {
-    margin: 0;
     font-family: "Liberation Sans",Arial,Helvetica,sans-serif;
     color: #333;
 }
-#ductus_content {
-    margin: 2em 3em 1em;
+
+/* base grid */
+.ductus_wrap1 {
+    width: 100%;
 }
+.ductus_wrap2 {
+    width: 96%;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+body.ductus_wide .ductus_wrap2 {
+    max-width: none;
+}
+@media screen and (max-width: 768px) {
+    .ductus_wrap2 {
+        width: 99%;
+    }
+}
+.ductus_wrap3_main, .ductus_wrap3_side, .ductus_wrap3_all {
+    float: left;
+    width: 100%;
+}
+@media screen and (min-width: 768px) {
+    .ductus_wrap3_main {
+        width: 71%;
+    }
+    .ductus_wrap3_side {
+        float: right;
+        width: 29%;
+    }
+    .ductus_wrap3_main .ductus_wrap4 {
+        /* .04 / .71 */
+        padding: 0 5.6338028169014086%;
+    }
+    .ductus_wrap3_side .ductus_wrap4 {
+        /* .04 / .29 */
+        padding: 0 13.793103448275865%;
+    }
+}
+.ductus_wrap4 {
+    padding: 0 4%;
+    margin: 2em 0;
+}
+
+/* end of main grid styling */
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
@@ -35,14 +83,15 @@ h6 {
     display: none;
 }
 
-#ductus_header * {
+#ductus_header ul {
     margin: 0;
-    padding: 0;
 }
-div#ductus_header {
+#ductus_header {
     background: #6b497e;
     border-bottom: 1px solid #39005a;
-    padding: 0 3em;
+}
+#ductus_header .ductus_wrap4 {
+    margin: 0;
 }
 #ductus_header h1 {
     display: inline;
@@ -65,7 +114,6 @@ div#ductus_header {
 
 #ductus_footer {
     border-top: 1px solid #ddd;
-    padding: 0 1em;
 }
 #ductus_footer p {
     text-align: center;
@@ -78,7 +126,7 @@ div#ductus_header {
 
 #ductus_document_header ul {
     list-style: none;
-    padding: 1em 3em;
+    padding: 1em 0;
 }
 #ductus_document_header ul li {
     display: inline;
@@ -138,9 +186,6 @@ a.broken {
     padding-right: 14px;
     background: transparent url(../img/Icon_External_Link.png) no-repeat center right;
 }
-.ductus_textwiki_content {
-    max-width: 30em;
-}
 
 dl.ductus_creation_views {
     padding-left: 2em;
@@ -150,14 +195,6 @@ dl.ductus_creation_views dd {
     margin-left: 0;
     padding-left: 2em;
     margin-bottom: 1em;
-}
-
-.clear {
-    clear: both;
-}
-
-.handle {
-    cursor: move;
 }
 
 .quiet {
@@ -186,14 +223,6 @@ ul.radio_ul {
     body {
 	font-size: 12px;
     }
-    #ductus_content {
-	margin-left: 1em;
-	margin-right: 1em;
-    }
-    div#ductus_header, #ductus_document_header ul {
-	padding-left: 1em;
-	padding-right: 1em;
-    }
 
 }
 
@@ -202,14 +231,6 @@ ul.radio_ul {
 
     body {
 	font-size: 14px;
-    }
-    #ductus_content {
-	margin-left: 2em;
-	margin-right: 2em;
-    }
-    div#ductus_header, #ductus_document_header ul {
-	padding-left: 2em;
-	padding-right: 2em;
     }
 
 }

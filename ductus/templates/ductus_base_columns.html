@@ -1,0 +1,17 @@
+{% extends "ductus_base.html" %}
+
+{# NOTE: this file should be modified alongside ductus_document_columns.html #}
+
+{% block content_wrapping %}
+  <div class="ductus_wrap3_main">
+    <div class="ductus_wrap4">
+      {% block outer_content %}{% block content %}{% endblock %}{% endblock %}
+    </div>
+  </div>
+  <div class="ductus_wrap3_side">
+    <div class="ductus_wrap4">
+      {% block sidebar %}{% endblock %}
+    </div>
+  </div>
+  <div style="clear: both"></div>
+{% endblock %}
