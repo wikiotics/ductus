@@ -14,12 +14,22 @@
 {% endblock %}
 
 {% block document_header %}
-<header>
 {% with request.ductus as ductus %}
+{% if oldid_str_qm or ductus.resource and not ductus.wiki_page %}
+<header>
+  <div class="ductus_wrap1" id="ductus_document_infoheader">
+    <div class="ductus_wrap2">
+      <div class="ductus_wrap3_all">
+        <div class="ductus_wrap4">
 {% if oldid_str_qm %}{% with request.path|urlencode|iriencode as current_url %}{% blocktrans %}You may be viewing an old version of this page.  <a href="{{ current_url }}">Click here to see the most up-to-date version.</a>{% endblocktrans %}{% endwith %}{% endif %}
 {% if ductus.resource and not ductus.wiki_page %}{% trans "You are viewing a URN.  This page is static and will never change." %}{% endif %}
-{% endwith %}
+        </div>
+      </div>
+    </div>
+  </div>
 </header>
+{% endif %}
+{% endwith %}
 {% endblock %}
 
 {% block document_footer %}
