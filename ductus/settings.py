@@ -239,3 +239,6 @@ try:
     from ductus_local_settings import *
 except ImportError:
     pass
+
+if "LOCAL_INSTALLED_APPS" in locals():
+    INSTALLED_APPS += LOCAL_INSTALLED_APPS
