@@ -111,9 +111,9 @@ $(function () {
         var ul = this.elt.find("ul");
 
         $.each(FlashcardSide.widgets, function (i, w) {
-            var button = $('<li><a href="#new-' + i  + '">new ' + w[0] + '</a></li>');
+            var button = $('<li><a href="#fcs-new-' + i  + '">new ' + w[0] + '</a></li>');
             var creation_widget = w[1].creation_ui_widget();
-            var tab_body = $('<div id="new-' + i + '"></div>').append(creation_widget.elt);
+            var tab_body = $('<div id="fcs-new-' + i + '"></div>').append(creation_widget.elt);
             creation_widget.elt.bind("ductus_element_selected", function (event, model_json_repr) {
                 this_.fcsw.set_from_json(model_json_repr);
                 this_.go_to_main_editor_tab();
@@ -165,6 +165,18 @@ $(function () {
             }
             this.elt.find('#fcs-edit-tab').parent().toggle(!!this.fcsw.wrapped.edit_ui_widget);
             this.edit_tab_body.children().detach().end().append(this.editor_widget.elt);
+        } else {
+            // try to select a sensible "new" tab
+            var display_index = fcsw.column.th.index() + 1;
+            // fixme: this next row assumes there is only one deck...
+            var first_td_in_column = $(".ductus_FlashcardDeck").find("td:nth-child(" + display_index + ")").first();
+            var first_fcsw_in_column = first_td_in_column.children().first().data("widget_object");
+            if (first_fcsw_in_column.wrapped) {
+                for (var j = 0; j < FlashcardSide.widgets.length; ++j) {
+                    if (FlashcardSide.widgets[j][1].prototype.fqn == first_fcsw_in_column.wrapped.fqn)
+                        this.elt.tabs("select", "fcs-new-" + j);
+                }
+            }
         }
     };
     FlashcardSideEditor.prototype.go_to_main_editor_tab = function () {
@@ -241,6 +253,7 @@ $(function () {
     function FlashcardSide(fcs, column) {
         Widget.call(this, '<div class="ductus_FlashcardSide"></div>');
         this.set_from_json(fcs);
+        this.column = column;
     }
     FlashcardSide.prototype = chain_clone(Widget.prototype);
     FlashcardSide.prototype.blueprint_repr = function () {
