@@ -160,9 +160,7 @@ $(function () {
 
         // bring up editor widget
         if (this.fcsw.wrapped) {
-            if (this.fcsw.wrapped.edit_ui_widget) {
-                this.editor_widget = this.fcsw.wrapped.edit_ui_widget();
-            }
+            this.editor_widget = this.fcsw.wrapped.edit_ui_widget ? this.fcsw.wrapped.edit_ui_widget() : null;
             this.elt.find('#fcs-edit-tab').parent().toggle(!!this.fcsw.wrapped.edit_ui_widget);
             this.edit_tab_body.children().detach().end().append(this.editor_widget.elt);
         } else {
