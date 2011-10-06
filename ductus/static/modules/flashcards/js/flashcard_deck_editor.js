@@ -510,7 +510,7 @@ $(function () {
         var this_ = this;
         var column = {}; // will contain attributes `th` and `heading`
         this.columns.push(column);
-        column.th = $('<th></th>').appendTo(this.header_elt);
+        column.th = $('<th class="ductus_FlashcardDeck_column"></th>').appendTo(this.header_elt);
         this._set_column_heading(column, heading);
         column.th.ductus_selectable(function () {
             return this_.column_ui_widget(column);

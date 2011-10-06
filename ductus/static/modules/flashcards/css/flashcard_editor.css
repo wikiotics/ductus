@@ -19,6 +19,9 @@
 .topleft_th {
     width: 20px;
 }
+.ductus_FlashcardDeck_column {
+    cursor: default;
+}
 .ductus_FlashcardDeck_anonymous_column_name {
     font-style: italic;
 }
