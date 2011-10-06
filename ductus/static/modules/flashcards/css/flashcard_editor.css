@@ -22,6 +22,11 @@
 .ductus_FlashcardDeck_anonymous_column_name {
     font-style: italic;
 }
+.row_td {
+    color: #888;
+    text-align: center;
+    cursor: default;
+}
 
 /* Vertical Tabs (adapted from view-source:http://jquery-ui.googlecode.com/svn/trunk/demos/tabs/vertical.html) */
 .ui-tabs-vertical {

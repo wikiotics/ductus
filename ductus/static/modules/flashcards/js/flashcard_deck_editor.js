@@ -496,6 +496,7 @@ $(function () {
     FlashcardDeck.prototype.add_row = function (fc) {
         var row = new Flashcard(fc, this.columns);
         this.rows.push(row);
+        row.elt.find(".row_td").text(this.rows.length);
         this.table.append(row.elt);
     };
     FlashcardDeck.prototype._set_column_heading = function (column, heading) {
