@@ -170,7 +170,7 @@ $(function () {
             // fixme: this next row assumes there is only one deck...
             var first_td_in_column = $(".ductus_FlashcardDeck").find("td:nth-child(" + display_index + ")").first();
             var first_fcsw_in_column = first_td_in_column.children().first().data("widget_object");
-            if (first_fcsw_in_column.wrapped) {
+            if (first_fcsw_in_column && first_fcsw_in_column.wrapped) {
                 for (var j = 0; j < FlashcardSide.widgets.length; ++j) {
                     if (FlashcardSide.widgets[j][1].prototype.fqn == first_fcsw_in_column.wrapped.fqn)
                         this.elt.tabs("select", "fcs-new-" + j);
