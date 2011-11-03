@@ -18,7 +18,6 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404, redirect
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
@@ -26,7 +25,7 @@ from django import forms
 
 from ductus.wiki.models import WikiPage
 from ductus.wiki.views import RegularWikiNamespace
-from ductus.user.forms import UserEditForm
+from ductus.user.forms import UserEditForm, UserCreationForm
 
 recaptcha = None
 if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):

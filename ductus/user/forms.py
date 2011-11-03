@@ -16,8 +16,22 @@
 
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
+from django.utils.translation import ugettext_lazy
 
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email',)
+
+class UserCreationForm(DjangoUserCreationForm):
+    class Meta:
+        # add email address as a shown field
+        model = User
+        fields = ("username", "password1", "password2", "email")
+
+# make DEK happy http://www-cs-faculty.stanford.edu/~uno/email.html
+UserEditForm.base_fields["email"].label = ugettext_lazy("Email address")
+UserCreationForm.base_fields["email"].label = ugettext_lazy("Email address")
+
+UserCreationForm.base_fields["email"].help_text = ugettext_lazy("Providing an email address is completely optional.")
