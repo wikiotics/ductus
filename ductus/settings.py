@@ -235,6 +235,10 @@ LOGIN_REDIRECT_URL = '/'
 
 #DEFAULT_FROM_EMAIL = "no-reply@example.com"
 
+OGGINFO_PATH = '/usr/bin/ogginfo'
+FAAD_PATH = '/usr/bin/faad'
+MKVMERGE_PATH = '/usr/bin/mkvmerge'
+
 try:
     from ductus_local_settings import *
 except ImportError:

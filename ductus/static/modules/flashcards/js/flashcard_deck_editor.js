@@ -378,6 +378,27 @@ $(function () {
     };
     ChoiceInteractionWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}choice_interaction';
 
+    function AudioLessonInteractionWidget(ai) {
+        ModelWidget.call(this, ai, '<div class="ductus_AudioLessonInteractionWidget"></div>');
+        this.elt.append('Audio: <input name="audio" class="audio"/> Transcript (optional): <input name="transcript" class="transcript"/>');
+        this.audio = this.elt.find('.audio');
+        this.transcript = this.elt.find('.transcript');
+        if (ai) {
+            this.audio.val(ai.resource.audio);
+            this.transcript.val(ai.resource.transcript);
+        }
+
+        this.record_initial_inner_blueprint();
+    }
+    AudioLessonInteractionWidget.prototype = chain_clone(ModelWidget.prototype);
+    AudioLessonInteractionWidget.prototype.inner_blueprint_repr = function () {
+        return this.add_inner_blueprint_constructor({
+            audio: this.audio.val(),
+            transcript: this.transcript.val()
+        });
+    };
+    AudioLessonInteractionWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}audio_lesson_interaction';
+
     function InteractionChooserWidget(ic) {
         Widget.call(this, '<div class="ductus_InteractionChooserWidget"></div>');
         this.interactions = $('<ul class="ductus_InteractionChooserWidget_interactions"></ul>').appendTo(this.elt);
@@ -386,12 +407,17 @@ $(function () {
         $('<a href="javascript:void(0)">Add a "choice" interaction</a>').click(function () {
             this_.__add_interaction(new ChoiceInteractionWidget());
         }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
+        $('<a href="javascript:void(0)">Add an audio lesson interaction</a>').click(function () {
+            this_.__add_interaction(new AudioLessonInteractionWidget());
+        }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
 
         if (ic) {
             for (var i = 0; i < ic.array.length; ++i) {
                 var interaction = ic.array[i];
                 if (interaction.resource.fqn == ChoiceInteractionWidget.prototype.fqn) {
                     this.__add_interaction(new ChoiceInteractionWidget(interaction));
+                } else if (interaction.resource.fqn == AudioLessonInteractionWidget.prototype.fqn) {
+                    this.__add_interaction(new AudioLessonInteractionWidget(interaction));
                 }
             }
         }

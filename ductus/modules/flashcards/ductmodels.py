@@ -41,35 +41,53 @@ def _is_canonical_int(string):
     else:
         return str(x) == string
 
-def _prompt_validator(v):
-    # FlashcardDeck's validator will automatically make sure the columns exist,
-    # so we need not worry about that here
-    prompts = v.split(',')
-    if len(prompts) == 0:
-        # this code path should never be reached since ''.split(',') == [''],
-        # but we leave it for completeness
-        raise ductmodels.ValidationError("at least one prompt column must be given")
-    if len(frozenset(prompts)) != len(prompts):
-        raise ductmodels.ValidationError("each prompt must be from a unique column")
-    if not all(_is_canonical_int(a) for a in prompts):
-        raise ductmodels.ValidationError("each `prompt` must be an integer in canonical form")
+_re_like_interpretation = {
+    '': lambda n: n == 1,
+    '+': lambda n: n > 0,
+    '*': lambda n: True,
+    '?': lambda n: n == 0 or n == 1
+}
 
-def _answer_validator(v):
-    # FlashcardDeck's validator will automatically make sure the column exists
-    # so we need not worry about that here
-    if not _is_canonical_int(v):
-        raise ductmodels.ValidationError("`answer` must be an integer in canonical form")
+def _column_validator(re_like=''):
+    def _do_column_validation(v):
+        # FlashcardDeck's validator will automatically make sure the columns exist,
+        # so we need not worry about that here
+        if v:
+            prompts = v.split(',')
+        else:
+            prompts = []
+        if len(frozenset(prompts)) != len(prompts):
+            raise ductmodels.ValidationError("each must be from a unique column")
+        if not all(_is_canonical_int(a) for a in prompts):
+            raise ductmodels.ValidationError("each must be an integer in canonical form")
+        if not _re_like_interpretation[re_like](len(prompts)):
+            raise ductmodels.ValidationError("incorrect number of columns given.  Expecting re-like matching '%s'." % re_like)
+    return _do_column_validation
 
 @register_ductmodel
 class ChoiceInteraction(ductmodels.BaseDuctModel):
     ns = 'http://wikiotics.org/ns/2011/flashcards'
     nsmap = {'flashcards': ns}
 
-    prompt = ductmodels.Attribute(validator=_prompt_validator)
-    answer = ductmodels.Attribute(validator=_answer_validator)
+    prompt = ductmodels.Attribute(validator=_column_validator('+'))
+    answer = ductmodels.Attribute(validator=_column_validator(''))
 
     def get_columns_referenced(self):
         return [int(a) for a in (self.prompt.split(',') + [self.answer])]
+
+@register_ductmodel
+class AudioLessonInteraction(ductmodels.BaseDuctModel):
+    ns = 'http://wikiotics.org/ns/2011/flashcards'
+    nsmap = {'flashcards': ns}
+
+    audio = ductmodels.Attribute(validator=_column_validator(''))
+    transcript = ductmodels.Attribute(validator=_column_validator('?'), optional=True)
+
+    def get_columns_referenced(self):
+        rv = [int(self.audio)]
+        if self.transcript:
+            rv.append(int(self.transcript))
+        return rv
 
 @register_ductmodel
 class Flashcard(ductmodels.DuctModel):
@@ -93,7 +111,7 @@ class FlashcardDeck(ductmodels.DuctModel):
     headings = ductmodels.ArrayElement(ductmodels.TextElement())
     column_order = ductmodels.Attribute(optional=True)
 
-    interactions = OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction))
+    interactions = OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction, AudioLessonInteraction))
 
     def validate(self, strict=True):
         super(FlashcardDeck, self).validate(strict)

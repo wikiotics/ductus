@@ -18,13 +18,14 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy, ugettext as _
 
-from ductus.wiki.decorators import register_creation_view, register_view
+from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
 from ductus.util.http import query_string_not_found
-from ductus.modules.flashcards.ductmodels import FlashcardDeck, ChoiceInteraction
+from ductus.modules.flashcards.ductmodels import FlashcardDeck, ChoiceInteraction, AudioLessonInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
 from ductus.modules.flashcards import registered_interaction_views
+from ductus.modules.audio.views import get_joined_audio_mediacache_url, mediacache_cat_audio
 
 def picture_choice_flashcard_template():
     deck = FlashcardDeck()
@@ -86,3 +87,35 @@ def choice(request, interaction):
         'prompt_columns': [int(a) for a in interaction.prompt.split(',')],
         'answer_column': int(interaction.answer),
     }, RequestContext(request))
+
+def _get_audio_urns_in_column(flashcard_deck, column):
+    cells = [card.get().sides.array[column] for card in flashcard_deck.cards]
+    return [cell.href for cell in cells if cell.href]
+
+@register_interaction_view(AudioLessonInteraction)
+def podcast(request, interaction):
+    column = int(interaction.audio)
+    resource = request.ductus.resource
+    audio_urns = _get_audio_urns_in_column(resource, column)
+    podcast_relative_url = get_joined_audio_mediacache_url(resource, audio_urns)
+
+    return render_to_response('flashcards/audio_lesson.html', {
+        'podcast_relative_url': podcast_relative_url,
+    }, RequestContext(request))
+
+@register_mediacache_view(FlashcardDeck)
+def mediacache_flashcard_deck(blob_urn, mime_type, additional_args, flashcard_deck):
+    if mime_type == 'audio/webm':
+        # figure out which column the audio is from
+        from hashlib import sha1
+        for column in xrange(len(flashcard_deck.headings)):
+            audio_urn_list = _get_audio_urns_in_column(flashcard_deck, column)
+            if sha1(' '.join(audio_urn_list)).hexdigest() == additional_args:
+                break
+        else:
+            return None
+
+        # concatenate the audio
+        return mediacache_cat_audio(blob_urn, audio_urn_list)
+
+    return None

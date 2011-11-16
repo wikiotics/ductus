@@ -26,9 +26,6 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 from ductus.modules.audio.ductmodels import Audio
 from ductus.resource import get_resource_database
 
-OGGINFO_PATH = getattr(settings, "OGGINFO_PATH", '/usr/bin/ogginfo')
-FAAD_PATH = getattr(settings, "FAAD_PATH", '/usr/bin/faad')
-
 try:
     DEVNULL = subprocess.DEVNULL
 except AttributeError:
@@ -37,7 +34,7 @@ except AttributeError:
 logger = logging.getLogger(__name__)
 
 def verify_aac_lc(filename, error_messages):
-    popen = subprocess.Popen([FAAD_PATH, '-i', filename],
+    popen = subprocess.Popen([settings.FAAD_PATH, '-i', filename],
                              stdout=DEVNULL, stderr=subprocess.PIPE)
     stderr_output = popen.communicate()[1]
 
@@ -47,7 +44,7 @@ def verify_aac_lc(filename, error_messages):
     return 'audio/mp4'
 
 def verify_ogg_vorbis(filename, error_messages):
-    popen = subprocess.Popen([OGGINFO_PATH, filename],
+    popen = subprocess.Popen([settings.OGGINFO_PATH, filename],
                              stdout=subprocess.PIPE, stderr=DEVNULL)
     lower_stdout = popen.communicate()[0].lower()
 

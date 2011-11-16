@@ -19,6 +19,7 @@ from shutil import rmtree
 import subprocess
 from tempfile import mkdtemp
 import logging
+import hashlib
 
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
@@ -27,9 +28,10 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy
 
 from ductus.resource.ductmodels import BlueprintSaveContext
+from ductus.resource import get_resource_database
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
-from ductus.wiki.mediacache import mediacache_redirect, mime_to_ext
+from ductus.wiki.mediacache import mediacache_redirect, mime_to_ext, resolve_relative_mediacache_url, get_generated_filename
 from ductus.decorators import unvarying
 from ductus.modules.audio.ductmodels import Audio
 from ductus.modules.audio.forms import AudioImportForm
@@ -116,3 +118,55 @@ def mediacache_audio(blob_urn, mime_type, additional_args, audio):
             return iterate_file_then_delete(output_filename, delete_func=delete_tmpdir)
         finally:
             os.remove(input_filename)
+
+def _join_list(lst, c='+'):
+    """Returns a new list with `c` between each element"""
+    from itertools import chain, izip, repeat
+    rv = list(chain.from_iterable(izip(lst, repeat(c))))
+    try:
+        rv.pop()
+    except IndexError:
+        pass
+    return rv
+
+def get_joined_audio_mediacache_url(resource, audio_urn_list):
+    """Returns relative urls, meant to have the mediacache prefix prepended"""
+    if not audio_urn_list:
+        return None
+
+    first_audio_resource = get_resource_database().get_resource_object(audio_urn_list[0])
+
+    if len(audio_urn_list) == 1:
+        return resolve_relative_mediacache_url(first_audio_resource)
+    else:
+        urn_list_hash = hashlib.sha1(' '.join(audio_urn_list)).hexdigest()
+        return resolve_relative_mediacache_url(resource, "audio/webm", urn_list_hash, first_audio_resource.blob.href)
+
+def mediacache_cat_audio(first_blob_urn, audio_urn_list):
+    """Returns a webm file"""
+
+    if len(audio_urn_list) < 2:
+        return None
+
+    resource_database = get_resource_database()
+    audio_resources = [resource_database.get_resource_object(urn)
+                       for urn in audio_urn_list]
+    if audio_resources[0].blob.href != first_blob_urn:
+        return None
+
+    filenames = [get_generated_filename(resource.blob.href, 'audio/ogg',
+                                        None, resource)
+                 for resource in audio_resources]
+
+    # join the audio files into one
+    tmpdir = mkdtemp()
+    def delete_tmpdir(filename=None):
+        rmtree(tmpdir, ignore_errors=True)
+    output_filename = os.path.join(tmpdir, "joined_audio.webm")
+    logger.info("Converting %d audio files" % len(filenames))
+    try:
+        subprocess.check_call([settings.MKVMERGE_PATH, '-o', output_filename, '-w', '-q'] + _join_list(filenames))
+    except Exception:
+        delete_tmpdir()
+        raise
+    return iterate_file_then_delete(output_filename, delete_func=delete_tmpdir)

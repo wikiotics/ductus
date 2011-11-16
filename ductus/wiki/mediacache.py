@@ -37,6 +37,7 @@ mime_types = (
     ('jpg', 'image/jpeg'),
     ('oga', 'audio/ogg'),
     ('m4a', 'audio/mp4'),
+    ('webma', 'audio/webm'),
 )
 ext_to_mime = dict(mime_types)
 mime_to_ext = dict([(_b, _a) for (_a, _b) in mime_types])
@@ -128,7 +129,7 @@ def mediacache_redirect(request, blob_urn, mime_type, additional_args, resource)
     url = "%s/%s?%s" % (mediacache_url, pathname, resource.urn)
     return HttpResponseRedirect(url)
 
-def _do_mediacache_view_serve(blob_urn, mime_type, additional_args, resource):
+def _do_mediacache_view_generate(blob_urn, mime_type, additional_args, resource):
     # call the mediacache view to generate the bits
     mcv = registered_mediacache_views[resource.fqn]
     data_iterator = mcv(blob_urn, mime_type, additional_args, resource)
@@ -141,10 +142,27 @@ def _do_mediacache_view_serve(blob_urn, mime_type, additional_args, resource):
         # fixme: log a warning if this returns False (i.e. an error occurred)
         put(blob_urn, mime_type, additional_args, data_iterator)
 
+    return data_iterator
+
+def _do_mediacache_view_serve(blob_urn, mime_type, additional_args, resource):
+    data_iterator_list = _do_mediacache_view_generate(blob_urn, mime_type, additional_args, resource)
     # send it off
-    response = HttpResponse(list(data_iterator), content_type=mime_type) # see django #6527
+    response = HttpResponse(data_iterator_list, content_type=mime_type) # see django #6527
     response["X-Ductus-Mediacache"] = "generated"
     return response
+
+def get_generated_filename(blob_urn, mime_type, additional_args, resource):
+    # if the mediacache is ever /not/ stored directly in the filesystem, we
+    # will need to make this function return a temporary file instead (and we
+    # will need to worry about deleting said file)
+
+    filename = __to_filename(blob_urn, mime_type, additional_args)
+
+    import os.path
+    if not os.path.isfile(filename):
+        _do_mediacache_view_generate(blob_urn, mime_type, additional_args, resource)
+
+    return filename
 
 def __to_filename(urn, mime_type, additional_args):
     hash_type, digest = split_urn(urn)
@@ -187,3 +205,9 @@ def get(urn, mime_type, additional_args):
         return iter(f)
     except (OSError, IOError):
         return None
+
+def resolve_relative_mediacache_url(resource, mime_type=None, additional_args=None, blob_urn=None):
+    hash_type, digest = split_urn(blob_urn or resource.blob.href)
+    ext = mime_to_ext[mime_type or resource.blob.mime_type]
+    return "%s/%s%s.%s?%s" % (hash_type, digest, _dotstr(additional_args),
+                              ext, resource.urn)
