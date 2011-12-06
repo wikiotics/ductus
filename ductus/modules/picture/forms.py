@@ -104,7 +104,7 @@ class UrnHandler(object):
                 return
 
         # this should never be reached
-        assert self.handles(uri)
+        assert self.handles(self.uri)
 
     def save(self, save_context):
         return self.urn

@@ -24,4 +24,3 @@ def register_interaction_view(model):
         registered_interaction_views[model.fqn] = func
         return func
     return _register_interaction_view
-

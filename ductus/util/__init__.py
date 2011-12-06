@@ -156,7 +156,7 @@ def create_property(f):
     ...         def fget(s):
     ...             return 43
     ...         return locals()
-    ... 
+    ...
     >>> A().monty
     43
 

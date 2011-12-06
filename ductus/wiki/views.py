@@ -455,7 +455,7 @@ def view_copy_resource(request):
             if not is_legal_wiki_pagename(prefix, pagename):
                 raise forms.ValidationError(_(u'Invalid page name')) # would be nice to tell the user why it's invalid...
             if not user_has_edit_permission(request.user, prefix, pagename):
-                raise forms.ValidationError(_('you do not have permission to create/write to this resource')) 
+                raise forms.ValidationError(_('you do not have permission to create/write to this resource'))
             return target_pagename
 
     if request.method == 'POST':
