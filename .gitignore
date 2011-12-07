@@ -6,3 +6,4 @@ build
 dist
 MANIFEST
 ip_blacklist.data
+doc/_build/
