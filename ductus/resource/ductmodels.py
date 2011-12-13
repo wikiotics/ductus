@@ -25,7 +25,7 @@ from django.conf import settings
 from django.utils.datastructures import SortedDict
 
 from ductus.license import is_license_compatibility_satisfied
-from ductus.util import create_property
+from ductus.util import create_property, is_punctuation
 from ductus.resource import register_ductmodel, get_resource_database, _registered_ductmodels
 
 # fixme: we could just not "follow" parents instead of excluding them.  If we
@@ -433,6 +433,12 @@ class ArrayElement(Element):
     # maybe make an interface for new_item to be passed arguments, which will
     # call some yet-to-be-defined "set_stuff" function on the item
 
+class OptionalArrayElement(ArrayElement):
+    optional = True
+
+    def is_null_xml_element(self):
+        return len(self) == 0
+
 class LinkElement(Element):
     nsmap = {"xlink": "http://www.w3.org/1999/xlink"}
 
@@ -561,8 +567,6 @@ class DuctusCommonElement(Element):
     timestamp = Attribute()
     log_message = TextElement()
 
-    # rejected: title, languages, source url
-
     ns = "http://ductus.us/ns/2009/ductus"
     nsmap = {"ductus": ns}
 
@@ -605,8 +609,23 @@ class DuctusCommonElement(Element):
         self.author.href = save_context.author_full_absolute_url
         self.log_message.text = save_context.log_message
 
+def _tag_value_attribute_validator(v):
+    if not v:
+        raise ValidationError("a tag cannot be blank")
+    if v[0].isspace() or v[-1].isspace():
+        raise ValidationError("a tag cannot begin or end with whitespace")
+    if is_punctuation(v[0]):
+        raise ValidationError("a tag cannot begin with punctuation")
+    if len(v) > 200:
+        raise ValidationError("tags are limited to 200 characters")
+    if u',' in v:
+        raise ValidationError("tags cannot contain commas")
+
+class TagElement(Element):
+    value = Attribute(validator=_tag_value_attribute_validator)
+
 class BaseDuctModel(Element):
-    """all functionality of DuctModel, but without the `common` element"""
+    """all functionality of DuctModel, but without the `common` or `tags` elements"""
 
     __metaclass__ = DuctModelMetaclass
 
@@ -690,6 +709,7 @@ class BaseDuctModel(Element):
 
 class DuctModel(BaseDuctModel):
     common = DuctusCommonElement()
+    tags = OptionalArrayElement(TagElement())
 
     __allowed_licenses_set = set(settings.DUCTUS_ALLOWED_LICENSES)
 
@@ -738,7 +758,10 @@ class DuctModel(BaseDuctModel):
 
     def patch_from_blueprint(self, blueprint, save_context):
         super(DuctModel, self).patch_from_blueprint(blueprint, save_context)
+        # we must save both subelements' blueprints explicitly for some reason
+        # that is currently mysterious to me...
         self.common.patch_from_blueprint(None, save_context)
+        self.tags.patch_from_blueprint(blueprint, save_context)
 
 def blueprint_expects_dict(blueprint):
     if not isinstance(blueprint, dict):

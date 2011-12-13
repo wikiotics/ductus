@@ -162,3 +162,9 @@ def create_property(f):
 
     """
     return property(**f())
+
+def is_punctuation(v):
+    """Returns true if the given character is a punctuation mark"""
+    assert len(v) == 1
+    import unicodedata
+    return unicodedata.category(unicode(v)).startswith("P")

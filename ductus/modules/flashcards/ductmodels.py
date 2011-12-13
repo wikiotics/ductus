@@ -27,12 +27,6 @@ class Phrase(ductmodels.BaseDuctModel):
     phrase = ductmodels.TextElement()
 # end of other models
 
-class OptionalArrayElement(ductmodels.ArrayElement):
-    optional = True
-
-    def is_null_xml_element(self):
-        return len(self) == 0
-
 def _is_canonical_int(string):
     try:
         x = int(string)
@@ -111,7 +105,7 @@ class FlashcardDeck(ductmodels.DuctModel):
     headings = ductmodels.ArrayElement(ductmodels.TextElement())
     column_order = ductmodels.Attribute(optional=True)
 
-    interactions = OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction, AudioLessonInteraction))
+    interactions = ductmodels.OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction, AudioLessonInteraction))
 
     def validate(self, strict=True):
         super(FlashcardDeck, self).validate(strict)
