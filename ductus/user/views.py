@@ -20,6 +20,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.utils.safestring import mark_safe
 from django import forms
 
@@ -31,8 +32,7 @@ recaptcha = None
 if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):
     from recaptcha.client import captcha as recaptcha
 
-def user_creation(request, template_name='registration/create_user.html',
-                  success_template_name='registration/user_created.html'):
+def user_creation(request, template_name='registration/create_user.html'):
     "Displays user creation form and handles its action"
     if request.method == "POST":
         if recaptcha is not None:
@@ -48,9 +48,11 @@ def user_creation(request, template_name='registration/create_user.html',
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return render_to_response(success_template_name, {
-                'username': form.cleaned_data["username"],
-            }, context_instance=RequestContext(request))
+            # log in the user automatically
+            user = authenticate(username=form.cleaned_data["username"],
+                                password=form.cleaned_data["password1"])
+            login(request, user)
+            return redirect("ductus.wiki.views.view_frontpage")
     else:
         form = UserCreationForm()
 

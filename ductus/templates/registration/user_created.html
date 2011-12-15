@@ -1,7 +1,0 @@
-{% extends "ductus_base.html" %}
-{% load i18n %}
-
-{% block content %}
-{% url django.contrib.auth.views.login as login_url %}
-<p>{% blocktrans %}Created user {{ username }}.  Now you may <a href="{{ login_url }}">log in</a>.{% endblocktrans %}</p>
-{% endblock %}
