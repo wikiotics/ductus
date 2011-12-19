@@ -119,7 +119,7 @@ def mediacache_audio(blob_urn, mime_type, additional_args, audio):
         finally:
             os.remove(input_filename)
 
-def _join_list(lst, c='+'):
+def _join_list(lst, c):
     """Returns a new list with `c` between each element"""
     from itertools import chain, izip, repeat
     rv = list(chain.from_iterable(izip(lst, repeat(c))))
@@ -129,8 +129,10 @@ def _join_list(lst, c='+'):
         pass
     return rv
 
-def get_joined_audio_mediacache_url(resource, audio_urn_list):
+def get_joined_audio_mediacache_url(resource, audio_urn_list, mime_type):
     """Returns relative urls, meant to have the mediacache prefix prepended"""
+    assert mime_type in ('audio/webm', 'audio/mp4')
+
     if not audio_urn_list:
         return None
 
@@ -140,12 +142,13 @@ def get_joined_audio_mediacache_url(resource, audio_urn_list):
         return resolve_relative_mediacache_url(first_audio_resource)
     else:
         urn_list_hash = hashlib.sha1(' '.join(audio_urn_list)).hexdigest()
-        return resolve_relative_mediacache_url(resource, "audio/webm", urn_list_hash, first_audio_resource.blob.href)
+        return resolve_relative_mediacache_url(resource, mime_type, urn_list_hash, first_audio_resource.blob.href)
 
-def mediacache_cat_audio(first_blob_urn, audio_urn_list):
-    """Returns a webm file"""
-
+def mediacache_cat_audio(first_blob_urn, audio_urn_list, mime_type):
     if len(audio_urn_list) < 2:
+        # there's no reason to do concatenation...
+        # get_joined_audio_mediacache_url() points to the original (single)
+        # file anyway
         return None
 
     resource_database = get_resource_database()
@@ -154,6 +157,14 @@ def mediacache_cat_audio(first_blob_urn, audio_urn_list):
     if audio_resources[0].blob.href != first_blob_urn:
         return None
 
+    if mime_type == 'audio/webm':
+        return _cat_webm(audio_resources)
+    elif mime_type == 'audio/mp4':
+        return _cat_m4a(audio_resources)
+    else:
+        raise Exception("attempting to concatenate unsupported format: %s" % mime_type)
+
+def _cat_webm(audio_resources):
     filenames = [get_generated_filename(resource.blob.href, 'audio/ogg',
                                         None, resource)
                  for resource in audio_resources]
@@ -163,9 +174,37 @@ def mediacache_cat_audio(first_blob_urn, audio_urn_list):
     def delete_tmpdir(filename=None):
         rmtree(tmpdir, ignore_errors=True)
     output_filename = os.path.join(tmpdir, "joined_audio.webm")
-    logger.info("Converting %d audio files" % len(filenames))
+    logger.info("Joining %d ogg/vorbis files" % len(filenames))
     try:
-        subprocess.check_call([settings.MKVMERGE_PATH, '-o', output_filename, '-w', '-q'] + _join_list(filenames))
+        subprocess.check_call([settings.MKVMERGE_PATH, '-o', output_filename, '-w', '-q'] + _join_list(filenames, '+'))
+    except Exception:
+        delete_tmpdir()
+        raise
+    return iterate_file_then_delete(output_filename, delete_func=delete_tmpdir)
+
+def _cat_m4a(audio_resources):
+    filenames = [get_generated_filename(resource.blob.href, 'audio/mp4',
+                                        None, resource)
+                 for resource in audio_resources]
+
+    # join the audio files into one
+    tmpdir = mkdtemp()
+    def delete_tmpdir(filename=None):
+        rmtree(tmpdir, ignore_errors=True)
+    output_filename = os.path.join(tmpdir, "joined_audio.m4a")
+    logger.info("Joining %d m4a files" % len(filenames))
+    try:
+        # MP4Box can concatenate a maximum of 20 files at a time, so we call it
+        # repeatedly until everything is concatenated.
+        from itertools import islice
+        MAX_CUMUL_OPS = 20  # as defined in gpac/applications/mp4box/main.c
+        i = iter(filenames)
+        while True:
+            current_filenames = list(islice(i, MAX_CUMUL_OPS))
+            if not current_filenames:
+                break
+            cmd = [settings.MP4BOX_PATH, output_filename, '-cat'] + _join_list(current_filenames, '-cat')
+            subprocess.check_call(cmd)
     except Exception:
         delete_tmpdir()
         raise

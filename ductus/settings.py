@@ -238,6 +238,7 @@ LOGIN_REDIRECT_URL = '/'
 OGGINFO_PATH = '/usr/bin/ogginfo'
 FAAD_PATH = '/usr/bin/faad'
 MKVMERGE_PATH = '/usr/bin/mkvmerge'
+MP4BOX_PATH = '/usr/bin/MP4Box'
 
 try:
     from ductus_local_settings import *

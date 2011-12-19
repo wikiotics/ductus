@@ -97,15 +97,17 @@ def podcast(request, interaction):
     column = int(interaction.audio)
     resource = request.ductus.resource
     audio_urns = _get_audio_urns_in_column(resource, column)
-    podcast_relative_url = get_joined_audio_mediacache_url(resource, audio_urns)
+    podcast_webm_relative_url = get_joined_audio_mediacache_url(resource, audio_urns, 'audio/webm')
+    podcast_m4a_relative_url = get_joined_audio_mediacache_url(resource, audio_urns, 'audio/mp4')
 
     return render_to_response('flashcards/audio_lesson.html', {
-        'podcast_relative_url': podcast_relative_url,
+        'podcast_webm_relative_url': podcast_webm_relative_url,
+        'podcast_m4a_relative_url': podcast_m4a_relative_url,
     }, RequestContext(request))
 
 @register_mediacache_view(FlashcardDeck)
 def mediacache_flashcard_deck(blob_urn, mime_type, additional_args, flashcard_deck):
-    if mime_type == 'audio/webm':
+    if mime_type in ('audio/webm', 'audio/mp4'):
         # figure out which column the audio is from
         from hashlib import sha1
         for column in xrange(len(flashcard_deck.headings)):
@@ -116,6 +118,6 @@ def mediacache_flashcard_deck(blob_urn, mime_type, additional_args, flashcard_de
             return None
 
         # concatenate the audio
-        return mediacache_cat_audio(blob_urn, audio_urn_list)
+        return mediacache_cat_audio(blob_urn, audio_urn_list, mime_type)
 
     return None
