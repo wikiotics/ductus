@@ -203,7 +203,7 @@ def _cat_m4a(audio_resources):
             current_filenames = list(islice(i, MAX_CUMUL_OPS))
             if not current_filenames:
                 break
-            cmd = [settings.MP4BOX_PATH, output_filename, '-cat'] + _join_list(current_filenames, '-cat')
+            cmd = [settings.MP4BOX_PATH, output_filename, '-tmp', tmpdir, '-cat'] + _join_list(current_filenames, '-cat')
             subprocess.check_call(cmd)
     except Exception:
         delete_tmpdir()
