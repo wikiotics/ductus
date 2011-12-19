@@ -1,15 +1,22 @@
-.. Ductus documentation master file, created by
-   sphinx-quickstart on Sat Aug 28 00:07:53 2010.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to Ductus's documentation!
-==================================
+====================
+Ductus Documentation
+====================
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
+
+   overview
+   resourcedatabase
+   ductmodels
+   genericwiki-storage
+   genericwiki-dispatch
+   textwiki
+   flashcard_deck
+   resource_json
+   customizing-ductus
+   conventions
 
 Indices and tables
 ==================

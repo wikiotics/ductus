@@ -22,4 +22,5 @@ register = Library()
 @register.filter
 @stringfilter
 def underscores_to_spaces(value):
+    """Converts to spaces all underscores in the given string"""
     return value.replace('_', ' ')

@@ -14,6 +14,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+This module allows us to have a series of titles and subtitles in the HTML
+<title> element.
+
+For instance, a lesson about Animals may have, in the <title> element, 'Animals
+- Example Ductus Site'.  Using this framework, we can add an arbitrary number
+of subtitles and have them all displayed with the most specific first.
+
+Ultimately, all these subtitles are put into the HTML <title> element in
+ductus_base.html.
+"""
+
 from django import template
 
 register = template.Library()
@@ -37,5 +49,21 @@ class TitleNode(template.Node):
 
 @register.tag
 def title(parser, token):
+    """Adds a title/subtitle to the list of titles that should be rendered on a page.
+
+    This should be called in a specific order for each title: it should called
+    given the most general (top-level) title first, and the final time it is
+    called it should be given the most specific title.
+
+    For instance, if this function is called twice while rendering a template:
+
+    {% title "Example Ductus Site" %}
+    {% title "Animals" %}
+
+    then the <title> of the page will be "Animals - Example Ductus Site".
+
+    This function works by appending to a list which is stored in the top-level
+    template context with variable name title_list.
+    """
     tag_name, title = token.split_contents()
     return TitleNode(title)
