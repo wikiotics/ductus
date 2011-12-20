@@ -20,11 +20,10 @@ from django.utils.safestring import mark_safe
 def site_settings(request):
     """Sets Ductus-specific template variables based on site settings
 
-    Includes ductus_media_prefix, ductus_site_name, and ductus_site_head
+    Includes ductus_media_prefix, ductus_mediacache_prefix, ductus_mime_to_ext,
+    ductus_site_name, and ductus_default_license.
     """
     dsn = getattr(settings, "DUCTUS_SITE_NAME", "Example Ductus Site")
-    dsh = getattr(settings, "DUCTUS_SITE_HEAD", "")
-    dsf = getattr(settings, "DUCTUS_SITE_FOOTER", "")
     dmcp = getattr(settings, "DUCTUS_MEDIACACHE_URL", None) or '/mediacache'
     if request.is_secure():
         dmcp = getattr(settings, "DUCTUS_MEDIACACHE_URL_SECURE", None) or dmcp
@@ -34,8 +33,6 @@ def site_settings(request):
         'ductus_mediacache_prefix': dmcp + '/',
         'ductus_mime_to_ext': mime_to_ext,
         'ductus_site_name': mark_safe(dsn),
-        'ductus_site_head': mark_safe(dsh),
-        'ductus_site_footer': mark_safe(dsf),
         'ductus_default_license': settings.DUCTUS_DEFAULT_LICENSE,
     }
 
