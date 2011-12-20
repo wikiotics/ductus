@@ -28,14 +28,18 @@ def site_settings(request):
     dmcp = getattr(settings, "DUCTUS_MEDIACACHE_URL", None) or '/mediacache'
     if request.is_secure():
         dmcp = getattr(settings, "DUCTUS_MEDIACACHE_URL_SECURE", None) or dmcp
+    format_dict = {
+        'language_code': getattr(request, "LANGUAGE_CODE", settings.LANGUAGE_CODE),
+        'ductus_media_prefix': settings.DUCTUS_MEDIA_PREFIX,
+    }
     from ductus.wiki.mediacache import mime_to_ext
     return {
         'ductus_media_prefix': settings.DUCTUS_MEDIA_PREFIX,
         'ductus_mediacache_prefix': dmcp + '/',
         'ductus_mime_to_ext': mime_to_ext,
         'ductus_site_name': mark_safe(dsn),
-        'ductus_site_head': mark_safe(dsh),
-        'ductus_site_footer': mark_safe(dsf),
+        'ductus_site_head': mark_safe(dsh.format(**format_dict)),
+        'ductus_site_footer': mark_safe(dsf.format(**format_dict)),
         'ductus_default_license': settings.DUCTUS_DEFAULT_LICENSE,
     }
 
