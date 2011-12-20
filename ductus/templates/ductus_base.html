@@ -94,7 +94,7 @@
               <hr/>
               <form action="{% url django.views.i18n.set_language %}" method="post">
                 <p>
-                  {% trans "user interface language:" %}
+                  {% trans "Your language:" %}
                   <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />
                   <select name="language">
                     {% for lang in LANGUAGES %}
