@@ -19,19 +19,53 @@ class DuctusBot(object):
         """server: base url to the ductus as a string"""
         self.server = server
         self.crsf_token = False
+        self.sessionid = None
 
     def get_cookies(self):
         # Set up initial cookies
         print "Getting session id and csrf token from server %s ..." % self.server
-        cj = cookielib.CookieJar()
-        self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+        self.cj = cookielib.CookieJar()
+        self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
         self.opener.open(self.server + '/login').read() # make sure we read the whole response from the server, otherwise socket is invalid for further requests
-        for cookie in cj:
+        for cookie in self.cj:
             if cookie.name == 'csrftoken':
                 self.csrf_token = cookie.value
+                print "GOT CSRF token"
                 break
         else:
             print "Couldn't get csrf token"
+
+    def login(self):
+        print "logging in..."
+        values = {   "csrfmiddlewaretoken": self.csrf_token,
+                    "username": "laurent",
+                    "password": INSERT_PWD_HERE}
+        data = urllib.urlencode(values)
+        request = urllib2.Request( self.server + '/login')
+        request.add_header('User-agent', 'DuctusBot')
+        request.add_header('X-CSRFToken', self.csrf_token)
+        request.add_header('Cookie', 'csrftoken=' + self.csrf_token)
+        request.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
+        request.add_header('Content-length', len(data))
+        request.add_data(data)
+        #print "Connecting to %s..." % fullurl
+        try:
+            fullurl = self.opener.open(request)
+        except urllib2.HTTPError as e:
+            if e.code == 403:
+                print "Access denied, giving up here - maybe a CSRF issue?"
+                print e.read()
+                sys.exit()
+            if e.code == 500:
+                raise
+        except urllib2.URLError as e:
+            print "Connection failed: "
+            print e.read()
+        else:
+            for cookie in self.cj:
+                if cookie.name == 'sessionid':
+                    self.sessionid = cookie.value
+                    print "Login OK"
 
     def page_exists(self, url):
         """Check if a given url exists on the server (by checking for 404 http code). Returns a bool."""
@@ -71,7 +105,6 @@ class DuctusBot(object):
         body += crlf
         body += 'Content-Type: %s' % mimetypes.guess_type(filename)[0]
         body += crlf + crlf
-        #body += self.archive.get_oggfile(filename)
         body += file_contents
         body += crlf + '--' + part_boundary + '--'
         body += crlf
@@ -80,14 +113,13 @@ class DuctusBot(object):
         request.add_header('User-agent', 'DuctusBot')
         request.add_header('X-Requested-With', 'XMLHttpRequest')
         request.add_header('X-CSRFToken', self.csrf_token)
-        request.add_header('Cookie', 'csrftoken='+self.csrf_token)
+        request.add_header('Cookie', 'csrftoken=' + self.csrf_token + '; sessionid=' + self.sessionid)
         request.add_header('Content-type', 'multipart/form-data; boundary=%s' % part_boundary)
         request.add_header('Content-length', len(body))
         request.add_data(body)
         try:
             url = self.opener.open(request)
         except urllib2.HTTPError as e:
-            #print "HTTP error: " + str(e)
             print e.read()
             if e.code == 403:
                 print "Access denied, giving up here - maybe a CSRF issue?"
@@ -98,7 +130,6 @@ class DuctusBot(object):
             return '{"urn":""}'
         else:
             response = url.read()
-            #print response
             return response
 
     def save_blueprint(self, url, blueprint, log_message = u'bot action'):
@@ -117,7 +148,7 @@ class DuctusBot(object):
         request.add_header('User-agent', 'DuctusBot')
         request.add_header('X-Requested-With', 'XMLHttpRequest')
         request.add_header('X-CSRFToken', self.csrf_token)
-        request.add_header('Cookie', 'csrftoken='+self.csrf_token)
+        request.add_header('Cookie', 'csrftoken=' + self.csrf_token + '; sessionid=' + self.sessionid)
         request.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
         request.add_header('Content-length', len(data))
         request.add_data(data)
@@ -172,6 +203,7 @@ class WBimporter():
         self.csrf_token = None
         self.bot = DuctusBot(server)
         self.bot.get_cookies()
+        self.bot.login()
 
     def is_title_available(self, title):
         return not self.bot.page_exists(title)
@@ -195,15 +227,11 @@ class WBimporter():
     def create_blueprint_from_archive_XML(self):
         # load XML and correct mediawiki content tags
         xml_text = unicode(self.archive.get_xml(), 'utf-8')
-        #print "BEFORE"
-        #print xml_text
         xml_text = xml_text.replace('&lt;', '<')
         xml_text = xml_text.replace('&gt;', '>')
         xml_text = xml_text.replace('&quot;', '"')
         # dump namespace declarations to make subsequent processing easier
         xml_text = re.sub(r'<mediawiki(.*)>', '<mediawiki>', xml_text, 1)
-        #print "AFTER"
-        #print xml_text
         try:
             xml_tree = etree.XML(xml_text)
         except:
@@ -219,13 +247,11 @@ class WBimporter():
                 contributors[index] = 'WikiBabel user ' + contributor[0].text
             else:
                 contributors[index] = 'IP ' + contributor[0].text
-        treelist = xml_tree.xpath('//wikibabel')    #[0]
+        treelist = xml_tree.xpath('//wikibabel')
         for revision in treelist:
-            #print etree.tostring(revision)
             context = etree.iterwalk(revision, events=("start", "end"))
             for action, elem in context:
                 if action == "end" and elem.tag in ['text', 'source', 'target']:
-                    #print elem.tag
                     if elem.text != None:
                         elem.text = elem.text.replace('"', '\\"')
                     urn = elem.get("sound")
@@ -246,10 +272,6 @@ class WBimporter():
             print urn
             parent = json.loads(urn)['urn']
         
-    #def save_blueprint(self, blueprints):
-    #    for blueprint in blueprints:
-    #        parent = self.bot.save_blueprint(self.url, blueprint, "WikiBabel import")
-
 class objectJSONEncoder(json.JSONEncoder):
     def __init__(self):
         return json.JSONEncoder(False, False)
