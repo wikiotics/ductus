@@ -101,7 +101,7 @@ class DuctusBot(object):
             #print response
             return response
 
-    def save_blueprint(self, url, blueprint, log_message = 'bot action'):
+    def save_blueprint(self, url, blueprint, log_message = u'bot action'):
         """Save a blueprint to a urn on the server.
         url: url to save the blueprint to, without server name (e.g: "/en/my_lesson")
         blueprint: string representation of the json blueprint
@@ -110,7 +110,7 @@ class DuctusBot(object):
         fullurl = self.server + url
 
         values = {  'log_message'   : log_message,
-                    'blueprint'     : blueprint}
+                    'blueprint'     : blueprint.encode('utf-8')}
         data = urllib.urlencode(values, True)
 
         request = urllib2.Request(fullurl)
@@ -241,10 +241,8 @@ class WBimporter():
             json_blueprint = json_blueprint.replace('\n', '')
             # FIXME: ugly workaround to XSL stylesheet: remove the last ',' separator between templates. Ideally XSL stylesheet should be corrected :)
             json_blueprint = json_blueprint.replace('flashcard"}},]}', 'flashcard"}}]}')
-            json_test = json.loads(json_blueprint)
-            blueprints.append(json.dumps(json_test))
-            #print json_blueprint
-            urn = self.bot.save_blueprint(self.url, json_blueprint, "import from Wikibabel lesson "+title+", updated on " + timestamps[index] + " by " + contributors[index])
+            log_message = unicode("import from Wikibabel lesson "+title+", updated on " + timestamps[index] + " by " + contributors[index], 'utf-8')
+            urn = self.bot.save_blueprint(self.url, json_blueprint, log_message)
             print urn
             parent = json.loads(urn)['urn']
         
