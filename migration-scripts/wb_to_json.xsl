@@ -35,26 +35,30 @@
 	<!-- do nothing here, but this prevents the title from being printed at the beginning of the html output -->
 </xsl:template>
 <xsl:template match="Lesson/sentence">
+<xsl:choose>
+<xsl:when test="string(source) != '' or string(source/@sound) != ''">
+	<xsl:text>{"resource":{"sides":{"array":[</xsl:text>
+			<!-- text of the line -->
+			<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="source" /><xsl:text>"}}},</xsl:text>
+			<!-- audio -->
+			<xsl:if test="string(source/@sound) != '' ">
+			<xsl:text>{"href":"</xsl:text><xsl:value-of select="source/@sound" /><xsl:text>"},</xsl:text>
+			</xsl:if>
+			<xsl:if test="string(source/@sound) = '' ">
+			<xsl:text>{"resource":null},</xsl:text>
+			</xsl:if>
+			<!-- language -->
+			<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="$source_language" /><xsl:text>"}}},</xsl:text>
+			<!-- speaker -->
+			<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text>
+				<!--<xsl:value-of select="key('speaker-table',source/@speaker)/@name"/>-->
+			<xsl:text>"}}}
+	]},
+	"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard"
+	}},</xsl:text>
+</xsl:when>
+</xsl:choose>
 <xsl:text>{"resource":{"sides":{"array":[</xsl:text>
-                <!-- text of the line -->
-                <xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="source" /><xsl:text>"}}},</xsl:text>
-		<!-- audio -->
-                <xsl:if test="string(source/@sound) != '' ">
-		<xsl:text>{"href":"</xsl:text><xsl:value-of select="source/@sound" /><xsl:text>"},</xsl:text>
-		</xsl:if>
-		<xsl:if test="string(source/@sound) = '' ">
-		<xsl:text>{"resource":null},</xsl:text>
-		</xsl:if>
-		<!-- language -->
-		<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="$source_language" /><xsl:text>"}}},</xsl:text>
-		<!-- speaker -->
-		<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text>
-			<!--<xsl:value-of select="key('speaker-table',source/@speaker)/@name"/>-->
-		<xsl:text>"}}}
-]},
-"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard"
-}},
-{"resource":{"sides":{"array":[</xsl:text>
                 <!-- text of the line -->
                 <xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="target" /><xsl:text>"}}},</xsl:text>
 		<!-- audio -->
