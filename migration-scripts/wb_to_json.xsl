@@ -5,6 +5,7 @@
 
 <xsl:param name="source_language" />
 <xsl:param name="target_language" />
+<xsl:param name="rev_parent" />
 
 <xsl:key name="speaker-table" match="speaker" use="@id"/>
 
@@ -14,10 +15,19 @@
 "array":[</xsl:text>
 	<xsl:apply-templates />
 <xsl:text>]},
-"headings":{"array":[{"text":"phrase"},{"text":"sound"},{"text":"language"},{"text":"speaker"}]},
-"interactions":{"array":[]},
-"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard_deck"
-}}</xsl:text>
+"headings":{"array":[{"text":"phrase"},{"text":"audio"},{"text":"language"},{"text":"speaker"}]},
+"tags": {"array": [{"value": "source:</xsl:text><xsl:value-of select="$source_language" />
+<xsl:text>"}, {"value": "target:</xsl:text><xsl:value-of select="$target_language" />
+<xsl:text>"},{"value": "wikibabel"}]},
+"interactions":{"array":[{"resource":{"audio":"1","transcript":"0","@create":"{http://wikiotics.org/ns/2011/flashcards}audio_lesson_interaction"}}]},
+</xsl:text>
+<xsl:if test="$rev_parent = '' ">
+	<xsl:text>"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard_deck"</xsl:text>
+</xsl:if>
+<xsl:if test="string($rev_parent) != '' ">
+	<xsl:text>"@patch":"</xsl:text><xsl:value-of select="$rev_parent" /><xsl:text>"</xsl:text>
+</xsl:if>
+<xsl:text>}}</xsl:text>
 </xsl:template>
 
 
@@ -25,7 +35,7 @@
 	<!-- do nothing here, but this prevents the title from being printed at the beginning of the html output -->
 </xsl:template>
 <xsl:template match="Lesson/sentence">
-	 <xsl:text>{"resource":{"sides":{"array":[</xsl:text>
+<xsl:text>{"resource":{"sides":{"array":[</xsl:text>
                 <!-- text of the line -->
                 <xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="source" /><xsl:text>"}}},</xsl:text>
 		<!-- audio -->
