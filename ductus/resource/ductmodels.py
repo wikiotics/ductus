@@ -498,7 +498,7 @@ class ResourceElement(LinkElement):
     def __check_type(self, resource):
         if self.allowed_resource_types:
             if not type(resource) in self.allowed_resource_types:
-                raise Exception("Not a correct resource type")
+                raise Exception("Not a correct resource type: %s but allowed types are %s" % (type(resource), self.allowed_resource_types))
 
     def output_json_dict(self):
         rv = super(ResourceElement, self).output_json_dict()
