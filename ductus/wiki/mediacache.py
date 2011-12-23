@@ -95,7 +95,10 @@ def _mediacache_view(pathname, query_string):
         raise Http404("the urn of the resource that references this blob should be given as the query string")
 
     resource_database = get_resource_database()
-    resource = resource_database.get_resource_object(query_string)
+    try:
+        resource = resource_database.get_resource_object(query_string)
+    except KeyError:
+        raise Http404("the query string does not reference an existing urn")
 
     return _do_mediacache_view_serve(blob_urn, mime_type, additional_args, resource)
 
