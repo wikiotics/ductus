@@ -52,6 +52,8 @@ setup(
         'ductus.modules.audio',
         'ductus.modules.picture',
         'ductus.modules.picture_choice',
+        'ductus.modules.phrase_choice',
+        'ductus.modules.flashcards',
         'ductus.modules.textwiki',
         'ductus.modules.textwiki.templatetags',
     ),
