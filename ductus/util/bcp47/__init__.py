@@ -19,18 +19,18 @@
 
 from ductus.util.bcp47.data import subtag_database
 
-def tag_to_description(tag):
+def language_tag_to_description(tag):
     """Converts a bcp47 tag to a description
 
     Currently only supports language tags and region subtags.
 
     Raises KeyError if it is not found.
 
-    >>> tag_to_description('en')
+    >>> language_tag_to_description('en')
     u'English'
-    >>> tag_to_description('en-us')
+    >>> language_tag_to_description('en-us')
     u'English (United States)'
-    >>> tag_to_description('EN-US')
+    >>> language_tag_to_description('EN-US')
     u'English (United States)'
     """
     subtags = tag.split('-')
@@ -44,5 +44,8 @@ def tag_to_description(tag):
         raise KeyError
     rv = language
     if region:
+        # NOTE: some day we may wish to do this formatting using
+        # django.utils.translation.string_concat so that each subtag can be put
+        # through ugettext or ugettext_lazy separately
         rv += u" (%s)" % region
     return rv

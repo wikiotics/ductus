@@ -375,7 +375,7 @@ class RegularWikiNamespace(BaseWikiNamespace):
 class NaturalLanguageWikiNamespace(RegularWikiNamespace):
     pass
 
-for __language, __language_name in settings.DUCTUS_NATURAL_LANGUAGES:
+for __language in settings.DUCTUS_NATURAL_LANGUAGES:
     NaturalLanguageWikiNamespace(__language)
 
 class UrnWikiNamespace(BaseWikiNamespace):

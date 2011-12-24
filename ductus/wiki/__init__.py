@@ -22,6 +22,7 @@ from django.conf import settings
 
 from ductus.resource import ResourceDatabase, UnsupportedURN, get_resource_database
 from ductus.wiki.namespaces import registered_namespaces
+from ductus.util.bcp47 import language_tag_to_description
 
 __whitespace_re = re.compile(r'\s', re.UNICODE)
 
@@ -123,8 +124,8 @@ def get_writable_directories_for_user(user):
         rv.append(('user:%s/' % user.username, 'user', user.username))
         rv.extend(('group:%s/' % group.slug, 'group', group.name)
                   for group in user.groups.all())
-    rv.extend(('%s:' % lang, 'language_namespace', lang_name)
-              for lang, lang_name in settings.DUCTUS_NATURAL_LANGUAGES)
+    rv.extend(('%s:' % lang, 'language_namespace', language_tag_to_description(lang))
+              for lang in settings.DUCTUS_NATURAL_LANGUAGES)
     return tuple(rv)
 
 registered_views = {}

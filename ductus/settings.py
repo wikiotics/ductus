@@ -75,40 +75,40 @@ ADMIN_MEDIA_PREFIX = '/media/'
 #SECRET_KEY = 'cpoong-0a^a(kp1q0jm*(okmdmcidh_!rqjzg4&ff%93flbwr$'
 
 # Allowed language-related namespace prefixes, as well as the languages allowed
-# on a textwiki page
+# on a textwiki page.  Each should be a valid BCP 47 language tag.
 DUCTUS_NATURAL_LANGUAGES = (
-    ('af', 'Afrikaans'),
-    ('ar', 'Arabic'),
-    ('bs', 'Bosnian'),
-    ('ca', 'Catalan'),
-    ('cs', 'Czech'),
-    ('da', 'Danish'),
-    ('de', 'German'),
-    ('en', 'English'),
-    ('eo', 'Esperanto'),
-    ('es', 'Spanish'),
-    ('fi', 'Finnish'),
-    ('fr', 'French'),
-    ('he', 'Hebrew'),
-    ('hi', 'Hindi'),
-    ('hr', 'Croatian'),
-    ('hu', 'Hungarian'),
-    ('id', 'Indonesian'),
-    ('is', 'Icelandic'),
-    ('it', 'Italian'),
-    ('ja', 'Japanese'),
-    ('ko', 'Korean'),
-    ('nl', 'Dutch'),
-    ('no', 'Norwegian'),
-    ('pl', 'Polish'),
-    ('pt', 'Portuguese'),
-    ('ro', 'Romanian'),
-    ('ru', 'Russian'),
-    ('sk', 'Slovak'),
-    ('sv', 'Swedish'),
-    ('tr', 'Turkish'),
-    ('uk', 'Ukrainian'),
-    ('zh', 'Chinese'),
+    'af', # Afrikaans
+    'ar', # Arabic
+    'bs', # Bosnian
+    'ca', # Catalan
+    'cs', # Czech
+    'da', # Danish
+    'de', # German
+    'en', # English
+    'eo', # Esperanto
+    'es', # Spanish
+    'fi', # Finnish
+    'fr', # French
+    'he', # Hebrew
+    'hi', # Hindi
+    'hr', # Croatian
+    'hu', # Hungarian
+    'id', # Indonesian
+    'is', # Icelandic
+    'it', # Italian
+    'ja', # Japanese
+    'ko', # Korean
+    'nl', # Dutch
+    'no', # Norwegian
+    'pl', # Polish
+    'pt', # Portuguese
+    'ro', # Romanian
+    'ru', # Russian
+    'sk', # Slovak
+    'sv', # Swedish
+    'tr', # Turkish
+    'uk', # Ukrainian
+    'zh', # Chinese
 )
 
 # languages the user interface can be translated to

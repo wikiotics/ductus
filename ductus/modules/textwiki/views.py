@@ -27,6 +27,7 @@ from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.namespaces import registered_namespaces, split_pagename, WikiPrefixNotProvided
 from ductus.wiki.forms import LogMessageField
 from ductus.modules.textwiki.ductmodels import Wikitext
+from ductus.util.bcp47 import language_tag_to_description
 
 recaptcha = None
 if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):
@@ -42,8 +43,8 @@ def view_textwiki(request):
     }, context_instance=RequestContext(request))
 
 _natural_language_choices = [('', ugettext_lazy('Unspecified'))]
-_natural_language_choices.extend((code, ugettext_lazy(lang)) for code, lang
-                                 in settings.DUCTUS_NATURAL_LANGUAGES)
+_natural_language_choices.extend((code, ugettext_lazy(language_tag_to_description(code)))
+                                 for code in settings.DUCTUS_NATURAL_LANGUAGES)
 
 class WikiEditForm(forms.Form):
     textarea_attrs = {'cols': '80', 'rows': '30'}
