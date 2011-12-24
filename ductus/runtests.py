@@ -7,12 +7,13 @@ from django.core.management import setup_environ
 setup_environ(settings)
 
 import ductus.util
+import ductus.util.bcp47
 import ductus.license
 
 import unittest, doctest
 
 suite = unittest.TestSuite()
-for mod in ductus.util, ductus.license:
+for mod in ductus.util, ductus.util.bcp47, ductus.license:
     suite.addTest(doctest.DocTestSuite(mod))
 
 runner = unittest.TextTestRunner()

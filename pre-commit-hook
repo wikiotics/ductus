@@ -21,4 +21,4 @@ cd `git rev-parse --show-toplevel`
 
 # Check for pep8 compliance, at least to the extent that current
 # ductus code follows it
-pep8 `git ls-files | grep \\\\.py` --ignore=E501,E302,E261,E401,E225,E301 --repeat
+pep8 `git ls-files | grep \\\\.py | grep -v data.py` --ignore=E501,E302,E261,E401,E225,E301 --repeat

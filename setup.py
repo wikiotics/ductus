@@ -39,6 +39,7 @@ setup(
         'ductus',
         'ductus.initialize',
         'ductus.util',
+        'ductus.util.bcp47',
         'ductus.resource',
         'ductus.resource.storage',
         'ductus.special',
