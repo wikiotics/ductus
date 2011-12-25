@@ -230,8 +230,8 @@ DUCTUS_BLACKLIST_STRICT = False # if True, will error on failure to load blackli
 CACHE_BACKEND = 'dummy:///'
 CACHE_MIDDLEWARE_SECONDS = 86400
 
-LOGIN_URL = '/login/'
-LOGOUT_URL= '/logout/'
+LOGIN_URL = '/login'
+LOGOUT_URL= '/logout'
 LOGIN_REDIRECT_URL = '/'
 
 #DEFAULT_FROM_EMAIL = "no-reply@example.com"
