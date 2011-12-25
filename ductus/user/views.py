@@ -20,7 +20,8 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login as perform_login
+from django.contrib.auth.views import login as django_login, logout as django_logout
 from django.utils.safestring import mark_safe
 from django import forms
 
@@ -51,7 +52,7 @@ def user_creation(request, template_name='registration/create_user.html'):
             # log in the user automatically
             user = authenticate(username=form.cleaned_data["username"],
                                 password=form.cleaned_data["password1"])
-            login(request, user)
+            perform_login(request, user)
             return redirect("ductus.wiki.views.view_frontpage")
     else:
         form = UserCreationForm()
@@ -67,6 +68,12 @@ def user_creation(request, template_name='registration/create_user.html'):
         'form': form,
         'captcha': mark_safe(captcha_html),
     }, context_instance=RequestContext(request))
+
+def login(request):
+    return django_login(request)
+
+def logout(request):
+    return django_logout(request)
 
 @login_required
 def account_settings(request):

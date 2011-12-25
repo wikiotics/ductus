@@ -18,7 +18,7 @@
 <tr><td><label for="id_password">{% trans "Password" %}:</label></td><td>{{ form.password }} {% url django.contrib.auth.views.password_reset as password_reset_url %}{% blocktrans %}<a href="{{ password_reset_url }}">Forget your password</a>?{% endblocktrans %}</td></tr>
 </table>
 <input type="submit" value="{% trans "Log in" %}" />
-{% url django.contrib.auth.views.logout as logout_url %}
+{% url ductus.user.views.logout as logout_url %}
 {% ifnotequal next logout_url %}{% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}{% endifnotequal %}
 </form>
 {% url ductus.user.views.user_creation as user_creation_url %}

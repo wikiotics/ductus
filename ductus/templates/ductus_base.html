@@ -38,10 +38,10 @@
                 <ul class="ductus_login_status_header">
 {% if user.is_authenticated %}
                   <li><a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
-                    &mdash; <a href="{% url django.contrib.auth.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
+                    &mdash; <a href="{% url ductus.user.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
 {% else %}
                   {% block login_button %}
-                    <li><a href="{% url django.contrib.auth.views.login %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
+                    <li><a href="{% url ductus.user.views.login %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
                   {% endblock %}
 {% endif %}
                 </ul>
