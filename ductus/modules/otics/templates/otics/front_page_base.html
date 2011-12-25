@@ -1,0 +1,56 @@
+{% extends "ductus_base_columns.html" %}
+{% load i18n %}
+
+{# Have the left column be two-thirds of the width #}
+{% block body_classes %}thirds{% endblock %}
+
+{% block javascript %}
+$(function () {
+    $(".language-tag").mouseenter(function () {
+        $(".total_language_stats").hide();
+        var spec = $(".specific_language_stats");
+        spec.show();
+        spec.find(".lesson_count").text($(this).data("count"));
+        spec.find(".language_name").text($(this).text());
+    }).mouseleave(function () {
+        $(".total_language_stats").show();
+        $(".specific_language_stats").hide();
+    });
+});
+{% endblock %}
+
+{% block head %}
+<style type="text/css">
+.language-tag { white-space: nowrap; }
+</style>
+{% endblock %}
+
+{# Remove the normal header #}
+{% block site_logo %}<h1>Ductus-otics is ...</h1>{% endblock %}
+
+{% block content %}
+<div class="otics_learn_language_box">
+  <h2>Learn a language</h2>
+  <div>
+    <p>{% trans "Try a lesson in:" %}</p>
+    <div>
+{% for tagc in language_tag_cloud %}
+      <a href="{{ tagc.href }}" style="font-size: {{ tagc.percent }}%" class="language-tag" data-code="{{ tagc.data }}" data-count="{{ tagc.weight }}">{{ tagc.label }}</a>
+{% endfor %}
+    </div>
+    <p class="language_lesson_stats">
+      <span class="total_language_stats">{% blocktrans %}{{ total_lesson_count }} lessons in {{ total_language_count }} languages.{% endblocktrans %}</span>
+      <span class="specific_language_stats" style="display: none">{% blocktrans %}<span class="lesson_count"></span> lesson(s) in <span class="language_name"></span>.{% endblocktrans %}</span>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="otics_build_lesson_box">
+  <h2>Build a lesson</h2>
+  <ul>
+    <li><a href="/new">Create a new lesson</a></li>
+  </ul>
+</div>
+{% endblock %}

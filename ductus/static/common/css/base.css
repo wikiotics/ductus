@@ -32,6 +32,7 @@ body.ductus_wide .ductus_wrap2 {
     width: 100%;
 }
 @media screen and (min-width: 768px) {
+    /* standard sidebar layout */
     .ductus_wrap3_main {
         width: 71%;
     }
@@ -46,6 +47,23 @@ body.ductus_wide .ductus_wrap2 {
     .ductus_wrap3_side .ductus_wrap4 {
         /* .04 / .29 */
         padding: 0 13.793103448275865%;
+    }
+
+    /* "thirds" layout */
+    .ductus_thirds .ductus_wrap3_main {
+        width: 66.6666%;
+    }
+    .ductus_thirds .ductus_wrap3_side {
+        float: right;
+        width: 33.3333%;
+    }
+    .ductus_thirds .ductus_wrap3_main .ductus_wrap4 {
+        /* .04 / .666666 */
+        padding: 0 6.000006000006%;
+    }
+    .ductus_thirds .ductus_wrap3_side .ductus_wrap4 {
+        /* .04 / .333333 */
+        padding: 0 12.000012000012%;
     }
 }
 .ductus_wrap4 {

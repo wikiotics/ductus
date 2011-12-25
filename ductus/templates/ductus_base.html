@@ -35,20 +35,7 @@
           <div class="ductus_wrap3_all">
             <div class="ductus_wrap4">
               <nav>
-                <ul class="ductus_header_tabs">
-{% if 0 %}
-                  <li>Community
-                    <ul>
-{% if user.is_authenticated %}
-                      <li>My Page</li>
-                      <li>My Groups</li>
-                      <li></li>
-{% endif %}
-                      <li>Contribute</li>
-                      <li>Help</li>
-                    </ul>
-                  </li>
-{% endif %}
+                <ul class="ductus_login_status_header">
 {% if user.is_authenticated %}
                   <li><a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
                     &mdash; <a href="{% url django.contrib.auth.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
@@ -59,8 +46,10 @@
 {% endif %}
                 </ul>
               </nav>
+{% block site_logo %}
               <h1><a href="/"><span>{{ ductus_site_name }}</span></a></h1>
               <hr/>
+{% endblock %}
             </div>
           </div>
           <div style="clear: both"></div>

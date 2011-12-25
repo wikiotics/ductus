@@ -10,6 +10,7 @@ recursive-include ductus/user/templates *
 recursive-include ductus/wiki/templates *
 recursive-include ductus/modules/audio/templates *
 recursive-include ductus/modules/flashcards/templates *
+recursive-include ductus/modules/otics/templates *
 recursive-include ductus/modules/picture/templates *
 recursive-include ductus/modules/phrase_choice/templates *
 recursive-include ductus/modules/picture_choice/templates *
