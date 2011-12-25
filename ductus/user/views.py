@@ -73,7 +73,9 @@ def login(request):
     return django_login(request)
 
 def logout(request):
-    return django_logout(request)
+    response = django_logout(request, next_page='/')
+    #messages.info(request, _("You have been logged out."))
+    return response
 
 @login_required
 def account_settings(request):
