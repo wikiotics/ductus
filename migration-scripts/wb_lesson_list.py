@@ -141,19 +141,23 @@ def main():
 
     #links = [ server + link for link in links ]
     done_list = []
-    for link in links:
-        if link in exclude_list:
-            print "skipping lesson: " + link
-        else:
-            print "getting lesson: " + link
-            filename = get_lesson(wb_server, lang, link)
-            import_lesson(filename, new_server, lang, link)
-            done_list.append(link)
-
-    done_list = exclude_list + done_list
-    done_file = open('done.list', 'w')
-    pickle.dump(done_list, done_file)
-    done_file.close()
+    try:
+        for link in links:
+            if link in exclude_list:
+                print "skipping lesson: " + link
+            else:
+                print "getting lesson: " + link
+                filename = get_lesson(wb_server, lang, link)
+                import_lesson(filename, new_server, lang, link)
+                done_list.append(link)
+    except:
+        raise
+    finally:
+        # make sure we get an updated done.list
+        done_list = exclude_list + done_list
+        done_file = open('done.list', 'w')
+        pickle.dump(done_list, done_file)
+        done_file.close()
 
 if __name__ == '__main__':
     main()
