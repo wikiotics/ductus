@@ -37,11 +37,11 @@ class DuctusBot(object):
 
     def login(self):
         print "logging in..."
-        values = {   "csrfmiddlewaretoken": self.csrf_token,
+        values = {"csrfmiddlewaretoken": self.csrf_token,
                     "username": "laurent",
                     "password": INSERT_PWD_HERE}
         data = urllib.urlencode(values)
-        request = urllib2.Request( self.server + '/login')
+        request = urllib2.Request(self.server + '/login')
         request.add_header('User-agent', 'DuctusBot')
         request.add_header('X-CSRFToken', self.csrf_token)
         request.add_header('Cookie', 'csrftoken=' + self.csrf_token)
@@ -77,7 +77,7 @@ class DuctusBot(object):
         except StandardError:
             raise
 
-    def upload_audio(self, filename, file_contents = None, file_path = ''):
+    def upload_audio(self, filename, file_contents=None, file_path=''):
         """Save file_contents under filename to a urn on the server. Returns the urn under which the file was saved, as a dict.
         filename: (local) name of the file to upload
         file_contents: the contents of the file as returned by File.read(). If omitted, the function will attempt to open <filename> and read its contents.
@@ -132,7 +132,7 @@ class DuctusBot(object):
             response = url.read()
             return response
 
-    def save_blueprint(self, url, blueprint, log_message = u'bot action'):
+    def save_blueprint(self, url, blueprint, log_message=u'bot action'):
         """Save a blueprint to a urn on the server.
         url: url to save the blueprint to, without server name (e.g: "/en/my_lesson")
         blueprint: string representation of the json blueprint
@@ -140,8 +140,8 @@ class DuctusBot(object):
         Returns the urn under which the blueprint has been saved"""
         fullurl = self.server + url
 
-        values = {  'log_message'   : log_message,
-                    'blueprint'     : blueprint.encode('utf-8')}
+        values = {'log_message': log_message,
+                    'blueprint': blueprint.encode('utf-8')}
         data = urllib.urlencode(values, True)
 
         request = urllib2.Request(fullurl)
@@ -223,7 +223,6 @@ class WBimporter():
             self.ogg_urns[oggfile] = urn['urn']
             #print "OGG: "+ oggfile +" - URN: " + self.ogg_urns[oggfile]
 
-
     def create_blueprint_from_archive_XML(self):
         # load XML and correct mediawiki content tags
         xml_text = unicode(self.archive.get_xml(), 'utf-8')
@@ -263,7 +262,7 @@ class WBimporter():
         blueprints = []
         parent = ''
         for index, tree in enumerate(treelist):
-            json_blueprint = unicode( transform(tree, source_language="'"+self.srclang+"'", target_language="'"+self.trglang+"'", rev_parent="'"+parent+"'" ))
+            json_blueprint = unicode(transform(tree, source_language="'"+self.srclang+"'", target_language="'"+self.trglang+"'", rev_parent="'"+parent+"'"))
             json_blueprint = json_blueprint.replace('\n', '')
             # FIXME: ugly workaround to XSL stylesheet: remove the last ',' separator between templates. Ideally XSL stylesheet should be corrected :)
             json_blueprint = json_blueprint.replace('flashcard"}},]}', 'flashcard"}}]}')
@@ -271,12 +270,12 @@ class WBimporter():
             urn = self.bot.save_blueprint(self.url, json_blueprint, log_message)
             print urn
             parent = json.loads(urn)['urn']
-        
+
 class objectJSONEncoder(json.JSONEncoder):
     def __init__(self):
         return json.JSONEncoder(False, False)
 
-    def default(self,o):
+    def default(self, o):
         if isinstance(o, objectify.ObjectifiedElement) and o.countchildren() > 1:
             '''ensure that all children with same name get converted'''
             return [child for child in o.iterchildren()]
@@ -312,7 +311,6 @@ def main():
     importer.load_zipfile_and_register_ogg_files()
     blueprints = importer.create_blueprint_from_archive_XML()
     #print importer.save_blueprint(blueprints)
-    
+
 if __name__ == '__main__':
     main()
-

@@ -8,7 +8,7 @@ import string
 
 
 def get_lesson(server, lang, title):
-    values = {  'pages'   : title.split('/')[-1],
+    values = {'pages': title.split('/')[-1],
                 #'curonly'     : "0"}
                 }
     data = urllib.urlencode(values, True)

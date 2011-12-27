@@ -75,7 +75,7 @@ class WBimporter():
             params = urllib.urlencode({'name': 'file', 'filename': filename})
             headers = {"Content-type": "multipart/form-data",
                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"}
-            url = self.server + '/new/audio' 
+            url = self.server + '/new/audio'
             print 'Connecting to %s' % url
 
             # build mime representation of the file to upload
@@ -124,7 +124,6 @@ class WBimporter():
             self.ogg_urns[oggfile] = urn['urn']
             print "OGG: "+ oggfile +" - URN: " + self.ogg_urns[oggfile]
 
-
     def create_blueprint_from_archive_XML(self):
         # load XML and correct mediawiki content tags
         xml_text = unicode(self.archive.get_xml(), 'utf-8')
@@ -147,18 +146,18 @@ class WBimporter():
     def do_xslt(self, tree):
         xslt = etree.parse("wb_to_json.xsl")
         transform = etree.XSLT(xslt)
-        json_blueprint = unicode( transform(tree, source_language="'"+self.srclang+"'", target_language="'"+self.trglang+"'") )
+        json_blueprint = unicode(transform(tree, source_language="'"+self.srclang+"'", target_language="'"+self.trglang+"'"))
         json_blueprint = json_blueprint.replace('\n', '')
         # FIXME: ugly workaround to XSL stylesheet: remove the last ',' separator between templates. Ideally XSL stylesheet should be corrected :)
         json_blueprint = json_blueprint.replace('flashcard"}},]}', 'flashcard"}}]}')
         json_test = json.loads(json_blueprint)
         return json.dumps(json_test)
-        
+
     def save_blueprint(self, blueprint):
         url = self.server + self.url
 
-        values = {  'log_message'   : 'Import from wiki-babel.org',
-                    'blueprint'     : blueprint}
+        values = {'log_message': 'Import from wiki-babel.org',
+                    'blueprint': blueprint}
         data = urllib.urlencode(values, True)
 
         request = urllib2.Request(url)
@@ -190,7 +189,7 @@ class objectJSONEncoder(json.JSONEncoder):
     def __init__(self):
         return json.JSONEncoder(False, False)
 
-    def default(self,o):
+    def default(self, o):
         if isinstance(o, objectify.ObjectifiedElement) and o.countchildren() > 1:
             '''ensure that all children with same name get converted'''
             return [child for child in o.iterchildren()]
@@ -226,7 +225,6 @@ def main():
     importer.load_zipfile_and_register_ogg_files()
     blueprint = importer.create_blueprint_from_archive_XML()
     print importer.save_blueprint(blueprint)
-    
+
 if __name__ == '__main__':
     main()
-
