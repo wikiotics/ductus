@@ -106,7 +106,7 @@
 			<!-- audio -->
 			<xsl:text>{"resource":null},</xsl:text>
 			<!-- language -->
-			<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":""}}},</xsl:text>
+			<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="$source_language" /><xsl:text>"}}},</xsl:text>
 			<!-- speaker -->
 			<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text>
 				<!--<xsl:value-of select="key('speaker-table',text/@speaker)/@name"/>-->
