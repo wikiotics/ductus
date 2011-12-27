@@ -37,7 +37,7 @@
 <xsl:template match="Lesson/sentence">
 <xsl:choose>
 <xsl:when test="string(source) != '' or string(source/@sound) != ''">
-	<xsl:text>{"resource":{"sides":{"array":[</xsl:text>
+<xsl:text>{"resource":{"sides":{"array":[</xsl:text>
 			<!-- text of the line -->
 			<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="source" /><xsl:text>"}}},</xsl:text>
 			<!-- audio -->
@@ -53,16 +53,18 @@
 			<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text>
 				<!--<xsl:value-of select="key('speaker-table',source/@speaker)/@name"/>-->
 			<xsl:text>"}}}
-	]},
-	"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard"
-	}},</xsl:text>
+]},
+"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard"
+}},</xsl:text>
 </xsl:when>
 </xsl:choose>
+<xsl:choose>
+<xsl:when test="string(target) != '' or string(target/@sound) != ''">
 <xsl:text>{"resource":{"sides":{"array":[</xsl:text>
-                <!-- text of the line -->
-                <xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="target" /><xsl:text>"}}},</xsl:text>
+		<!-- text of the line -->
+		<xsl:text>{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"</xsl:text><xsl:value-of select="target" /><xsl:text>"}}},</xsl:text>
 		<!-- audio -->
-                <xsl:if test="string(target/@sound) != '' ">
+		<xsl:if test="string(target/@sound) != '' ">
 		<xsl:text>{"href":"</xsl:text><xsl:value-of select="target/@sound" /><xsl:text>"},</xsl:text>
 		</xsl:if>
 		<xsl:if test="string(target/@sound) = '' ">
@@ -81,6 +83,8 @@
 ]},
 "@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard"
 }},</xsl:text>
+</xsl:when>
+</xsl:choose>
 </xsl:template>
 
 <xsl:template match="Lesson/comment">
