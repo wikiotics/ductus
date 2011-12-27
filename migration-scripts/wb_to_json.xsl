@@ -16,8 +16,8 @@
 	<xsl:apply-templates />
 <xsl:text>]},
 "headings":{"array":[{"text":"phrase"},{"text":"audio"},{"text":"language"},{"text":"speaker"}]},
-"tags": {"array": [{"value": "source:</xsl:text><xsl:value-of select="$source_language" />
-<xsl:text>"}, {"value": "target:</xsl:text><xsl:value-of select="$target_language" />
+"tags": {"array": [{"value": "source-language:</xsl:text><xsl:value-of select="$source_language" />
+<xsl:text>"}, {"value": "target-language:</xsl:text><xsl:value-of select="$target_language" />
 <xsl:text>"},{"value": "wikibabel"}]},
 "interactions":{"array":[{"resource":{"audio":"1","transcript":"0","@create":"{http://wikiotics.org/ns/2011/flashcards}audio_lesson_interaction"}}]},
 </xsl:text>
