@@ -1,4 +1,5 @@
 import pickle
+import json
 import optparse
 import sys
 import re
@@ -22,13 +23,11 @@ def get_lesson(server, lang, title):
     try:
         fullurl = urllib2.urlopen(request)
     except urllib2.HTTPError as e:
-        #print "HTTP error: " + str(e)
         if e.code == 403:
             print "Access denied, giving up here - maybe a CSRF issue?"
             print e.read()
             sys.exit()
         if e.code == 500:
-            #print fullurl.read()
             raise
     except urllib2.URLError as e:
         print "Connection failed: " + str(e)
@@ -42,7 +41,6 @@ def get_lesson(server, lang, title):
     filename = ''.join(c for c in filename if c in valid_chars) + '.zip'
     print filename
     local_file = open(filename, "w")
-    #Write to our local file
     local_file.write(response)
     local_file.close()
     return filename
@@ -87,7 +85,6 @@ def update_langcode(code):
 import ductus_bot
 
 def import_lesson(filename, server, lang, link):
-    #print link
     trglang = re.search(r'Lesson:(.{3}):', link).group(1)
     print trglang
     trglang = update_langcode(trglang)
@@ -101,13 +98,13 @@ def import_lesson(filename, server, lang, link):
         print "Lesson will be saved to " + importer.url
 
     importer.load_zipfile_and_register_ogg_files()
-    blueprints = importer.create_blueprint_from_archive_XML()
+    urn = importer.create_blueprint_from_archive_XML()
+    return urn
 
 
 def main():
     usage = "usage: %prog wb_server_url new_server[:port] lang_code"
     p = optparse.OptionParser(usage=usage)
-    #p.add_option('-x file', '--exclude-list file', help='exclude lesson names from file')
     options, arguments = p.parse_args()
     if len(arguments) != 3:
         p.print_help()
@@ -117,19 +114,15 @@ def main():
     lang = arguments[2]
 
     url = wb_server + '/' + lang + '/Special:All_lessons'
-    #request = urllib2.Request(url=url)
     print "Connecting to " + url
     try:
         url = urllib2.urlopen(url)
     except urllib2.HTTPError as e:
-        #print e.read()
         sys.exit()
     else:
         response = url.read()
 
-    #print response
     search_str = 'href="(/%s/Lesson:.{3}:[1-4]:.*?)"' % lang
-    #print search_str
     links = re.findall(search_str, response)
 
     try:
@@ -139,8 +132,8 @@ def main():
     except:
         exclude_list = []
 
-    #links = [ server + link for link in links ]
     done_list = []
+    match_list = []
     try:
         for link in links:
             if link in exclude_list:
@@ -148,8 +141,9 @@ def main():
             else:
                 print "getting lesson: " + link
                 filename = get_lesson(wb_server, lang, link)
-                import_lesson(filename, new_server, lang, link)
+                urn = import_lesson(filename, new_server, lang, link)
                 done_list.append(link)
+                match_list.append((wb_server + link, new_server + json.loads(urn)['page_url']))
     except:
         raise
     finally:
@@ -158,6 +152,10 @@ def main():
         done_file = open('done.list', 'w')
         pickle.dump(done_list, done_file)
         done_file.close()
+        print match_list
+        match_file = open('match.list', 'w')
+        pickle.dump(match_list, match_file)
+        match_file.close()
 
 if __name__ == '__main__':
     main()

@@ -224,6 +224,7 @@ class WBimporter():
             #print "OGG: "+ oggfile +" - URN: " + self.ogg_urns[oggfile]
 
     def create_blueprint_from_archive_XML(self):
+        """returns the urn under which the lesson was saved"""
         # load XML and correct mediawiki content tags
         xml_text = unicode(self.archive.get_xml(), 'utf-8')
         xml_text = xml_text.replace('&lt;', '<')
@@ -261,6 +262,7 @@ class WBimporter():
         transform = etree.XSLT(xslt)
         blueprints = []
         parent = ''
+        urn = ''
         for index, tree in enumerate(treelist):
             json_blueprint = unicode(transform(tree, source_language="'"+self.srclang+"'", target_language="'"+self.trglang+"'", rev_parent="'"+parent+"'"))
             json_blueprint = json_blueprint.replace('\n', '')
@@ -270,6 +272,7 @@ class WBimporter():
             urn = self.bot.save_blueprint(self.url, json_blueprint, log_message)
             print urn
             parent = json.loads(urn)['urn']
+        return urn
 
 class objectJSONEncoder(json.JSONEncoder):
     def __init__(self):
