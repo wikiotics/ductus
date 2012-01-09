@@ -2,6 +2,143 @@
 {% load i18n %}
 
 {% block content %}
+<!-- swfobject is a commonly used library to embed Flash content -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+
+<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.fileupload.modified.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}modules/audio/recorder.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}modules/audio/gui_jquery.js"></script>
+
+<script>
+	var recordButton, playButton;
+	var recordInterval, playInterval;
+
+	function setupRecorder() {
+		Wami.setup("wami", function () {
+			checkSecurity();
+		});
+	}
+
+	function checkSecurity() {
+		var settings = Wami.getSettings();
+		if (settings.microphone.granted) {
+			listen();
+			Wami.hide();
+			setupButtons();
+			} else {
+			// Show any Flash settings panel you want using the string constants
+			// defined here:
+			// http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/system/SecurityPanel.html
+			Wami.showSettings("privacy", "Wami.show", "checkSecurity", "zoomError");
+		}
+	}
+
+	function listen() {
+		Wami.startListening();
+		// Continually listening when the window is in focus allows us to
+		// buffer a little audio before the users clicks, since sometimes
+		// people talk too soon. Without "listening", the audio would record
+		// exactly when startRecording() is called.
+		window.onfocus = function () {
+			Wami.startListening();
+		};
+
+		// Note that the use of onfocus and onblur should probably be replaced
+		// with a more robust solution (e.g. jQuery's $(window).focus(...)
+		window.onblur = function () {
+			Wami.stopListening();
+		};
+	}
+
+	function zoomError() {
+		// The minimum size for the flash content is 214x137. Browser's zoomed out
+		// too far won't show the panel.
+		// We could play the game of re-embedding the Flash in a larger DIV here,
+		// but instead we just warn the user:
+		alert("Your browser may be zoomed too far out to show the Flash security settings panel.  Zoom in, and refresh.");
+	}
+
+	function setupButtons() {
+		recordButton = new Wami.Button("recordDiv", Wami.Button.RECORD);
+		recordButton.onstart = startRecording;
+		recordButton.onstop = stopRecording;
+		recordButton.setEnabled(true);
+
+		playButton = new Wami.Button("playDiv", Wami.Button.PLAY);
+		playButton.onstart = startPlaying;
+		playButton.onstop = stopPlaying;
+		playButton.setEnabled(false);
+
+		$('#uploadDiv').button( { label:'Upload recording'});
+		$('#uploadDiv').click( function(){ uploadAudio();} );
+	}
+
+	function uploadAudio() {
+		Wami.uploadRecordedFile2('/new/audio');
+	}
+	/**
+	* These methods are called on clicks from the GUI.
+	*/
+
+	function startRecording() {
+		recordButton.setActivity(0);
+		playButton.setEnabled(false);
+		Wami.startRecording("{{ recording_server_name }}", "onRecordStart", "onRecordFinish", "onError");
+	}
+
+	function stopRecording() {
+		Wami.stopRecording();
+		clearInterval(recordInterval);
+		recordButton.setEnabled(true);
+	}
+
+	function startPlaying() {
+		playButton.setActivity(0);
+		recordButton.setEnabled(false);
+		Wami.startPlaying("{{ recording_server_name }}", "onPlayStart", "onPlayFinish", "onError");
+	}
+
+	function stopPlaying() {
+		Wami.stopPlaying();
+	}
+
+	/**
+	* Callbacks from the flash indicating certain events
+	*/
+
+	function onError(e) {
+		alert(e);
+	}
+
+	function onRecordStart() {
+		recordInterval = setInterval(function () {
+			if (recordButton.isActive()) {
+				var level = Wami.getRecordingLevel();
+				recordButton.setActivity(level);
+			}
+		}, 200);
+	}
+
+	function onRecordFinish() {
+		playButton.setEnabled(true);
+	}
+
+	function onPlayStart() {
+		playInterval = setInterval(function () {
+			if (playButton.isActive()) {
+				var level = Wami.getPlayingLevel();
+				playButton.setActivity(level);
+			}
+		}, 200);
+	}
+
+	function onPlayFinish() {
+		clearInterval(playInterval);
+		recordButton.setEnabled(true);
+		playButton.setEnabled(true);
+	}
+	$(document).ready( function(){ setupRecorder(); });
+</script>
 <p>{% trans "Please upload an ogg/vorbis file (preferably), or a mp4/aac file." %}</p>
 <form method="post" action="{{ request.escaped_full_path }}" enctype="multipart/form-data">
 <table>
@@ -9,4 +146,13 @@
 <tr><td></td><td><input type="submit" value="{% trans "Upload audio file" %}"/></td></tr>
 </table>
 </form>
+
+<p>Alternatively, you can record audio from your microphone directly here:</p>
+<div style="position: relative; width:214px">
+	<div id="recordDiv" style="position: absolute; left: 50px; top: 25px"></div>
+	<div id="playDiv" style="position: absolute; left: 110px; top: 25px"></div>
+	<div id="uploadDiv" style="position: absolute; left: 170px; top: 25px"></div>
+	<div id="wami"></div>
+</div>
+
 {% endblock %}

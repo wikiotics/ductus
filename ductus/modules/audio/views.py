@@ -26,6 +26,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy
+from django.contrib.sites.models import Site
 
 from ductus.resource.ductmodels import BlueprintSaveContext
 from ductus.resource import get_resource_database
@@ -60,8 +61,10 @@ def new_audio(request):
     else:
         form = AudioImportForm()
 
+    recording_server_name = settings.ONLINE_RECORDING_SERVER
     return render_to_response('audio/audio_import_form.html', {
         'form': form,
+        'recording_server_name': recording_server_name,
     }, RequestContext(request))
 
 @register_view(Audio, 'audio')

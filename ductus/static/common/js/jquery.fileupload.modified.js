@@ -108,7 +108,24 @@
                 xhr.setRequestHeader('Content-Type', file.type);
                 xhr.send(file);
             } else {
-                if (typeof FormData !== undef) {
+                if (file.hasOwnProperty('recordedContent')) {
+                    // for flash recorded audio only, which is passed as a string from flash to JS
+                    var boundary = '12345678901234567890';
+                    xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+
+                    var body = buildMultiPartFormData(
+                                    boundary,
+                                    file,
+                                    file.recordedContent,
+                                    getFormData(settings)
+                                    );
+
+                    var audioByteArray = new Uint8Array(body.length);
+                    for (var i=0; i< audioByteArray.length; i++) {
+                         audioByteArray[i] = body.charCodeAt(i);
+                    }
+                    xhr.send(audioByteArray.buffer);
+                } else if (typeof FormData !== undef) {
                     formData = new FormData();
                     $.each(getFormData(settings), function (index, field) {
                         formData.append(field.name, field.value);
