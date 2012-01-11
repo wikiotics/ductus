@@ -190,6 +190,11 @@ Wami.uploadRecordedFile = function(url) {
 	$.ajax( request );
 }
 
+Wami.handle_upload_errors = function(e) {
+	console.log('handle upload errors');
+	onError(e);
+}
+
 Wami.uploadRecordedFile2 = function(url) {
 	var base64audioBytes = Wami.getAudioData();
 	var crlf = '\r\n';
@@ -210,40 +215,40 @@ Wami.uploadRecordedFile2 = function(url) {
 				console.log('http status ' + xhr.status);
 				return;
 			}
-			//progress_elt.attr('value', 100).find('span').text(100);
 			console.log(xhr);
-			/*var data;
+			var data;
 			try {
 				data = $.parseJSON(xhr.responseText);
 			} catch (error) {
-				handle_upload_errors();
+				Wami.handle_upload_errors(e);
 				return;
 			}
 			if (data.errors) {
-				var key, errors = [];
+				console.log("onLoad error: ");
+				console.log(data.errors);
+				var key, errors = '';
 				for (key in data.errors) {
-					errors.push(data.errors[key]);
+					errors += data.errors[key];
 				}
-				//handle_upload_errors(errors);
-				console.log("onLoad error: " + errors);
+				Wami.handle_upload_errors(errors);
 				return;
-			}*/
-			//_this._set_state_remote_urn(data.urn);
-			//_this._upload_in_progress = false;
-			//if (success_cb) success_cb();
+			} else if (data.page_url) {
+				Wami.handle_upload_errors('<span>File saved successfully.</span><a href="'+data.page_url+'">See file</a>');
+				return;
+			}
 			console.log("ductusFileUpload onLoad complete");
 		},
 		onProgress: function (e, files, index, xhr) {
-				    var percent = parseInt(100 * e.loaded / e.total, 10);
+				    //var percent = parseInt(100 * e.loaded / e.total, 10);
 				    //progress_elt.attr('value', percent).find('span').text(percent);
 				    //console.log
 		},
 		onError: function (e, files, index, xhr) {
-				 //handle_upload_errors();
+				 handle_upload_errors(e);
 				 console.log("ductus file upload error");
 		},
 		onAbort: function (e, files, index, xhr) {
-				 //handle_upload_errors();
+				 handle_upload_errors(e);
 				 console.log("on abort in ductus file upload error");
 		}
 	}).handleFiles([recordedFile]);

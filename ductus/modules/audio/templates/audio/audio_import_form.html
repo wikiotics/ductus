@@ -71,6 +71,7 @@
 
 		$('#uploadDiv').button( { label:'Upload recording'});
 		$('#uploadDiv').click( function(){ uploadAudio();} );
+		$('#uploadDiv').css({ height:'63px'});
 	}
 
 	function uploadAudio() {
@@ -107,7 +108,8 @@
 	*/
 
 	function onError(e) {
-		alert(e);
+		console.log(e);
+		$('#feedbackDiv').html(e);
 	}
 
 	function onRecordStart() {
@@ -148,10 +150,11 @@
 </form>
 
 <p>Alternatively, you can record audio from your microphone directly here:</p>
-<div style="position: relative; width:214px">
+<div style="position: relative; width:414px">
 	<div id="recordDiv" style="position: absolute; left: 50px; top: 25px"></div>
 	<div id="playDiv" style="position: absolute; left: 110px; top: 25px"></div>
 	<div id="uploadDiv" style="position: absolute; left: 170px; top: 25px"></div>
+	<div id="feedbackDiv" style="position: absolute; left: 30px; top: 95px"></div>
 	<div id="wami"></div>
 </div>
 
