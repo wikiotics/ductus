@@ -2,6 +2,7 @@
 import optparse
 import sys
 import re
+import os
 import httplib, urllib, urllib2
 import cookielib
 import itertools
@@ -89,7 +90,7 @@ class DuctusBot(object):
         url = self.server + '/new/audio'
 
         if file_contents == None:
-            with open(file_path + '/' + filename) as f:
+            with open(os.path.join(file_path, filename)) as f:
                 file_contents = f.read()
 
         print 'Connecting to %s' % url
