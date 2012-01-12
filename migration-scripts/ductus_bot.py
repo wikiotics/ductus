@@ -15,7 +15,12 @@ from lxml import etree, objectify
 
 
 class DuctusBot(object):
-    """A basic bot class that provides standard functions to interact with a ductus site"""
+    """A basic bot class that provides standard functions to interact with a
+    ductus site.
+    Note: if /en/main_page does not exist, this bot will not work
+    (e.g. login() will fail, etc...). Set some content for the mainpage to
+    solve the problem.
+    """
     def __init__(self, server):
         """server: base url to the ductus as a string"""
         self.server = server
@@ -36,11 +41,11 @@ class DuctusBot(object):
         else:
             print "Couldn't get csrf token"
 
-    def login(self):
+    def login(self, username, password):
         print "logging in..."
         values = {"csrfmiddlewaretoken": self.csrf_token,
-                    "username": USERNAME_HERE,
-                    "password": INSERT_PWD_HERE}
+                    "username": username,
+                    "password": password}
         data = urllib.urlencode(values)
         request = urllib2.Request(self.server + '/login')
         request.add_header('User-agent', 'DuctusBot')
@@ -57,6 +62,7 @@ class DuctusBot(object):
                 print e.read()
                 sys.exit()
             if e.code == 500:
+                print e.read()
                 raise
         except urllib2.URLError as e:
             print "Connection failed: "
