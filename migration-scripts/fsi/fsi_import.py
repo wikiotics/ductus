@@ -6,13 +6,22 @@ import re
 import urllib
 import urllib2
 import string
-from ductus_bot import DuctusBot    #FIXME: this relies on ln -s ../ductus_bot, clean this up!!
+from ductus_bot import DuctusBot    # FIXME: this relies on ln -s ../ductus_bot, clean this up!!
 import os
 import glob
 
 """
 A bot to import FSI audio lessons to wikiotics.
 Run without arguments to get help.
+
+inifile format: (include the curly braces {})
+{
+"username": "USERNAME",
+"password": "PASSWORD",
+"server": "http://localhost:8000",
+"filename_pattern": "*.ogg",
+"target_language": "fr"
+}
 """
 
 class FSIbot(DuctusBot):
@@ -21,11 +30,11 @@ class FSIbot(DuctusBot):
         """ return a list of audio files with names matching pattern contained in path.
         The list is sort according to numbered filenames, which are assumed of the form
         path/to/folder/NNN-filename with NNN being digits"""
-        file_list = glob.glob( os.path.join(path, pattern) )
-        
-        file_list.sort(key=lambda x:int(re.search(r'\/(\d+?)-', x).group(1)) )
-        #for infile in file_list:
-        #    print "current file is: " + infile + " - " + re.search(r'\/(\d+?)-', infile).group(1)
+        file_list = glob.glob(os.path.join(path, pattern))
+
+        file_list.sort(key=lambda x: int(re.search(r'\/(\d+?)-', x).group(1)))
+        for infile in file_list:
+            print "adding file to list: " + infile
         return file_list
 
     def build_fsi_row(self, audio_file, language_code):
@@ -38,7 +47,6 @@ class FSIbot(DuctusBot):
         except:
             print "Failed to upload audio file. Aborting."
             raise
-            #sys.exit()
 
         bp = '{"resource":{"sides":{"array":['
         bp += '{"resource":null},'
@@ -60,7 +68,7 @@ class FSIbot(DuctusBot):
         bp_body = ''
         for audio_file in file_list:
             bp_body += self.build_fsi_row(audio_file, language_code) + ','
-        
+
         blueprint = bp_header + bp_body.rstrip(',') + bp_footer
         return blueprint
 
@@ -72,27 +80,32 @@ class FSIbot(DuctusBot):
         return urn_json
 
 def main():
-    usage = "usage: %prog server[:port] lang_code folder filename_pattern lesson_url"
+    usage = "usage: %prog folder lesson_url"
     p = optparse.OptionParser(usage=usage)
-    p.add_option('-i', '--init-file', help='use init file')
+    p.add_option('-i', '--init-file', dest="inifile_name", help='use init file FILE (see fsi_import.py for format)', metavar="FILE")
     options, arguments = p.parse_args()
-    if len(arguments) != 5:
+    if len(arguments) != 2:
         p.print_help()
         sys.exit()
-    server = arguments[0]
-    lang = arguments[1]
-    folder = arguments[2]
-    file_pattern = arguments[3]
-    url = arguments[4]
-
-    print "pattern: " + file_pattern
-    fsibot = FSIbot(server)
+    folder = arguments[0]
+    url = arguments[1]
 
     try:
+        # load and parse init file
+        inifile = open(options.inifile_name, 'r')
+        #settings = json.loads(json.dumps(json.load(inifile), ensure_ascii=True))
+        settings = json.load(inifile)
+        inifile.close()
+    except:
+        raise
+
+    # FIXME: getting UnicodeDecodeError as soon as any of the settings are used (encode('ascii') makes it work, but why ???
+    fsibot = FSIbot(settings['server'].encode('ascii'))
+    try:
         fsibot.get_cookies()
-        fsibot.login(USERNAME, PASSWORD)
-        file_list = fsibot.get_audio_files(folder, file_pattern)
-        blueprint = fsibot.build_fsi_lesson(file_list, lang)
+        fsibot.login(settings['username'].encode('ascii'), settings['password'].encode('ascii'))
+        file_list = fsibot.get_audio_files(folder, settings['filename_pattern'].encode('ascii'))
+        blueprint = fsibot.build_fsi_lesson(file_list, settings['target_language'].encode('ascii'))
         fsibot.save_fsi_lesson(url, blueprint)
     except:
         raise
