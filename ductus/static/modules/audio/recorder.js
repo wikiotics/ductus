@@ -1,3 +1,9 @@
+/*
+ * Based on code from wami-recorder
+ * https://code.google.com/p/wami-recorder/
+ * Copyright (C) 2011 Ian McGraw <mcgrawian@gmail.com>
+ * Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+ */
 var Wami = window.Wami || {};
 
 Wami.setup = function(id, callback) {
@@ -95,6 +101,7 @@ Wami.setup = function(id, callback) {
 
 /*
  * Base64 encode/decode from http://ostermiller.org/calc/encode.html
+ * Licensed under GPL version 2
  */
 var END_OF_INPUT = -1;
 var base64Chars = new Array(
@@ -164,6 +171,22 @@ function decodeBase64(str){
 	return result;
 }
 
+/*
+ * Following code:
+ * Copyright (c) 2012  Laurent Savaete <laurent@wikiotics.org>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 Wami.uploadRecordedFile = function(url) {
 	// does not work: jquery automatically encodes any string passed to it as UTF8
 	// so this won't work unless ductus server UTF8 decodes it, makes no sense

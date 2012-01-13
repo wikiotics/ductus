@@ -1,3 +1,9 @@
+/*
+ * This file is derived from wami-recorder
+ * https://code.google.com/p/wami-recorder/
+ * Copyright (C) 2011 Ian McGraw <mcgrawian@gmail.com>
+ * Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+ */
 var Wami = window.Wami || {};
 var button_image = "/static/modules/audio/buttons.png"
 Wami.Button = function(guiID, type) {
