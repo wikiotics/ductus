@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ################################################################################
 #
@@ -10,15 +10,21 @@
 #
 ################################################################################
 
-
-# This script should exit immediately on any error
-set -e
-
-
 # Change to the top-level directory of the repository
 cd `git rev-parse --show-toplevel`
 
+# checkout the content of the git stage (what is about to be committed) to TMPDIR
+TMPDIR=`mktemp -d`
+git diff --cached --name-only --diff-filter=ACMR | grep -v data.py | xargs git checkout-index --prefix=$TMPDIR/ --
 
 # Check for pep8 compliance, at least to the extent that current
 # ductus code follows it
-pep8 `git ls-files | grep \\\\.py | grep -v data.py` --ignore=E501,E302,E261,E401,E225,E301 --repeat
+pep8 $TMPDIR --filename=*.py --ignore=E501,E302,E261,E401,E225,E301 --repeat | sed -e "s/${TMPDIR//\//\\/}//"
+
+# grab the error code from pep8 so we have time to delete temp files
+CODE=${PIPESTATUS[0]}
+rm -Rf $TMPDIR
+if [ $CODE -ne 0 ]; then
+	echo "Correct the above errors and git-add your files before committing again.";
+fi
+exit $CODE
