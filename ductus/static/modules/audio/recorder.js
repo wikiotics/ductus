@@ -47,7 +47,7 @@ Wami.setup = function(id, callback) {
 	delegate('getPlayingLevel');
 	delegate('getSettings');
 	delegate('showSettings');
-	delegate('getAudioData');
+	delegate('getBase64AudioData');
 	delegate('setCustomHeaders');
 	delegate('uploadAudio');
 
@@ -187,39 +187,13 @@ function decodeBase64(str){
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-Wami.uploadRecordedFile = function(url) {
-	// does not work: jquery automatically encodes any string passed to it as UTF8
-	// so this won't work unless ductus server UTF8 decodes it, makes no sense
-	var audioBytes = Wami.getAudioData();
-	var request = {}
-	var boundary = "12345678901234567890";
-	request.contentType = 'multipart/form-data; boundary='+boundary;
-	request.dataType = "json";
-	request.url = 'http://localhost:8000/new/audio';
-	request.type = 'POST';
-	var crlf = '\r\n';
-	var body = '';
-	body += '--' + boundary + crlf;
-	body += 'Content-Disposition: form-data; name="file"; filename="online-recording.wav"' + crlf;
-	body += "Content-Type: audio/x-wav" + crlf + crlf;
-	body += decodeBase64(audioBytes);	// body is utf8 encoded by jquery before sending, no way around it, so use ductusFileUpload for binary safe upload instead
-	body += crlf + '--' + boundary + '--' + crlf;
-	request.headers = {
-		'X-Requested-With': 'XMLHttpRequest',
-		'X-CSRFToken': getCookie('csrftoken'),
-		'Content-length': body.length,
-		'Content-Type': 'multipart/form-data; boundary='+boundary };
-	request.data = body;
-	$.ajax( request );
-}
-
 Wami.handle_upload_errors = function(e) {
 	console.log('handle upload errors');
 	onError(e);
 }
 
-Wami.uploadRecordedFile2 = function(url) {
-	var base64audioBytes = Wami.getAudioData();
+Wami.uploadRecordedFile = function(url) {
+	var base64audioBytes = Wami.getBase64AudioData();
 	var crlf = '\r\n';
 	var body = '';
 	var audioBytes = decodeBase64(base64audioBytes);
@@ -256,7 +230,7 @@ Wami.uploadRecordedFile2 = function(url) {
 				Wami.handle_upload_errors(errors);
 				return;
 			} else if (data.page_url) {
-				Wami.handle_upload_errors('<span>File saved successfully.</span><a href="'+data.page_url+'">See file</a>');
+				Wami.handle_upload_errors('<span>File saved successfully. </span><a href="'+data.page_url+'">View file</a>');
 				return;
 			}
 			console.log("ductusFileUpload onLoad complete");
