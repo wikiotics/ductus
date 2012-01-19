@@ -55,16 +55,18 @@ class FSIbot(DuctusBot):
         bp = '{"resource":{"sides":{"array":['
         bp += '{"resource":null},'
         bp += '{"href":"' + urn + '"},'
-        bp += '{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"' + language_code + '"}}},'
+        #bp += '{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"' + language_code + '"}}},'
         bp += '{"resource":null}'
-        bp += ']},"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard"}}'
+        bp += ']},"tags": {"array": [{"value": "language:'+language_code+'"}, {"value":"fsi"}]},'
+        bp += '"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard"}}'
         return bp
 
     def build_fsi_lesson(self, file_list, language_code):
         """return a blueprint for a template lesson containing all the audio files in file_list"""
         bp_header = '{"resource":{"cards":{"array":['
         bp_footer = ']},'
-        bp_footer += '"headings":{"array":[{"text":"phrase"},{"text":"audio"},{"text":"language"},{"text":"speaker"}]},'
+        bp_footer += '"headings":{"array":[{"text":"phrase"},{"text":"audio"},{"text":"speaker"}]},'
+        #bp_footer += '"headings":{"array":[{"text":"phrase"},{"text":"audio"},{"text":"language"},{"text":"speaker"}]},'
         bp_footer += '"tags": {"array": [{"value": "source-language:en"}, {"value": "target-language:'+language_code+'"}, {"value": "fsi"}]},'
         bp_footer += '"interactions":{"array":[{"resource":{"audio":"1","transcript":"0","@create":"{http://wikiotics.org/ns/2011/flashcards}audio_lesson_interaction"}}]},'
         bp_footer += '"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard_deck"}}'
