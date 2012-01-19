@@ -41,9 +41,13 @@ class FSIbot(DuctusBot):
         """return a blueprint for a flashcard row containing audio_file"""
         print "Uploading audio file: " + audio_file
         try:
-            urn_json = self.upload_audio(audio_file, None, '.')
-            urn = json.loads(urn_json)['urn']
+            response = self.upload_audio(audio_file, None, '.')
+            urn = response['urn']
             print "Saved urn: " + urn
+        except KeyError as e:
+            print "Error(s) occurred while upload an audio file."
+            print json.dumps(response['errors'])
+            sys.exit()
         except:
             print "Failed to upload audio file. Aborting."
             raise

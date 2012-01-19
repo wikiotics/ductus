@@ -135,7 +135,7 @@ class DuctusBot(object):
             print "Connection failed: " + str(e)
             return '{"urn":""}'
         else:
-            response = url.read()
+            response = json.loads(url.read())
             return response
 
     def save_blueprint(self, url, blueprint, log_message=u'bot action'):
@@ -170,8 +170,9 @@ class DuctusBot(object):
                 raise
         except urllib2.URLError as e:
             print "Connection failed: " + str(e)
+            raise
         else:
-            response = fullurl.read()
+            response = json.loads(fullurl.read())
             return response
 
 def main():
