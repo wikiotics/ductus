@@ -37,7 +37,7 @@ class FSIbot(DuctusBot):
             print "adding file to list: " + infile
         return file_list
 
-    def build_fsi_row(self, audio_file, language_code):
+    def build_fsi_row(self, audio_file, language_code, tag_audio_lang=True):
         """return a blueprint for a flashcard row containing audio_file"""
         print "Uploading audio file: " + audio_file
         try:
@@ -57,11 +57,14 @@ class FSIbot(DuctusBot):
         bp += '{"href":"' + urn + '"},'
         #bp += '{"resource":{"@create":"{http://wikiotics.org/ns/2011/phrase}phrase", "phrase":{"text":"' + language_code + '"}}},'
         bp += '{"resource":null}'
-        bp += ']},"tags": {"array": [{"value": "language:'+language_code+'"}, {"value":"fsi"}]},'
+        if tag_audio_lang:
+            bp += ']},"tags": {"array": [{"value": "language:'+language_code+'"}, {"value":"fsi"}]},'
+        else:
+            bp += ']},"tags": {"array": [{"value":"fsi"}]},'
         bp += '"@create":"{http://wikiotics.org/ns/2011/flashcards}flashcard"}}'
         return bp
 
-    def build_fsi_lesson(self, file_list, language_code):
+    def build_fsi_lesson(self, file_list, language_code, tag_audio_lang=True):
         """return a blueprint for a template lesson containing all the audio files in file_list"""
         bp_header = '{"resource":{"cards":{"array":['
         bp_footer = ']},'
@@ -73,7 +76,7 @@ class FSIbot(DuctusBot):
 
         bp_body = ''
         for audio_file in file_list:
-            bp_body += self.build_fsi_row(audio_file, language_code) + ','
+            bp_body += self.build_fsi_row(audio_file, language_code, tag_audio_lang) + ','
 
         blueprint = bp_header + bp_body.rstrip(',') + bp_footer
         return blueprint
@@ -89,6 +92,7 @@ def main():
     usage = "usage: %prog folder lesson_url"
     p = optparse.OptionParser(usage=usage)
     p.add_option('-i', '--init-file', dest="inifile_name", help='use init file FILE (see fsi_import.py for format)', metavar="FILE")
+    p.add_option('-t', '--dont-tag-audio-language', action="store_false", dest="tag_audio_lang", default=True, help='do NOT tag lesson rows with the target language code')
     options, arguments = p.parse_args()
     if len(arguments) != 2:
         p.print_help()
@@ -111,8 +115,9 @@ def main():
         fsibot.get_cookies()
         fsibot.login(settings['username'].encode('ascii'), settings['password'].encode('ascii'))
         file_list = fsibot.get_audio_files(folder, settings['filename_pattern'].encode('ascii'))
-        blueprint = fsibot.build_fsi_lesson(file_list, settings['target_language'].encode('ascii'))
-        fsibot.save_fsi_lesson(url, blueprint)
+        blueprint = fsibot.build_fsi_lesson(file_list, settings['target_language'].encode('ascii'), options.tag_audio_lang)
+        response = fsibot.save_fsi_lesson(url, blueprint)
+        print "Lesson saved as: " + settings['server'].encode('ascii') + response['page_url']
     except:
         raise
     #finally:
