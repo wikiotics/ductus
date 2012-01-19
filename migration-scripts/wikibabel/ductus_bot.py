@@ -13,14 +13,16 @@ import json
 from zipfile import ZipFile
 from lxml import etree, objectify
 
+"""
+This version of ductus_bot.py has been archived in a working condition.
+Since the wikibabel import was a one-off adventure, the corresponding bot will
+not be maintained anymore, but this is kept for reference.
+Please use the most up-to-date version of the bot in
+ductus_root/migrations-scripts/ductus_bot.py instead.
+"""
 
 class DuctusBot(object):
-    """A basic bot class that provides standard functions to interact with a
-    ductus site.
-    Note: if /en/main_page does not exist, this bot will not work
-    (e.g. login() will fail, etc...). Set some content for the mainpage to
-    solve the problem.
-    """
+    """A basic bot class that provides standard functions to interact with a ductus site"""
     def __init__(self, server):
         """server: base url to the ductus as a string"""
         self.server = server
@@ -41,11 +43,11 @@ class DuctusBot(object):
         else:
             print "Couldn't get csrf token"
 
-    def login(self, username, password):
+    def login(self):
         print "logging in..."
         values = {"csrfmiddlewaretoken": self.csrf_token,
-                    "username": username,
-                    "password": password}
+                    "username": "laurent",
+                    "password": INSERT_PWD_HERE}
         data = urllib.urlencode(values)
         request = urllib2.Request(self.server + '/login')
         request.add_header('User-agent', 'DuctusBot')
@@ -54,6 +56,7 @@ class DuctusBot(object):
         request.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
         request.add_header('Content-length', len(data))
         request.add_data(data)
+        #print "Connecting to %s..." % fullurl
         try:
             fullurl = self.opener.open(request)
         except urllib2.HTTPError as e:
@@ -62,7 +65,6 @@ class DuctusBot(object):
                 print e.read()
                 sys.exit()
             if e.code == 500:
-                print e.read()
                 raise
         except urllib2.URLError as e:
             print "Connection failed: "
@@ -135,7 +137,7 @@ class DuctusBot(object):
             print "Connection failed: " + str(e)
             return '{"urn":""}'
         else:
-            response = json.loads(url.read())
+            response = url.read()
             return response
 
     def save_blueprint(self, url, blueprint, log_message=u'bot action'):
@@ -162,27 +164,164 @@ class DuctusBot(object):
         try:
             fullurl = self.opener.open(request)
         except urllib2.HTTPError as e:
+            #print "HTTP error: " + str(e)
             if e.code == 403:
                 print "Access denied, giving up here - maybe a CSRF issue?"
                 print e.read()
                 sys.exit()
             if e.code == 500:
+                #print fullurl.read()
                 raise
         except urllib2.URLError as e:
             print "Connection failed: " + str(e)
-            raise
         else:
-            response = json.loads(fullurl.read())
+            response = fullurl.read()
             return response
 
+class WBLessonArchive():
+    '''this class will fail miserably for non-WB archives'''
+    def __init__(self, filename):
+        self.filename = filename
+        self.zipfile = ZipFile(self.filename, 'r')
+
+    def get_xml(self):
+        return self.zipfile.open('WBLessonExport.xml').read()
+
+    def get_ogglist(self):
+        ogglist = self.zipfile.namelist()
+        ogglist.remove('WBLessonExport.xml')
+        return ogglist
+
+    def get_oggfile(self, oggfilename):
+        '''return contents of the OGG file named in parameter'''
+        return self.zipfile.open(oggfilename).read()
+
+    def close():
+        self.zipfile.close()
+
+class WBimporter():
+
+    def __init__(self, server, archive, srclang, trglang, title):
+        self.server = server
+        self.archive = archive
+        self.srclang = srclang
+        self.trglang = trglang
+        self.title = title
+        self.url = '/' + self.trglang + '/' + self.title
+        self.csrf_token = None
+        self.bot = DuctusBot(server)
+        self.bot.get_cookies()
+        self.bot.login()
+
+    def is_title_available(self, title):
+        return not self.bot.page_exists(title)
+
+    def load_zipfile_and_register_ogg_files(self):
+        print "Getting list of files from archive..."
+        files = self.archive.get_ogglist()
+
+        def register_oggfile(self, filename):
+            return self.bot.upload_audio(filename, self.archive.get_oggfile(filename))
+
+        self.ogg_urns = {}
+        for index, oggfile in enumerate(files):
+            print "Uploading file %i - %s..." % (index, oggfile)
+            urn_json = register_oggfile(self, oggfile)
+            urn = json.loads(urn_json)
+            self.ogg_urns[oggfile] = urn['urn']
+            #print "OGG: "+ oggfile +" - URN: " + self.ogg_urns[oggfile]
+
+    def create_blueprint_from_archive_XML(self):
+        """returns the urn under which the lesson was saved"""
+        # load XML and correct mediawiki content tags
+        xml_text = unicode(self.archive.get_xml(), 'utf-8')
+        xml_text = xml_text.replace('&lt;', '<')
+        xml_text = xml_text.replace('&gt;', '>')
+        xml_text = xml_text.replace('&quot;', '"')
+        # dump namespace declarations to make subsequent processing easier
+        xml_text = re.sub(r'<mediawiki(.*)>', '<mediawiki>', xml_text, 1)
+        try:
+            xml_tree = etree.XML(xml_text)
+        except:
+            print "ERROR while loading XML content"
+            print xml_text
+            raise
+        title = xml_tree.xpath('//page/title')[0].text
+        timestamps = xml_tree.xpath('//revision/timestamp')
+        timestamps = [ts.text for ts in timestamps]
+        contributors = xml_tree.xpath('//revision/contributor')
+        for index, contributor in enumerate(contributors):
+            if contributor[0].tag == 'username':
+                contributors[index] = 'WikiBabel user ' + contributor[0].text
+            else:
+                contributors[index] = 'IP ' + contributor[0].text
+        treelist = xml_tree.xpath('//wikibabel')
+        for revision in treelist:
+            context = etree.iterwalk(revision, events=("start", "end"))
+            for action, elem in context:
+                if action == "end" and elem.tag in ['text', 'source', 'target']:
+                    if elem.text != None:
+                        elem.text = elem.text.replace('"', '\\"')
+                    urn = elem.get("sound")
+                    if urn != '':
+                        elem.set("sound", self.ogg_urns[urn + '.ogg'])
+
+        xslt = etree.parse("wb_to_json.xsl")
+        transform = etree.XSLT(xslt)
+        blueprints = []
+        parent = ''
+        urn = ''
+        for index, tree in enumerate(treelist):
+            json_blueprint = unicode(transform(tree, source_language="'"+self.srclang+"'", target_language="'"+self.trglang+"'", rev_parent="'"+parent+"'"))
+            json_blueprint = json_blueprint.replace('\n', '')
+            # FIXME: ugly workaround to XSL stylesheet: remove the last ',' separator between templates. Ideally XSL stylesheet should be corrected :)
+            json_blueprint = json_blueprint.replace('flashcard"}},]}', 'flashcard"}}]}')
+            log_message = unicode("import from Wikibabel lesson "+title+", updated on " + timestamps[index] + " by " + contributors[index], 'utf-8')
+            urn = self.bot.save_blueprint(self.url, json_blueprint, log_message)
+            print urn
+            parent = json.loads(urn)['urn']
+        return urn
+
+class objectJSONEncoder(json.JSONEncoder):
+    def __init__(self):
+        return json.JSONEncoder(False, False)
+
+    def default(self, o):
+        if isinstance(o, objectify.ObjectifiedElement) and o.countchildren() > 1:
+            '''ensure that all children with same name get converted'''
+            return [child for child in o.iterchildren()]
+        if isinstance(o, objectify.IntElement):
+            return int(o)
+        if isinstance(o, objectify.NumberElement) or isinstance(o, objectify.FloatElement):
+            return float(o)
+        if isinstance(o, objectify.ObjectifiedDataElement):
+            return str(o)
+        if hasattr(o, '__dict__'):
+            return o.__dict__
+        return json.JSONEncoder.default(self, o)
+
 def main():
-    usage = "usage: %prog [options] "
+    usage = "usage: %prog [options] server zipfile source_language target_language lesson_title"
     p = optparse.OptionParser(usage=usage)
+    #p.add_option('-c', '--csrf-token', help='use CSRF-token')
     options, arguments = p.parse_args()
     if len(arguments) != 5:
         p.print_help()
         sys.exit()
+    server = arguments[0]
+    archive = WBLessonArchive(arguments[1])
+    srclang = arguments[2]
+    trglang = arguments[3]
+    title = arguments[4]
+    importer = WBimporter(server, archive, srclang, trglang, title)
 
+    while not 1: #importer.is_title_available(title):
+        title = raw_input("Title not available, please choose another one: ")
+    print "Lesson will be saved to " + importer.url
+
+    importer.load_zipfile_and_register_ogg_files()
+    blueprints = importer.create_blueprint_from_archive_XML()
+    #print importer.save_blueprint(blueprints)
 
 if __name__ == '__main__':
     main()
