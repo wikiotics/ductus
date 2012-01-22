@@ -46,7 +46,7 @@ Wami.setup = function(id, callback) {
 	delegate('getRecordingLevel');
 	delegate('getPlayingLevel');
 	delegate('getSettings');
-	delegate('showSettings');
+	delegate('showSecurity');
 	delegate('getBase64AudioData');
 	delegate('setCustomHeaders');
 	delegate('uploadAudio');
