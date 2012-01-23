@@ -1,11 +1,12 @@
-#bottom_toolbar, #bottom_toolbar_spacer {
-    height: 260px;
-    width: 100%;
+#side_toolbar, #side_toolbar_spacer {
+    height: 100%;
+    width: 200px;
 }
-#bottom_toolbar {
+#side_toolbar {
     position: fixed;
-    left: 0;
+    right: 0;
     bottom: 0;
+    top: 20px;
     background: #bbb;
     font-size: 85%;
 }

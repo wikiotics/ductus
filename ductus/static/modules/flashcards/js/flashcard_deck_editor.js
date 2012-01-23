@@ -40,6 +40,7 @@ $(function () {
     }
 
     $.fn.ductus_selectable = function (ui_widget_func, wrapped_set_func, dblclick_handler) {
+        // set click/dblclick handlers for a selectable element
         if (dblclick_handler) {
             this.dblclick(dblclick_handler);
         }
@@ -47,7 +48,7 @@ $(function () {
             $(this).click(function () {
                 _select($(this), wrapped_set_func);
                 if (ui_widget_func) {
-                    $("#bottom_toolbar").children().detach().end().append(ui_widget_func().elt);
+                    $("#side_item_editor").children().detach().end().append(ui_widget_func().elt);
                 }
             });
         });
@@ -565,7 +566,8 @@ $(function () {
 
     var fcdw = new FlashcardDeck(resource_json);
     var save_widget = new SaveWidget(fcdw, 'the lesson');
-    $("#flashcard_deck_editor").append(fcdw.elt).append(save_widget.elt);
+    $("#side_item_editor").before(save_widget.elt);
+    $("#flashcard_deck_editor").append(fcdw.elt);
 
     $("#bottom_toolbar_spacer").appendTo("body");
 });
