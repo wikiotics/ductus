@@ -600,13 +600,14 @@
         }
 
         // directory chooser
+	$('<span>Save to:</span>').appendTo(this.form);
         var ul = $('<ul class="radio_ul"></ul>').appendTo(this.form);
         for (i = 0; i < directories.user.length; ++i) {
             var dir = directories.user[i];
             var id = ductus_unique_dom_id();
             var div = $('<li></li>').appendTo(ul);
             div.append($('<input type="radio" name="grp" id="' + id + '"/>').attr('value', dir[0]));
-            div.append($('<label for="' + id + '"></label>').text('Save within my user directory (' + dir[2] + ') '));
+            div.append($('<label for="' + id + '"></label>').text('my user directory (' + dir[2] + ') '));
             if (dir[0] === initial_directory_selection) {
                 div.find("#" + id).attr("checked", true);
             }
@@ -617,7 +618,7 @@
             var id = ductus_unique_dom_id();
             var div = $('<li></li>').appendTo(ul);
             div.append($('<input type="radio" name="grp" id="' + id + '"/>').attr('value', dir[0]));
-            div.append($('<label for="' + id + '"></label>').text('Save to group: ' + dir[2]));
+            div.append($('<label for="' + id + '"></label>').text('group: ' + dir[2]));
             if (dir[0] === initial_directory_selection) {
                 div.find("#" + id).attr("checked", true);
             }
@@ -628,7 +629,7 @@
             var id = ductus_unique_dom_id();
             var lns_div = $('<li></li>').appendTo(ul);
             lns_div.append('<input type="radio" name="grp" id="' + id + '" value="///see_select///"/>');
-            lns_div.append('<label for="' + id + '">Save to community wiki for language: </label>');
+            lns_div.append('<label for="' + id + '">community wiki for: </label>');
             lns_div.find("label").after(select);
             var directory_selected = false;
             for (i = 0; i < directories.language_namespace.length; ++i) {
@@ -784,4 +785,5 @@
 	}
 	do_next_step();
     };
+
 
