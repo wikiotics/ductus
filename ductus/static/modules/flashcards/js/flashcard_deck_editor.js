@@ -109,6 +109,8 @@ $(function () {
     };
 
     function FlashcardSideEditor(fcsw) {
+        // the editor shown at the right side, allowing to add elements to a flashcard side, edit or remove them.
+        // fcsw is the calling widget (the one that was clicked on the flashcard deck)
         Widget.call(this, '<div class="ductus_FlashcardSideEditor"><ul></ul></div>');
 
         var this_ = this;
@@ -604,6 +606,7 @@ $(function () {
         this.elt.show();
         if (ppw.wrapped) {
             if (ppw.wrapped.left_popup_html) {
+                // TODO: wrap these 3 calls in a method of popupwidget
                 leftw.html(ppw.wrapped.left_popup_html);
                 leftw.click(function() {
                     this_.ppw.wrapped.left_popup_callback();
@@ -627,6 +630,21 @@ $(function () {
                 });
                 topw.show();
             }
+        } else {
+            // no wrapped widget: it's an empty flashcard side
+            leftw.html('new phrase');
+            leftw.click(function() {
+                // create an empty phrase in the clicked cell
+                this_.ppw.set_from_json({
+                    resource: {
+                        phrase: { text: '' },
+                        fqn: PhraseWidget.prototype.fqn
+                              }
+                });
+                this_.elt.hide();
+                this_.ppw.wrapped.input.focus();
+            });
+            leftw.show();
         }
         bottomw.show();     // delete button is always shown
         bottomw.click(function() {
