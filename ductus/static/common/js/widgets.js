@@ -740,6 +740,8 @@
     };
 
     function SaveWidget (toplevel_blueprint_object, wikipage_type_shortname) {
+        // the widget that defines page name, log message, uri, and actually saves the blueprint to the server
+        // toplevel_blueprint_object is the root widget (typically the flashcard deck)
         this.toplevel_blueprint_object = toplevel_blueprint_object;
         Widget.call(this, '<div class="ductus_SaveWidget"></div>');
         var this_ = this;
@@ -751,8 +753,8 @@
         this.elt.append('<form class="save_form save_and_return" style="display: inline"><input type="submit" value="Save"/></form>');
         //this.elt.append('<form class="save_form save_and_continue" style="display: inline"><input type="submit" value="Save and continue editing"/></form>');
         this.elt.find(".save_form").submit(function (event) {
-	    event.preventDefault(); // cancel normal submit event handling
-	    this_.perform_save($(event.target).hasClass('save_and_return'));
+            event.preventDefault(); // cancel normal submit event handling
+            this_.perform_save($(event.target).hasClass('save_and_return'));
         });
         this.save_buttons = this.elt.find("input:submit");
 
@@ -764,49 +766,49 @@
     }
     SaveWidget.prototype = chain_clone(Widget.prototype);
     SaveWidget.prototype.perform_save = function (save_and_return) {
-	var this_ = this;
-	var blocking_elements = this.elt.add(this.toplevel_blueprint_object.elt);
-	blocking_elements.block({ message: "saving ..." });
-	var presave_steps = this.toplevel_blueprint_object.get_outstanding_presave_steps();
-	function perform_final_save () {
-	    var blueprint = JSON.stringify(this_.toplevel_blueprint_object.blueprint_repr());
+        var this_ = this;
+        var blocking_elements = this.elt.add(this.toplevel_blueprint_object.elt);
+        blocking_elements.block({ message: "saving ..." });
+        var presave_steps = this.toplevel_blueprint_object.get_outstanding_presave_steps();
+        function perform_final_save () {
+            var blueprint = JSON.stringify(this_.toplevel_blueprint_object.blueprint_repr());
             $.ajax({
-	        url: this_.destination_chooser.get_destination().get_pathname(),
-	        data: {
-		    blueprint: blueprint,
-		    log_message: this_.elt.find(".log_message").val()
-	        },
-	        success: function (data) {
-		    // go to the newly-saved page
-		    if (save_and_return) {
-		        window.location = (data.page_url || resolve_urn(data.urn));
-		    } else {
-		        $('<span class="ductus_save_notice">saved!</span>').appendTo(this_.elt).delay(3000).fadeOut(400, function () { $(this).remove(); });
-		    }
-	        },
-	        error: function (xhr, textStatus, errorThrown) {
-		    alert(xhr.status + " error. save failed.");
-	        },
-	        complete: function (xhr, textStatus) {
-		    blocking_elements.unblock();
-	        },
-	        type: 'POST',
-	        dataType: 'json'
-	    });
-	}
-	var i = 0;
-	function do_next_step () {
-	    if (i == presave_steps.length) {
-	        perform_final_save();
-	    } else {
-	        var next_step = presave_steps[i++];
-	        next_step(do_next_step, function (error) {
-	            alert("an error occurred: " + error);
-	            blocking_elements.unblock();
-	        });
-	    }
-	}
-	do_next_step();
+                url: this_.destination_chooser.get_destination().get_pathname(),
+                data: {
+                    blueprint: blueprint,
+                log_message: this_.elt.find(".log_message").val()
+                },
+                success: function (data) {
+                             // go to the newly-saved page
+                             if (save_and_return) {
+                                 window.location = (data.page_url || resolve_urn(data.urn));
+                             } else {
+                                 $('<span class="ductus_save_notice">saved!</span>').appendTo(this_.elt).delay(3000).fadeOut(400, function () { $(this).remove(); });
+                             }
+                         },
+                error: function (xhr, textStatus, errorThrown) {
+                           alert(xhr.status + " error. save failed.");
+                       },
+                complete: function (xhr, textStatus) {
+                              blocking_elements.unblock();
+                          },
+                type: 'POST',
+                dataType: 'json'
+            });
+        }
+        var i = 0;
+        function do_next_step () {
+            if (i == presave_steps.length) {
+                perform_final_save();
+            } else {
+                var next_step = presave_steps[i++];
+                next_step(do_next_step, function (error) {
+                    alert("an error occurred: " + error);
+                    blocking_elements.unblock();
+                });
+            }
+        }
+        do_next_step();
     };
 
 
