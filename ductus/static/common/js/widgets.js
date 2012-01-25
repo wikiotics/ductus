@@ -196,14 +196,15 @@
     PictureModelWidget.prototype.edit_ui_widget = function () {
         return { elt: this._picture_widget.rotation_controls };
     };
-    PictureModelWidget.prototype.left_popup_html = 'record (soon)';
-    PictureModelWidget.prototype.left_popup_callback = function() {
-    };
-    PictureModelWidget.prototype.right_popup_html = 'upload';
-    PictureModelWidget.prototype.right_popup_callback = function() {
-    };
-    PictureModelWidget.prototype.top_popup_html = 'search (soon)';
-    PictureModelWidget.prototype.top_popup_callback = function() {
+    PictureModelWidget.prototype.popup_html = {
+        'left': 'record (soon)',
+        'right': 'upload (soon)',
+        'top': 'search (soon)'
+    };  
+    PictureModelWidget.prototype.popup_callback = {
+        'left': function() {},
+        'right': function() {},
+        'top': function() {}
     };
 
     function PictureWidget(picture_source, editable) {
@@ -528,14 +529,18 @@
         html5_audio_element.attr('src', src);
         this.control_elt.append(html5_audio_element);
     };
-    AudioWidget.prototype.left_popup_html = 'record';
-    AudioWidget.prototype.left_popup_callback = function() {
+    // content of popup menu when clicking on an audio widget
+    // null will disable the corresponding submenu
+    AudioWidget.prototype.popup_html = {
+        'left': 'record',
+        'right': 'upload',
+        'top': 'search'
     };
-    AudioWidget.prototype.right_popup_html = 'upload';
-    AudioWidget.prototype.right_popup_callback = function() {
-    };
-    AudioWidget.prototype.top_popup_html = 'search';
-    AudioWidget.prototype.top_popup_callback = function() {
+    // callbacks to handle clicks on the menu for an audio widget
+    AudioWidget.prototype.popup_callback = {
+        'left': function() {},
+        'right': function() {},
+        'top': function() {}
     };
     AudioWidget.creation_ui_widget = function () {
         if (typeof FileReader == 'undefined') {

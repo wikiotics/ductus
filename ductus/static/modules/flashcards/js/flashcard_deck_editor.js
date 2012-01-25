@@ -83,6 +83,10 @@ $(function () {
         };
         return r;
     };
+    // no specific popup actions for phrases yet
+    PhraseWidget.prototype.popup_html = {};
+    PhraseWidget.prototype.popup_callback = {};
+
     PhraseWidget.creation_ui_widget = function () {
         return new PhraseCreator;
     };
@@ -577,19 +581,27 @@ $(function () {
 
     function PopupWidget(ppw) {
         Widget.call(this, '<div id="ductus_PopupWidget"></div>');
-        this.elt.append('<div id="ductus_PopupLeft" class="ductus_Popup">Record</div>');
-        this.elt.append('<div id="ductus_PopupTop" class="ductus_Popup">Search</div>');
-        this.elt.append('<div id="ductus_PopupRight" class="ductus_Popup">Edit</div>');
-        this.elt.append('<div id="ductus_PopupBottom" class="ductus_Popup">Delete</div>');
+        this_ = this;
+        $.each(['left', 'top', 'right', 'bottom'], function(i, side) {
+            this_.elt.append('<div id="ductus_Popup' + side + '" class="ductus_Popup"></div>');
+        });
     }
     PopupWidget.prototype = chain_clone(Widget.prototype);
     PopupWidget.prototype.hide_popup = function (ppw) {
         // hide the popup menu and all its bits.
-        this.elt.find('#ductus_PopupLeft').hide();
-        this.elt.find('#ductus_PopupRight').hide();
-        this.elt.find('#ductus_PopupTop').hide();
-        this.elt.find('#ductus_PopupBottom').hide();
+        this_ = this;
+        $.each(['left', 'top', 'right', 'bottom'], function(i, side) {
+            this_.elt.find('#ductus_Popup' + side).hide();
+        });
         this.elt.hide();
+    }
+    PopupWidget.prototype.setup_popup = function (side, content, click_cb) {
+        var sub_popup = this.elt.find('#ductus_Popup'+side);
+        if (content) {
+            sub_popup.html(content);
+            sub_popup.click(click_cb);
+            sub_popup.show();
+        }
     }
     PopupWidget.prototype.show_popup = function (ppw) {
         // show the popup menu according to context. ppw is the widget that was clicked.
@@ -599,74 +611,51 @@ $(function () {
         this_ = this;
         this.hide_popup();
 
-        leftw = this.elt.find('#ductus_PopupLeft');
-        rightw = this.elt.find('#ductus_PopupRight');
-        topw = this.elt.find('#ductus_PopupTop');
-        bottomw = this.elt.find('#ductus_PopupBottom');
+        leftw = this.elt.find('#ductus_Popupleft');
+        rightw = this.elt.find('#ductus_Popupright');
+        topw = this.elt.find('#ductus_Popuptop');
+        bottomw = this.elt.find('#ductus_Popupbottom');
 
-        // fill the popup depending on the calling widget (ppw)
         this.elt.show();
         if (ppw.wrapped) {
-            if (ppw.wrapped.left_popup_html) {
-                // TODO: wrap these 3 calls in a method of popupwidget
-                leftw.html(ppw.wrapped.left_popup_html);
-                leftw.click(function() {
-                    this_.ppw.wrapped.left_popup_callback();
-                    this_.elt.hide();
-                });
-                leftw.show();
-            }
-            if (ppw.wrapped.right_popup_html) {
-                rightw.html(ppw.wrapped.right_popup_html);
-                rightw.click(function() {
-                    this_.ppw.wrapped.right_popup_callback();
-                    this_.elt.hide();
-                });
-                rightw.show();
-            }
-            if (ppw.wrapped.top_popup_html) {
-                topw.html(ppw.wrapped.top_popup_html);
-                topw.click(function() {
-                    this_.ppw.wrapped.top_popup_callback();
-                    this_.elt.hide();
-                });
-                topw.show();
-            }
+            // the flashcard side has some content: setup popup accordingly
+            $.each(ppw.wrapped.popup_html, function(side, content) {
+                this_.setup_popup(side,
+                    content,
+                    function() {
+                        this_.ppw.wrapped.popup_callback[side]();
+                        this_.elt.hide();
+                    });
+            });
         } else {
-            // no wrapped widget: it's an empty flashcard side
-            leftw.html('new phrase');
-            leftw.click(function() {
-                // create an empty phrase in the clicked cell
+            // no wrapped widget: it's an empty flashcard side, setup creation options
+            this.setup_popup('left', 'new phrase', function() {
                 this_.ppw.set_from_json({
                     resource: {
                         phrase: { text: '' },
                         fqn: PhraseWidget.prototype.fqn
                               }
-                });
+                }); 
                 this_.elt.hide();
                 this_.ppw.wrapped.input.focus();
             });
-            leftw.show();
-            rightw.html('new audio');
-            rightw.click(function() {
+            this.setup_popup('right', 'new audio', function() {
                 // create a file upload element in the clicked cell
                 FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-1");
                 this_.elt.hide();
             });
-            rightw.show();
-            topw.html('new picture');
-            topw.click(function() {
+            this.setup_popup('top', 'new picture', function() {
                 // create a file upload element in the clicked cell
                 FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-0");
                 this_.elt.hide();
             });
-            topw.show();
         }
-        bottomw.show();     // delete button is always shown
-        bottomw.click(function() {
+        // delete button is always present
+        this.setup_popup('bottom', 'delete', function() {
                 this_.ppw.reset();
                 this_.elt.hide();
             });
+        // position popup buttons around the clicked widget
         leftw.position({
                     "my": "right center",
                     "at": "left center",
