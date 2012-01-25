@@ -29,10 +29,12 @@ $(function () {
     var selected = null;
     var selected_wrapped_set;
     function _unselect() {
+        // unmarked the previously selected widget
         if (!selected) return;
         selected_wrapped_set.removeClass("ductus-selected");
     }
     function _select(elt, wrapped_set_func) {
+        // mark the clicked widget as selected
         _unselect();
         selected = $(elt);
         selected_wrapped_set = wrapped_set_func ? wrapped_set_func() : $(elt);
@@ -46,6 +48,7 @@ $(function () {
         }
         return this.each(function () {
             $(this).click(function () {
+                $('#ductus_PopupWidget').hide();
                 _select($(this), wrapped_set_func);
                 if (ui_widget_func) {
                     $("#side_item_editor").children().detach().end().append(ui_widget_func().elt);
@@ -129,11 +132,6 @@ $(function () {
         ul.append('<li><a href="#fcs-edit" id="fcs-edit-tab" class="display-only-if-editable">edit</a></li>');
         this.elt.append(edit_tab_body);
         this.edit_tab_body = edit_tab_body;
-
-        var delete_tab_body = $('<div id="fcs-delete">Confirm deletion: <form><input type="submit" value="Delete"/></form></div>');
-        delete_tab_body.find("form").submit(function () { this_.fcsw.reset(); return false; });
-        ul.append('<li><a href="#fcs-delete" id="fcs-delete-tab" class="display-only-if-editable">delete</a></li>');
-        this.elt.append(delete_tab_body);
 
         this.elt.verticaltabs();
 
@@ -271,6 +269,11 @@ $(function () {
         this.elt.empty().html("&nbsp;");
     };
     FlashcardSide.prototype.ui_widget = function () {
+        popup = $("#ductus_PopupWidget");
+        if (popup.length) {
+            popup.data('widget_object').show_popup(this);
+        }
+        // set the edit widget for this flashcard side
         if (!FlashcardSide._global_flashcard_side_editor) {
             FlashcardSide._global_flashcard_side_editor = new FlashcardSideEditor(this);
         } else {
@@ -461,6 +464,10 @@ $(function () {
 
         ModelWidget.call(this, fcd, '<div class="ductus_FlashcardDeck"></div>');
 
+        // create popup menu
+        this.popup_menu = new PopupWidget(this);
+        this.popup_menu.elt.appendTo(this.elt);
+
         this.rows = [];
         this.columns = [];
         this.table = $('<table border="1"></table>').appendTo(this.elt);
@@ -564,11 +571,95 @@ $(function () {
         return FlashcardDeck._global_flashcard_column_editor;
     };
 
+    function PopupWidget(ppw) {
+        Widget.call(this, '<div id="ductus_PopupWidget"></div>');
+        this.elt.append('<div id="ductus_PopupLeft" class="ductus_Popup">Record</div>');
+        this.elt.append('<div id="ductus_PopupTop" class="ductus_Popup">Search</div>');
+        this.elt.append('<div id="ductus_PopupRight" class="ductus_Popup">Edit</div>');
+        this.elt.append('<div id="ductus_PopupBottom" class="ductus_Popup">Delete</div>');
+    }
+    PopupWidget.prototype = chain_clone(Widget.prototype);
+    PopupWidget.prototype.hide_popup = function (ppw) {
+        // hide the popup menu and all its bits.
+        this.elt.find('#ductus_PopupLeft').hide();
+        this.elt.find('#ductus_PopupRight').hide();
+        this.elt.find('#ductus_PopupTop').hide();
+        this.elt.find('#ductus_PopupBottom').hide();
+        this.elt.hide();
+    }
+    PopupWidget.prototype.show_popup = function (ppw) {
+        // show the popup menu according to context. ppw is the widget that was clicked.
+        if (this.ppw === ppw)
+            return;
+        this.ppw = ppw;
+        this_ = this;
+        this.hide_popup();
+
+        leftw = this.elt.find('#ductus_PopupLeft');
+        rightw = this.elt.find('#ductus_PopupRight');
+        topw = this.elt.find('#ductus_PopupTop');
+        bottomw = this.elt.find('#ductus_PopupBottom');
+
+        // fill the popup depending on the calling widget (ppw)
+        this.elt.show();
+        if (ppw.wrapped) {
+            if (ppw.wrapped.left_popup_html) {
+                leftw.html(ppw.wrapped.left_popup_html);
+                leftw.click(function() {
+                    this_.ppw.wrapped.left_popup_callback();
+                    this_.elt.hide();
+                });
+                leftw.show();
+            }
+            if (ppw.wrapped.right_popup_html) {
+                rightw.html(ppw.wrapped.right_popup_html);
+                rightw.click(function() {
+                    this_.ppw.wrapped.right_popup_callback();
+                    this_.elt.hide();
+                });
+                rightw.show();
+            }
+            if (ppw.wrapped.top_popup_html) {
+                topw.html(ppw.wrapped.top_popup_html);
+                topw.click(function() {
+                    this_.ppw.wrapped.top_popup_callback();
+                    this_.elt.hide();
+                });
+                topw.show();
+            }
+        }
+        bottomw.show();     // delete button is always shown
+        bottomw.click(function() {
+                this_.ppw.reset();
+                this_.elt.hide();
+            });
+        leftw.position({
+                    "my": "right center",
+                    "at": "left center",
+                    "of": ppw.elt
+        });
+        rightw.position({
+                    "my": "left center",
+                    "at": "right center",
+                    "of": ppw.elt
+        });
+        topw.position({
+                    "my": "center bottom",
+                    "at": "center top",
+                    "of": ppw.elt
+        });
+        bottomw.position({
+                    "my": "center top",
+                    "at": "center bottom",
+                    "of": ppw.elt
+        });
+    };
+
     var fcdw = new FlashcardDeck(resource_json);
     var save_widget = new SaveWidget(fcdw, 'the lesson');
     $("#side_item_editor").before(save_widget.elt);
     $("#flashcard_deck_editor").append(fcdw.elt);
 
-    $("#bottom_toolbar_spacer").appendTo("body");
+    $("#side_toolbar_spacer").appendTo("body");
 });
 

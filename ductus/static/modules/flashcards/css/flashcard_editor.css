@@ -10,6 +10,42 @@
     background: #bbb;
     font-size: 85%;
 }
+#ductus_PopupWidget {
+    position: absolute;
+    display: none;
+    /*width: 60px;
+    height: 60px;*/
+    /*padding: 10px;
+    background: #ceefae;
+    color: #00ee00;
+    border: 1px solid #1a1a1a;
+    font-size: 90%;*/
+}
+#ductus_PopupContainer {
+    position: relative;
+    width: 135px;
+    height: 115px;
+}
+.ductus_Popup {
+    border: 1px solid;
+    width: 64px;
+    height: 64px;
+    background: #bbb;
+    /*position: absolute;*/
+}
+#ductus_PopupLeft {
+    /*left: 0px;
+    top: 35px;*/
+}
+#ductus_PopupTop {
+    /*left: 35px;*/
+}
+#ductus_PopupRight {
+    /*left: 69px;*/
+}
+#ductus_PopupBottom {
+    /*left: 35px;*/
+}
 .ductus-selected {
     background-color: #ddf;
 }

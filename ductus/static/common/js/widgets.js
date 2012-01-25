@@ -196,6 +196,15 @@
     PictureModelWidget.prototype.edit_ui_widget = function () {
         return { elt: this._picture_widget.rotation_controls };
     };
+    PictureModelWidget.prototype.left_popup_html = 'record (soon)';
+    PictureModelWidget.prototype.left_popup_callback = function() {
+    };
+    PictureModelWidget.prototype.right_popup_html = 'upload';
+    PictureModelWidget.prototype.right_popup_callback = function() {
+    };
+    PictureModelWidget.prototype.top_popup_html = 'search (soon)';
+    PictureModelWidget.prototype.top_popup_callback = function() {
+    };
 
     function PictureWidget(picture_source, editable) {
 	var self = this;
@@ -518,6 +527,15 @@
         var html5_audio_element = $('<audio controls preload="none"></audio>');
         html5_audio_element.attr('src', src);
         this.control_elt.append(html5_audio_element);
+    };
+    AudioWidget.prototype.left_popup_html = 'record';
+    AudioWidget.prototype.left_popup_callback = function() {
+    };
+    AudioWidget.prototype.right_popup_html = 'upload';
+    AudioWidget.prototype.right_popup_callback = function() {
+    };
+    AudioWidget.prototype.top_popup_html = 'search';
+    AudioWidget.prototype.top_popup_callback = function() {
     };
     AudioWidget.creation_ui_widget = function () {
         if (typeof FileReader == 'undefined') {
