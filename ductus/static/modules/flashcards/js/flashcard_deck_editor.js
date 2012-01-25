@@ -579,7 +579,8 @@ $(function () {
         return FlashcardDeck._global_flashcard_column_editor;
     };
 
-    function PopupWidget(ppw) {
+    function PopupWidget(calling_widget) {
+        // the widget holding the popup menu that shows up when clicking items on the flashcard deck
         Widget.call(this, '<div id="ductus_PopupWidget"></div>');
         this_ = this;
         $.each(['left', 'top', 'right', 'bottom'], function(i, side) {
@@ -587,7 +588,7 @@ $(function () {
         });
     }
     PopupWidget.prototype = chain_clone(Widget.prototype);
-    PopupWidget.prototype.hide_popup = function (ppw) {
+    PopupWidget.prototype.hide_popup = function (calling_widget) {
         // hide the popup menu and all its bits.
         this_ = this;
         $.each(['left', 'top', 'right', 'bottom'], function(i, side) {
@@ -596,6 +597,9 @@ $(function () {
         this.elt.hide();
     }
     PopupWidget.prototype.setup_popup = function (side, content, click_cb) {
+        // setup a popup on one of the sides of the clicked element
+        // content is the HTML that will fill the side
+        // click_cb is the function to call when the user clicks the menu item
         var sub_popup = this.elt.find('#ductus_Popup'+side);
         if (content) {
             sub_popup.html(content);
@@ -603,11 +607,11 @@ $(function () {
             sub_popup.show();
         }
     }
-    PopupWidget.prototype.show_popup = function (ppw) {
-        // show the popup menu according to context. ppw is the widget that was clicked.
-        if (this.ppw === ppw)
+    PopupWidget.prototype.show_popup = function (calling_widget) {
+        // show the popup menu according to context. calling_widget is the widget that was clicked.
+        if (this.calling_widget === calling_widget)
             return;
-        this.ppw = ppw;
+        this.calling_widget = calling_widget;
         this_ = this;
         this.hide_popup();
 
@@ -617,27 +621,27 @@ $(function () {
         bottomw = this.elt.find('#ductus_Popupbottom');
 
         this.elt.show();
-        if (ppw.wrapped) {
+        if (calling_widget.wrapped) {
             // the flashcard side has some content: setup popup accordingly
-            $.each(ppw.wrapped.popup_html, function(side, content) {
+            $.each(calling_widget.wrapped.popup_html, function(side, content) {
                 this_.setup_popup(side,
                     content,
                     function() {
-                        this_.ppw.wrapped.popup_callback[side]();
+                        this_.calling_widget.wrapped.popup_callback[side]();
                         this_.elt.hide();
                     });
             });
         } else {
             // no wrapped widget: it's an empty flashcard side, setup creation options
             this.setup_popup('left', 'new phrase', function() {
-                this_.ppw.set_from_json({
+                this_.calling_widget.set_from_json({
                     resource: {
                         phrase: { text: '' },
                         fqn: PhraseWidget.prototype.fqn
                               }
                 }); 
                 this_.elt.hide();
-                this_.ppw.wrapped.input.focus();
+                this_.calling_widget.wrapped.input.focus();
             });
             this.setup_popup('right', 'new audio', function() {
                 // create a file upload element in the clicked cell
@@ -652,29 +656,29 @@ $(function () {
         }
         // delete button is always present
         this.setup_popup('bottom', 'delete', function() {
-                this_.ppw.reset();
+                this_.calling_widget.reset();
                 this_.elt.hide();
             });
         // position popup buttons around the clicked widget
         leftw.position({
                     "my": "right center",
                     "at": "left center",
-                    "of": ppw.elt
+                    "of": calling_widget.elt
         });
         rightw.position({
                     "my": "left center",
                     "at": "right center",
-                    "of": ppw.elt
+                    "of": calling_widget.elt
         });
         topw.position({
                     "my": "center bottom",
                     "at": "center top",
-                    "of": ppw.elt
+                    "of": calling_widget.elt
         });
         bottomw.position({
                     "my": "center top",
                     "at": "center bottom",
-                    "of": ppw.elt
+                    "of": calling_widget.elt
         });
     };
 
