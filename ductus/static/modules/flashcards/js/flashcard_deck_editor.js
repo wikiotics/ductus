@@ -251,6 +251,8 @@ $(function () {
     FlashcardDeckEditor.prototype = chain_clone(Widget.prototype);
 
     function FlashcardSide(fcs, column) {
+        // a FlashcardSide widget. Visually, the cell in the flashcard deck
+        // either empty or containing a ModelWidget in this.wrapped
         Widget.call(this, '<div class="ductus_FlashcardSide"></div>');
         this.set_from_json(fcs);
         this.column = column;
@@ -645,6 +647,20 @@ $(function () {
                 this_.ppw.wrapped.input.focus();
             });
             leftw.show();
+            rightw.html('new audio');
+            rightw.click(function() {
+                // create a file upload element in the clicked cell
+                FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-1");
+                this_.elt.hide();
+            });
+            rightw.show();
+            topw.html('new picture');
+            topw.click(function() {
+                // create a file upload element in the clicked cell
+                FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-0");
+                this_.elt.hide();
+            });
+            topw.show();
         }
         bottomw.show();     // delete button is always shown
         bottomw.click(function() {
