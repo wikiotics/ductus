@@ -603,10 +603,11 @@ $(function () {
     }
     PopupWidget.prototype = chain_clone(Widget.prototype);
     PopupWidget.prototype.hide_popup = function (calling_widget) {
-        // hide the popup menu and all its bits.
+        // hide the popup menu and all deactivate click event handlers.
         this_ = this;
         $.each(['left', 'top', 'right', 'bottom'], function(i, side) {
-            this_.elt.find('#ductus_Popup' + side).hide();
+            var sub_popup = this_.elt.find('#ductus_Popup' + side).hide();
+            sub_popup.unbind("click");
         });
         this.elt.hide();
     }
@@ -617,7 +618,8 @@ $(function () {
         var sub_popup = this.elt.find('#ductus_Popup'+side);
         if (content) {
             sub_popup.html(content);
-            sub_popup.click(click_cb);
+            // prevent flashcard from picking up click event when it has a wrapped widget
+            sub_popup.bind("click", function(e) { click_cb(); e.stopPropagation(); });
             sub_popup.show();
         }
     }
@@ -635,9 +637,9 @@ $(function () {
         bottomw = this.elt.find('#ductus_Popupbottom');
 
         this.elt.show();
-        if (calling_widget.wrapped) {
+        if (this_.calling_widget.wrapped) {
             // the flashcard side has some content: setup popup accordingly
-            $.each(calling_widget.wrapped.popup_html, function(side, content) {
+            $.each(this_.calling_widget.wrapped.popup_html, function(side, content) {
                 this_.setup_popup(side,
                     content,
                     function() {
