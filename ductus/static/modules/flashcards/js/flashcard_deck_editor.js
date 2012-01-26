@@ -57,6 +57,19 @@ $(function () {
         });
     };
 
+    $.fn.make_sidebar_widget = function (title, sidebar) {
+        // setup and insert the widget in the editor sidebar
+        // (add a title header and collapse/expand handler)
+        this.appendTo(sidebar);
+        var header = $('<div class="ductus_SidebarWidgetHeader">' + title + '</div>');
+        this.before(header);
+        this.addClass('ductus_SidebarWidget');
+        header.bind('click', function() {
+            $(this).next().toggle();
+            return false;
+        }).next().hide();
+    }
+
     function PhraseWidget(phrase) {
         ModelWidget.call(this, phrase, '<div class="ductus_PhraseWidget"></div>');
 
@@ -114,7 +127,7 @@ $(function () {
 
     function FlashcardSideEditor(fcsw) {
         // the editor shown at the right side, allowing to add elements to a flashcard side, edit or remove them.
-        // fcsw is the calling widget (the one that was clicked on the flashcard deck)
+        // fcsw is the calling FlashcardSide widget (the one that was clicked on the flashcard deck)
         Widget.call(this, '<div class="ductus_FlashcardSideEditor"><ul></ul></div>');
 
         var this_ = this;
@@ -512,13 +525,14 @@ $(function () {
         // a jQuery object to attach sidebar widgets to
         this.sidebar = $('<div id="ductus_Sidebar"></div>');
 
-        // interaction chooser
         this.interaction_chooser = new InteractionChooserWidget(fcd.resource.interactions);
-        this.interaction_chooser.elt.appendTo(this.sidebar);
+        this.interaction_chooser.elt.make_sidebar_widget("Interactions", this.sidebar);
 
-        // tagging widget
         this.tagging_widget = new TaggingWidget(fcd.resource.tags);
-        this.tagging_widget.elt.appendTo(this.sidebar);
+        this.tagging_widget.elt.make_sidebar_widget("Tags", this.sidebar);
+
+        this.save_widget = new SaveWidget(this, 'the lesson');
+        this.save_widget.elt.make_sidebar_widget("Save", this.sidebar);
 
         this.record_initial_inner_blueprint();
     }
@@ -699,6 +713,7 @@ $(function () {
     };
 
     function TaggingWidget(tags) {
+        // the widget used to edit tags applied to the whole flashcard deck
         ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>Tags (space seperated):</label><input /></div>');
         this.input = this.elt.children('input');
         var tag_string = '';
@@ -714,6 +729,7 @@ $(function () {
     TaggingWidget.prototype.inner_blueprint_repr = function () {
     }
     TaggingWidget.prototype.get_tag_list = function () {
+        // return a list of all tags (for use in blueprint)
         var tag_list = [];
         if (this.input && this.input.val()) {
             tag_list = this.input.val().split(" ");
@@ -722,9 +738,8 @@ $(function () {
     }
 
     var fcdw = new FlashcardDeck(resource_json);
-    var save_widget = new SaveWidget(fcdw, 'the lesson');
     $("#side_item_editor").before(fcdw.sidebar);
-    $("#side_item_editor").before(save_widget.elt);
+    $("#side_item_editor").make_sidebar_widget("item editor", fcdw.sidebar);
     $("#flashcard_deck_editor").append(fcdw.elt);
 
     $("#side_toolbar_spacer").appendTo("body");
