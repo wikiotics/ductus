@@ -434,7 +434,7 @@ $(function () {
             }
         }
     }
-    InteractionChooserWidget.prototype = chain_clone(InteractionChooserWidget.prototype);
+    InteractionChooserWidget.prototype = chain_clone(ModelWidget.prototype);
     InteractionChooserWidget.prototype.blueprint_repr = function () {
         var interactions = [];
         this.interactions.children().each(function () {
