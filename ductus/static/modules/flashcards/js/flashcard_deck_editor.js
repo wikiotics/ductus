@@ -509,9 +509,16 @@ $(function () {
             this.rows[0].elt.find('td:not(.row_td)').first().click();
         }
 
+        // a jQuery object to attach sidebar widgets to
+        this.sidebar = $('<div id="ductus_Sidebar"></div>');
+
         // interaction chooser
         this.interaction_chooser = new InteractionChooserWidget(fcd.resource.interactions);
-        this.interaction_chooser.elt.appendTo(this.elt);
+        this.interaction_chooser.elt.appendTo(this.sidebar);
+
+        // tagging widget
+        this.tagging_widget = new TaggingWidget(fcd.resource.tags);
+        this.tagging_widget.elt.appendTo(this.sidebar);
 
         this.record_initial_inner_blueprint();
     }
@@ -525,9 +532,16 @@ $(function () {
         $.each(this.columns, function (i, column) {
             headings.push({text: column.heading});
         });
+        var tags = [];
+        $.each(this.tagging_widget.get_tag_list(), function (i, tag) {
+            if (tag != '') {
+                tags.push({value: tag});
+            }
+        });
         return this.add_inner_blueprint_constructor({
             cards: {array: cards},
             headings: {array: headings},
+            tags: {array: tags},
             interactions: this.interaction_chooser.blueprint_repr()
         });
     };
@@ -682,8 +696,32 @@ $(function () {
         });
     };
 
+    function TaggingWidget(tags) {
+        ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>Tags (space seperated):</label><input /></div>');
+        this.input = this.elt.children('input');
+        var tag_string = '';
+        if (tags) {
+            for (var i = 0; i < tags.array.length; ++i) {
+                var tag = tags.array[i];
+                tag_string += tag.value + ' ';
+            }
+        }
+        this.input.val(tag_string);
+    }
+    TaggingWidget.prototype = chain_clone(Widget.prototype);
+    TaggingWidget.prototype.inner_blueprint_repr = function () {
+    }
+    TaggingWidget.prototype.get_tag_list = function () {
+        var tag_list = [];
+        if (this.input && this.input.val()) {
+            tag_list = this.input.val().split(" ");
+        }
+        return tag_list;
+    }
+
     var fcdw = new FlashcardDeck(resource_json);
     var save_widget = new SaveWidget(fcdw, 'the lesson');
+    $("#side_item_editor").before(fcdw.sidebar);
     $("#side_item_editor").before(save_widget.elt);
     $("#flashcard_deck_editor").append(fcdw.elt);
 
