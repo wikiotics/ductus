@@ -328,6 +328,30 @@ $(function () {
         this.wrapped = wrapped;
         this.elt.empty().append(wrapped.elt);
     };
+    // popup definition for an empty flashcard side
+    FlashcardSide.prototype.popup_html = {
+        'left': 'new phrase',
+        'right': 'new audio',
+        'top': 'new picture'
+    };
+    // callbacks to handle clicks on an empty flashcard side
+    FlashcardSide.prototype.popup_callback = {
+        'left': function() {
+            this_.calling_widget.set_from_json({
+                resource: {
+                    phrase: { text: '' },
+                    fqn: PhraseWidget.prototype.fqn
+                }
+            });
+            this_.calling_widget.wrapped.input.focus();
+        },
+        'right': function() {
+            FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-1");
+        },
+        'top': function() {
+            FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-0");
+        }
+    };
     FlashcardSide.widgets = [
         ['picture', PictureModelWidget],
         ['audio', AudioWidget],
@@ -665,41 +689,27 @@ $(function () {
         bottomw = this.elt.find('#ductus_Popupbottom');
 
         this.elt.show();
+        // determine which widget was clicked
+        var popup_caller = null;
         if (this_.calling_widget.wrapped) {
             // the flashcard side has some content: setup popup accordingly (content and callbacks)
-            $.each(this_.calling_widget.wrapped.popup_html, function(side, content) {
-                this_.setup_popup(side,
-                    content,
-                    function(arg) {
-                        // arg is a custom variable passed by the click event handler upon binding
-                        this_.calling_widget.wrapped.popup_callback[side](arg);
-                        this_.elt.hide();
-                    },
-                    this_.calling_widget.wrapped);
-            });
+            popup_caller = this_.calling_widget.wrapped;
         } else {
-            // no wrapped widget: it's an empty flashcard side, setup creation options
-            this.setup_popup('left', 'new phrase', function() {
-                this_.calling_widget.set_from_json({
-                    resource: {
-                        phrase: { text: '' },
-                        fqn: PhraseWidget.prototype.fqn
-                              }
-                }); 
-                this_.elt.hide();
-                this_.calling_widget.wrapped.input.focus();
-            });
-            this.setup_popup('right', 'new audio', function() {
-                // create a file upload element in the clicked cell
-                FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-1");
-                this_.elt.hide();
-            });
-            this.setup_popup('top', 'new picture', function() {
-                // create a file upload element in the clicked cell
-                FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-0");
-                this_.elt.hide();
-            });
+            // no wrapped widget
+            popup_caller = this_.calling_widget;
         }
+        // setup the popup menu content and callbacks
+        $.each(popup_caller.popup_html, function(side, content) {
+            this_.setup_popup(side,
+                content,
+                function(arg) {
+                    // arg is a custom variable passed by the click event handler upon binding
+                    popup_caller.popup_callback[side](arg);
+                    this_.elt.hide();
+                },
+                popup_caller);
+        });
+
         // position popup buttons around the clicked widget
         leftw.position({
                     "my": "right center",
