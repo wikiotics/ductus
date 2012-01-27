@@ -515,7 +515,7 @@
         }).handleFiles([file]);
     };
     AudioWidget.prototype._append_audio_control = function (src) {
-        var html5_audio_element = $('<audio controls></audio>');
+        var html5_audio_element = $('<audio controls preload="none"></audio>');
         html5_audio_element.attr('src', src);
         this.control_elt.append(html5_audio_element);
     };
