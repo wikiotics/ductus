@@ -625,15 +625,22 @@ $(function () {
         });
         this.elt.hide();
     }
-    PopupWidget.prototype.setup_popup = function (side, content, click_cb) {
+    PopupWidget.prototype.setup_popup = function (side, content, click_cb, click_cb_arg) {
         // setup a popup on one of the sides of the clicked element
-        // content is the HTML that will fill the side
+        // content is the HTML that will fill the popup menu side
         // click_cb is the function to call when the user clicks the menu item
+        // click_cb_arg is an argument passed to click_cb (defined at callback setup time, callback execution time!)
+        // (except for objects ? http://api.jquery.com/bind/ )
         var sub_popup = this.elt.find('#ductus_Popup'+side);
         if (content) {
             sub_popup.html(content);
-            // prevent flashcard from picking up click event when it has a wrapped widget
-            sub_popup.bind("click", function(e) { click_cb(); e.stopPropagation(); });
+            sub_popup.bind("click",
+                    {cb_arg: click_cb_arg},
+                    function(e) {
+                        click_cb(e.data.cb_arg);
+                        // prevent flashcard from picking up click event when it has a wrapped widget
+                        e.stopPropagation();
+                    });
             sub_popup.show();
         }
     }
@@ -652,14 +659,16 @@ $(function () {
 
         this.elt.show();
         if (this_.calling_widget.wrapped) {
-            // the flashcard side has some content: setup popup accordingly
+            // the flashcard side has some content: setup popup accordingly (content and callbacks)
             $.each(this_.calling_widget.wrapped.popup_html, function(side, content) {
                 this_.setup_popup(side,
                     content,
-                    function() {
-                        this_.calling_widget.wrapped.popup_callback[side]();
+                    function(arg) {
+                        // arg is a custom variable passed by the click event handler upon binding
+                        this_.calling_widget.wrapped.popup_callback[side](arg);
                         this_.elt.hide();
-                    });
+                    },
+                    this_.calling_widget.wrapped);
             });
         } else {
             // no wrapped widget: it's an empty flashcard side, setup creation options
