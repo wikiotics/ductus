@@ -586,13 +586,6 @@ $(function () {
             return this_.table.find("th, td");
         });
 
-        $('<a class="new_row_button" href="javascript:void(0)">add new row</a>').click(function () {
-            this_.add_row();
-        }).appendTo($('<div></div>').appendTo(this.elt));
-        $('<a class="new_column_button" href="javascript:void(0)">add new column</a>').click(function () {
-            this_.add_column();
-        }).appendTo($('<div></div>').appendTo(this.elt));
-
         // when the widget first loads, select the first cell
         if (this.rows.length && this.columns.length) {
             this.rows[0].elt.find('td:not(.row_td)').first().click();
