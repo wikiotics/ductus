@@ -96,9 +96,16 @@ $(function () {
         };
         return r;
     };
-    // no specific popup actions for phrases yet
-    PhraseWidget.prototype.popup_html = {};
-    PhraseWidget.prototype.popup_callback = {};
+    // define popup menu content and callbacks
+    PhraseWidget.prototype.popup_html = {
+        'bottom': 'delete'
+    };
+    PhraseWidget.prototype.popup_callback = {
+        // target is the phrase widget that generated the popup
+        'bottom': function(target) {
+            target.elt.parent().data('widget_object').reset();
+        }
+    };
 
     PhraseWidget.creation_ui_widget = function () {
         return new PhraseCreator;
@@ -693,11 +700,6 @@ $(function () {
                 this_.elt.hide();
             });
         }
-        // delete button is always present
-        this.setup_popup('bottom', 'delete', function() {
-                this_.calling_widget.reset();
-                this_.elt.hide();
-            });
         // position popup buttons around the clicked widget
         leftw.position({
                     "my": "right center",

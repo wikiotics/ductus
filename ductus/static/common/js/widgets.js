@@ -199,12 +199,16 @@
     PictureModelWidget.prototype.popup_html = {
         'left': 'record (soon)',
         'right': 'upload (soon)',
-        'top': 'search (soon)'
+        'top': 'search (soon)',
+        'bottom': 'delete'
     };  
     PictureModelWidget.prototype.popup_callback = {
         'left': function() {},
         'right': function() {},
-        'top': function() {}
+        'top': function() {},
+        'bottom': function(target) {
+            target.elt.parent().data('widget_object').reset();
+        }
     };
 
     function PictureWidget(picture_source, editable) {
@@ -534,13 +538,17 @@
     AudioWidget.prototype.popup_html = {
         'left': 'record',
         'right': 'upload',
-        'top': 'search'
+        'top': 'search',
+        'bottom': 'delete'
     };
     // callbacks to handle clicks on the menu for an audio widget
     AudioWidget.prototype.popup_callback = {
         'left': function() {},
         'right': function() {},
-        'top': function() {}
+        'top': function() {},
+        'bottom': function(target) {
+            target.elt.parent().data('widget_object').reset();
+        }
     };
     AudioWidget.creation_ui_widget = function () {
         if (typeof FileReader == 'undefined') {
