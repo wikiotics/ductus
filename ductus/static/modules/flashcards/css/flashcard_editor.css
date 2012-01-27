@@ -28,6 +28,9 @@
     border: 1px solid #D3D3D3;
     color: #555555;
 }
+.ductus_SidebarWidget {
+    background: white;
+}
 .ductus_Popup {
     border: 1px solid;
     width: 64px;
