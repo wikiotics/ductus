@@ -363,6 +363,7 @@ $(function () {
     });
 
     function Flashcard(fc, columns) {
+        // flashcard widget (a row visually)
         ModelWidget.call(this, fc, '<tr class="ductus_Flashcard"><td class="row_td"></td></tr>');
 
         var this_ = this;
@@ -723,6 +724,8 @@ $(function () {
     }
     PopupWidget.prototype.show_popup = function (calling_widget) {
         // show the popup menu according to context. calling_widget is the widget that was clicked.
+
+        // don't do anything if it's the same widget we just clicked
         if (this.calling_widget === calling_widget)
             return;
         this.calling_widget = calling_widget;
@@ -744,6 +747,7 @@ $(function () {
             // no wrapped widget
             popup_caller = this_.calling_widget;
         }
+
         // setup the popup menu content and callbacks
         $.each(popup_caller.popup_html, function(side, content) {
             this_.setup_popup(side,
