@@ -510,6 +510,16 @@ $(function () {
         }).appendTo(li);
     };
 
+    function FlashcardColumn(fcd) {
+        // a simple widget to handle a column in the flash card deck
+        // fcd is the parent flashcard deck
+        // (this is mostly for "coherence" in related function calls, like popups...)
+        Widget.call(this, '<th class="ductus_FlashcardDeck_column"></th>');
+        this.th = this.elt;
+        this.fcd = fcd;
+    }
+    FlashcardColumn.prototype = chain_clone(Widget.prototype);
+
     function FlashcardDeck(fcd) {
         // if new, create default nested json with one column and one row
         if (!fcd) {
@@ -626,9 +636,9 @@ $(function () {
     };
     FlashcardDeck.prototype.add_column = function (heading) {
         var this_ = this;
-        var column = {}; // will contain attributes `th` and `heading`
+        var column = new FlashcardColumn(this);
         this.columns.push(column);
-        column.th = $('<th class="ductus_FlashcardDeck_column"></th>').appendTo(this.header_elt);
+        column.th.appendTo(this.header_elt);
         this._set_column_heading(column, heading);
         column.th.ductus_selectable(function () {
             return this_.column_ui_widget(column);
