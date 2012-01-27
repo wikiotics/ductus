@@ -347,9 +347,11 @@ $(function () {
         },
         'right': function() {
             FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-1");
+            $('#side_item_editor').show();
         },
         'top': function() {
             FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-0");
+            $('#side_item_editor').show();
         }
     };
     FlashcardSide.widgets = [
@@ -814,5 +816,6 @@ $(function () {
     $("#flashcard_deck_editor").append(fcdw.elt);
 
     $("#side_toolbar_spacer").appendTo("body");
+    $('#side_item_editor').show();
 });
 
