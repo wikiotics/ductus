@@ -395,6 +395,10 @@ $(function () {
     };
     Flashcard.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}flashcard';
     Flashcard.prototype.ui_widget = function () {
+        popup = $("#ductus_PopupWidget");
+        if (popup.length) {
+            popup.data('widget_object').show_popup(this);
+        }
         if (!Flashcard._global_flashcard_editor) {
             Flashcard._global_flashcard_editor = new FlashcardEditor(this);
         } else {
@@ -411,6 +415,19 @@ $(function () {
         }, null, function () {
             fcsw.handle_double_click();
         });
+    };
+    // popup definition for a flashcard (a row)
+    // FIXME: the width of the whole flashcard is used for positioning popup...
+    Flashcard.prototype.popup_html = {
+        'left': 'add row'
+            // TODO: move row
+    };
+    // callbacks to handle clicks on an empty flashcard side
+    Flashcard.prototype.popup_callback = {
+        'left': function() {
+            var fcd = $(".ductus_FlashcardDeck").data('widget_object');
+            fcd.add_row();
+        }
     };
 
     function ChoiceInteractionWidget(ci) {
