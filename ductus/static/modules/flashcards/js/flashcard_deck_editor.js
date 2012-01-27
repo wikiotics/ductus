@@ -660,6 +660,8 @@ $(function () {
         $.each(this.rows, function (i, row) {
             row._append_new_cell(null, column);
         });
+        // ensure the minimal width of the deck so we can scroll over the whole thing
+        this.ensure_min_width();
         return column;
     };
     FlashcardDeck.prototype.ui_widget = function (column) {
@@ -679,6 +681,9 @@ $(function () {
         }
         return FlashcardDeck._global_flashcard_column_editor;
     };
+    FlashcardDeck.prototype.ensure_min_width = function() {
+        this.elt.css('min-width', this.table.width() + $('#side_toolbar').width() + 50);
+    }
 
     function PopupWidget(calling_widget) {
         // the widget holding the popup menu that shows up when clicking items on the flashcard deck
@@ -807,6 +812,7 @@ $(function () {
     $("#side_item_editor").before(fcdw.sidebar);
     $("#side_item_editor").make_sidebar_widget("item editor", fcdw.sidebar);
     $("#flashcard_deck_editor").append(fcdw.elt);
+    fcdw.ensure_min_width();
 
     $("#side_toolbar_spacer").appendTo("body");
     $('#side_item_editor').show();
