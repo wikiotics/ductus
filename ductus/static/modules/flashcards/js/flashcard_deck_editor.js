@@ -520,6 +520,21 @@ $(function () {
     }
     FlashcardColumn.prototype = chain_clone(Widget.prototype);
 
+    // define popup callbacks to handle clicks on a column header
+    FlashcardColumn.prototype.popup_html = {
+        'left': 'add colummn',
+        'bottom': 'delete column'
+            // TODO: move column
+    };
+    FlashcardColumn.prototype.popup_callback = {
+        'left': function(column) {
+            column.fcd.add_column();
+        },
+        'bottom': function() {
+            console.log('would delete column now');
+        }
+    };
+
     function FlashcardDeck(fcd) {
         // if new, create default nested json with one column and one row
         if (!fcd) {
@@ -657,6 +672,10 @@ $(function () {
         return FlashcardDeck._global_flashcard_deck_editor;
     };
     FlashcardDeck.prototype.column_ui_widget = function (column) {
+        popup = $("#ductus_PopupWidget");
+        if (popup.length) {
+            popup.data('widget_object').show_popup(column);
+        }
         if (!FlashcardDeck._global_flashcard_column_editor) {
             FlashcardDeck._global_flashcard_column_editor = new FlashcardColumnEditor(this, column);
         } else {
