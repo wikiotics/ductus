@@ -412,6 +412,8 @@ PictureSearchWidget.prototype.do_focus = function () {
 };
 
 function AudioWidget(audio) {
+    console.log('aw constructor');
+    console.log(audio);
     ModelWidget.call(this, audio, '<span class="ductus_AudioWidget"><span class="control"></span><span class="status"></span></span>');
 
     this.control_elt = this.elt.find('.control');
@@ -573,6 +575,11 @@ AudioWidget.creation_ui_widget = function () {
             resource: { fqn: AudioWidget.prototype.fqn, _file: file }
         }]);
     });
+
+    //NEXT: bug when reopening a recorder several times in the same window, probably line below that creates several instances, and wami gets confused
+
+    var recording_widget = new OnlineRecorder();
+    recording_widget.elt.appendTo(upload_widget_elt);
     return { elt: upload_widget_elt };
 };
 
@@ -833,3 +840,159 @@ SaveWidget.prototype.perform_save = function (save_and_return) {
     }
     do_next_step();
 };
+
+/*
+ * Online recorder widget
+ * makes use of wami recorder
+ * this is the UI part of the recorder
+ * the actual recording functionnality is in wami (recorder.js)
+ */
+var online_recorder;    // make this a global variable since this code is too messy. FIXME: clean this up
+function OnlineRecorder() {
+    var recorder_div =
+        '<div id="ductus_OnlineRecorder" style="position: relative; width:414px">' +
+            '<div id="recordDiv" style="position: absolute; left: 50px; top: 25px"></div>' +
+            '<div id="playDiv" style="position: absolute; left: 110px; top: 25px"></div>' +
+            '<div id="uploadDiv" style="position: absolute; left: 170px; top: 25px"></div>' +
+            '<div id="feedbackDiv" style="position: absolute; left: 30px; top: 95px"></div>' +
+            '<div id="wami"></div>' +
+        '</div>'
+    Widget.call(this, recorder_div);
+    this.init();
+}
+OnlineRecorder.prototype = chain_clone(Widget.prototype);
+OnlineRecorder.prototype.init = function() {
+    // set or reset the widget to its initial status: upload or record buttons
+     var start_button = $('<div>Record online</div>').button();
+    this.elt.append(start_button);
+    online_recorder = this;
+    start_button.click(function() {
+        $(this).remove();
+        online_recorder.setupRecorder();
+    });
+}
+OnlineRecorder.prototype.setupRecorder = function() {
+    //online_recorder = this;
+    Wami.setup("wami", function () {
+        online_recorder.checkSecurity();
+    });
+}
+OnlineRecorder.prototype.checkSecurity = function() {
+    console.log('OR checkSecurity start');
+    this.settings = Wami.getSettings();
+    console.log('OR got wami settings');
+    console.log(this.settings);
+    //online_recorder = this;
+    if (this.settings.microphone.granted) {
+        console.log('mic granted');
+        this.listen();
+        Wami.hide();
+        this.setupButtons();
+        console.log('mic granted done');
+    } else {
+        // Show any Flash settings panel you want using the string constants
+        // defined here:
+        // http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/system/SecurityPanel.html
+        Wami.showSecurity("privacy", "Wami.show", "online_recorder.checkSecurity", "online_recorder.zoomError");
+        console.log('back from flash security');
+    }
+}
+OnlineRecorder.prototype.listen = function() {
+    Wami.startListening();
+    // Continually listening when the window is in focus allows us to
+    // buffer a little audio before the users clicks, since sometimes
+    // people talk too soon. Without "listening", the audio would record
+    // exactly when startRecording() is called.
+    window.onfocus = function () {
+        Wami.startListening();
+    };
+
+    // Note that the use of onfocus and onblur should probably be replaced
+    // with a more robust solution (e.g. jQuery's $(window).focus(...)
+    window.onblur = function () {
+        Wami.stopListening();
+    };
+}
+OnlineRecorder.prototype.zoomError = function() {
+    // The minimum size for the flash content is 214x137. Browser's zoomed out
+    // too far won't show the panel.
+    // We could play the game of re-embedding the Flash in a larger DIV here,
+    // but instead we just warn the user:
+    alert("Your browser may be zoomed too far out to show the Flash security settings panel.  Zoom in, and refresh.");
+}
+OnlineRecorder.prototype.setupButtons = function() {
+    console.log('in setupButtons');
+    if (!this.recordButton) {
+        this.recordButton = new Wami.Button("recordDiv", Wami.Button.RECORD);
+        this.recordButton.onstart = online_recorder.startRecording;
+        this.recordButton.onstop = online_recorder.stopRecording;
+
+        this.playButton = new Wami.Button("playDiv", Wami.Button.PLAY);
+        this.playButton.onstart = online_recorder.startPlaying;
+        this.playButton.onstop = online_recorder.stopPlaying;
+
+        //console.log(this);
+        //console.log(this.elt.find('#uploadDiv'));
+        var upload_div = this.elt.find('#uploadDiv');
+        upload_div.button( { label:'Upload recording'});
+        upload_div.click( function(){ online_recorder.uploadAudio();} );
+        upload_div.css({ height:'63px'});
+    }
+    this.recordButton.setEnabled(true);
+    this.playButton.setEnabled(false);
+}
+OnlineRecorder.prototype.uploadAudio = function() {
+    Wami.uploadRecordedFile('/new/audio');
+}
+/**
+ * These methods are called on clicks from the GUI.
+ */
+OnlineRecorder.prototype.startRecording = function() {
+    online_recorder.recordButton.setActivity(0);
+    online_recorder.playButton.setEnabled(false);
+    Wami.startRecording("{{ recording_server_name }}", "onRecordStart", "onRecordFinish", "onError");
+}
+OnlineRecorder.prototype.stopRecording = function() {
+    Wami.stopRecording();
+    clearInterval(online_recorder.recordInterval);
+    online_recorder.recordButton.setEnabled(true);
+}
+OnlineRecorder.prototype.startPlaying = function() {
+    online_recorder.playButton.setActivity(0);
+    online_recorder.recordButton.setEnabled(false);
+    Wami.startPlaying("{{ recording_server_name }}", "onPlayStart", "onPlayFinish", "onError");
+}
+OnlineRecorder.prototype.stopPlaying = function() {
+    Wami.stopPlaying();
+}
+/**
+ * Callbacks from the flash indicating certain events
+ */
+OnlineRecorder.prototype.onError = function(e) {
+    console.log(e);
+    this.elt.find('#feedbackDiv').html(e);
+}
+OnlineRecorder.prototype.onRecordStart = function() {
+    this.recordInterval = setInterval(function () {
+        if (this.recordButton.isActive()) {
+            var level = Wami.getRecordingLevel();
+            this.recordButton.setActivity(level);
+        }
+    }, 200);
+}
+OnlineRecorder.prototype.onRecordFinish = function() {
+    this.playButton.setEnabled(true);
+}
+OnlineRecorder.prototype.onPlayStart = function() {
+    this.playInterval = setInterval(function () {
+        if (this.playButton.isActive()) {
+            var level = Wami.getPlayingLevel();
+            this.playButton.setActivity(level);
+        }
+    }, 200);
+}
+OnlineRecorder.prototype.onPlayFinish = function() {
+    clearInterval(playInterval);
+    this.recordButton.setEnabled(true);
+    this.playButton.setEnabled(true);
+}

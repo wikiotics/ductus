@@ -30,10 +30,17 @@ Wami.setup = function(id, callback) {
     Wami._callbacks["swfinit"] = function() {
 	// Delegate all the methods to the recorder.
 	var recorder = document.getElementById(id);
+    if (typeof(Wami.recorder) == 'undefined') {
+        Wami.recorder = $('#'+id);
+    }
 
 	function delegate(name) {
 	    Wami[name] = function() {
-		return recorder[name].apply(recorder, arguments);
+            //console.log('delegating ' + name);
+            //console.log(recorder);
+            return recorder[name].apply(recorder, arguments);
+            //console.log('returning from deleg method: ' + rv);
+            //return rv;
 	    }
 	}
 
@@ -66,7 +73,9 @@ Wami.setup = function(id, callback) {
 	    }
 	}
 
+    console.log('about to callback');
 	callback();
+    console.log('callback done');
     }
 
     var flashVars = {
@@ -188,10 +197,18 @@ function decodeBase64(str){
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 Wami.handle_upload_errors = function(e) {
-	console.log('handle upload errors');
-	onError(e);
+	online_recorder.onError(e);
 }
-
+Wami.handle_upload_success = function(data) {
+    // feedback the urn to the recorded audio to the caller
+    console.log('wami handle upload success');
+    console.log(online_recorder.elt.parent());
+    online_recorder.elt.parent().trigger('ductus_element_selected',
+            { href: data.urn,
+              resource: { fqn: AudioWidget.prototype.fqn }
+            }
+    );
+}
 Wami.uploadRecordedFile = function(url) {
 	var base64audioBytes = Wami.getBase64AudioData();
 	var crlf = '\r\n';
@@ -231,6 +248,7 @@ Wami.uploadRecordedFile = function(url) {
 				return;
 			} else if (data.page_url) {
 				Wami.handle_upload_errors('<span>File saved successfully. </span><a href="'+data.page_url+'">View file</a>');
+                Wami.handle_upload_success(data);
 				return;
 			}
 			console.log("ductusFileUpload onLoad complete");
