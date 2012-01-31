@@ -88,14 +88,14 @@ $(function () {
 	};
     };
     PhraseWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/phrase}phrase';
-    PhraseWidget.prototype.edit_ui_widget = function () {
+    /*PhraseWidget.prototype.edit_ui_widget = function () {
         var r = new Widget('<div>(see above)</div>');
         var this_ = this;
         r.focus_on_editor = function () {
             this_.input.focus();
         };
         return r;
-    };
+    };*/
     // define popup menu content and callbacks
     PhraseWidget.prototype.popup_html = {
         'bottom': 'delete'
@@ -107,9 +107,9 @@ $(function () {
         }
     };
 
-    PhraseWidget.creation_ui_widget = function () {
+    /*PhraseWidget.creation_ui_widget = function () {
         return new PhraseCreator;
-    };
+    };*/
 
     function PhraseCreator() {
         Widget.call(this, '<div class="ductus_PhraseCreator"><form><input/></form></div>');
@@ -141,15 +141,17 @@ $(function () {
         var ul = this.elt.find("ul");
 
         $.each(FlashcardSide.widgets, function (i, w) {
-            var button = $('<li><a href="#fcs-new-' + i  + '">new ' + w[0] + '</a></li>');
-            var creation_widget = w[1].creation_ui_widget();
-            var tab_body = $('<div id="fcs-new-' + i + '"></div>').append(creation_widget.elt);
-            creation_widget.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                this_.fcsw.set_from_json(model_json_repr);
-                this_.go_to_main_editor_tab();
-            });
-            this_.elt.append(tab_body);
-            ul.append(button);
+            if (w[1].creation_ui_widget) {
+                var button = $('<li><a href="#fcs-new-' + i  + '">new ' + w[0] + '</a></li>');
+                var creation_widget = w[1].creation_ui_widget();
+                var tab_body = $('<div id="fcs-new-' + i + '"></div>').append(creation_widget.elt);
+                creation_widget.elt.bind("ductus_element_selected", function (event, model_json_repr) {
+                    this_.fcsw.set_from_json(model_json_repr);
+                    this_.go_to_main_editor_tab();
+                });
+                this_.elt.append(tab_body);
+                ul.append(button);
+            }
         });
 
         ul.append('<li class="display-only-if-editable">&nbsp;</li>');
