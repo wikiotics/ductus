@@ -36,6 +36,7 @@
     width: 64px;
     height: 64px;
     background: #bbb;
+    z-index: 5;
 }
 .ductus_file_upload_wrapper {
     cursor: pointer;
@@ -69,6 +70,9 @@
 .ductus_FlashcardSide {
     height: 100%;
     width: 100%;
+}
+.ductus_AudioWidget .status .error {
+    font-size: 70%;
 }
 .topleft_th {
     width: 20px;
