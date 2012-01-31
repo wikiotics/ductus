@@ -755,16 +755,18 @@ $(function () {
         }
 
         // setup the popup menu content and callbacks
-        $.each(popup_caller.popup_html, function(side, content) {
-            this_.setup_popup(side,
-                content,
-                function(arg) {
-                    // arg is a custom variable passed by the click event handler upon binding
-                    popup_caller.popup_callback[side](arg);
-                    this_.elt.hide();
-                },
-                popup_caller);
-        });
+        if (popup_caller.popup_html) {
+            $.each(popup_caller.popup_html, function(side, content) {
+                this_.setup_popup(side,
+                    content,
+                    function(arg) {
+                        // arg is a custom variable passed by the click event handler upon binding
+                        popup_caller.popup_callback[side](arg);
+                        this_.elt.hide();
+                    },
+                    popup_caller);
+            });
+        }
 
         // position popup buttons around the clicked widget
         leftw.position({
