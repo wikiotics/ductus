@@ -346,8 +346,12 @@ $(function () {
             this_.calling_widget.wrapped.input.focus();
         },
         'right': function() {
-            FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-1");
-            $('#side_item_editor').show();
+            // show an audio creation widget in the deck
+            var creator = AudioWidget.creation_ui_widget();
+            this_.calling_widget._set_wrapped(creator);
+            creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
+                this_.calling_widget.set_from_json(model_json_repr);
+            });
         },
         'top': function() {
             FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-0");
