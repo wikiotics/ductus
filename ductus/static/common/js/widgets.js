@@ -561,7 +561,12 @@ AudioWidget.creation_ui_widget = function () {
         return { elt: $('<div>Your browser does not support File API, so you will not be able to upload anything.</div>') };
     }
     var upload_widget_elt = $('<div class="AudioWidget_creation_widget"></div>');
-    var input = $('<input type="file" accept="audio/ogg">').appendTo(upload_widget_elt);
+    var file_input = '<span class="ductus_file_upload_wrapper">' +
+        '<input type="file" accept="audio/ogg" />' +
+        '<span class="ductus_file_upload_button">Upload a file</span>' +
+        '</span>';
+    var input = $(file_input).appendTo(upload_widget_elt).find('input');
+    $(file_input).button();
     input.change(function () {
         var file = this.files[0];
         upload_widget_elt.trigger("ductus_element_selected", [{
