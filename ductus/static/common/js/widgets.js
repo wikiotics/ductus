@@ -932,13 +932,12 @@ OnlineRecorder.prototype.listen = function() {
     // people talk too soon. Without "listening", the audio would record
     // exactly when startRecording() is called.
     window.onfocus = function () {
-        this.Wami.startListening();
+        online_recorder.Wami.startListening();
     };
-
     // Note that the use of onfocus and onblur should probably be replaced
     // with a more robust solution (e.g. jQuery's $(window).focus(...)
     window.onblur = function () {
-        this.Wami.stopListening();
+        online_recorder.Wami.stopListening();
     };
 }
 OnlineRecorder.prototype.zoomError = function() {
