@@ -882,10 +882,10 @@ OnlineRecorder.prototype.setupRecorder = function() {
     console.log("setupRecorder");
     if (!this.Wami) {
         console.log("no wami found yet");
-        this.Wami = window.Wami;
-        this.Wami.setup("wami", function () {
+        this.Wami = new Wami('wami', function() {
             online_recorder.checkSecurity();
         });
+        this.Wami.setup();
     } else {
         console.log("reusing existing wami");
         this.checkSecurity();

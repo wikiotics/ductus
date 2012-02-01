@@ -4,110 +4,114 @@
  * Copyright (C) 2011 Ian McGraw <mcgrawian@gmail.com>
  * Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  */
-var Wami = window.Wami || {};
+//var Wami = window.Wami || {};
 
-Wami.setup = function(id, callback) {
-    if (Wami.startRecording) {
-	// Wami's already defined
-	callback();
-	return;
+function Wami(id, callback) {
+    this.id = id;
+    this.callback = callback;
+    global_Wami = this;
+}
+
+Wami.prototype.setup = function() {
+    /*if (Wami.startRecording) {
+        // Wami's already defined
+	    this.callback();
+        return;
+        NEW: it's now up to the user to ensure there is only one Wami??
+    }*/
+    
+    if (this.supportsTransparency()) {
+	this.params.wmode = "transparent";
     }
+    
+    if (console) {
+	this.flashVars.console = true;
+    }
+    
+    this.version = '10.0.0';
+    this.noflash_warning = "WAMI requires Flash " +
+        this.version + " or greater<br />https://get.adobe.com/flashplayer/";
+    $(this.id).html(this.noflash_warning);
+    
+    // This is the minimum size due to the microphone security panel
+    swfobject.embedSWF("/static/modules/audio/Wami.swf", this.id, 214, 137, this.version, null, this.flashVars,
+		       this.params);
+    
+    // Without this line, Firefox has a dotted outline of the flash
+    swfobject.createCSS("#" + this.id, "outline:none");
+}   // setup()
+
 
     /**
      * Set up the Flash for WAMI
      */
-    function supportsTransparency() {
+Wami.prototype.supportsTransparency = function() {
 	// Detecting the OS is a big no-no in Javascript programming, but
 	// I can't think of a better way to know if wmode is supported or
 	// not... since not supporting it (like Flash on Ubuntu) is a bug.
-	return (navigator.platform.indexOf("Linux") == -1);
-    }
+    return (navigator.platform.indexOf("Linux") == -1);
+}
     
     /**
      * Attach all the audio methods to the Wami namespace in the callback.
      */
-    Wami._callbacks = Wami._callbacks || {};
-    Wami._callbacks["swfinit"] = function() {
+//Wami._callbacks = Wami._callbacks || {};
+Wami.prototype.swfinit_callback = function() {
 	// Delegate all the methods to the recorder.
-	var recorder = document.getElementById(id);
-    if (typeof(Wami.recorder) == 'undefined') {
-        Wami.recorder = $('#'+id);
-    }
+    console.log('swfinit callback');
+    this.recorder = document.getElementById(this.id);   // jQuery selector doesn't work
 
-	function delegate(name) {
-	    Wami[name] = function() {
-            console.log('delegating ' + name);
-            //console.log(recorder);
-            return recorder[name].apply(recorder, arguments);
-            //console.log('returning from deleg method: ' + rv);
-            //return rv;
-	    }
-	}
+	this.delegate('startPlaying');
+	this.delegate('stopPlaying');
+	this.delegate('startRecording');
+	this.delegate('stopRecording');
+	this.delegate('startListening');
+	this.delegate('stopListening');
+	this.delegate('getRecordingLevel');
+	this.delegate('getPlayingLevel');
+	this.delegate('getSettings');
+	this.delegate('showSecurity');
+	this.delegate('getBase64AudioData');
+	this.delegate('setCustomHeaders');
+	this.delegate('uploadAudio');
 
-	delegate('startPlaying');
-	delegate('stopPlaying');
-	delegate('startRecording');
-	delegate('stopRecording');
-	delegate('startListening');
-	delegate('stopListening');
-	delegate('getRecordingLevel');
-	delegate('getPlayingLevel');
-	delegate('getSettings');
-	delegate('showSecurity');
-	delegate('getBase64AudioData');
-	delegate('setCustomHeaders');
-	delegate('uploadAudio');
-
-	Wami.show = function() {
-	    if (!supportsTransparency()) {
-		recorder.style.visibility = "visible";
-	    }
-	}
-
-	Wami.hide = function() {
-	    // Hiding flash correctly in all the browsers is tricky. Please read:
-	    // https://code.google.com/p/wami-recorder/wiki/HidingFlash
-	    
-	    if (!supportsTransparency()) {
-		recorder.style.visibility = "hidden";
-	    }
-	}
-
-    console.log('about to callback');
-	callback();
-    console.log('callback done');
-    }
-
-    var flashVars = {
-	visible : false,
-	loadedCallback : "Wami._callbacks['swfinit']",
-	localMode : true
-    }
-
-    var params = {
-	allowScriptAccess : "always"
-    }
-    
-    if (supportsTransparency()) {
-	params.wmode = "transparent";
-    }
-    
-    if (console) {
-	flashVars.console = true;
-    }
-    
-    var version = '10.0.0';
-    document.getElementById(id).innerHTML = "WAMI requires Flash "
-    + version + " or greater<br />https://get.adobe.com/flashplayer/";
-    
-    // This is the minimum size due to the microphone security panel
-    swfobject.embedSWF("/static/modules/audio/Wami.swf", id, 214, 137, version, null, flashVars,
-		       params);
-    
-    // Without this line, Firefox has a dotted outline of the flash
-    swfobject.createCSS("#" + id, "outline:none");
+	this.callback();
 }
 
+Wami.prototype.delegate = function(name) {
+    wami = this;
+    this[name] = function() {
+        console.log('delegating ' + name);
+        console.log(wami);
+        console.log(wami.recorder);
+        return wami.recorder[name].apply(wami.recorder, arguments);
+    }
+}
+
+Wami.prototype.show = function() {
+    if (!supportsTransparency()) {
+        this.recorder.style.visibility = "visible";
+    }
+}
+
+Wami.prototype.hide = function() {
+    // Hiding flash correctly in all the browsers is tricky. Please read:
+    // https://code.google.com/p/wami-recorder/wiki/HidingFlash
+
+    if (!this.supportsTransparency()) {
+        this.recorder.style.visibility = "hidden";
+    }
+}
+
+Wami.prototype.flashVars = {
+    visible : false,
+    loadedCallback : "global_Wami.swfinit_callback",
+    localMode : true
+}
+
+Wami.prototype.params = {
+	allowScriptAccess : "always"
+}
 /*
  * Base64 encode/decode from http://ostermiller.org/calc/encode.html
  * Licensed under GPL version 2
@@ -196,10 +200,10 @@ function decodeBase64(str){
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-Wami.handle_upload_errors = function(e) {
+Wami.prototype.handle_upload_errors = function(e) {
 	online_recorder.onError(e);
 }
-Wami.handle_upload_success = function(data) {
+Wami.prototype.handle_upload_success = function(data) {
     // feedback the urn to the recorded audio to the caller
     console.log('wami handle upload success');
     console.log(online_recorder.elt.parent());
@@ -210,19 +214,20 @@ Wami.handle_upload_success = function(data) {
             }
     );
 }
-Wami.uploadRecordedFile = function(url) {
-	var base64audioBytes = Wami.getBase64AudioData();
+Wami.prototype.uploadRecordedFile = function(url) {
+	this.base64audioBytes = this.getBase64AudioData();
 	var crlf = '\r\n';
 	var body = '';
-	var audioBytes = decodeBase64(base64audioBytes);
+	this.audioBytes = decodeBase64(this.base64audioBytes);
 	// create a file that looks like the DOM file structure but has file.content
 	// so we can pass it to our customised jquery file upload function
-	var recordedFile = {
+	this.recordedFile = {
 		name: "online-recording.wav",
 		type: "audio/x-wav",
-		size: audioBytes.length,
-		recordedContent: audioBytes
+		size: this.audioBytes.length,
+		recordedContent: this.audioBytes
 	};
+    wami = this;
 	$.ductusFileUpload({
 		url: '/new/audio',
 		onLoad: function (e, files, index, xhr) {
@@ -235,7 +240,7 @@ Wami.uploadRecordedFile = function(url) {
 			try {
 				data = $.parseJSON(xhr.responseText);
 			} catch (error) {
-				Wami.handle_upload_errors(e);
+				wami.handle_upload_errors(e);
 				return;
 			}
 			if (data.errors) {
@@ -245,11 +250,11 @@ Wami.uploadRecordedFile = function(url) {
 				for (key in data.errors) {
 					errors += data.errors[key];
 				}
-				Wami.handle_upload_errors(errors);
+				wami.handle_upload_errors(errors);
 				return;
 			} else if (data.page_url) {
 				//Wami.handle_upload_errors('<span>File saved successfully. </span><a href="'+data.page_url+'">View file</a>');
-                Wami.handle_upload_success(data);
+                wami.handle_upload_success(data);
 				return;
 			}
 			console.log("ductusFileUpload onLoad complete");
@@ -260,12 +265,12 @@ Wami.uploadRecordedFile = function(url) {
 				    //console.log
 		},
 		onError: function (e, files, index, xhr) {
-				 handle_upload_errors(e);
+				 wami.handle_upload_errors(e);
 				 console.log("ductus file upload error");
 		},
 		onAbort: function (e, files, index, xhr) {
-				 handle_upload_errors(e);
+				 wami.handle_upload_errors(e);
 				 console.log("on abort in ductus file upload error");
 		}
-	}).handleFiles([recordedFile]);
+	}).handleFiles([this.recordedFile]);
 }
