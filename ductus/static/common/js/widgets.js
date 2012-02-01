@@ -869,6 +869,7 @@ OnlineRecorder.prototype.init = function() {
         this.record_btn.hide();
         this.play_btn.hide();
         this.upload_btn.hide();
+        this.listen(false);
     }
     var start_button = $('<div>Record online</div>').button();
     this.elt.append(start_button);
@@ -915,7 +916,7 @@ OnlineRecorder.prototype.checkSecurity = function() {
     console.log('OR checkSecurity start');
     this.settings = this.Wami.getSettings();
     if (this.settings.microphone.granted) {
-        this.listen();
+        this.listen(true);
         this.Wami.hide();
         this.setupButtons();
     } else {
@@ -925,20 +926,28 @@ OnlineRecorder.prototype.checkSecurity = function() {
         this.Wami.showSecurity("privacy", "online_recorder.Wami.show", "online_recorder.checkSecurity", "online_recorder.zoomError");
     }
 }
-OnlineRecorder.prototype.listen = function() {
-    this.Wami.startListening();
-    // Continually listening when the window is in focus allows us to
-    // buffer a little audio before the users clicks, since sometimes
-    // people talk too soon. Without "listening", the audio would record
-    // exactly when startRecording() is called.
-    window.onfocus = function () {
-        online_recorder.Wami.startListening();
-    };
-    // Note that the use of onfocus and onblur should probably be replaced
-    // with a more robust solution (e.g. jQuery's $(window).focus(...)
-    window.onblur = function () {
-        online_recorder.Wami.stopListening();
-    };
+OnlineRecorder.prototype.listen = function(active) {
+    // activate (when recorder is used) or deactivate listening (when it is
+    // unused because no recorder is used)
+    if (active) {
+        this.Wami.startListening();
+        // Continually listening when the window is in focus allows us to
+        // buffer a little audio before the users clicks, since sometimes
+        // people talk too soon. Without "listening", the audio would record
+        // exactly when startRecording() is called.
+        window.onfocus = function () {
+            online_recorder.Wami.startListening();
+        };
+        // Note that the use of onfocus and onblur should probably be replaced
+        // with a more robust solution (e.g. jQuery's $(window).focus(...)
+        window.onblur = function () {
+            online_recorder.Wami.stopListening();
+        };
+    } else {
+        //this.Wami.stopListening();
+        window.onfocus = null;
+        window.onblur = null;
+    }
 }
 OnlineRecorder.prototype.zoomError = function() {
     // The minimum size for the flash content is 214x137. Browser's zoomed out
