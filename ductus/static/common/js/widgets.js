@@ -858,31 +858,63 @@ function OnlineRecorder() {
             '<div id="wami"></div>' +
         '</div>'
     Widget.call(this, recorder_div);
+    online_recorder = this;     // set the global variable
     this.init();
 }
 OnlineRecorder.prototype = chain_clone(Widget.prototype);
 OnlineRecorder.prototype.init = function() {
     // set or reset the widget to its initial status: upload or record buttons
-     var start_button = $('<div>Record online</div>').button();
+    if (this.record_btn) {
+        console.log('disabling buttons');
+        this.record_btn.hide();
+        this.play_btn.hide();
+        this.upload_btn.hide();
+    }
+    var start_button = $('<div>Record online</div>').button();
     this.elt.append(start_button);
-    online_recorder = this;
+    //this.elt.button({ label: 'Record online' });
     start_button.click(function() {
-        $(this).remove();
+        start_button.button('widget').remove();
         online_recorder.setupRecorder();
     });
 }
 OnlineRecorder.prototype.setupRecorder = function() {
-    //online_recorder = this;
-    Wami.setup("wami", function () {
-        online_recorder.checkSecurity();
-    });
+    console.log("setupRecorder");
+    if (!this.Wami) {
+        console.log("no wami found yet");
+        this.Wami = window.Wami;
+        this.Wami.setup("wami", function () {
+            online_recorder.checkSecurity();
+        });
+    } else {
+        console.log("reusing existing wami");
+        this.checkSecurity();
+    }
+}
+OnlineRecorder.prototype.setupButtons = function() {
+    console.log('in setupButtons');
+    if (!this.record_btn) {
+        this.record_btn = this.elt.find('#recordDiv');
+        this.record_btn.button( { label:'Record'});
+
+        this.play_btn = this.elt.find('#playDiv');
+        this.play_btn.button( { label:'Play'});
+
+        this.upload_btn = this.elt.find('#uploadDiv');
+        this.upload_btn.button( { label:'Upload recording'});
+    }
+    console.log('enabling buttons');
+    this.record_btn.button().show();
+    this.record_btn.click( function(){ online_recorder.startRecording();} );
+    this.play_btn.button().show();
+    this.play_btn.click( function(){ online_recorder.startPlaying();} );
+    this.upload_btn.button().show();
+    this.upload_btn.click( function(){ online_recorder.uploadAudio();} );
 }
 OnlineRecorder.prototype.checkSecurity = function() {
     console.log('OR checkSecurity start');
     this.settings = Wami.getSettings();
-    console.log('OR got wami settings');
-    console.log(this.settings);
-    //online_recorder = this;
+    //console.log(this.settings);
     if (this.settings.microphone.granted) {
         console.log('mic granted');
         this.listen();
@@ -920,47 +952,28 @@ OnlineRecorder.prototype.zoomError = function() {
     // but instead we just warn the user:
     alert("Your browser may be zoomed too far out to show the Flash security settings panel.  Zoom in, and refresh.");
 }
-OnlineRecorder.prototype.setupButtons = function() {
-    console.log('in setupButtons');
-    if (!this.recordButton) {
-        this.recordButton = new Wami.Button("recordDiv", Wami.Button.RECORD);
-        this.recordButton.onstart = online_recorder.startRecording;
-        this.recordButton.onstop = online_recorder.stopRecording;
-
-        this.playButton = new Wami.Button("playDiv", Wami.Button.PLAY);
-        this.playButton.onstart = online_recorder.startPlaying;
-        this.playButton.onstop = online_recorder.stopPlaying;
-
-        //console.log(this);
-        //console.log(this.elt.find('#uploadDiv'));
-        var upload_div = this.elt.find('#uploadDiv');
-        upload_div.button( { label:'Upload recording'});
-        upload_div.click( function(){ online_recorder.uploadAudio();} );
-        upload_div.css({ height:'63px'});
-    }
-    this.recordButton.setEnabled(true);
-    this.playButton.setEnabled(false);
-}
 OnlineRecorder.prototype.uploadAudio = function() {
-    Wami.uploadRecordedFile('/new/audio');
+    this.Wami.uploadRecordedFile('/new/audio');
 }
 /**
  * These methods are called on clicks from the GUI.
  */
 OnlineRecorder.prototype.startRecording = function() {
-    online_recorder.recordButton.setActivity(0);
-    online_recorder.playButton.setEnabled(false);
-    Wami.startRecording("{{ recording_server_name }}", "onRecordStart", "onRecordFinish", "onError");
+    console.log('OR startRecording');
+    this.elt.find('#recordDiv').click( function(){ online_recorder.stopRecording();} );
+    Wami.startRecording("", "online_recorder.onRecordStart", "online_recorder.onRecordFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopRecording = function() {
+    console.log('OR stopRecording');
     Wami.stopRecording();
     clearInterval(online_recorder.recordInterval);
-    online_recorder.recordButton.setEnabled(true);
+    //online_recorder.recordButton.setEnabled(true);
 }
 OnlineRecorder.prototype.startPlaying = function() {
-    online_recorder.playButton.setActivity(0);
-    online_recorder.recordButton.setEnabled(false);
-    Wami.startPlaying("{{ recording_server_name }}", "onPlayStart", "onPlayFinish", "onError");
+    //online_recorder.playButton.setActivity(0);
+    //online_recorder.recordButton.setEnabled(false);
+    this.elt.find('#recordDiv').click( function(){ online_recorder.stopPlaying();} );
+    Wami.startPlaying("", "online_recorder.onPlayStart", "online_recorder.onPlayFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopPlaying = function() {
     Wami.stopPlaying();
@@ -972,27 +985,17 @@ OnlineRecorder.prototype.onError = function(e) {
     console.log(e);
     this.elt.find('#feedbackDiv').html(e);
 }
-OnlineRecorder.prototype.onRecordStart = function() {
+/*OnlineRecorder.prototype.onRecordStart = function() {
     this.recordInterval = setInterval(function () {
         if (this.recordButton.isActive()) {
-            var level = Wami.getRecordingLevel();
-            this.recordButton.setActivity(level);
+            //var level = Wami.getRecordingLevel();
+            //this.recordButton.setActivity(level);
         }
     }, 200);
-}
+}*/
 OnlineRecorder.prototype.onRecordFinish = function() {
-    this.playButton.setEnabled(true);
-}
-OnlineRecorder.prototype.onPlayStart = function() {
-    this.playInterval = setInterval(function () {
-        if (this.playButton.isActive()) {
-            var level = Wami.getPlayingLevel();
-            this.playButton.setActivity(level);
-        }
-    }, 200);
+    //this.playButton.setEnabled(true);
 }
 OnlineRecorder.prototype.onPlayFinish = function() {
     clearInterval(playInterval);
-    this.recordButton.setEnabled(true);
-    this.playButton.setEnabled(true);
 }

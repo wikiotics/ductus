@@ -36,7 +36,7 @@ Wami.setup = function(id, callback) {
 
 	function delegate(name) {
 	    Wami[name] = function() {
-            //console.log('delegating ' + name);
+            console.log('delegating ' + name);
             //console.log(recorder);
             return recorder[name].apply(recorder, arguments);
             //console.log('returning from deleg method: ' + rv);
@@ -203,6 +203,7 @@ Wami.handle_upload_success = function(data) {
     // feedback the urn to the recorded audio to the caller
     console.log('wami handle upload success');
     console.log(online_recorder.elt.parent());
+    online_recorder.init();
     online_recorder.elt.parent().trigger('ductus_element_selected',
             { href: data.urn,
               resource: { fqn: AudioWidget.prototype.fqn }
@@ -247,7 +248,7 @@ Wami.uploadRecordedFile = function(url) {
 				Wami.handle_upload_errors(errors);
 				return;
 			} else if (data.page_url) {
-				Wami.handle_upload_errors('<span>File saved successfully. </span><a href="'+data.page_url+'">View file</a>');
+				//Wami.handle_upload_errors('<span>File saved successfully. </span><a href="'+data.page_url+'">View file</a>');
                 Wami.handle_upload_success(data);
 				return;
 			}
