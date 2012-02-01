@@ -913,36 +913,32 @@ OnlineRecorder.prototype.setupButtons = function() {
 }
 OnlineRecorder.prototype.checkSecurity = function() {
     console.log('OR checkSecurity start');
-    this.settings = Wami.getSettings();
-    //console.log(this.settings);
+    this.settings = this.Wami.getSettings();
     if (this.settings.microphone.granted) {
-        console.log('mic granted');
         this.listen();
-        Wami.hide();
+        this.Wami.hide();
         this.setupButtons();
-        console.log('mic granted done');
     } else {
         // Show any Flash settings panel you want using the string constants
         // defined here:
         // http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/system/SecurityPanel.html
-        Wami.showSecurity("privacy", "Wami.show", "online_recorder.checkSecurity", "online_recorder.zoomError");
-        console.log('back from flash security');
+        this.Wami.showSecurity("privacy", "online_recorder.Wami.show", "online_recorder.checkSecurity", "online_recorder.zoomError");
     }
 }
 OnlineRecorder.prototype.listen = function() {
-    Wami.startListening();
+    this.Wami.startListening();
     // Continually listening when the window is in focus allows us to
     // buffer a little audio before the users clicks, since sometimes
     // people talk too soon. Without "listening", the audio would record
     // exactly when startRecording() is called.
     window.onfocus = function () {
-        Wami.startListening();
+        this.Wami.startListening();
     };
 
     // Note that the use of onfocus and onblur should probably be replaced
     // with a more robust solution (e.g. jQuery's $(window).focus(...)
     window.onblur = function () {
-        Wami.stopListening();
+        this.Wami.stopListening();
     };
 }
 OnlineRecorder.prototype.zoomError = function() {
@@ -961,22 +957,20 @@ OnlineRecorder.prototype.uploadAudio = function() {
 OnlineRecorder.prototype.startRecording = function() {
     console.log('OR startRecording');
     this.elt.find('#recordDiv').click( function(){ online_recorder.stopRecording();} );
-    Wami.startRecording("", "online_recorder.onRecordStart", "online_recorder.onRecordFinish", "online_recorder.onError");
+    this.Wami.startRecording("", "online_recorder.onRecordStart", "online_recorder.onRecordFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopRecording = function() {
     console.log('OR stopRecording');
-    Wami.stopRecording();
+    this.Wami.stopRecording();
     clearInterval(online_recorder.recordInterval);
     //online_recorder.recordButton.setEnabled(true);
 }
 OnlineRecorder.prototype.startPlaying = function() {
-    //online_recorder.playButton.setActivity(0);
-    //online_recorder.recordButton.setEnabled(false);
     this.elt.find('#recordDiv').click( function(){ online_recorder.stopPlaying();} );
-    Wami.startPlaying("", "online_recorder.onPlayStart", "online_recorder.onPlayFinish", "online_recorder.onError");
+    this.Wami.startPlaying("", "online_recorder.onPlayStart", "online_recorder.onPlayFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopPlaying = function() {
-    Wami.stopPlaying();
+    this.Wami.stopPlaying();
 }
 /**
  * Callbacks from the flash indicating certain events
@@ -985,17 +979,16 @@ OnlineRecorder.prototype.onError = function(e) {
     console.log(e);
     this.elt.find('#feedbackDiv').html(e);
 }
-/*OnlineRecorder.prototype.onRecordStart = function() {
-    this.recordInterval = setInterval(function () {
-        if (this.recordButton.isActive()) {
-            //var level = Wami.getRecordingLevel();
-            //this.recordButton.setActivity(level);
-        }
-    }, 200);
-}*/
+OnlineRecorder.prototype.onRecordStart = function() {
+    console.log('OR onRecordStart');
+}
 OnlineRecorder.prototype.onRecordFinish = function() {
-    //this.playButton.setEnabled(true);
+    console.log('OR onRecordFinish');
+}
+OnlineRecorder.prototype.onPlayStart = function() {
+    console.log('OR onPlayStart');
 }
 OnlineRecorder.prototype.onPlayFinish = function() {
-    clearInterval(playInterval);
+    console.log('OR onPlayFinish');
+    //clearInterval(playInterval);
 }
