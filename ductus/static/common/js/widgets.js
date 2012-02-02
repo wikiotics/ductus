@@ -851,9 +851,12 @@ var online_recorder;    // make this a global variable since this code is too me
 function OnlineRecorder() {
     var recorder_div =
         '<div id="ductus_OnlineRecorder" style="position: relative; width:414px">' +
-            '<div id="recordDiv" style="position: absolute; left: 50px; top: 25px"></div>' +
-            '<div id="playDiv" style="position: absolute; left: 110px; top: 25px"></div>' +
-            '<div id="uploadDiv" style="position: absolute; left: 170px; top: 25px"></div>' +
+            '<div id="record_online_button"></div>' +
+            '<div id="rec_controls">' +
+                '<div id="recordDiv"></div>' +
+                '<div id="playDiv"></div>' +
+                '<div id="uploadDiv"></div>' +
+            '</div>' +
             '<div id="feedbackDiv" style="position: absolute; left: 30px; top: 95px"></div>' +
             '<div id="wami"></div>' +
         '</div>'
@@ -896,13 +899,26 @@ OnlineRecorder.prototype.setupButtons = function() {
     console.log('in setupButtons');
     if (!this.record_btn) {
         this.record_btn = this.elt.find('#recordDiv');
-        this.record_btn.button( { label:'Record'});
+        this.record_btn.text('Start recording');
+        this.record_btn.button( {
+            icons: { primary: "ui-icon-bullet" },
+            text: false
+        });
 
         this.play_btn = this.elt.find('#playDiv');
-        this.play_btn.button( { label:'Play'});
+        this.play_btn.text('Play');
+        this.play_btn.button( {
+            icons: { primary: "ui-icon-play" },
+            text: false
+        });
 
         this.upload_btn = this.elt.find('#uploadDiv');
-        this.upload_btn.button( { label:'Upload recording'});
+        this.upload_btn.text('Upload recording');
+        this.upload_btn.button( {
+            icons: { primary: "ui-icon-check" },
+            text: false
+        });
+        this.elt.find('#rec_controls').buttonset();
     }
     this.record_btn.button().show();
     this.record_btn.click( function(){ online_recorder.startRecording();} );
@@ -963,26 +979,42 @@ OnlineRecorder.prototype.uploadAudio = function() {
  */
 OnlineRecorder.prototype.startRecording = function() {
     console.log('OR startRecording');
-    var btn = this.elt.find('#recordDiv');
-    btn.unbind('click');
-    btn.click( function(){ online_recorder.stopRecording();} );
+    this.record_btn.unbind('click');
+    this.record_btn.text('Stop recording');
+    this.record_btn.button( {
+        icons: { primary: "ui-icon-stop" },
+        text: false
+    });
+    this.record_btn.click( function(){ online_recorder.stopRecording();} );
     this.Wami.startRecording("", "online_recorder.onRecordStart", "online_recorder.onRecordFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopRecording = function() {
-    var btn = this.elt.find('#recordDiv');
-    btn.unbind('click');
-    btn.click( function(){ online_recorder.startRecording();} );
+    this.record_btn.unbind('click');
+    this.record_btn.text('Start recording');
+    this.record_btn.button( {
+        icons: { primary: "ui-icon-bullet" },
+        text: false
+    });
+    this.record_btn.click( function(){ online_recorder.startRecording();} );
     this.Wami.stopRecording();
 }
 OnlineRecorder.prototype.startPlaying = function() {
-    var btn = this.elt.find('#playDiv');
-    btn.unbind('click');
-    btn.click( function(){ online_recorder.stopPlaying();} );
+    this.play_btn.unbind('click');
+    this.play_btn.text('Stop');
+    this.play_btn.button( {
+        icons: { primary: "ui-icon-stop" },
+        text: false
+    });
+    this.play_btn.click( function(){ online_recorder.stopPlaying();} );
     this.Wami.startPlaying("", "online_recorder.onPlayStart", "online_recorder.onPlayFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopPlaying = function() {
-    var btn = this.elt.find('#playDiv');
-    btn.unbind('click');
+    this.play_btn.unbind('click');
+    this.play_btn.text('Play');
+    this.play_btn.button( {
+        icons: { primary: "ui-icon-play" },
+        text: false
+    }); 
     btn.click( function(){ online_recorder.startPlaying();} );
     this.Wami.stopPlaying();
 }
