@@ -1015,7 +1015,7 @@ OnlineRecorder.prototype.stopPlaying = function() {
         icons: { primary: "ui-icon-play" },
         text: false
     }); 
-    btn.click( function(){ online_recorder.startPlaying();} );
+    this.play_btn.click( function(){ online_recorder.startPlaying();} );
     this.Wami.stopPlaying();
 }
 /**
