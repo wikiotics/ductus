@@ -904,7 +904,6 @@ OnlineRecorder.prototype.setupButtons = function() {
         this.upload_btn = this.elt.find('#uploadDiv');
         this.upload_btn.button( { label:'Upload recording'});
     }
-    console.log('enabling buttons');
     this.record_btn.button().show();
     this.record_btn.click( function(){ online_recorder.startRecording();} );
     this.play_btn.button().show();
@@ -964,20 +963,27 @@ OnlineRecorder.prototype.uploadAudio = function() {
  */
 OnlineRecorder.prototype.startRecording = function() {
     console.log('OR startRecording');
-    this.elt.find('#recordDiv').click( function(){ online_recorder.stopRecording();} );
+    var btn = this.elt.find('#recordDiv');
+    btn.unbind('click');
+    btn.click( function(){ online_recorder.stopRecording();} );
     this.Wami.startRecording("", "online_recorder.onRecordStart", "online_recorder.onRecordFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopRecording = function() {
-    console.log('OR stopRecording');
+    var btn = this.elt.find('#recordDiv');
+    btn.unbind('click');
+    btn.click( function(){ online_recorder.startRecording();} );
     this.Wami.stopRecording();
-    clearInterval(online_recorder.recordInterval);
-    //online_recorder.recordButton.setEnabled(true);
 }
 OnlineRecorder.prototype.startPlaying = function() {
-    this.elt.find('#recordDiv').click( function(){ online_recorder.stopPlaying();} );
+    var btn = this.elt.find('#playDiv');
+    btn.unbind('click');
+    btn.click( function(){ online_recorder.stopPlaying();} );
     this.Wami.startPlaying("", "online_recorder.onPlayStart", "online_recorder.onPlayFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopPlaying = function() {
+    var btn = this.elt.find('#playDiv');
+    btn.unbind('click');
+    btn.click( function(){ online_recorder.startPlaying();} );
     this.Wami.stopPlaying();
 }
 /**
@@ -998,5 +1004,4 @@ OnlineRecorder.prototype.onPlayStart = function() {
 }
 OnlineRecorder.prototype.onPlayFinish = function() {
     console.log('OR onPlayFinish');
-    //clearInterval(playInterval);
 }

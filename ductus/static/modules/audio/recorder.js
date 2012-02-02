@@ -82,8 +82,6 @@ Wami.prototype.delegate = function(name) {
     wami = this;
     this[name] = function() {
         console.log('delegating ' + name);
-        console.log(wami);
-        console.log(wami.recorder);
         return wami.recorder[name].apply(wami.recorder, arguments);
     }
 }
