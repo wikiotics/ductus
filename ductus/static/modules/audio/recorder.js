@@ -58,7 +58,6 @@ Wami.prototype.supportsTransparency = function() {
 //Wami._callbacks = Wami._callbacks || {};
 Wami.prototype.swfinit_callback = function() {
 	// Delegate all the methods to the recorder.
-    console.log('swfinit callback');
     this.recorder = document.getElementById(this.id);   // jQuery selector doesn't work
 
 	this.delegate('startPlaying');
@@ -81,7 +80,6 @@ Wami.prototype.swfinit_callback = function() {
 Wami.prototype.delegate = function(name) {
     wami = this;
     this[name] = function() {
-        console.log('delegating ' + name);
         return wami.recorder[name].apply(wami.recorder, arguments);
     }
 }
@@ -203,8 +201,6 @@ Wami.prototype.handle_upload_errors = function(e) {
 }
 Wami.prototype.handle_upload_success = function(data) {
     // feedback the urn to the recorded audio to the caller
-    console.log('wami handle upload success');
-    console.log(online_recorder.elt.parent());
     online_recorder.init();
     online_recorder.elt.parent().trigger('ductus_element_selected',
             { href: data.urn,
@@ -255,12 +251,10 @@ Wami.prototype.uploadRecordedFile = function(url) {
                 wami.handle_upload_success(data);
 				return;
 			}
-			console.log("ductusFileUpload onLoad complete");
 		},
 		onProgress: function (e, files, index, xhr) {
 				    //var percent = parseInt(100 * e.loaded / e.total, 10);
 				    //progress_elt.attr('value', percent).find('span').text(percent);
-				    //console.log
 		},
 		onError: function (e, files, index, xhr) {
 				 wami.handle_upload_errors(e);
@@ -268,7 +262,6 @@ Wami.prototype.uploadRecordedFile = function(url) {
 		},
 		onAbort: function (e, files, index, xhr) {
 				 wami.handle_upload_errors(e);
-				 console.log("on abort in ductus file upload error");
 		}
 	}).handleFiles([this.recordedFile]);
 }

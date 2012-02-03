@@ -412,8 +412,6 @@ PictureSearchWidget.prototype.do_focus = function () {
 };
 
 function AudioWidget(audio) {
-    console.log('aw constructor');
-    console.log(audio);
     ModelWidget.call(this, audio, '<span class="ductus_AudioWidget"><span class="control"></span><span class="status"></span></span>');
 
     this.control_elt = this.elt.find('.control');
@@ -575,8 +573,6 @@ AudioWidget.creation_ui_widget = function () {
             resource: { fqn: AudioWidget.prototype.fqn, _file: file }
         }]);
     });
-
-    //NEXT: bug when reopening a recorder several times in the same window, probably line below that creates several instances, and wami gets confused
 
     var recording_widget = new OnlineRecorder();
     recording_widget.elt.appendTo(upload_widget_elt);
@@ -853,9 +849,9 @@ function OnlineRecorder() {
         '<div id="ductus_OnlineRecorder" style="position: relative; width:414px">' +
             '<div id="record_online_button"></div>' +
             '<div id="rec_controls">' +
-                '<div id="recordDiv"></div>' +
-                '<div id="playDiv"></div>' +
-                '<div id="uploadDiv"></div>' +
+                '<button id="recordDiv"></button>' +
+                '<button id="playDiv"></button>' +
+                '<button id="uploadDiv"></button>' +
             '</div>' +
             '<div id="feedbackDiv" style="position: absolute; left: 30px; top: 95px"></div>' +
             '<div id="wami"></div>' +
@@ -867,68 +863,92 @@ function OnlineRecorder() {
 OnlineRecorder.prototype = chain_clone(Widget.prototype);
 OnlineRecorder.prototype.init = function() {
     // set or reset the widget to its initial status: upload or record buttons
+    this.hideButtons();
     if (this.record_btn) {
-        console.log('disabling buttons');
-        this.record_btn.hide();
-        this.play_btn.hide();
-        this.upload_btn.hide();
         this.listen(false);
     }
-    var start_button = $('<div>Record online</div>').button();
-    this.elt.append(start_button);
-    //this.elt.button({ label: 'Record online' });
-    start_button.click(function() {
-        start_button.button('widget').remove();
+    if (!this.record_online_btn) {
+        this.record_online_btn = this.elt.find('#record_online_button');
+        this.record_online_btn.button( { label: 'Record online' } );
+    }
+    this.record_online_btn.button().show();
+    this.record_online_btn.click( function() {
+        $(this).hide();
         online_recorder.setupRecorder();
     });
 }
 OnlineRecorder.prototype.setupRecorder = function() {
-    console.log("setupRecorder");
     if (!this.Wami) {
-        console.log("no wami found yet");
         this.Wami = new Wami('wami', function() {
             online_recorder.checkSecurity();
         });
         this.Wami.setup();
     } else {
-        console.log("reusing existing wami");
         this.checkSecurity();
     }
 }
 OnlineRecorder.prototype.setupButtons = function() {
-    console.log('in setupButtons');
-    if (!this.record_btn) {
-        this.record_btn = this.elt.find('#recordDiv');
+    this.elt.find('button').attr('visibility', 'hidden');
+    this.elt.find('#rec_controls').hide();
+    this.showRecordButton('start');
+    this.showPlayButton('start');
+    this.showUploadButton();
+    this.elt.find('#rec_controls').buttonset();
+    this.elt.find('#rec_controls').show();
+    this.record_online_btn.hide();
+}
+OnlineRecorder.prototype.hideButtons = function() {
+    this.elt.find('#rec_controls').hide();
+}
+OnlineRecorder.prototype.showRecordButton = function(start_stop) {
+    this.record_btn = this.elt.find('#recordDiv');
+    this.record_btn.unbind('click');
+    if (start_stop == 'start') {
         this.record_btn.text('Start recording');
         this.record_btn.button( {
             icons: { primary: "ui-icon-bullet" },
             text: false
         });
-
-        this.play_btn = this.elt.find('#playDiv');
-        this.play_btn.text('Play');
+        this.record_btn.click( function(){ online_recorder.startRecording();} );
+    } else {
+        this.record_btn.text('Stop recording');
+        this.record_btn.button( {
+            icons: { primary: "ui-icon-stop" },
+            text: false
+        });
+        this.record_btn.click( function(){ online_recorder.stopRecording();} );
+    }
+}
+OnlineRecorder.prototype.showPlayButton = function(start_stop) {
+    this.play_btn = this.elt.find('#playDiv');
+    this.play_btn.unbind('click');
+    if (start_stop == 'start') {
+        this.play_btn.text('Start playing');
         this.play_btn.button( {
             icons: { primary: "ui-icon-play" },
             text: false
         });
-
-        this.upload_btn = this.elt.find('#uploadDiv');
-        this.upload_btn.text('Upload recording');
-        this.upload_btn.button( {
-            icons: { primary: "ui-icon-check" },
+        this.play_btn.click( function(){ online_recorder.startPlaying();} );
+    } else {
+        this.play_btn.text('Stop playing');
+        this.play_btn.button( {
+            icons: { primary: "ui-icon-stop" },
             text: false
         });
-        this.elt.find('#rec_controls').buttonset();
+        this.play_btn.click( function(){ online_recorder.stopPlaying();} );
     }
-    this.record_btn.button().show();
-    this.record_btn.click( function(){ online_recorder.startRecording();} );
-    this.play_btn.button().show();
-    this.play_btn.click( function(){ online_recorder.startPlaying();} );
-    this.upload_btn.button().show();
+}
+OnlineRecorder.prototype.showUploadButton = function() {
+    this.upload_btn = this.elt.find('#uploadDiv');
+    this.upload_btn.unbind('click');
+    this.upload_btn.text('Upload recording');
+    this.upload_btn.button( {
+        icons: { primary: "ui-icon-check" },
+        text: false
+    });
     this.upload_btn.click( function(){ online_recorder.uploadAudio();} );
 }
 OnlineRecorder.prototype.checkSecurity = function() {
-    console.log('OR checkSecurity start');
     this.settings = this.Wami.getSettings();
     if (this.settings.microphone.granted) {
         this.listen(true);
@@ -978,44 +998,19 @@ OnlineRecorder.prototype.uploadAudio = function() {
  * These methods are called on clicks from the GUI.
  */
 OnlineRecorder.prototype.startRecording = function() {
-    console.log('OR startRecording');
-    this.record_btn.unbind('click');
-    this.record_btn.text('Stop recording');
-    this.record_btn.button( {
-        icons: { primary: "ui-icon-stop" },
-        text: false
-    });
-    this.record_btn.click( function(){ online_recorder.stopRecording();} );
+    this.showRecordButton('stop');
     this.Wami.startRecording("", "online_recorder.onRecordStart", "online_recorder.onRecordFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopRecording = function() {
-    this.record_btn.unbind('click');
-    this.record_btn.text('Start recording');
-    this.record_btn.button( {
-        icons: { primary: "ui-icon-bullet" },
-        text: false
-    });
-    this.record_btn.click( function(){ online_recorder.startRecording();} );
+    this.showRecordButton('start');
     this.Wami.stopRecording();
 }
 OnlineRecorder.prototype.startPlaying = function() {
-    this.play_btn.unbind('click');
-    this.play_btn.text('Stop');
-    this.play_btn.button( {
-        icons: { primary: "ui-icon-stop" },
-        text: false
-    });
-    this.play_btn.click( function(){ online_recorder.stopPlaying();} );
+    this.showPlayButton('stop');
     this.Wami.startPlaying("", "online_recorder.onPlayStart", "online_recorder.onPlayFinish", "online_recorder.onError");
 }
 OnlineRecorder.prototype.stopPlaying = function() {
-    this.play_btn.unbind('click');
-    this.play_btn.text('Play');
-    this.play_btn.button( {
-        icons: { primary: "ui-icon-play" },
-        text: false
-    }); 
-    this.play_btn.click( function(){ online_recorder.startPlaying();} );
+    this.showPlayButton('start');
     this.Wami.stopPlaying();
 }
 /**
@@ -1036,4 +1031,5 @@ OnlineRecorder.prototype.onPlayStart = function() {
 }
 OnlineRecorder.prototype.onPlayFinish = function() {
     console.log('OR onPlayFinish');
+    this.showPlayButton('start');
 }

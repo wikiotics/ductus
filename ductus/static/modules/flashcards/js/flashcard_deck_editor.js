@@ -141,13 +141,11 @@ $(function () {
         var ul = this.elt.find("ul");
 
         $.each(FlashcardSide.widgets, function (i, w) {
-            if (w[1].creation_ui_widget) {
+            if (w[1].creation_ui_widget && i == 0) {
                 var button = $('<li><a href="#fcs-new-' + i  + '">new ' + w[0] + '</a></li>');
                 var creation_widget = w[1].creation_ui_widget();
                 var tab_body = $('<div id="fcs-new-' + i + '"></div>').append(creation_widget.elt);
                 creation_widget.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                    console.log("ductus_element_selected event");
-                    console.log(this_);
                     this_.fcsw.set_from_json(model_json_repr);
                     this_.go_to_main_editor_tab();
                 });
@@ -318,7 +316,6 @@ $(function () {
             FlashcardSide._global_flashcard_side_editor.go_to_main_editor_tab();
     };
     FlashcardSide.prototype.set_from_json = function (fcs) {
-        //console.log('set from json');
         if (fcs && fcs.resource) {
             this._set_wrapped(new FlashcardSide.widgets_by_fqn[fcs.resource.fqn](fcs));
         } else {
@@ -353,23 +350,12 @@ $(function () {
         'right': function() {
             // show an audio creation widget in the deck
             if (!FlashcardSide._global_audio_creator) {
-                console.log('first time: creating audio creator');
                 FlashcardSide._global_audio_creator = AudioWidget.creation_ui_widget();
-                console.log(FlashcardSide._global_audio_creator.elt.find('#ductus_OnlineRecorder'))
-                console.log(FlashcardSide._global_audio_creator.elt.find('#ductus_OnlineRecorder').data('widget_object'))
-                console.log(online_recorder);
             } else {
-                console.log('other time: reusing audio creator');
-                console.log(FlashcardSide._global_audio_creator.elt.find('#ductus_OnlineRecorder').data('widget_object'))
-                console.log(online_recorder);
                 online_recorder.init();
             }
             this_.calling_widget._set_wrapped(FlashcardSide._global_audio_creator);
             FlashcardSide._global_audio_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                console.log("ductus_element_selected event2");
-                console.log(this_);
-                console.log(event);
-                console.log(model_json_repr);
                 this_.calling_widget.set_from_json(model_json_repr);
             });
         },
