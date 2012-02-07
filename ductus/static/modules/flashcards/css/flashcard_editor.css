@@ -37,6 +37,7 @@
     height: 64px;
     background: #bbb;
     z-index: 5;
+    cursor: pointer;
 }
 .ductus_file_upload_wrapper {
     cursor: pointer;
