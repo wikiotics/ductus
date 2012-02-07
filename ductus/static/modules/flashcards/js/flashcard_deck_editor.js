@@ -334,7 +334,8 @@ $(function () {
     FlashcardSide.prototype.popup_html = {
         'left': 'new phrase',
         'right': 'new audio',
-        'top': 'new picture'
+        'top': 'new picture',
+        'bottom': 'paste'
     };
     // callbacks to handle clicks on an empty flashcard side
     FlashcardSide.prototype.popup_callback = {
@@ -362,6 +363,17 @@ $(function () {
         'top': function() {
             FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-0");
             $('#side_item_editor').show();
+        },
+        'bottom': function() {
+            var bp = $.extend(true,
+                    {
+                        resource: {
+                            fqn: AudioWidget.prototype.fqn
+                                  }
+                    },
+                    window.global_copy_paste_buffer
+            );
+            this_.calling_widget.set_from_json(bp);
         }
     };
     FlashcardSide.widgets = [
