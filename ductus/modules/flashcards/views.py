@@ -277,7 +277,7 @@ def fsw_get_audio_to_subtitle(request):
         urn = 'urn:' + revision.urn
         resource_database = get_resource_database()
         fcd = resource_database.get_resource_object(urn)
-        card_index = random.randint(0, len(fcd.cards.array))
+        card_index = random.randint(0, len(fcd.cards.array) - 1)
         fc = fcd.cards.array[card_index].get()
         resource = resource_json(fc)
 
