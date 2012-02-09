@@ -255,10 +255,49 @@ def mediacache_flashcard_deck(blob_urn, mime_type, additional_args, flashcard_de
     return None
 
 def five_sec_widget(request):
-    """display a `five seconds widget` as specified by the query parameters
+    """display a `five seconds widget` as specified by the query parameters.
+    Also handle POST requests from the widget, saving blueprints and performing related updates.
     """
     if request.method == 'POST':
-        return handle_blueprint_post(request, Flashcard)
+
+        new_fc_urn = handle_blueprint_post(request, Flashcard)
+        # temp hack for FSI, manually update the lesson we took the flashcard from
+        # TODO: replace this with lesson updates using indexing system when available
+        from django.utils.safestring import mark_safe
+        from ductus.resource.ductmodels import BlueprintSaveContext
+        from ductus.wiki.views import _fully_handle_blueprint_post
+        try:
+            url = request.POST['fsi_url']
+            card_index = int(request.POST['fsi_index'])
+        except KeyError:
+            raise ValidationError("the widget should provide FSI specific fields")
+
+        page = WikiPage.objects.get(name=url)
+        revision = page.get_latest_revision()
+        urn = 'urn:' + revision.urn
+        resource_database = get_resource_database()
+        old_fcd = resource_database.get_resource_object(urn)
+        fcd_bp = json.loads(resource_json(old_fcd))
+
+        # remove href and add a @patch statement so that the blueprint updates the database
+        fcd_bp['resource']['@patch'] = old_fcd.common.parents.array[0].href
+        del fcd_bp['href']
+
+        # set the flashcard href saved above
+        fcd_bp['resource']['cards']['array'][card_index]['href'] = new_fc_urn.urn
+        # remove all 'resource' keys in the blueprint as ResourceElement ignores the hrefs otherwise
+        for fc in fcd_bp['resource']['cards']['array']:
+            del fc['resource']
+        for interaction in fcd_bp['resource']['interactions']['array']:
+            del interaction['resource']
+
+        request.POST = request.POST.copy()
+        request.POST['blueprint'] = json.dumps(fcd_bp)
+        request.POST['log_message'] = '5sec widget (subtitle)'
+        prefix, pagename = url.split(':')
+        response = _fully_handle_blueprint_post(request, prefix, pagename)
+
+        return response
 
     return render_to_response('flashcards/five_sec_widget.html', {
     }, RequestContext(request))
@@ -280,5 +319,10 @@ def fsw_get_audio_to_subtitle(request):
         card_index = random.randint(0, len(fcd.cards.array) - 1)
         fc = fcd.cards.array[card_index].get()
         resource = resource_json(fc)
+        # temporary hack for FSI: add the URL this flashcard is taken from
+        tmp_resource = json.loads(resource)
+        tmp_resource['fsi_url'] = url
+        tmp_resource['fsi_index'] = card_index
+        resource = json.dumps(tmp_resource)
 
     return HttpResponse(resource, content_type="application/json")

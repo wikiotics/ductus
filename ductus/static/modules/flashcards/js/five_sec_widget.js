@@ -114,6 +114,8 @@ $(function() {
         // called when the audio prompt is received from AJAX to fill in the widget
         this_ = this;
         this.initial_href = data.href;
+        this.fsi_url = data.fsi_url;
+        this.fsi_index = data.fsi_index;
         this.tags = [];
         this.tags = data.resource.tags.array;
         this.card_sides = [];
@@ -199,6 +201,9 @@ $(function() {
             url: window.location.pathname,
             data: {
                 blueprint: JSON.stringify(blueprint),
+                // temp hack for fsi upload
+                fsi_url: this_.fsi_url,
+                fsi_index: this_.fsi_index,
                 log_message: '5sec-widget (subtitle)'
             },
             success: function(data) {
