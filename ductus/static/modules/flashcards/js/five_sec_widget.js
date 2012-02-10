@@ -118,14 +118,14 @@ $(function() {
     SubtitleFSWidget.prototype = chain_clone(FiveSecWidget.prototype);
     SubtitleFSWidget.prototype.init_widget = function() {
         this.set_footer(
-                '<select id="FSWLanguage" name="FSWLanguage">' +
+                '<select id="ductus_FSWLanguage" name="FSWLanguage">' +
                 '<option value="de">Deutsch</option>' +
                 '<option selected="selected" value="fr">Français</option>' +
                 '<option value="zh">中文 - Mandarin Chinese</option>' +
                 '</select>'
                 );
         widget = this;
-        this.elt.find('#FSWLanguage').change(function() {
+        this.elt.find('#ductus_FSWLanguage').change(function() {
             widget.language = $(this).find(':selected').attr('value');
             widget.get_audio();
         });
