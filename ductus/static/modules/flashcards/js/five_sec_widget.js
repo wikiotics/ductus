@@ -226,7 +226,7 @@ $(function() {
         $.ajax({
             url: '/five-sec-widget/get-audio-to-subtitle',
             data: {
-                language: 'somelangcode'
+                language: 'fr',
             },
             success: function(data) {
                          this_.init_from_blueprint(data);

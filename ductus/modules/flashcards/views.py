@@ -310,20 +310,33 @@ def fsw_get_audio_to_subtitle(request):
         # that would return a random flashcard that matches a certain number
         # of criteria defined by the site admin and the user's profile
         # (when it's available!)
-        url = getattr(settings, "FIVE_SEC_WIDGET_URLS", '')
-        if url != '':
-            url = url[0]
-            try:
-                page = WikiPage.objects.get(name=url)
-            except WikiPage.DoesNotExist:
-                raise Http404('wikipage does not exist')
-
-            revision = page.get_latest_revision()
-            urn = 'urn:' + revision.urn
+        language = request.GET.get('language', 'fr')
+        url_list = getattr(settings, "FIVE_SEC_WIDGET_URLS", '')
+        if url_list != '':
+            url_list = [url for url in url_list if url.split(':')[0] == language]
+            # pick a randomly chosen flashcard that has no text transcript in side[0]
+            # this is highly inefficient and only a hack until indexing is available
+            # FIVE_SEC_WIDGET_URLS should be kept clean of "mostly filled lessons"
             resource_database = get_resource_database()
-            fcd = resource_database.get_resource_object(urn)
-            card_index = random.randint(0, len(fcd.cards.array) - 1)
-            fc = fcd.cards.array[card_index].get()
+            while True:
+                url = url_list[random.randint(0, len(url_list) - 1)]
+                try:
+                    page = WikiPage.objects.get(name=url)
+                except WikiPage.DoesNotExist:
+                    if len(url_list) > 1:
+                        continue
+                    else:
+                        raise Http404('wikipage does not exist: ' + url)
+
+                revision = page.get_latest_revision()
+                urn = 'urn:' + revision.urn
+                fcd = resource_database.get_resource_object(urn)
+                card_index = random.randint(0, len(fcd.cards.array) - 1)
+                fc = fcd.cards.array[card_index].get()
+                side = fc.sides.array[0].get()
+                if not side:
+                    break
+
             resource = resource_json(fc)
             # temporary hack for FSI: add the URL this flashcard is taken from
             tmp_resource = json.loads(resource)
