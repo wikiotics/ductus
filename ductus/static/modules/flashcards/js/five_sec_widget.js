@@ -123,15 +123,20 @@ $(function() {
                 '<option selected="selected" value="fr">Français</option>' +
                 '<option value="zh">中文 - Mandarin Chinese</option>' +
                 '</select>' +
-                '<a class="ductus_FSWlink" href="#">skip</a>'
+                '<a class="ductus_FSWlink" id="skip" href="#">skip</a>' +
+                '<a class="ductus_FSWlink" id="flag" href="#">flag</a>'
                 );
         widget = this;
         this.elt.find('#ductus_FSWLanguage').change(function() {
             widget.language = $(this).find(':selected').attr('value');
             widget.get_audio();
         });
-        this.elt.find('.ductus_FSWlink').click(function() {
+        this.elt.find('.ductus_FSWlink#skip').click(function() {
             widget.get_audio();
+        });
+        this.elt.find('.ductus_FSWlink#flag').click(function() {
+            widget.tags.push({value: 'flag:needs-review'});
+            widget.submit();
         });
     };
 
