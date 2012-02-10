@@ -122,11 +122,15 @@ $(function() {
                 '<option value="de">Deutsch</option>' +
                 '<option selected="selected" value="fr">Français</option>' +
                 '<option value="zh">中文 - Mandarin Chinese</option>' +
-                '</select>'
+                '</select>' +
+                '<a class="ductus_FSWlink" href="#">skip</a>'
                 );
         widget = this;
         this.elt.find('#ductus_FSWLanguage').change(function() {
             widget.language = $(this).find(':selected').attr('value');
+            widget.get_audio();
+        });
+        this.elt.find('.ductus_FSWlink').click(function() {
             widget.get_audio();
         });
     };
