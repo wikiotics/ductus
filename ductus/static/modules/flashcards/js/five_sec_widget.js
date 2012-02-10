@@ -214,6 +214,12 @@ $(function() {
                       return prop;
         }
         this.tags.splice(getKey('language:' + this.language), 1);
+        // FSI specific: force a language tag as we know it's english from FSI design
+        $.each(this.tags, function(i, tag) {
+            if (tag.value == 'fsi') {
+                this.tags.push({ value: 'language:en'});
+            }
+        });
         this.submit();
     };
     SubtitleFSWidget.prototype.submit = function() {
