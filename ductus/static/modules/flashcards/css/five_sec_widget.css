@@ -11,6 +11,7 @@ div#ductus_FSWInstructions {
 }
 div#ductus_FSWPrompt {
     margin-top: 1em;
+    height: 60px;
 }
 div#ductus_FSWAnswer textarea {
     width: 90%;
