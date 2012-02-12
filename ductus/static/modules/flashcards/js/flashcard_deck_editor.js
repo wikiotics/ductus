@@ -328,7 +328,8 @@ $(function () {
             return;
         }
         this.wrapped = wrapped;
-        this.elt.empty().append(wrapped.elt);
+        this.elt.children().detach();
+        this.elt.append(wrapped.elt);
     };
     // popup definition for an empty flashcard side
     FlashcardSide.prototype.popup_html = {
