@@ -280,7 +280,7 @@ def five_sec_widget(request):
         fcd_bp = json.loads(resource_json(old_fcd))
 
         # remove href and add a @patch statement so that the blueprint updates the database
-        fcd_bp['resource']['@patch'] = old_fcd.common.parents.array[0].href
+        fcd_bp['resource']['@patch'] = urn
         del fcd_bp['href']
 
         # set the flashcard href saved above
