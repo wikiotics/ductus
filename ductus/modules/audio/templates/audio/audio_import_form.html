@@ -84,7 +84,7 @@
 	function startRecording() {
 		recordButton.setActivity(0);
 		playButton.setEnabled(false);
-		Wami.startRecording("{{ recording_server_name }}", "onRecordStart", "onRecordFinish", "onError");
+		Wami.startRecording("", "onRecordStart", "onRecordFinish", "onError");
 	}
 
 	function stopRecording() {
@@ -96,7 +96,7 @@
 	function startPlaying() {
 		playButton.setActivity(0);
 		recordButton.setEnabled(false);
-		Wami.startPlaying("{{ recording_server_name }}", "onPlayStart", "onPlayFinish", "onError");
+		Wami.startPlaying("", "onPlayStart", "onPlayFinish", "onError");
 	}
 
 	function stopPlaying() {
