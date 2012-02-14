@@ -21,6 +21,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.core.cache import cache
+from django.views.decorators.cache import never_cache
 from django.http import HttpResponse, Http404
 from django.conf import settings
 
@@ -302,6 +303,7 @@ def five_sec_widget(request):
     return render_to_response('flashcards/five_sec_widget.html', {
     }, RequestContext(request))
 
+@never_cache
 def fsw_get_audio_to_subtitle(request):
     """return a JSON flashcard object to the subtitle 5s widget
     """
