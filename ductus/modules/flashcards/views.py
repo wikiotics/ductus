@@ -316,6 +316,8 @@ def fsw_get_audio_to_subtitle(request):
         url_list = getattr(settings, "FIVE_SEC_WIDGET_URLS", '')
         if url_list != '':
             url_list = [url for url in url_list if url.split(':')[0] == language]
+            if url_list == []:
+                raise Http404('No material available for this language')
             # pick a randomly chosen flashcard that has no text transcript in side[0]
             # this is highly inefficient and only a hack until indexing is available
             # FIVE_SEC_WIDGET_URLS should be kept clean of "mostly filled lessons"
