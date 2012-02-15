@@ -143,20 +143,6 @@ $(function () {
         var this_ = this;
         var ul = this.elt.find("ul");
 
-        $.each(FlashcardSide.widgets, function (i, w) {
-            if (w[1].creation_ui_widget && i == 0) {
-                var button = $('<li><a href="#fcs-new-' + i  + '">new ' + w[0] + '</a></li>');
-                var creation_widget = w[1].creation_ui_widget();
-                var tab_body = $('<div id="fcs-new-' + i + '"></div>').append(creation_widget.elt);
-                creation_widget.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                    this_.fcsw.set_from_json(model_json_repr);
-                    this_.go_to_main_editor_tab();
-                });
-                this_.elt.append(tab_body);
-                ul.append(button);
-            }
-        });
-
         ul.append('<li class="display-only-if-editable">&nbsp;</li>');
 
         var edit_tab_body = $('<div id="fcs-edit"></div>');
@@ -362,8 +348,14 @@ $(function () {
             });
         },
         'top': function() {
-            FlashcardSide._global_flashcard_side_editor.elt.tabs("select", "fcs-new-0");
-            $('#side_item_editor').show();
+            // new picture: show an overlay with the pictureSearchWidget in it
+            if (!FlashcardSide._global_picture_creator) {
+                FlashcardSide._global_picture_creator = PictureModelWidget.creation_ui_widget();
+            }
+            $(FlashcardSide._global_picture_creator.elt).dialog();
+            FlashcardSide._global_picture_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
+                this_.calling_widget.set_from_json(model_json_repr);
+            });
         },
         'bottom': function() {
             var bp = $.extend(true,
