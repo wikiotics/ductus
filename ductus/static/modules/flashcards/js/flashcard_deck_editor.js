@@ -43,6 +43,9 @@ $(function () {
 
     $.fn.ductus_selectable = function (ui_widget_func, wrapped_set_func, dblclick_handler) {
         // set click/dblclick handlers for a selectable element
+        // ui_widget_func: the "click handler" for the widget (also sets the editing widget)
+        // wrapped_set_func: a function returning the elements to show as selected when clicked
+        // dblclick_handler: (optional) the handler to call when the widget is double clicked
         if (dblclick_handler) {
             this.dblclick(dblclick_handler);
         }

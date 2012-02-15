@@ -13,6 +13,8 @@
 #ductus_PopupWidget {
     position: absolute;
     display: none;
+    height: 0px;
+    width: 0px;
 }
 .ductus_SidebarWidgetHeader {
     font-size: 125%;
