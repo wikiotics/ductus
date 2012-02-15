@@ -431,7 +431,8 @@ $(function () {
     // popup definition for a flashcard (a row)
     // FIXME: the width of the whole flashcard is used for positioning popup...
     Flashcard.prototype.popup_html = {
-        'left': 'add row'
+        'left': 'add row',
+        'bottom': 'delete row'
             // TODO: move row
     };
     // callbacks to handle clicks on an empty flashcard side
@@ -439,6 +440,10 @@ $(function () {
         'left': function() {
             var fcd = $(".ductus_FlashcardDeck").data('widget_object');
             fcd.add_row();
+        },
+        'bottom': function(fc) {
+            var fcd = $(".ductus_FlashcardDeck").data('widget_object');
+            fcd.delete_row(fc);
         }
     };
 
@@ -647,6 +652,19 @@ $(function () {
         row.elt.find(".row_td").text(this.rows.length);
         this.table.append(row.elt);
     };
+    FlashcardDeck.prototype.delete_row = function (fc) {
+        var row_index = fc.elt.index() - 1;
+        // remove each FlashcardSide in the flashcard
+        fc.elt.find("td").children().each(function (i) {
+            $(this).data("widget_object").reset();
+        });
+        fc.elt.remove();
+        this.rows.splice(row_index, 1);
+        // reindex row headers
+        $(this.rows).each(function (i, row) {
+            row.elt.find('.row_td').text(i + 1);
+        });
+    }
     FlashcardDeck.prototype._set_column_heading = function (column, heading) {
         column.heading = heading;
         if (heading)
