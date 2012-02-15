@@ -177,8 +177,6 @@ $(function () {
                 }, 0);
             }
         });
-
-        this.set_fcsw(fcsw);
     }
     FlashcardSideEditor.prototype = chain_clone(Widget.prototype);
     FlashcardSideEditor.prototype.set_fcsw = function (fcsw) {
@@ -309,9 +307,8 @@ $(function () {
         // set the edit widget for this flashcard side
         if (!FlashcardSide._global_flashcard_side_editor) {
             FlashcardSide._global_flashcard_side_editor = new FlashcardSideEditor(this);
-        } else {
-            FlashcardSide._global_flashcard_side_editor.set_fcsw(this);
         }
+        FlashcardSide._global_flashcard_side_editor.set_fcsw(this);
         return FlashcardSide._global_flashcard_side_editor;
     };
     FlashcardSide.prototype.handle_double_click = function () {
