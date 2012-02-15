@@ -171,6 +171,8 @@ FlickrPictureSource.prototype.clone = function () {
 };
 
 function PictureModelWidget(picture) {
+    // the widget shown in a flashcard side cell for a picture
+    // this one is blueprint-aware
     ModelWidget.call(this, picture, '<span class="ductus_PictureModelWidget"></span>');
 
     var picture_source = null;
@@ -219,6 +221,9 @@ PictureModelWidget.prototype.popup_callback = {
 };
 
 function PictureWidget(picture_source, editable) {
+    // a widget showing a picture
+    // it is appended as a child to PictureModelWidget in flashcard decks
+    // as it does not hold a blueprint itself
     var self = this;
 
     if (editable === undefined)
@@ -357,6 +362,7 @@ PictureWidget.prototype._draw_canvas = function () {
 };
 
 function PictureSearchWidget(initial_query_data) {
+    // the widget used as a creation widget to search for a picture (from flickr)
     if (!initial_query_data) {
         initial_query_data = {};
     }
