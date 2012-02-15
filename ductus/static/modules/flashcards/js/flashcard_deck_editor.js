@@ -172,12 +172,6 @@ $(function () {
         // show or hide edit/delete buttons as appropriate
         this.elt.find('.display-only-if-editable').toggle(!!this.fcsw.wrapped);
 
-        // set editor widget
-        this.editor_widget = (fcsw.wrapped && fcsw.wrapped.edit_ui_widget) ? fcsw.wrapped.edit_ui_widget() : null;
-        this.elt.find('#fcs-edit-tab').parent().toggle(!!this.editor_widget);
-        if (fcsw.wrapped && this.editor_widget)
-            this.edit_tab_body.children().detach().end().append(this.editor_widget.elt);
-
         // if no existing element, try to select a sensible "new" tab
         if (!fcsw.wrapped) {
             var display_index = fcsw.column.th.index() + 1;

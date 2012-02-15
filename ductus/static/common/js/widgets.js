@@ -183,6 +183,8 @@ function PictureModelWidget(picture) {
     assert(function () { return !!picture_source; });
 
     this._picture_widget = new PictureWidget(picture_source);
+    // show rotation controls next to picture
+    this._picture_widget.elt.append(this._picture_widget.rotation_controls);
 
     if (picture && picture.resource && picture.resource.net_rotation)
         this._picture_widget.set_rotation(picture.resource.net_rotation);
