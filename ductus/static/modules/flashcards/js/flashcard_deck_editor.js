@@ -432,7 +432,8 @@ $(function () {
     // FIXME: the width of the whole flashcard is used for positioning popup...
     Flashcard.prototype.popup_html = {
         'left': 'add row',
-        'bottom': 'delete row'
+        'bottom': 'delete row',
+        'top': 'insert row'
             // TODO: move row
     };
     // callbacks to handle clicks on an empty flashcard side
@@ -444,7 +445,11 @@ $(function () {
         'bottom': function(fc) {
             var fcd = $(".ductus_FlashcardDeck").data('widget_object');
             fcd.delete_row(fc);
-        }
+        },
+        'top': function(fc) {
+            var fcd = $(".ductus_FlashcardDeck").data('widget_object');
+            fcd.insert_row(fc.elt.index()-1);
+        },
     };
 
     function ChoiceInteractionWidget(ci) {
@@ -652,6 +657,18 @@ $(function () {
         row.elt.find(".row_td").text(this.rows.length);
         this.table.append(row.elt);
     };
+    FlashcardDeck.prototype.insert_row = function (row_index, fc) {
+        // insert a row (flashcard) in the flashcard deck
+        // row_index: the index at which to insert the row (and move every row below further down)
+        // fc: a blueprint to initialise the inserted row with
+        var row = new Flashcard(fc, this.columns);
+        this.rows[row_index].elt.before(row.elt);
+        this.rows.splice(row_index, 0, row);
+        // reindex row headers
+        $(this.rows).each(function (i, row) {
+            row.elt.find('.row_td').text(i + 1);
+        });
+    }
     FlashcardDeck.prototype.delete_row = function (fc) {
         var row_index = fc.elt.index() - 1;
         // remove each FlashcardSide in the flashcard
