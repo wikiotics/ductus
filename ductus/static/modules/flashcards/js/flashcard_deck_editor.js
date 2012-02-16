@@ -806,26 +806,34 @@ $(function () {
             });
         }
 
+        // if a row was clicked, make the popup display around the row header
+        // if a cell was clicked, make sure we do not hide any parts of it
+        var positioning_elt = this.calling_widget.elt;
+        if (this.calling_widget.elt.is('tr')) {
+            positioning_elt = this.calling_widget.elt.children('td.row_td');
+        } else if (!this.calling_widget.elt.is('th')) {
+            positioning_elt = this.calling_widget.elt.closest('td');
+        }
         // position popup buttons around the clicked widget
         leftw.position({
                     "my": "right center",
                     "at": "left center",
-                    "of": calling_widget.elt
+                    "of": positioning_elt
         });
         rightw.position({
                     "my": "left center",
                     "at": "right center",
-                    "of": calling_widget.elt
+                    "of": positioning_elt
         });
         topw.position({
                     "my": "center bottom",
                     "at": "center top",
-                    "of": calling_widget.elt
+                    "of": positioning_elt
         });
         bottomw.position({
                     "my": "center top",
                     "at": "center bottom",
-                    "of": calling_widget.elt
+                    "of": positioning_elt
         });
     };
 
