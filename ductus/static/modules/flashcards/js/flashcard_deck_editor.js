@@ -34,7 +34,7 @@ $(function () {
         selected_wrapped_set.removeClass("ductus-selected");
     }
     function _select(elt, wrapped_set_func) {
-        // mark the clicked widget as selected
+        // mark the clicked widget as selected (color its background)
         _unselect();
         selected = $(elt);
         selected_wrapped_set = wrapped_set_func ? wrapped_set_func() : $(elt);
@@ -53,7 +53,7 @@ $(function () {
             $(this).click(function () {
                 $('#ductus_PopupWidget').hide();
                 _select($(this), wrapped_set_func);
-                if (ui_widget_func) {
+                if (ui_widget_func && ui_widget_func()) {
                     $("#side_item_editor").children().detach().end().append(ui_widget_func().elt);
                 }
             });
@@ -208,17 +208,24 @@ $(function () {
     };
 
     function FlashcardColumnEditor(fcdw, column) {
-        Widget.call(this, '<div class="ductus_FlashcardColumnEditor">Column header: <input/></div>');
-        // allow user to edit heading
-        // future: may allow superficial moving of column order
-        // future: should also allow one to delete an entire column, after confirmation (but we will have undo soon)
+        // an in-place editor for flashcard column headers
+        Widget.call(this, '<div class="ductus_FlashcardColumnEditor"><span></span><input/></div>');
 
-        this.non_unique_warning = $('<div>Warning: each column name must be unique.</div>').appendTo(this.elt).hide();
+        this.non_unique_warning = $('<div class="ductus_non_uniq_col_header">Warning: each column name must be unique.</div>').appendTo(this.elt).hide();
 
         var this_ = this;
-        this.input = this.elt.find('input');
+        this.column = column;
+        this.fcdw = fcdw;
+        this.input = this.elt.find('input').hide();
+        this.span = this.elt.find('span').show();
+        this.input.bind('focusout', function (event) {
+            this_.input.hide();
+            this_.span.show();
+            this_.fcdw._set_column_heading(this_.column, this_.input.val());
+        });
         this.input.bind("change keyup keypress drop", function (event) {
             var heading = $.trim($(this).val());
+            this_.span.text(heading);
 
             // do a linear search through all other columns to make sure the heading is unique
             var show_non_unique_warning = false;
@@ -233,17 +240,37 @@ $(function () {
             }
 
             this_.non_unique_warning.toggle(show_non_unique_warning);
-            this_.fcdw._set_column_heading(this_.column, heading);
+            if (show_non_unique_warning) {
+                this_.input.addClass('ductus_input_value_incorrect');
+            } else {
+                this_.input.removeClass('ductus_input_value_incorrect');
+                if (event.keyCode == 13) {  // user hit enter key
+                    $(this_.input).focusout();
+                }
+            }
         });
-
-        this.set(fcdw, column);
+        this.input.bind('click', function (event) {
+            // prevent popup from showing while editing
+            event.stopPropagation();
+        });
+        this.span.bind('click', function (event) {
+            // replace the text with an input
+            event.stopPropagation();
+            this_.span.hide();
+            this_.input.show().focus();
+        });
     }
     FlashcardColumnEditor.prototype = chain_clone(Widget.prototype);
     FlashcardColumnEditor.prototype.set = function (fcdw, column) {
+        // update the widget when user clicks a different column
         this.column = column;
         this.fcdw = fcdw;
-        this.input.val(this.column.heading || '');
     };
+    FlashcardColumnEditor.prototype.set_heading = function (heading) {
+        // change the text of the column header
+        this.span.text(heading);
+        this.input.val(heading);
+    }
 
     function FlashcardDeckEditor(fcdw) {
         // this will edit:
@@ -538,6 +565,8 @@ $(function () {
         // (this is mostly for "coherence" in related function calls, like popups...)
         Widget.call(this, '<th class="ductus_FlashcardDeck_column"></th>');
         this.th = this.elt;
+        this.header = new FlashcardColumnEditor(fcd, this);
+        this.th.append(this.header.elt);
         this.fcd = fcd;
     }
     FlashcardColumn.prototype = chain_clone(Widget.prototype);
@@ -685,9 +714,9 @@ $(function () {
     FlashcardDeck.prototype._set_column_heading = function (column, heading) {
         column.heading = heading;
         if (heading)
-            column.th.text(heading);
+            column.header.set_heading(heading);
         else
-            column.th.html('<span class="ductus_FlashcardDeck_anonymous_column_name">Side ' + column.th.index() + '</span>');
+            column.header.set_heading('Side ' + column.th.index());
     };
     FlashcardDeck.prototype.add_column = function (heading) {
         var this_ = this;
@@ -718,12 +747,6 @@ $(function () {
         if (popup.length) {
             popup.data('widget_object').show_popup(column);
         }
-        if (!FlashcardDeck._global_flashcard_column_editor) {
-            FlashcardDeck._global_flashcard_column_editor = new FlashcardColumnEditor(this, column);
-        } else {
-            FlashcardDeck._global_flashcard_column_editor.set(this, column);
-        }
-        return FlashcardDeck._global_flashcard_column_editor;
     };
     FlashcardDeck.prototype.ensure_min_width = function() {
         this.elt.css('min-width', this.table.width() + $('#side_toolbar').width() + 50);
