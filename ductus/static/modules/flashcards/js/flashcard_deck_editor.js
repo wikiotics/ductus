@@ -216,12 +216,14 @@ $(function () {
         var this_ = this;
         this.column = column;
         this.fcdw = fcdw;
+        this.last_valid_heading = '';
+
         this.input = this.elt.find('input').hide();
         this.span = this.elt.find('span').show();
         this.input.bind('focusout', function (event) {
             this_.input.hide();
             this_.span.show();
-            this_.fcdw._set_column_heading(this_.column, this_.input.val());
+            this_.fcdw._set_column_heading(this_.column, this_.last_valid_heading);
         });
         this.input.bind("change keyup keypress drop", function (event) {
             var heading = $.trim($(this).val());
@@ -232,7 +234,7 @@ $(function () {
             if (heading) {
                 for (var i = 0; i < fcdw.columns.length; ++i) {
                     if (heading == fcdw.columns[i].heading && fcdw.columns[i] !== this_.column) {
-                        heading = '';
+                        heading = this_.last_valid_heading;
                         show_non_unique_warning = true;
                         break;
                     }
@@ -244,6 +246,7 @@ $(function () {
                 this_.input.addClass('ductus_input_value_incorrect');
             } else {
                 this_.input.removeClass('ductus_input_value_incorrect');
+                this_.last_valid_heading = heading;
                 if (event.keyCode == 13) {  // user hit enter key
                     $(this_.input).focusout();
                 }
