@@ -53,9 +53,8 @@ $(function () {
             $(this).click(function () {
                 $('#ductus_PopupWidget').hide();
                 _select($(this), wrapped_set_func);
-                if (ui_widget_func && ui_widget_func()) {
-                    $("#side_item_editor").children().detach().end().append(ui_widget_func().elt);
-                }
+                if (ui_widget_func)
+                    ui_widget_func();
             });
         });
     };
@@ -91,14 +90,6 @@ $(function () {
 	};
     };
     PhraseWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/phrase}phrase';
-    /*PhraseWidget.prototype.edit_ui_widget = function () {
-        var r = new Widget('<div>(see above)</div>');
-        var this_ = this;
-        r.focus_on_editor = function () {
-            this_.input.focus();
-        };
-        return r;
-    };*/
     // define popup menu content and callbacks
     PhraseWidget.prototype.popup_html = {
         'bottom': 'delete'
@@ -109,10 +100,6 @@ $(function () {
             target.elt.parent().data('widget_object').reset();
         }
     };
-
-    /*PhraseWidget.creation_ui_widget = function () {
-        return new PhraseCreator;
-    };*/
 
     function PhraseCreator() {
         Widget.call(this, '<div class="ductus_PhraseCreator"><form><input/></form></div>');
@@ -314,12 +301,6 @@ $(function () {
         if (popup.length) {
             popup.data('widget_object').show_popup(this);
         }
-        // set the edit widget for this flashcard side
-        if (!FlashcardSide._global_flashcard_side_editor) {
-            FlashcardSide._global_flashcard_side_editor = new FlashcardSideEditor(this);
-        }
-        FlashcardSide._global_flashcard_side_editor.set_fcsw(this);
-        return FlashcardSide._global_flashcard_side_editor;
     };
     FlashcardSide.prototype.handle_double_click = function () {
         if (FlashcardSide._global_flashcard_side_editor)
@@ -441,12 +422,6 @@ $(function () {
         if (popup.length) {
             popup.data('widget_object').show_popup(this);
         }
-        if (!Flashcard._global_flashcard_editor) {
-            Flashcard._global_flashcard_editor = new FlashcardEditor(this);
-        } else {
-            Flashcard._global_flashcard_editor.set_fcw(this);
-        }
-        return Flashcard._global_flashcard_editor;
     };
     Flashcard.prototype._append_new_cell = function (fcs, column) {
         var fcsw = new FlashcardSide(fcs, column);
@@ -630,9 +605,7 @@ $(function () {
             this_.add_row(card);
         });
 
-        this.table.find(".topleft_th").ductus_selectable(function () {
-            return this_.ui_widget();
-        }, function () {
+        this.table.find(".topleft_th").ductus_selectable(null, function () {
             // fixme: this will do weird things if a widget itself contains a table; we should have a class that we use for all th and td's here
             return this_.table.find("th, td");
         });
@@ -739,11 +712,6 @@ $(function () {
         // ensure the minimal width of the deck so we can scroll over the whole thing
         this.ensure_min_width();
         return column;
-    };
-    FlashcardDeck.prototype.ui_widget = function (column) {
-        if (!FlashcardDeck._global_flashcard_deck_editor)
-            FlashcardDeck._global_flashcard_deck_editor = new FlashcardDeckEditor(this);
-        return FlashcardDeck._global_flashcard_deck_editor;
     };
     FlashcardDeck.prototype.column_ui_widget = function (column) {
         popup = $("#ductus_PopupWidget");
@@ -889,12 +857,10 @@ $(function () {
     }
 
     var fcdw = new FlashcardDeck(resource_json);
-    $("#side_item_editor").before(fcdw.sidebar);
-    $("#side_item_editor").make_sidebar_widget("item editor", fcdw.sidebar);
+    $('#side_toolbar').append(fcdw.sidebar);
     $("#flashcard_deck_editor").append(fcdw.elt);
     fcdw.ensure_min_width();
 
     $("#side_toolbar_spacer").appendTo("body");
-    $('#side_item_editor').show();
 });
 
