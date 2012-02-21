@@ -28,6 +28,7 @@ urlpatterns += patterns('',
     url(r'^reset-password/confirm/(?P<uidb36>[-\w]+)/(?P<token>[-\w]+)$', 'django.contrib.auth.views.password_reset_confirm'),
     url(r'^reset-password/success$', 'django.contrib.auth.views.password_reset_complete'),
     url(r'^setlang$', 'django.views.i18n.set_language'),
+    url(r'^jsi18n$', 'django.views.i18n.javascript_catalog', {'domain': 'djangojs', 'packages': ('ductus',)}),
     # this must come last since it matches practically everything...
     url(r'^(?P<prefix>\w+)/(?P<pagename>.+)$', 'ductus.wiki.views.wiki_dispatch'),
 )
