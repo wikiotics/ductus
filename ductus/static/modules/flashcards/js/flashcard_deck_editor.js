@@ -92,7 +92,7 @@ $(function () {
     PhraseWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/phrase}phrase';
     // define popup menu content and callbacks
     PhraseWidget.prototype.popup_html = {
-        'bottom': 'delete'
+        'bottom': gettext('delete')
     };
     PhraseWidget.prototype.popup_callback = {
         // target is the phrase widget that generated the popup
@@ -198,7 +198,7 @@ $(function () {
         // an in-place editor for flashcard column headers
         Widget.call(this, '<div class="ductus_FlashcardColumnEditor"><span></span><input/></div>');
 
-        this.non_unique_warning = $('<div class="ductus_non_uniq_col_header">Warning: each column name must be unique.</div>').appendTo(this.elt).hide();
+        this.non_unique_warning = $('<div class="ductus_non_uniq_col_header">' + gettext('Warning: each column name must be unique.') + '</div>').appendTo(this.elt).hide();
 
         var this_ = this;
         this.column = column;
@@ -324,10 +324,10 @@ $(function () {
     };
     // popup definition for an empty flashcard side
     FlashcardSide.prototype.popup_html = {
-        'left': 'new phrase',
-        'right': 'new audio',
-        'top': 'new picture',
-        'bottom': 'paste'
+        'left': gettext('new phrase'),
+        'right': gettext('new audio'),
+        'top': gettext('new picture'),
+        'bottom': gettext('paste')
     };
     // callbacks to handle clicks on an empty flashcard side
     FlashcardSide.prototype.popup_callback = {
@@ -436,9 +436,9 @@ $(function () {
     // popup definition for a flashcard (a row)
     // FIXME: the width of the whole flashcard is used for positioning popup...
     Flashcard.prototype.popup_html = {
-        'left': 'add row',
-        'bottom': 'delete row',
-        'top': 'insert row'
+        'left': gettext('add row'),
+        'bottom': gettext('delete row'),
+        'top': gettext('insert row')
             // TODO: move row
     };
     // callbacks to handle clicks on an empty flashcard side
@@ -459,7 +459,7 @@ $(function () {
 
     function ChoiceInteractionWidget(ci) {
         ModelWidget.call(this, ci, '<div class="ductus_ChoiceInteractionWidget"></div>');
-        this.elt.append('Prompt: <input name="prompt" class="prompt"/> Answer: <input name="answer" class="answer"/>');
+        this.elt.append(gettext('Prompt:') + ' <input name="prompt" class="prompt"/> ' + gettext('Answer:') +' <input name="answer" class="answer"/>');
         this.prompt = this.elt.find('.prompt');
         this.answer = this.elt.find('.answer');
         if (ci) {
@@ -480,7 +480,7 @@ $(function () {
 
     function AudioLessonInteractionWidget(ai) {
         ModelWidget.call(this, ai, '<div class="ductus_AudioLessonInteractionWidget"></div>');
-        this.elt.append('Audio: <input name="audio" class="audio"/> Transcript (optional): <input name="transcript" class="transcript"/>');
+        this.elt.append(gettext('Audio:') + ' <input name="audio" class="audio"/> ' + gettext('Transcript (optional):') + ' <input name="transcript" class="transcript"/>');
         this.audio = this.elt.find('.audio');
         this.transcript = this.elt.find('.transcript');
         if (ai) {
@@ -504,10 +504,10 @@ $(function () {
         this.interactions = $('<ul class="ductus_InteractionChooserWidget_interactions"></ul>').appendTo(this.elt);
         this.new_interaction_buttons = $('<ul class="ductus_InteractionChooserWidget_add_buttons"></ul>').appendTo(this.elt);
         var this_ = this;
-        $('<a href="javascript:void(0)">Add a "choice" interaction</a>').click(function () {
+        $('<a href="javascript:void(0)">' + gettext('Add a "choice" interaction') + '</a>').click(function () {
             this_.__add_interaction(new ChoiceInteractionWidget());
         }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
-        $('<a href="javascript:void(0)">Add an audio lesson interaction</a>').click(function () {
+        $('<a href="javascript:void(0)">' + gettext('Add an audio lesson interaction') + '</a>').click(function () {
             this_.__add_interaction(new AudioLessonInteractionWidget());
         }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
 
@@ -532,7 +532,7 @@ $(function () {
     };
     InteractionChooserWidget.prototype.__add_interaction = function (widget) {
         var li = $('<li></li>').append(widget.elt).appendTo(this.interactions);
-        $('<span>delete interaction</span>').button({text: false, icons: {primary: 'ui-icon-close'}}).click(function () {
+        $('<span>' + gettext('delete interaction') + '</span>').button({text: false, icons: {primary: 'ui-icon-close'}}).click(function () {
             $(this).parent('li').remove();
         }).appendTo(li);
     };
@@ -551,8 +551,8 @@ $(function () {
 
     // define popup callbacks to handle clicks on a column header
     FlashcardColumn.prototype.popup_html = {
-        'left': 'add colummn',
-        'bottom': 'delete column'
+        'left': gettext('add column'),
+        'bottom': gettext('delete column')
             // TODO: move column
     };
     FlashcardColumn.prototype.popup_callback = {
@@ -619,13 +619,13 @@ $(function () {
         this.sidebar = $('<div id="ductus_Sidebar"></div>');
 
         this.interaction_chooser = new InteractionChooserWidget(fcd.resource.interactions);
-        this.interaction_chooser.elt.make_sidebar_widget("Interactions", this.sidebar);
+        this.interaction_chooser.elt.make_sidebar_widget(gettext('Interactions'), this.sidebar);
 
         this.tagging_widget = new TaggingWidget(fcd.resource.tags);
-        this.tagging_widget.elt.make_sidebar_widget("Tags", this.sidebar);
+        this.tagging_widget.elt.make_sidebar_widget(gettext('Tags'), this.sidebar);
 
         this.save_widget = new SaveWidget(this, 'the lesson');
-        this.save_widget.elt.make_sidebar_widget("Save", this.sidebar);
+        this.save_widget.elt.make_sidebar_widget(gettext('Save'), this.sidebar);
 
         this.record_initial_inner_blueprint();
     }
@@ -692,7 +692,7 @@ $(function () {
         if (heading)
             column.header.set_heading(heading);
         else
-            column.header.set_heading('Side ' + column.th.index());
+            column.header.set_heading(gettext('Side') + ' ' + column.th.index());
     };
     FlashcardDeck.prototype.add_column = function (heading) {
         var this_ = this;
@@ -833,7 +833,7 @@ $(function () {
 
     function TaggingWidget(tags) {
         // the widget used to edit tags applied to the whole flashcard deck
-        ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>Tags (space seperated):</label><input /></div>');
+        ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>' + gettext('Tags (space separated):') + '</label><input /></div>');
         this.input = this.elt.children('input');
         var tag_string = '';
         if (tags) {
