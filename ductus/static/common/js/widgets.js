@@ -237,12 +237,12 @@ function PictureWidget(picture_source, editable) {
     this._is_editable = editable;
 
     Widget.call(this, '<span class="ductus_PictureWidget"></span>');
-    this.image_holder = $('<span style="display: inline-block">drag image here</span>');
+    this.image_holder = $('<span style="display: inline-block">' + gettext('drag image here') + '</span>');
     this.elt.append(this.image_holder);
 
     // rotation controls
-    var rotate_left_button = $('<img alt="rotate left" title="rotate left" src="' + ductus_media_prefix + 'modules/picture/img/object-rotate-left.png" class="ductus_rotate_button"/>');
-    var rotate_right_button = $('<img alt="rotate right" title="rotate right" src="' + ductus_media_prefix + 'modules/picture/img/object-rotate-right.png" class="ductus_rotate_button"/>');
+    var rotate_left_button = $('<img alt="' + gettext('rotate left') + '" title="' + gettext('rotate left') + '" src="' + ductus_media_prefix + 'modules/picture/img/object-rotate-left.png" class="ductus_rotate_button"/>');
+    var rotate_right_button = $('<img alt="' + gettext('rotate right') + '" title="' + gettext('rotate right') + '" src="' + ductus_media_prefix + 'modules/picture/img/object-rotate-right.png" class="ductus_rotate_button"/>');
     rotate_left_button.click(function () { self.rotate_left(); });
     rotate_right_button.click(function () { self.rotate_right(); });
     this.rotation_controls = $('<span></span>').append(rotate_left_button).append(rotate_right_button);
@@ -369,9 +369,9 @@ function PictureSearchWidget(initial_query_data) {
         initial_query_data = {};
     }
 
-    Widget.call(this, '<div class="ductus_PictureSearchWidget"><form>What: <input name="q" class="input-query"/> Where: <input name="place"/><input type="submit" value="search"/><br/><input type="radio" name="sort" value="date-posted-desc"/>Recent <input type="radio" name="sort" value="interestingness-desc"/>Interesting <input type="radio" name="sort" value="relevance" checked/>Relevant | Search by <input type="radio" name="search_by" value="text" checked/>Text <input type="radio" name="search_by" value="tags"/>Tags</form></div>');
+    Widget.call(this, '<div class="ductus_PictureSearchWidget"><form>' + gettext('What:') +' <input name="q" class="input-query"/>' + gettext('Where:') + ' <input name="place"/><input type="submit" value="search"/><br/><input type="radio" name="sort" value="date-posted-desc"/>' + gettext('Recent') + ' <input type="radio" name="sort" value="interestingness-desc"/>' + gettext('Interesting') + ' <input type="radio" name="sort" value="relevance" checked/>' + gettext('Relevant | Search by') +' <input type="radio" name="search_by" value="text" checked/>' + gettext('Text') + ' <input type="radio" name="search_by" value="tags"/>' + gettext('Tags') + '</form></div>');
     if (DUCTUS_FLICKR_GROUP_ID) {
-        $(this.elt).find("form").append('<div><input type="checkbox" name="group" value="' + DUCTUS_FLICKR_GROUP_ID + '"/> Restrict to project\'s Flickr group</div>');
+        $(this.elt).find("form").append('<div><input type="checkbox" name="group" value="' + DUCTUS_FLICKR_GROUP_ID + '"/> ' + gettext('Restrict to project\'s Flickr group') + '</div>');
     }
     var search_results_elt = $('<div class="search_results"></div>');
     var this_ = this;
@@ -435,7 +435,7 @@ function AudioWidget(audio) {
 AudioWidget.prototype = chain_clone(ModelWidget.prototype);
 AudioWidget.prototype.blueprint_repr = function () {
     if (!this._urn) {
-        throw 'File has not been uploaded yet.';
+        throw gettext('File has not been uploaded yet.');
     }
     return { href: this._urn };
 };
@@ -460,13 +460,13 @@ AudioWidget.prototype._set_state_localfile = function (file) {
     this._reset();
     this.file = file;
     if (file.type !== 'audio/ogg') {
-        this.status_elt.append($('<span class="error"></span>').text('Warning: expected audio/ogg, but selected file is of type ' + file.type));
+        this.status_elt.append($('<span class="error"></span>').text(gettext('Warning: expected audio/ogg, but selected file is of type') + ' ' + file.type));
     }
     var reader = new FileReader();
     var _this = this;
     reader.onload = function (e) {
         _this._append_audio_control(e.target.result);
-        var upload_button = $('<a href="javascript:void(0)">upload</a>');
+        var upload_button = $('<a href="javascript:void(0)">' + gettext('upload') + '</a>');
         upload_button.click(function () {
             _this.attempt_upload();
         });
@@ -500,7 +500,7 @@ AudioWidget.prototype.attempt_upload = function (success_cb, error_cb) {
             _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
         }
         _this._upload_in_progress = false;
-        if (error_cb) error_cb("error uploading audio");
+        if (error_cb) error_cb(gettext('error uploading audio'));
     }
     $.ductusFileUpload({
         url: '/new/audio',
@@ -549,10 +549,10 @@ AudioWidget.prototype._append_audio_control = function (src) {
 // content of popup menu when clicking on an audio widget
 // null will disable the corresponding submenu
 AudioWidget.prototype.popup_html = {
-    'left': 'record',
-    'right': 'copy',
-    'top': 'search',
-    'bottom': 'delete'
+    'left': gettext('record'),
+    'right': gettext('copy'),
+    'top': gettext('search'),
+    'bottom': gettext('delete')
 };
 // callbacks to handle clicks on the menu for an audio widget
 AudioWidget.prototype.popup_callback = {
@@ -569,12 +569,12 @@ AudioWidget.prototype.popup_callback = {
 AudioWidget.creation_ui_widget = function () {
     if (typeof FileReader == 'undefined') {
         // File API is not supported, so don't provide file selection eleme
-        return { elt: $('<div>Your browser does not support File API, so you will not be able to upload anything.</div>') };
+        return { elt: $('<div>' + gettext('Your browser does not support File API, so you will not be able to upload anything.') + '</div>') };
     }
     var upload_widget_elt = $('<div class="AudioWidget_creation_widget"></div>');
     var file_input = '<span class="ductus_file_upload_wrapper">' +
         '<input type="file" accept="audio/ogg" />' +
-        '<span class="ductus_file_upload_button">Upload a file</span>' +
+        '<span class="ductus_file_upload_button">' + gettext('Upload a file') + '</span>' +
         '</span>';
     var input = $(file_input).appendTo(upload_widget_elt).find('input');
     $(file_input).button();
@@ -600,12 +600,12 @@ function FullPagename (arg) {
     } else if (arg.pathname && arg.pathname.charAt(0) == '/' && arg.pathname.length > 3) {
         this.__fqpagename = decodeURIComponent(arg.pathname.substring(1)).replace(/\//, ':');
     } else {
-        throw 'invalid arguments given to FullPagename constructor';
+        throw gettext('invalid arguments given to FullPagename constructor');
     }
 
     this.__colon_index = this.__fqpagename.indexOf(':');
     if (this.__colon_index < 0) {
-        throw 'invalid pagename; it contains no ":"';
+        throw gettext('invalid pagename; it contains no ":"');
     }
 }
 FullPagename.prototype.get_fqpagename = function () {
@@ -643,7 +643,7 @@ function SaveDestinationChooserWidget (original_pagename, suggested_pagename, wi
 
     var initial_pagename_selection = (original_pagename || suggested_pagename);
     var initial_directory_selection = initial_pagename_selection ? initial_pagename_selection.get_directory() : null;
-    var pagetype = wikipage_type_shortname || 'the wiki page';
+    var pagetype = wikipage_type_shortname || gettext('the wiki page');
 
     // figure out directories
     var i, directories = {'user': [], 'group': [], 'language_namespace': []};
@@ -655,36 +655,36 @@ function SaveDestinationChooserWidget (original_pagename, suggested_pagename, wi
     }
 
     // directory chooser
-    $('<span>Save to:</span>').appendTo(this.form);
+    $('<span>' + gettext('Save to:') + '</span>').appendTo(this.form);
     var ul = $('<ul class="radio_ul"></ul>').appendTo(this.form);
     for (i = 0; i < directories.user.length; ++i) {
         var dir = directories.user[i];
         var id = ductus_unique_dom_id();
         var div = $('<li></li>').appendTo(ul);
         div.append($('<input type="radio" name="grp" id="' + id + '"/>').attr('value', dir[0]));
-        div.append($('<label for="' + id + '"></label>').text('my user directory (' + dir[2] + ') '));
+        div.append($('<label for="' + id + '"></label>').text(gettext('my user directory') + ' (' + dir[2] + ') '));
         if (dir[0] === initial_directory_selection) {
             div.find("#" + id).attr("checked", true);
         }
-        div.append('<span class="quiet">Only you will be able to edit ' + pagetype + ' in place, but others can make improvements and save them elsewhere.</span>');
+        div.append('<span class="quiet">' + interpolate(gettext('Only you will be able to edit %(pagetype) in place, but others can make improvements and save them elsewhere.'), pagetype, true) + '</span>');
     }
     for (i = 0; i < directories.group.length; ++i) {
         var dir = directories.group[i];
         var id = ductus_unique_dom_id();
         var div = $('<li></li>').appendTo(ul);
         div.append($('<input type="radio" name="grp" id="' + id + '"/>').attr('value', dir[0]));
-        div.append($('<label for="' + id + '"></label>').text('group: ' + dir[2]));
+        div.append($('<label for="' + id + '"></label>').text(gettext('group: ') + dir[2]));
         if (dir[0] === initial_directory_selection) {
             div.find("#" + id).attr("checked", true);
         }
-        div.append('<span class="quiet">Only group members will be able to edit ' + pagetype + ' in place.</span>');
+        div.append('<span class="quiet">' + interpolate(gettext('Only group members will be able to edit %(pagetype) in place.'), pagetype, true) + '</span>');
     }
     if (directories.language_namespace) {
         var select = $('<select></select>');
         var id = ductus_unique_dom_id();
         var lns_div = $('<li></li>').appendTo(ul);
         lns_div.append('<input type="radio" name="grp" id="' + id + '" value="///see_select///"/>');
-        lns_div.append('<label for="' + id + '">community wiki for: </label>');
+        lns_div.append('<label for="' + id + '">' + gettext('community wiki for: ') + '</label>');
         lns_div.find("label").after(select);
         var directory_selected = false;
         for (i = 0; i < directories.language_namespace.length; ++i) {
@@ -704,14 +704,14 @@ function SaveDestinationChooserWidget (original_pagename, suggested_pagename, wi
             lns_div.find("input").attr("checked", "checked");
             this_._destination_changed();
         });
-        lns_div.append('<span class="quiet">Choose the language to be taught.  Anyone will be able to edit ' + pagetype + ' in place.</span>');
+        lns_div.append('<span class="quiet">' + interpolate(gettext('Choose the language to be taught.  Anyone will be able to edit %(pagetype) in place.'), pagetype, true) + '</span>');
     }
     this.elt.find("input[name='grp']").change(function () {
         this_._destination_changed();
     });
 
     // page name chooser
-    this.elt.append('<span>Page title:</span> ');
+    this.elt.append('<span>' + gettext('Page title:') + '</span> ');
     this._page_name_input = $('<input name="page_name"/>').appendTo(this.elt);
     this._page_name_input.bind('change keyup keypress drop', function () {
         this_._destination_changed();
@@ -781,8 +781,8 @@ function SaveWidget (toplevel_blueprint_object, wikipage_type_shortname) {
     var target_pagename = urlParams['target'] && new FullPagename(urlParams['target']);
     this.destination_chooser = new SaveDestinationChooserWidget(original_pagename, target_pagename, wikipage_type_shortname);
     this.elt.append(this.destination_chooser.elt);
-    this.elt.append('<div>Log message: <input type="text" class="log_message" name="log_message" maxlength="400"/></div>');
-    this.elt.append('<form class="save_form save_and_return" style="display: inline"><input type="submit" value="Save"/></form>');
+    this.elt.append('<div>' + gettext('Log message: ') + '<input type="text" class="log_message" name="log_message" maxlength="400"/></div>');
+    this.elt.append('<form class="save_form save_and_return" style="display: inline"><input type="submit" value="' + gettext('Save') + '"/></form>');
     //this.elt.append('<form class="save_form save_and_continue" style="display: inline"><input type="submit" value="Save and continue editing"/></form>');
     this.elt.find(".save_form").submit(function (event) {
         event.preventDefault(); // cancel normal submit event handling
@@ -803,7 +803,7 @@ SaveWidget.prototype.perform_save = function (save_and_return) {
     // and finally send the blueprint to the server
     var this_ = this;
     var blocking_elements = this.elt.add(this.toplevel_blueprint_object.elt);
-    blocking_elements.block({ message: "saving ..." });
+    blocking_elements.block({ message: gettext('saving ...') });
     // recursively list presave steps (eg: upload audio files)
     var presave_steps = this.toplevel_blueprint_object.get_outstanding_presave_steps();
 
@@ -820,11 +820,11 @@ SaveWidget.prototype.perform_save = function (save_and_return) {
                          if (save_and_return) {
                              window.location = (data.page_url || resolve_urn(data.urn));
                          } else {
-                             $('<span class="ductus_save_notice">saved!</span>').appendTo(this_.elt).delay(3000).fadeOut(400, function () { $(this).remove(); });
+                             $('<span class="ductus_save_notice">' + gettext('saved!') + '</span>').appendTo(this_.elt).delay(3000).fadeOut(400, function () { $(this).remove(); });
                          }
                      },
             error: function (xhr, textStatus, errorThrown) {
-                       alert(xhr.status + " error. save failed.");
+                       alert(xhr.status + gettext(' error. save failed.'));
                    },
             complete: function (xhr, textStatus) {
                           blocking_elements.unblock();
@@ -840,7 +840,7 @@ SaveWidget.prototype.perform_save = function (save_and_return) {
         } else {
             var next_step = presave_steps[i++];
             next_step(do_next_step, function (error) {
-                alert("an error occurred: " + error);
+                alert(gettext('an error occurred: ') + error);
                 blocking_elements.unblock();
             });
         }
@@ -880,7 +880,7 @@ OnlineRecorder.prototype.init = function() {
     }
     if (!this.record_online_btn) {
         this.record_online_btn = this.elt.find('#record_online_button');
-        this.record_online_btn.button( { label: 'Record online' } );
+        this.record_online_btn.button( { label: gettext('Record online') } );
     }
     this.record_online_btn.button().show();
     this.record_online_btn.click( function() {
@@ -915,14 +915,14 @@ OnlineRecorder.prototype.showRecordButton = function(start_stop) {
     this.record_btn = this.elt.find('#recordDiv');
     this.record_btn.unbind('click');
     if (start_stop == 'start') {
-        this.record_btn.text('Start recording');
+        this.record_btn.text(gettext('Start recording'));
         this.record_btn.button( {
             icons: { primary: "ui-icon-bullet" },
             text: false
         });
         this.record_btn.click( function(){ online_recorder.startRecording();} );
     } else {
-        this.record_btn.text('Stop recording');
+        this.record_btn.text(gettext('Stop recording'));
         this.record_btn.button( {
             icons: { primary: "ui-icon-stop" },
             text: false
@@ -934,14 +934,14 @@ OnlineRecorder.prototype.showPlayButton = function(start_stop) {
     this.play_btn = this.elt.find('#playDiv');
     this.play_btn.unbind('click');
     if (start_stop == 'start') {
-        this.play_btn.text('Start playing');
+        this.play_btn.text(gettext('Start playing'));
         this.play_btn.button( {
             icons: { primary: "ui-icon-play" },
             text: false
         });
         this.play_btn.click( function(){ online_recorder.startPlaying();} );
     } else {
-        this.play_btn.text('Stop playing');
+        this.play_btn.text(gettext('Stop playing'));
         this.play_btn.button( {
             icons: { primary: "ui-icon-stop" },
             text: false
@@ -952,7 +952,7 @@ OnlineRecorder.prototype.showPlayButton = function(start_stop) {
 OnlineRecorder.prototype.showUploadButton = function() {
     this.upload_btn = this.elt.find('#uploadDiv');
     this.upload_btn.unbind('click');
-    this.upload_btn.text('Upload recording');
+    this.upload_btn.text(gettext('Upload recording'));
     this.upload_btn.button( {
         icons: { primary: "ui-icon-check" },
         text: false
@@ -1000,7 +1000,7 @@ OnlineRecorder.prototype.zoomError = function() {
     // too far won't show the panel.
     // We could play the game of re-embedding the Flash in a larger DIV here,
     // but instead we just warn the user:
-    alert("Your browser may be zoomed too far out to show the Flash security settings panel.  Zoom in, and refresh.");
+    alert(gettext('Your browser may be zoomed too far out to show the Flash security settings panel.  Zoom in, and refresh.'));
 }
 OnlineRecorder.prototype.uploadAudio = function() {
     this.Wami.uploadRecordedFile('/new/audio');
