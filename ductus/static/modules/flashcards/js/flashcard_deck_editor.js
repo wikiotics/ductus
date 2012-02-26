@@ -331,28 +331,28 @@ $(function () {
     };
     // callbacks to handle clicks on an empty flashcard side
     FlashcardSide.prototype.popup_callback = {
-        'left': function() {
-            this_.calling_widget.set_from_json({
+        'left': function(caller) {
+            caller.set_from_json({
                 resource: {
                     phrase: { text: '' },
                     fqn: PhraseWidget.prototype.fqn
                 }
             });
-            this_.calling_widget.wrapped.input.focus();
+            caller.wrapped.input.focus();
         },
-        'right': function() {
+        'right': function(caller) {
             // show an audio creation widget in the deck
             if (!FlashcardSide._global_audio_creator) {
                 FlashcardSide._global_audio_creator = AudioWidget.creation_ui_widget();
             } else {
                 online_recorder.init();
             }
-            this_.calling_widget._set_wrapped(FlashcardSide._global_audio_creator);
+            caller._set_wrapped(FlashcardSide._global_audio_creator);
             FlashcardSide._global_audio_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                this_.calling_widget.set_from_json(model_json_repr);
+                caller.set_from_json(model_json_repr);
             });
         },
-        'top': function() {
+        'top': function(caller) {
             // new picture: show an overlay with the pictureSearchWidget in it
             if (!FlashcardSide._global_picture_creator) {
                 FlashcardSide._global_picture_creator = PictureModelWidget.creation_ui_widget();
@@ -363,10 +363,10 @@ $(function () {
                         title: gettext('Search flickr for pictures')
             });
             FlashcardSide._global_picture_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                this_.calling_widget.set_from_json(model_json_repr);
+                caller.set_from_json(model_json_repr);
             });
         },
-        'bottom': function() {
+        'bottom': function(caller) {
             var bp = $.extend(true,
                     {
                         resource: {
@@ -375,7 +375,7 @@ $(function () {
                     },
                     window.global_copy_paste_buffer
             );
-            this_.calling_widget.set_from_json(bp);
+            caller.set_from_json(bp);
         }
     };
     FlashcardSide.widgets = [
