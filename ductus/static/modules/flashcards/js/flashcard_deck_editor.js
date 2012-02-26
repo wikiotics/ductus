@@ -357,7 +357,11 @@ $(function () {
             if (!FlashcardSide._global_picture_creator) {
                 FlashcardSide._global_picture_creator = PictureModelWidget.creation_ui_widget();
             }
-            $(FlashcardSide._global_picture_creator.elt).dialog();
+            $(FlashcardSide._global_picture_creator.elt).dialog({
+                        height: ($(window).height() - parseInt($(document.body).css("padding-top")) - parseInt($(document.body).css("padding-top"))) * 0.8,
+                        width: ($(window).width() - parseInt($(document.body).css("padding-left")) - parseInt($(document.body).css("padding-right"))) * 0.8 + "px",
+                        title: gettext('Search flickr for pictures')
+            });
             FlashcardSide._global_picture_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
                 this_.calling_widget.set_from_json(model_json_repr);
             });
