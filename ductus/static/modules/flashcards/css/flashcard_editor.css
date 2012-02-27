@@ -81,6 +81,14 @@
 .ductus_AudioWidget .status .error {
     font-size: 70%;
 }
+.ductus_PictureWidget {
+    position: relative;
+}
+.ductus_picture_controls {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
 .topleft_th {
     width: 20px;
 }

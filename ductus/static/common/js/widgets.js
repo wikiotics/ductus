@@ -245,7 +245,7 @@ function PictureWidget(picture_source, editable) {
     var rotate_right_button = $('<img alt="' + gettext('rotate right') + '" title="' + gettext('rotate right') + '" src="' + ductus_media_prefix + 'modules/picture/img/object-rotate-right.png" class="ductus_rotate_button"/>');
     rotate_left_button.click(function () { self.rotate_left(); });
     rotate_right_button.click(function () { self.rotate_right(); });
-    this.rotation_controls = $('<span></span>').append(rotate_left_button).append(rotate_right_button);
+    this.rotation_controls = $('<span class="ductus_picture_controls"></span>').append(rotate_left_button).append(rotate_right_button);
     this.net_rotation = 0;
 
     // numerical rotation display, which acts as a fallback if canvas fails
