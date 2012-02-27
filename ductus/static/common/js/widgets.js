@@ -373,8 +373,8 @@ function PictureSearchWidget(initial_query_data) {
             '<form>' +
                 '<input name="q" class="input-query"/>' +
                 '<input type="submit" value="search"/>' +
-                '<input type="radio" name="search_by" value="text" checked/>' + gettext('Text') +
-                '<input type="radio" name="search_by" value="tags"/>' + gettext('Tags') + '<br/>' +
+                '<input type="radio" name="search_by" value="text" checked/>' + gettext('Full text') +
+                '<input type="radio" name="search_by" value="tags"/>' + gettext('Tags only') + '<br/>' +
                 gettext('Sort by:') +
                 '<input type="radio" name="sort" value="date-posted-desc"/>' + gettext('Recent') +
                 '<input type="radio" name="sort" value="interestingness-desc"/>' + gettext('Interesting') +
