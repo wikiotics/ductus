@@ -260,6 +260,7 @@ $(function () {
         // change the text of the column header
         this.span.text(heading);
         this.input.val(heading);
+        this.last_valid_heading = heading;
     }
 
     function FlashcardDeckEditor(fcdw) {
