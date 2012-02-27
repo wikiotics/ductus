@@ -94,6 +94,9 @@
     margin-left: 0.3em;
     margin-bottom: 0.4em;
 }
+.search_results span span {
+    margin: 5px;
+}
 .ductus_picture_controls {
     position: absolute;
     bottom: 0;
