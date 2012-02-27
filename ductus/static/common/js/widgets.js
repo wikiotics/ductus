@@ -369,7 +369,7 @@ function PictureSearchWidget(initial_query_data) {
         initial_query_data = {};
     }
 
-    Widget.call(this, '<div class="ductus_PictureSearchWidget"><form>' + gettext('What:') +' <input name="q" class="input-query"/>' + gettext('Where:') + ' <input name="place"/><input type="submit" value="search"/><br/><input type="radio" name="sort" value="date-posted-desc"/>' + gettext('Recent') + ' <input type="radio" name="sort" value="interestingness-desc"/>' + gettext('Interesting') + ' <input type="radio" name="sort" value="relevance" checked/>' + gettext('Relevant | Search by') +' <input type="radio" name="search_by" value="text" checked/>' + gettext('Text') + ' <input type="radio" name="search_by" value="tags"/>' + gettext('Tags') + '</form></div>');
+    Widget.call(this, '<div class="ductus_PictureSearchWidget"><form>' + gettext('What:') +' <input name="q" class="input-query"/><input type="submit" value="search"/><br/><input type="radio" name="sort" value="date-posted-desc"/>' + gettext('Recent') + ' <input type="radio" name="sort" value="interestingness-desc"/>' + gettext('Interesting') + ' <input type="radio" name="sort" value="relevance" checked/>' + gettext('Relevant | Search by') +' <input type="radio" name="search_by" value="text" checked/>' + gettext('Text') + ' <input type="radio" name="search_by" value="tags"/>' + gettext('Tags') + '</form></div>');
     if (DUCTUS_FLICKR_GROUP_ID) {
         $(this.elt).find("form").append('<div><input type="checkbox" name="group" value="' + DUCTUS_FLICKR_GROUP_ID + '"/> ' + gettext('Restrict to project\'s Flickr group') + '</div>');
     }
