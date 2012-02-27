@@ -243,8 +243,8 @@ function PictureWidget(picture_source, editable) {
     // rotation controls
     var rotate_left_button = $('<img alt="' + gettext('rotate left') + '" title="' + gettext('rotate left') + '" src="' + ductus_media_prefix + 'modules/picture/img/object-rotate-left.png" class="ductus_rotate_button"/>');
     var rotate_right_button = $('<img alt="' + gettext('rotate right') + '" title="' + gettext('rotate right') + '" src="' + ductus_media_prefix + 'modules/picture/img/object-rotate-right.png" class="ductus_rotate_button"/>');
-    rotate_left_button.click(function () { self.rotate_left(); });
-    rotate_right_button.click(function () { self.rotate_right(); });
+    rotate_left_button.click(function (e) { e.stopPropagation(); self.rotate_left(); });
+    rotate_right_button.click(function (e) { e.stopPropagation(); self.rotate_right(); });
     this.rotation_controls = $('<span class="ductus_picture_controls"></span>').append(rotate_left_button).append(rotate_right_button);
     this.net_rotation = 0;
 
