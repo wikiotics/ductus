@@ -371,7 +371,7 @@ function PictureSearchWidget(initial_query_data) {
 
     Widget.call(this, '<div class="ductus_PictureSearchWidget">' +
             '<form>' +
-                gettext('What:') +' <input name="q" class="input-query"/>' +
+                '<input name="q" class="input-query"/>' +
                 '<input type="submit" value="search"/><br/>' +
                 '<input type="radio" name="sort" value="date-posted-desc"/>' + gettext('Recent') +
                 ' <input type="radio" name="sort" value="interestingness-desc"/>' + gettext('Interesting') +
