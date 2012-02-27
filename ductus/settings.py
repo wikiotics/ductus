@@ -116,6 +116,7 @@ LANGUAGES = (
     ('cs', 'Czech'),
     ('de', 'German'),
     ('en', 'English'),
+    ('fr', 'French'),
 )
 
 TEMPLATE_LOADERS = (
