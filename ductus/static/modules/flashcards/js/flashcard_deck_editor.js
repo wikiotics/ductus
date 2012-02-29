@@ -358,7 +358,7 @@ $(function () {
             }
             caller._set_wrapped(FlashcardSide._global_audio_creator);
             FlashcardSide._global_audio_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                caller.set_from_json(model_json_repr);
+                this_.calling_widget.set_from_json(model_json_repr);
             });
             caller.ensure_last_row_empty();
         },
@@ -374,7 +374,7 @@ $(function () {
                         title: gettext('Search flickr for pictures')
             });
             FlashcardSide._global_picture_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                caller.set_from_json(model_json_repr);
+                this_.calling_widget.set_from_json(model_json_repr);
             });
             caller.ensure_last_row_empty();
         },
