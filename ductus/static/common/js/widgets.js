@@ -413,6 +413,9 @@ function PictureSearchWidget(initial_query_data) {
                     });
                     search_results_elt.append(picture_widget.elt);
                 }
+                if (data.photos.length == 0) {
+                    search_results_elt.append('<div>no results matching your query</div>');
+                }
                 if (data.pages > 1) {
                     var page_selector = $('<div class="pic_search_pager"></div>');
                     var first_page = (data.page < 5 ? 1 : data.page - 4);
