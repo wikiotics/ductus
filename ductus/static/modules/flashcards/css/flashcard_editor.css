@@ -97,6 +97,15 @@
 .search_results span span {
     margin: 5px;
 }
+.pic_search_pager a {
+    margin: 3px;
+    padding: 2px;
+    border: 1px solid #D3D3D3;
+}
+.pic_search_pager a.current_page {
+    color: black;
+    border: none;
+}
 .ductus_picture_controls {
     position: absolute;
     bottom: 0;

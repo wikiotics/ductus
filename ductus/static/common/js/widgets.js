@@ -424,6 +424,9 @@ function PictureSearchWidget(initial_query_data) {
                     }
                     for (var i = first_page; i < last_page; ++i) {
                         var page_item = $('<a href="#">' + i + '</a>').click(create_pager_handler(i));
+                        if (i == data.page) {
+                            page_item.addClass('current_page');
+                        }
                         page_selector.append(page_item);
                     }
                     search_results_elt.append(page_selector);
