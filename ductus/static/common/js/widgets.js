@@ -415,13 +415,14 @@ function PictureSearchWidget(initial_query_data) {
                 }
                 if (data.pages > 1) {
                     var page_selector = $('<div class="pic_search_pager"></div>');
-                    var max_pages = (data.pages > 10 ? 10 : data.pages);
+                    var first_page = (data.page < 5 ? 1 : data.page - 4);
+                    var last_page = (data.page < 5 ? 9 : (data.page < data.pages - 4 ? data.page + 4 : data.pages));
                     function create_pager_handler(i) {
                         return function() {
                             this_.elt.find('form').trigger('submit', i);
                         }
                     }
-                    for (var i = 1; i < max_pages; ++i) {
+                    for (var i = first_page; i < last_page; ++i) {
                         var page_item = $('<a href="#">' + i + '</a>').click(create_pager_handler(i));
                         page_selector.append(page_item);
                     }
