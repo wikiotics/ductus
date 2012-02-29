@@ -385,10 +385,11 @@ function PictureSearchWidget(initial_query_data) {
     }
     var search_results_elt = $('<div class="search_results"></div>');
     var this_ = this;
-    this.elt.find("form").submit(function () {
+    this.elt.find("form").submit(function (event, page_num) {
+        if (typeof(page_num) == 'undefined') { page_num = 1; }
         $.ajax({
             url: "/new/picture",
-            data: "view=flickr_search&" + $(this).serialize(),
+            data: "view=flickr_search&" + $(this).serialize() + '&page=' + page_num,
             dataType: "json",
             success: function (data, textStatus) {
                 search_results_elt.empty();
@@ -411,6 +412,20 @@ function PictureSearchWidget(initial_query_data) {
                         }]);
                     });
                     search_results_elt.append(picture_widget.elt);
+                }
+                if (data.pages > 1) {
+                    var page_selector = $('<div class="pic_search_pager"></div>');
+                    var max_pages = (data.pages > 10 ? 10 : data.pages);
+                    function create_pager_handler(i) {
+                        return function() {
+                            this_.elt.find('form').trigger('submit', i);
+                        }
+                    }
+                    for (var i = 1; i < max_pages; ++i) {
+                        var page_item = $('<a href="#">' + i + '</a>').click(create_pager_handler(i));
+                        page_selector.append(page_item);
+                    }
+                    search_results_elt.append(page_selector);
                 }
             },
             error: function (xhr, textStatus, errorThrown) {
