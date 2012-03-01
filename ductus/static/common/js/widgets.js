@@ -425,12 +425,18 @@ function PictureSearchWidget(initial_query_data) {
                             this_.elt.find('form').trigger('submit', i);
                         }
                     }
+                    if (data.page > 1) {
+                        $('<a href="#">Previous</a>').click(create_pager_handler(data.page - 1)).appendTo(page_selector);
+                    }
                     for (var i = first_page; i < last_page; ++i) {
                         var page_item = $('<a href="#">' + i + '</a>').click(create_pager_handler(i));
                         if (i == data.page) {
                             page_item.addClass('current_page');
                         }
                         page_selector.append(page_item);
+                    }
+                    if (data.page < data.pages) {
+                        $('<a href="#">Next</a>').click(create_pager_handler(data.page + 1)).appendTo(page_selector);
                     }
                     search_results_elt.append(page_selector);
                 }
