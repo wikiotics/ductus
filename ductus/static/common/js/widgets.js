@@ -410,6 +410,7 @@ function PictureSearchWidget(initial_query_data) {
                                 net_rotation: result.net_rotation // FIXME (?)
                                       }
                         }]);
+                        $(this_.elt).dialog('close');
                     });
                     search_results_elt.append(picture_widget.elt);
                 }
