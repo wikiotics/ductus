@@ -241,6 +241,7 @@ OGGINFO_PATH = '/usr/bin/ogginfo'
 FAAD_PATH = '/usr/bin/faad'
 MKVMERGE_PATH = '/usr/bin/mkvmerge'
 MP4BOX_PATH = '/usr/bin/MP4Box'
+FFMPEG_PATH = '/usr/bin/ffmpeg'
 
 try:
     from ductus_local_settings import *

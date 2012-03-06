@@ -55,17 +55,46 @@ def verify_ogg_vorbis(filename, error_messages):
 
     return 'audio/ogg'
 
+def verify_wav(filename, error_messages):
+    popen = subprocess.Popen([settings.FFMPEG_PATH, '-i', filename],
+                             stdout=DEVNULL, stderr=subprocess.PIPE)
+    stderr_output = popen.communicate()[1]
+
+    if 'Stream #0.0: Audio: pcm_s16le' not in stderr_output:
+        raise forms.ValidationError(error_messages['invalid_wav'])
+    return 'audio/wav'
+
 verification_map = {
     'audio/ogg': verify_ogg_vorbis,
     'application/ogg': verify_ogg_vorbis,
     'audio/mp4': verify_aac_lc,
     'video/mp4': verify_aac_lc, # as reported by Magic, sometimes
+    'audio/wav': verify_wav,
+    'audio/x-wav': verify_wav,  # as reported by Magic
 }
+
+def convert_wav_to_ogg(wav_filename):
+    """Convert the wav file whose name is given into ogg/vorbis format.
+
+    This is called by the field clean() method for wav files coming from the
+    online recorder.
+    """
+    ogg_filename = wav_filename + '.ogg'
+    popen = subprocess.Popen([settings.FFMPEG_PATH, '-i', wav_filename, '-acodec', 'libvorbis', ogg_filename],
+                            stdout=DEVNULL, stderr=subprocess.PIPE)
+    stderr_output = popen.communicate()[1]
+
+    if popen.returncode != 0:
+        raise forms.ValidationError(self.error_messages['wav_conversion_failed'])
+
+    return ogg_filename
 
 class AudioField(forms.FileField):
     default_error_messages = {
         'unrecognized_file_type': _(u'Unrecognized file type.  Please upload an ogg/vorbis file or mp4/AAC file.'),
         'invalid_vorbis': _(u'Not a valid ogg/vorbis file.'),
+        'invalid_wav': _(u'Not a valid wav file.'),
+        'wav_conversion_failed': _(u'There was a problem converting the WAV file you sent.'),
         'invalid_lc_aac': _(u'Not a valid low-complexity AAC file in mp4 container.'),
         'theora_stream_included': _(u'The given file contains a theora (video) stream, but only audio is expected.'),
         'file_too_large': _(u'The file you chose is too large.  Please select a file that contains fewer than %d bytes.'),
@@ -81,6 +110,7 @@ class AudioField(forms.FileField):
             raise forms.ValidationError(self.error_messages['file_too_large'] % max_blob_size)
 
         filename_requires_cleanup = False
+        oggfile_requires_cleanup = False
 
         try:
             if hasattr(data, 'temporary_file_path'):
@@ -106,11 +136,23 @@ class AudioField(forms.FileField):
             mime_type = verify_file_type(filename, self.error_messages)
             rv.ductus_mime_type = mime_type
 
+            # convert Wav files to ogg, so we don't waste precious space
+            # this code will disappear as soon as we have a clean way to compress
+            # audio on the client
+            if mime_type == 'audio/wav':
+                oggfile_requires_cleanup = True
+                ogg_filename = convert_wav_to_ogg(filename)
+                rv.ductus_mime_type = 'audio/ogg'
+                rv.content_type = 'audio/ogg'
+                rv.file = open(ogg_filename)
+
             return rv
 
         finally:
             if filename_requires_cleanup:
                 os.remove(filename)
+            if oggfile_requires_cleanup:
+                os.remove(ogg_filename)
 
 class AudioImportForm(forms.Form):
     file = AudioField()
