@@ -176,6 +176,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.markup',
+    'ductus',
     'ductus.initialize',
     'ductus.blacklist',
     'ductus.wiki',
