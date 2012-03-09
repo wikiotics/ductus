@@ -207,20 +207,30 @@ PictureModelWidget.creation_ui_widget = function () {
 PictureModelWidget.prototype.edit_ui_widget = function () {
     return { elt: this._picture_widget.rotation_controls };
 };
-PictureModelWidget.prototype.popup_html = {
-    'left': 'record (soon)',
-    'right': 'upload (soon)',
-    'top': 'search (soon)',
-    'bottom': 'delete'
-};
-PictureModelWidget.prototype.popup_callback = {
-    'left': function() {},
-    'right': function() {},
-    'top': function() {},
-    'bottom': function(target) {
-        target.elt.parent().data('widget_object').reset();
+PictureModelWidget.prototype.popup_settings = {
+    'left': {
+        'html': 'record (soon)',
+        'display': function() { return false; },
+        'callback': function() {}
+    },
+    'right': {
+        'html': 'upload (soon)',
+        'display': function() { return false; },
+        'callback': function() {}
+    },
+    'top': {
+        'html': 'search (soon)',
+        'display': function() { return false; },
+        'callback': function() {}
+    },
+    'bottom': {
+        'html': gettext('delete'),
+        'display': function() { return true; },
+        'callback': function(target) {
+            target.elt.parent().data('widget_object').reset();
+        }
     }
-};
+}
 
 function PictureWidget(picture_source, editable) {
     // a widget showing a picture
