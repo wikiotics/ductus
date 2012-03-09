@@ -642,7 +642,7 @@ $(function () {
         this.tagging_widget.elt.make_sidebar_widget(gettext('Tags'), this.sidebar);
 
         this.save_widget = new SaveWidget(this, 'the lesson');
-        this.save_widget.elt.make_sidebar_widget(gettext('Save'), this.sidebar);
+        this.save_widget.elt.make_sidebar_widget(gettext('Save...'), this.sidebar);
 
         this.record_initial_inner_blueprint();
     }
