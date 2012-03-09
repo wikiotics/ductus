@@ -99,6 +99,18 @@ $(function () {
             'callback': function(target) {
                 target.elt.parent().data('widget_object').reset();
             }
+        },
+        'right': {
+            'html': gettext('copy'),
+            'display': function() { return true; },
+            'callback': function(target) {
+                window.global_copy_paste_buffer = {
+                        resource: {
+                            fqn: PhraseWidget.prototype.fqn,
+                            phrase: { text: this_.calling_widget.wrapped.input.val() }
+                                  }
+                    };
+            }
         }
     }
 
