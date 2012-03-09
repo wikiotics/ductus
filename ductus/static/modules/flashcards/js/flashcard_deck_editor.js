@@ -92,15 +92,15 @@ $(function () {
     };
     PhraseWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/phrase}phrase';
     // define popup menu content and callbacks
-    PhraseWidget.prototype.popup_html = {
-        'bottom': gettext('delete')
-    };
-    PhraseWidget.prototype.popup_callback = {
-        // target is the phrase widget that generated the popup
-        'bottom': function(target) {
-            target.elt.parent().data('widget_object').reset();
+    PhraseWidget.prototype.popup_settings = {
+        'bottom': {
+            'html': gettext('delete'),
+            'display': function() { return true; },
+            'callback': function(target) {
+                target.elt.parent().data('widget_object').reset();
+            }
         }
-    };
+    }
 
     function PhraseCreator() {
         Widget.call(this, '<div class="ductus_PhraseCreator"><form><input/></form></div>');
