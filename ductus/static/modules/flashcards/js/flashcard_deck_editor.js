@@ -462,27 +462,32 @@ $(function () {
     };
     // popup definition for a flashcard (a row)
     // FIXME: the width of the whole flashcard is used for positioning popup...
-    Flashcard.prototype.popup_html = {
-        'left': gettext('add row'),
-        'bottom': gettext('delete row'),
-        'top': gettext('insert row')
-            // TODO: move row
-    };
-    // callbacks to handle clicks on an empty flashcard side
-    Flashcard.prototype.popup_callback = {
-        'left': function() {
-            var fcd = $(".ductus_FlashcardDeck").data('widget_object');
-            fcd.add_row();
+    Flashcard.prototype.popup_settings = {
+        'left': {
+            'html': gettext('add row'),
+            'display': function() { return true; },
+            'callback': function() {
+                var fcd = $(".ductus_FlashcardDeck").data('widget_object');
+                fcd.add_row();
+            }
         },
-        'bottom': function(fc) {
-            var fcd = $(".ductus_FlashcardDeck").data('widget_object');
-            fcd.delete_row(fc);
+        'bottom': {
+            'html': gettext('delete row'),
+            'display': function() { return true; },
+            'callback': function(fc) {
+                var fcd = $(".ductus_FlashcardDeck").data('widget_object');
+                fcd.delete_row(fc);
+            }
         },
-        'top': function(fc) {
-            var fcd = $(".ductus_FlashcardDeck").data('widget_object');
-            fcd.insert_row(fc.elt.index()-1);
-        },
-    };
+        'top': {
+            'html': gettext('insert row'),
+            'display': function() { return true; },
+            'callback': function(fc) {
+                var fcd = $(".ductus_FlashcardDeck").data('widget_object');
+                fcd.insert_row(fc.elt.index()-1);
+            }
+        }
+    }
 
     function ChoiceInteractionWidget(ci) {
         ModelWidget.call(this, ci, '<div class="ductus_ChoiceInteractionWidget"></div>');
