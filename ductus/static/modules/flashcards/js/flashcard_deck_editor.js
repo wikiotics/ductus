@@ -332,66 +332,75 @@ $(function () {
         }
     }
     // popup definition for an empty flashcard side
-    FlashcardSide.prototype.popup_html = {
-        'left': gettext('new phrase'),
-        'right': gettext('new audio'),
-        'top': gettext('new picture'),
-        'bottom': gettext('paste')
-    };
-    // callbacks to handle clicks on an empty flashcard side
-    FlashcardSide.prototype.popup_callback = {
-        'left': function(caller) {
-            caller.set_from_json({
-                resource: {
-                    phrase: { text: '' },
-                    fqn: PhraseWidget.prototype.fqn
+    FlashcardSide.prototype.popup_settings = {
+        'left': {
+            'html': gettext('new phrase'),
+            'display': function() { return true; },
+            'callback': function(caller) {
+                caller.set_from_json({
+                    resource: {
+                        phrase: { text: '' },
+                        fqn: PhraseWidget.prototype.fqn
+                    }
+                });
+                caller.ensure_last_row_empty();
+                caller.wrapped.input.focus();
+            },
+        },
+        'right': {
+            'html': gettext('new audio'),
+            'display': function() { return true; },
+            'callback': function(caller) {
+                // show an audio creation widget in the deck
+                if (!FlashcardSide._global_audio_creator) {
+                    FlashcardSide._global_audio_creator = AudioWidget.creation_ui_widget();
+                } else {
+                    online_recorder.init();
                 }
-            });
-            caller.ensure_last_row_empty();
-            caller.wrapped.input.focus();
+                caller._set_wrapped(FlashcardSide._global_audio_creator);
+                FlashcardSide._global_audio_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
+                    this_.calling_widget.set_from_json(model_json_repr);
+                });
+                caller.ensure_last_row_empty();
+            },
         },
-        'right': function(caller) {
-            // show an audio creation widget in the deck
-            if (!FlashcardSide._global_audio_creator) {
-                FlashcardSide._global_audio_creator = AudioWidget.creation_ui_widget();
-            } else {
-                online_recorder.init();
+        'top': {
+            'html': gettext('new picture'),
+            'display': function() { return true; },
+            'callback': function(caller) {
+                // new picture: show an overlay with the pictureSearchWidget in it
+                if (!FlashcardSide._global_picture_creator) {
+                    FlashcardSide._global_picture_creator = PictureModelWidget.creation_ui_widget();
+                }
+                $(FlashcardSide._global_picture_creator.elt).dialog({
+                    height: ($(window).height() - parseInt($(document.body).css("padding-top")) - parseInt($(document.body).css("padding-top"))) * 0.8,
+                width: ($(window).width() - parseInt($(document.body).css("padding-left")) - parseInt($(document.body).css("padding-right"))) * 0.8 + "px",
+                modal: true,
+                title: gettext('Search flickr for pictures')
+                });
+                FlashcardSide._global_picture_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
+                    this_.calling_widget.set_from_json(model_json_repr);
+                });
+                caller.ensure_last_row_empty();
+            },
+        },
+        'bottom': {
+            'html': gettext('paste'),
+            'display': function() { return true; },
+            'callback': function(caller) {
+                var bp = $.extend(true,
+                        {
+                            resource: {
+                                fqn: AudioWidget.prototype.fqn
+                            }
+                        },
+                        window.global_copy_paste_buffer
+                        );
+                caller.set_from_json(bp);
+                caller.ensure_last_row_empty();
             }
-            caller._set_wrapped(FlashcardSide._global_audio_creator);
-            FlashcardSide._global_audio_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                this_.calling_widget.set_from_json(model_json_repr);
-            });
-            caller.ensure_last_row_empty();
         },
-        'top': function(caller) {
-            // new picture: show an overlay with the pictureSearchWidget in it
-            if (!FlashcardSide._global_picture_creator) {
-                FlashcardSide._global_picture_creator = PictureModelWidget.creation_ui_widget();
-            }
-            $(FlashcardSide._global_picture_creator.elt).dialog({
-                        height: ($(window).height() - parseInt($(document.body).css("padding-top")) - parseInt($(document.body).css("padding-top"))) * 0.8,
-                        width: ($(window).width() - parseInt($(document.body).css("padding-left")) - parseInt($(document.body).css("padding-right"))) * 0.8 + "px",
-                        modal: true,
-                        title: gettext('Search flickr for pictures')
-            });
-            FlashcardSide._global_picture_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                this_.calling_widget.set_from_json(model_json_repr);
-            });
-            caller.ensure_last_row_empty();
-        },
-        'bottom': function(caller) {
-            var bp = $.extend(true,
-                    {
-                        resource: {
-                            fqn: AudioWidget.prototype.fqn
-                                  }
-                    },
-                    window.global_copy_paste_buffer
-            );
-            caller.set_from_json(bp);
-            caller.ensure_last_row_empty();
-        }
-    };
+    }
     FlashcardSide.widgets = [
         ['picture', PictureModelWidget],
         ['audio', AudioWidget],
