@@ -597,24 +597,34 @@ AudioWidget.prototype._append_audio_control = function (src) {
 };
 // content of popup menu when clicking on an audio widget
 // null will disable the corresponding submenu
-AudioWidget.prototype.popup_html = {
-    'left': gettext('record'),
-    'right': gettext('copy'),
-    'top': gettext('search'),
-    'bottom': gettext('delete')
-};
-// callbacks to handle clicks on the menu for an audio widget
-AudioWidget.prototype.popup_callback = {
-    'left': function() {},
-    'right': function() {
-        // copy the blueprint for pasting in another cell
-        window.global_copy_paste_buffer = this_.calling_widget.blueprint_repr();
+AudioWidget.prototype.popup_settings = {
+    'left': {
+        'html': gettext('record'),
+        'display': function() { return false; },
+        'callback': function() {}
     },
-    'top': function() {},
-    'bottom': function(target) {
-        target.elt.parent().data('widget_object').reset();
+    'right': {
+        'html': gettext('copy'),
+        'display': function() { return true; },
+        'callback': function() {
+            // copy the blueprint for pasting in another cell
+            window.global_copy_paste_buffer = this_.calling_widget.blueprint_repr();
+        },
+    },
+    'top': {
+        'html': gettext('search'),
+        'display': function() { return false; },
+        'callback': function() {}
+    },
+    'bottom': {
+        'html': gettext('delete'),
+        'display': function() { return true; },
+        'callback': function(target) {
+            target.elt.parent().data('widget_object').reset();
+        }
     }
-};
+}
+
 AudioWidget.creation_ui_widget = function () {
     if (typeof FileReader == 'undefined') {
         // File API is not supported, so don't provide file selection eleme
