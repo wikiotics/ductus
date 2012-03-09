@@ -50,7 +50,8 @@ $(function () {
             this.dblclick(dblclick_handler);
         }
         return this.each(function () {
-            $(this).click(function () {
+            $(this).click(function (e) {
+                e.stopPropagation();
                 $('#ductus_PopupWidget').hide();
                 _select($(this), wrapped_set_func);
                 if (ui_widget_func)
