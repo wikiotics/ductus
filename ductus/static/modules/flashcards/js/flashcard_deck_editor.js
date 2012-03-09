@@ -386,7 +386,9 @@ $(function () {
         },
         'bottom': {
             'html': gettext('paste'),
-            'display': function() { return true; },
+            'display': function() {
+                return (typeof(window.global_copy_paste_buffer) != 'undefined');
+            },
             'callback': function(caller) {
                 var bp = $.extend(true,
                         {
