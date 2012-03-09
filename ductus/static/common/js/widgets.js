@@ -608,7 +608,14 @@ AudioWidget.prototype.popup_settings = {
         'display': function() { return true; },
         'callback': function() {
             // copy the blueprint for pasting in another cell
-            window.global_copy_paste_buffer = this_.calling_widget.blueprint_repr();
+            window.global_copy_paste_buffer = $.extend(true,
+                    {
+                        resource: {
+                                      fqn: AudioWidget.prototype.fqn
+                                  }
+                    },
+                    this_.calling_widget.blueprint_repr()
+                    );
         },
     },
     'top': {

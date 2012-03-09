@@ -390,15 +390,7 @@ $(function () {
                 return (typeof(window.global_copy_paste_buffer) != 'undefined');
             },
             'callback': function(caller) {
-                var bp = $.extend(true,
-                        {
-                            resource: {
-                                fqn: AudioWidget.prototype.fqn
-                            }
-                        },
-                        window.global_copy_paste_buffer
-                        );
-                caller.set_from_json(bp);
+                caller.set_from_json(window.global_copy_paste_buffer);
                 caller.ensure_last_row_empty();
             }
         },
