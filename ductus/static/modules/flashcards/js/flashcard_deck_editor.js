@@ -802,6 +802,20 @@ $(function () {
         }
 
         // setup the popup menu content and callbacks
+        if (popup_caller.popup_settings) {
+            $.each(popup_caller.popup_settings, function(side, settings) {
+                if (settings['display']()) {
+                    this_.setup_popup(side,
+                        settings['html'],
+                        function(arg) {
+                            // arg is a custom variable passed by the click event handler upon binding
+                            settings['callback'](arg);
+                            this_.elt.hide();
+                        },
+                        popup_caller);
+                }
+            });
+        }
         if (popup_caller.popup_html) {
             $.each(popup_caller.popup_html, function(side, content) {
                 this_.setup_popup(side,
