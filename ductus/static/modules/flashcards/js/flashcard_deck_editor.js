@@ -758,6 +758,18 @@ $(function () {
         this.elt.css('min-width', this.table.width() + $('#side_toolbar').width() + 50);
     }
 
+    /*
+     * popup menu for flashcard deck editor elements.
+     * Define a popup menu for a widget by giving its prototype a property as:
+     * MyWidget.prototype.popup_settings = {
+     *  'left': {
+     *      'html': 'the html to display in the menu side',
+     *      'display': function() { return true if the side should be shown, false if not; },
+     *      'callback': function() { what_to_do_when_the_menu_is_clicked(); }
+     *      },
+     *  '...other sides...'
+     *  }
+     */
     function PopupWidget(calling_widget) {
         // the widget holding the popup menu that shows up when clicking items on the flashcard deck
         Widget.call(this, '<div id="ductus_PopupWidget"></div>');
