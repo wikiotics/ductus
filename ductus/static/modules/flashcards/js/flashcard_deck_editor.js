@@ -886,12 +886,14 @@ $(function () {
         topw.position({
                     "my": "center bottom",
                     "at": "center top",
-                    "of": positioning_elt
+                    "of": positioning_elt,
+                    "collision": "none"
         });
         bottomw.position({
                     "my": "center top",
                     "at": "center bottom",
-                    "of": positioning_elt
+                    "of": positioning_elt,
+                    "collision": "none"
         });
     };
 
