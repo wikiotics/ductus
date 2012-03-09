@@ -780,9 +780,6 @@ $(function () {
     PopupWidget.prototype.show_popup = function (calling_widget) {
         // show the popup menu according to context. calling_widget is the widget that was clicked.
 
-        // don't do anything if it's the same widget we just clicked
-        if (this.calling_widget === calling_widget)
-            return;
         this.calling_widget = calling_widget;
         this_ = this;
         this.hide_popup();
