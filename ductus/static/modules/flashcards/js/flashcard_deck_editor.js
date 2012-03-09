@@ -582,19 +582,22 @@ $(function () {
     FlashcardColumn.prototype = chain_clone(Widget.prototype);
 
     // define popup callbacks to handle clicks on a column header
-    FlashcardColumn.prototype.popup_html = {
-        'left': gettext('add column'),
-        'bottom': gettext('delete column')
-            // TODO: move column
-    };
-    FlashcardColumn.prototype.popup_callback = {
-        'left': function(column) {
-            column.fcd.add_column();
+    FlashcardColumn.prototype.popup_settings = {
+        'left': {
+            'html': gettext('add column'),
+            'display': function() { return true; },
+            'callback': function(column) {
+                column.fcd.add_column();
+            }
         },
-        'bottom': function() {
-            console.log('would delete column now');
+        'bottom': {
+            'html': gettext('delete column'),
+            'display': function() { return false; },
+            'callback': function() {
+                console.log('would delete column now');
+            }
         }
-    };
+    }
 
     function FlashcardDeck(fcd) {
         // if new, create default nested json with one column and one row
