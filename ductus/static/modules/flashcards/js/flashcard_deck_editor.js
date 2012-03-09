@@ -877,5 +877,10 @@ $(function () {
     fcdw.ensure_min_width();
 
     $("#side_toolbar_spacer").appendTo("body");
+
+    // hide popup for otherwise unhandled clicks
+    $(document).click( function(e) {
+        $('#ductus_PopupWidget').data('widget_object').hide_popup();
+    });
 });
 
