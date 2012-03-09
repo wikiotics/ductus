@@ -214,9 +214,18 @@ PictureModelWidget.prototype.popup_settings = {
         'callback': function() {}
     },
     'right': {
-        'html': 'upload (soon)',
-        'display': function() { return false; },
-        'callback': function() {}
+        'html': gettext('copy'),
+        'display': function() { return true; },
+        'callback': function() {
+            // copy the blueprint for pasting in another cell
+            window.global_copy_paste_buffer = {
+                        resource: {
+                            fqn: PictureModelWidget.prototype.fqn,
+                            net_rotation: this_.calling_widget.wrapped._picture_widget.net_rotation
+                        },
+                        href: this_.calling_widget.wrapped.initial_href
+                    };
+        },
     },
     'top': {
         'html': 'search (soon)',
