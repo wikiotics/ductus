@@ -10,7 +10,7 @@
 {% block content %}
 <ul>
 {% for revision in revision_list %}
-<li>{% if revision.get_absolute_url %}<a href="{{ revision.get_absolute_url }}">{% endif %}{{ revision.page.name }}{% if revision.get_absolute_url %}</a>{% endif %} <span dir="{{ LANGUAGE_BIDI|yesno:"rtl,ltr" }}">{% if not revision.get_absolute_url %}(deleted){% endif %} &ndash; {{ revision.timestamp|date:"Y-m-d H:i:s T" }} {% if revision.author %}{{ revision.author }}{% else %}{{ revision.author_ip }}{% endif %} {% if revision.log_message %}&ndash; <i>{{ revision.log_message }}</i>{% endif %}</span></li>
+<li>{% if revision.get_absolute_url %}<a href="{{ revision.get_absolute_url }}">{% endif %}<bdi>{{ revision.page.name }}</bdi>{% if revision.get_absolute_url %}</a>{% endif %} <span dir="{{ LANGUAGE_BIDI|yesno:"rtl,ltr" }}">{% if not revision.get_absolute_url %}{% trans "(deleted)" %}{% endif %} &ndash; {{ revision.timestamp|date:"Y-m-d H:i:s T" }} {% if revision.author %}<bdi>{{ revision.author }}</bdi>{% else %}{{ revision.author_ip }}{% endif %} {% if revision.log_message %}&ndash; <i><bdi>{{ revision.log_message }}</bdi></i>{% endif %}</span></li>
 {% endfor %}
 </ul>
 <div>
