@@ -851,18 +851,6 @@ $(function () {
                 }
             });
         }
-        if (popup_caller.popup_html) {
-            $.each(popup_caller.popup_html, function(side, content) {
-                this_.setup_popup(side,
-                    content,
-                    function(arg) {
-                        // arg is a custom variable passed by the click event handler upon binding
-                        popup_caller.popup_callback[side](arg);
-                        this_.elt.hide();
-                    },
-                    popup_caller);
-            });
-        }
 
         // if a row was clicked, make the popup display around the row header
         // if a cell was clicked, make sure we do not hide any parts of it
