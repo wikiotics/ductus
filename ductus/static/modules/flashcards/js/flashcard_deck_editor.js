@@ -883,6 +883,12 @@ $(function () {
                     "of": positioning_elt,
                     "collision": "none"
         });
+        $(document).bind('keypress keyup', function(event) {
+            if (event.keyCode == 27) {
+                this_.hide_popup();
+                $(document).unbind('keypress keyup');
+            }
+        });
     };
 
     function TaggingWidget(tags) {
