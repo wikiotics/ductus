@@ -1,13 +1,10 @@
 #side_toolbar, #side_toolbar_spacer {
-    height: 100%;
     width: 200px;
 }
 #side_toolbar {
     position: fixed;
     right: 0;
-    bottom: 0;
     top: 20px;
-    background: #bbb;
     font-size: 85%;
 }
 #ductus_PopupWidget {
@@ -19,14 +16,12 @@
 .ductus_SidebarWidgetHeader {
     font-size: 125%;
     padding: 5px;
-    background: url("/static/common/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
-    border: 1px solid #D3D3D3;
-    color: #555555;
     cursor: pointer;
     width: 95%;
 }
 .ductus_SidebarWidget {
     background: white;
+    border: 1px solid #D3D3D3;
 }
 .ductus_Popup {
     border: 1px solid #D3D3D3;
