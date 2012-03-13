@@ -67,6 +67,7 @@ $(function () {
         var header = $('<div class="ductus_SidebarWidgetHeader">' + title + '</div>');
         this.before(header);
         this.addClass('ductus_SidebarWidget');
+        header.button({ icons: { secondary: "ui-icon-triangle-1-s" } });
         header.bind('click', function() {
             $(this).next().toggle();
             return false;
