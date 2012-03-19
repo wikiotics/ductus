@@ -34,7 +34,7 @@ Wami.prototype.setup = function() {
     $(this.id).html(this.noflash_warning);
     
     // This is the minimum size due to the microphone security panel
-    swfobject.embedSWF(wami_path + "Wami.swf", this.id, 214, 137, this.version, null, this.flashVars,
+    swfobject.embedSWF(ductus_media_prefix + "modules/audio/wami/Wami.swf", this.id, 214, 137, this.version, null, this.flashVars,
 		       this.params);
     
     // Without this line, Firefox has a dotted outline of the flash

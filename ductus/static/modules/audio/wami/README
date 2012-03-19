@@ -1,0 +1,56 @@
+This code is a fork from the main wami recorder found at
+https://code.google.com/p/wami-recorder/
+with adaptations for use with Ductus on http://wikiotics.org
+
+Copyright (c) 2012 Laurent Savaete <laurent@wikiotics.org>
+
+This code is released under the MIT license.
+
+Original code:
+Copyright (c) 2011
+Spoken Language Systems Group
+MIT Computer Science and Artificial Intelligence Laboratory
+Massachusetts Institute of Technology
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use, copy,
+modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+INSTALLATION
+------------
+
+You need the flex SDK (v4.6 or more recent) to compile the flash swf file from this source code.
+You can obtain the SDK from https://www.adobe.com/devnet/flex/flex-sdk-download.html
+
+Before compiling:
+Edit the Makefile to point have MXMLC pointing at the flex compiler.
+By default, extracting the SDK archive under /usr/local (on unix compatible systems) should get you all set.
+
+Edit DUCTUS_ROOT to point to the root of your ductus installation.
+
+Then run:
+make
+make install (will copy wami.swf where ductus javascript code expects it)
+
+
+CONTACT
+-------
+You can get in touch with the author for support through the ductus homepage:
+http://code.ductus.us
