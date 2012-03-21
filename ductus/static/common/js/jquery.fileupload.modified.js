@@ -110,7 +110,7 @@
             } else {
                 if (file.hasOwnProperty('recordedContent')) {
                     // for flash recorded audio only, which is passed as a string from flash to JS
-                    var boundary = '12345678901234567890';
+                    var boundary = '----MultiPartFormBoundary' + (new Date()).getTime();
                     xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
 
                     var body = buildMultiPartFormData(
