@@ -1,7 +1,9 @@
 {% extends "ductus_base.html" %}
 {% load i18n %}
 
-{% block content %}
+{% block head %}
+{{ block.super }}
+
 {# swfobject is a commonly used library to embed Flash content #}
 <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/swfobject-2.2.min.js"></script>
 
@@ -9,7 +11,7 @@
 <script type="text/javascript" src="{{ ductus_media_prefix }}modules/audio/recorder.js"></script>
 <script type="text/javascript" src="{{ ductus_media_prefix }}modules/audio/gui_jquery.js"></script>
 
-<script>
+<script type="text/javascript">
 	var recordButton, playButton;
 	var recordInterval, playInterval;
 
@@ -141,6 +143,9 @@
 	}
 	$(document).ready( function(){ setupRecorder(); });
 </script>
+{% endblock %}
+
+{% block content %}
 <p>{% trans "Please upload an ogg/vorbis file (preferably), or a mp4/aac file." %}</p>
 <form method="post" action="{{ request.escaped_full_path }}" enctype="multipart/form-data">
 <table>
