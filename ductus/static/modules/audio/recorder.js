@@ -4,7 +4,6 @@
  * Copyright (C) 2011 Ian McGraw <mcgrawian@gmail.com>
  * Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  */
-//var Wami = window.Wami || {};
 
 function Wami(id, callback) {
     this.id = id;
