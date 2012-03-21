@@ -26,7 +26,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy
-from django.contrib.sites.models import Site
 
 from ductus.resource.ductmodels import BlueprintSaveContext
 from ductus.resource import get_resource_database
