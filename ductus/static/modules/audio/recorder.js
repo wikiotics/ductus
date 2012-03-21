@@ -38,7 +38,7 @@ Wami.prototype.setup = function() {
     
     // Without this line, Firefox has a dotted outline of the flash
     swfobject.createCSS("#" + this.id, "outline:none");
-}   // setup()
+};  // setup()
 
 
     /**
@@ -49,7 +49,7 @@ Wami.prototype.supportsTransparency = function() {
 	// I can't think of a better way to know if wmode is supported or
 	// not... since not supporting it (like Flash on Ubuntu) is a bug.
     return (navigator.platform.indexOf("Linux") == -1);
-}
+};
     
     /**
      * Attach all the audio methods to the Wami namespace in the callback.
@@ -74,20 +74,20 @@ Wami.prototype.swfinit_callback = function() {
 	this.delegate('uploadAudio');
 
 	this.callback();
-}
+};
 
 Wami.prototype.delegate = function(name) {
     wami = this;
     this[name] = function() {
         return wami.recorder[name].apply(wami.recorder, arguments);
-    }
-}
+    };
+};
 
 Wami.prototype.show = function() {
     if (!supportsTransparency()) {
         this.recorder.style.visibility = "visible";
     }
-}
+};
 
 Wami.prototype.hide = function() {
     // Hiding flash correctly in all the browsers is tricky. Please read:
@@ -96,17 +96,17 @@ Wami.prototype.hide = function() {
     if (!this.supportsTransparency()) {
         this.recorder.style.visibility = "hidden";
     }
-}
+};
 
 Wami.prototype.flashVars = {
     visible : false,
     loadedCallback : "global_Wami.swfinit_callback",
     localMode : true
-}
+};
 
 Wami.prototype.params = {
 	allowScriptAccess : "always"
-}
+};
 /*
  * Base64 encode/decode from http://ostermiller.org/calc/encode.html
  * Copyright Stephen Ostermiller 2003-2006
@@ -207,7 +207,7 @@ function decodeBase64(str){
  */
 Wami.prototype.handle_upload_errors = function(e) {
 	online_recorder.onError(e);
-}
+};
 Wami.prototype.handle_upload_success = function(data) {
     // feedback the urn to the recorded audio to the caller
     online_recorder.init();
@@ -216,7 +216,7 @@ Wami.prototype.handle_upload_success = function(data) {
               resource: { fqn: AudioWidget.prototype.fqn }
             }
     );
-}
+};
 Wami.prototype.uploadRecordedFile = function(url) {
 	this.base64audioBytes = this.getBase64AudioData();
 	var crlf = '\r\n';
@@ -273,4 +273,4 @@ Wami.prototype.uploadRecordedFile = function(url) {
 				 wami.handle_upload_errors(e);
 		}
 	}).handleFiles([this.recordedFile]);
-}
+};
