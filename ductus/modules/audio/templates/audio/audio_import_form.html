@@ -139,7 +139,7 @@
 		recordButton.setEnabled(true);
 		playButton.setEnabled(true);
 	}
-	$(document).ready( function(){ setupRecorder(); });
+	$(document).ready( function(){ setupRecorder(); });
 </script>
 <p>{% trans "Please upload an ogg/vorbis file (preferably), or a mp4/aac file." %}</p>
 <form method="post" action="{{ request.escaped_full_path }}" enctype="multipart/form-data">
