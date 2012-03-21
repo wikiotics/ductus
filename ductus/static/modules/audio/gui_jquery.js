@@ -5,7 +5,7 @@
  * Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  */
 var Wami = window.Wami || {};
-var button_image = "/static/modules/audio/buttons.png";
+Wami.button_image = ductus_media_prefix + "modules/audio/buttons.png";
 Wami.Button = function(guiID, type) {
 	var self = this;
 	self.active = false;
@@ -87,7 +87,7 @@ Wami.Button = function(guiID, type) {
 			width: '56px',
 		    	height: '63px',
 		    	cursor: 'pointer',
-		    	background: "url("+button_image+") no-repeat",
+		    	background: "url(" + Wami.button_image + ") no-repeat",
 		    	'background-position': background(1),
 		    	'text-align': 'center'
 		} );
@@ -104,7 +104,7 @@ Wami.Button = function(guiID, type) {
 		    	margin: 'auto',
 		    	cursor: 'pointer',
 		    	position: 'relative',
-		    	background: "url("+button_image+") no-repeat",
+		    	background: "url(" + Wami.button_image + ") no-repeat",
 		    	'background-position': meter(2)
 		} );
 		self.guidiv.append(self.meterDiv);
@@ -116,7 +116,7 @@ Wami.Button = function(guiID, type) {
 		    	margin: 'auto',
 		    	cursor: 'pointer',
 		    	position: 'relative',
-		    	background: "url("+button_image+") no-repeat",
+		    	background: "url(" + Wami.button_image + ") no-repeat",
 		    	'background-position': meter(1)
 		} );
 		self.meterDiv.append(self.coverDiv);
