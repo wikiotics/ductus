@@ -5,7 +5,7 @@
  * Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  */
 var Wami = window.Wami || {};
-var button_image = "/static/modules/audio/buttons.png"
+var button_image = "/static/modules/audio/buttons.png";
 Wami.Button = function(guiID, type) {
 	var self = this;
 	self.active = false;
@@ -128,7 +128,7 @@ Wami.Button = function(guiID, type) {
 	
 	self.isActive = function() {
 		return self.active;
-	}
+	};
 
 	self.setActivity = function(level) {
 		self.guidiv.onmouseout = function() {
@@ -148,7 +148,7 @@ Wami.Button = function(guiID, type) {
 		var height = (maxHeight + totalHeight - Math.floor(level / 100
 				* totalHeight));
 		self.coverDiv.css( { height: height + "px" } );
-	}
+	};
 
 	self.setEnabled = function(enable) {
 		var guidiv = self.guidiv;
@@ -174,10 +174,10 @@ Wami.Button = function(guiID, type) {
 			guidiv.onmouseover = function() {
 			};
 		}
-	}
+	};
 
 	init(guiID, type);
-}
+};
 // The types of buttons we can show:
 Wami.Button.RECORD = "record";
 Wami.Button.PLAY = "play";
