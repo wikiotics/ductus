@@ -230,7 +230,7 @@ Wami.prototype.uploadRecordedFile = function(url) {
 		size: this.audioBytes.length,
 		recordedContent: this.audioBytes
 	};
-    wami = this;
+	var wami = this;
 	$.ductusFileUpload({
 		url: '/new/audio',
 		onLoad: function (e, files, index, xhr) {
