@@ -54,10 +54,9 @@ Wami.Button = function(guiID, type) {
 		}
 	}
 
-	function mouseHandler(e) {
+	function mouseHandler(ev) {
 		var rightclick;
-		if (!e)
-			var e = window.event;
+		var e = ev || window.event;
 		if (e.which)
 			rightclick = (e.which == 3);
 		else if (e.button)
