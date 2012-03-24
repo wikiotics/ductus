@@ -219,13 +219,13 @@ PictureModelWidget.prototype.popup_settings = {
         'callback': function() {
             // copy the blueprint for pasting in another cell
             window.global_copy_paste_buffer = {
-                        resource: {
-                            fqn: PictureModelWidget.prototype.fqn,
-                            net_rotation: this_.calling_widget.wrapped._picture_widget.net_rotation
-                        },
-                        href: this_.calling_widget.wrapped.initial_href
-                    };
-        },
+                resource: {
+                    fqn: PictureModelWidget.prototype.fqn,
+                    net_rotation: this_.calling_widget.wrapped._picture_widget.net_rotation
+                },
+                href: this_.calling_widget.wrapped.initial_href
+            };
+        }
     },
     'top': {
         'html': 'search (soon)',
@@ -239,7 +239,7 @@ PictureModelWidget.prototype.popup_settings = {
             target.elt.parent().data('widget_object').reset();
         }
     }
-}
+};
 
 function PictureWidget(picture_source, editable) {
     // a widget showing a picture
@@ -338,15 +338,15 @@ PictureWidget.prototype.set_rotation = function (degrees) {
                 this.canvas.data("widget_object", this); // so the drop event can find the widget
                 this.canvas.draggable({
                     helper: function () {
-                                // cloning a canvas doesn't clone its contents, so we do that here
-                                var old_canvas = $(this);
-                                var new_canvas = $('<canvas></canvas>');
-                                var w = old_canvas.attr('width'), h = old_canvas.attr('height');
-                                new_canvas.attr('width', w).attr('height', h);
-                                var canvas_ctx = new_canvas[0].getContext('2d');
-                                canvas_ctx.drawImage(this, 0, 0);
-                                return new_canvas;
-                            }
+                        // cloning a canvas doesn't clone its contents, so we do that here
+                        var old_canvas = $(this);
+                        var new_canvas = $('<canvas></canvas>');
+                        var w = old_canvas.attr('width'), h = old_canvas.attr('height');
+                        new_canvas.attr('width', w).attr('height', h);
+                        var canvas_ctx = new_canvas[0].getContext('2d');
+                        canvas_ctx.drawImage(this, 0, 0);
+                        return new_canvas;
+                    }
                 });
                 this.image_holder.append(this.canvas);
             }
@@ -411,11 +411,12 @@ function PictureSearchWidget(initial_query_data) {
             data: "view=flickr_search&" + $(this).serialize() + '&page=' + page_num,
             dataType: "json",
             success: function (data, textStatus) {
+                var i;
                 search_results_elt.empty();
                 if (data.place) {
                     search_results_elt.append($("<div></div>").text(data.place));
                 }
-                for (var i = 0; i < data.photos.length; ++i) {
+                for (i = 0; i < data.photos.length; ++i) {
                     var photo = data.photos[i];
                     var picture_source = new FlickrPictureSource(photo);
                     var picture_widget = new PictureWidget(picture_source, false);
@@ -427,7 +428,7 @@ function PictureSearchWidget(initial_query_data) {
                                 fqn: PictureModelWidget.prototype.fqn,
                                 _picture_source: result._picture_source,
                                 net_rotation: result.net_rotation // FIXME (?)
-                                      }
+                            }
                         }]);
                         $(this_.elt).dialog('close');
                     });
@@ -443,12 +444,12 @@ function PictureSearchWidget(initial_query_data) {
                     function create_pager_handler(i) {
                         return function() {
                             this_.elt.find('form').trigger('submit', i);
-                        }
+                        };
                     }
                     if (data.page > 1) {
                         $('<a href="#">Previous</a>').click(create_pager_handler(data.page - 1)).appendTo(page_selector);
                     }
-                    for (var i = first_page; i < last_page; ++i) {
+                    for (i = first_page; i < last_page; ++i) {
                         var page_item = $('<a href="#">' + i + '</a>').click(create_pager_handler(i));
                         if (i == data.page) {
                             page_item.addClass('current_page');
@@ -617,15 +618,12 @@ AudioWidget.prototype.popup_settings = {
         'display': function() { return true; },
         'callback': function() {
             // copy the blueprint for pasting in another cell
-            window.global_copy_paste_buffer = $.extend(true,
-                    {
-                        resource: {
-                                      fqn: AudioWidget.prototype.fqn
-                                  }
-                    },
-                    this_.calling_widget.blueprint_repr()
-                    );
-        },
+            window.global_copy_paste_buffer = $.extend(true, {
+                resource: {
+                    fqn: AudioWidget.prototype.fqn
+                }
+            }, this_.calling_widget.blueprint_repr());
+        }
     },
     'top': {
         'html': gettext('search'),
@@ -639,18 +637,18 @@ AudioWidget.prototype.popup_settings = {
             target.elt.parent().data('widget_object').reset();
         }
     }
-}
+};
 
 AudioWidget.creation_ui_widget = function () {
     if (typeof FileReader == 'undefined') {
-        // File API is not supported, so don't provide file selection eleme
+        // File API is not supported, so don't provide file selection element
         return { elt: $('<div>' + gettext('Your browser does not support File API, so you will not be able to upload anything.') + '</div>') };
     }
     var upload_widget_elt = $('<div class="AudioWidget_creation_widget"></div>');
-    var file_input = '<span class="ductus_file_upload_wrapper">' +
+    var file_input = ('<span class="ductus_file_upload_wrapper">' +
         '<input type="file" accept="audio/ogg" />' +
         '<span class="ductus_file_upload_button">' + gettext('Upload a file') + '</span>' +
-        '</span>';
+        '</span>');
     var input = $(file_input).appendTo(upload_widget_elt).find('input');
     $(file_input).button();
     input.change(function () {
@@ -891,19 +889,19 @@ SaveWidget.prototype.perform_save = function (save_and_return) {
             log_message: this_.elt.find(".log_message").val()
             },
             success: function (data) {
-                         // go to the newly-saved page
-                         if (save_and_return) {
-                             window.location = (data.page_url || resolve_urn(data.urn));
-                         } else {
-                             $('<span class="ductus_save_notice">' + gettext('saved!') + '</span>').appendTo(this_.elt).delay(3000).fadeOut(400, function () { $(this).remove(); });
-                         }
-                     },
+                // go to the newly-saved page
+                if (save_and_return) {
+                    window.location = (data.page_url || resolve_urn(data.urn));
+                } else {
+                    $('<span class="ductus_save_notice">' + gettext('saved!') + '</span>').appendTo(this_.elt).delay(3000).fadeOut(400, function () { $(this).remove(); });
+                }
+            },
             error: function (xhr, textStatus, errorThrown) {
-                       alert(xhr.status + gettext(' error. save failed.'));
-                   },
+                alert(xhr.status + gettext(' error. save failed.'));
+            },
             complete: function (xhr, textStatus) {
-                          blocking_elements.unblock();
-                      },
+                blocking_elements.unblock();
+            },
             type: 'POST',
             dataType: 'json'
         });
@@ -931,7 +929,7 @@ SaveWidget.prototype.perform_save = function (save_and_return) {
  */
 var online_recorder;    // make this a global variable since this code is too messy. FIXME: clean this up
 function OnlineRecorder() {
-    var recorder_div =
+    var recorder_div = (
         '<div id="ductus_OnlineRecorder" style="position: relative; width:414px">' +
             '<div id="record_online_button"></div>' +
             '<div id="rec_controls">' +
@@ -942,6 +940,7 @@ function OnlineRecorder() {
             '<div id="feedbackDiv" style="position: absolute; left: 30px; top: 95px"></div>' +
             '<div id="wami"></div>' +
         '</div>'
+    );
     Widget.call(this, recorder_div);
     online_recorder = this;     // set the global variable
     this.init();
@@ -962,7 +961,7 @@ OnlineRecorder.prototype.init = function() {
         $(this).hide();
         online_recorder.setupRecorder();
     });
-}
+};
 OnlineRecorder.prototype.setupRecorder = function() {
     if (!this.Wami) {
         this.Wami = new Wami('wami', function() {
@@ -972,7 +971,7 @@ OnlineRecorder.prototype.setupRecorder = function() {
     } else {
         this.checkSecurity();
     }
-}
+};
 OnlineRecorder.prototype.setupButtons = function() {
     this.elt.find('button').attr('visibility', 'hidden');
     this.elt.find('#rec_controls').hide();
@@ -982,10 +981,10 @@ OnlineRecorder.prototype.setupButtons = function() {
     this.elt.find('#rec_controls').buttonset();
     this.elt.find('#rec_controls').show();
     this.record_online_btn.hide();
-}
+};
 OnlineRecorder.prototype.hideButtons = function() {
     this.elt.find('#rec_controls').hide();
-}
+};
 OnlineRecorder.prototype.showRecordButton = function(start_stop) {
     this.record_btn = this.elt.find('#recordDiv');
     this.record_btn.unbind('click');
@@ -995,16 +994,16 @@ OnlineRecorder.prototype.showRecordButton = function(start_stop) {
             icons: { primary: "ui-icon-bullet" },
             text: false
         });
-        this.record_btn.click( function(){ online_recorder.startRecording();} );
+        this.record_btn.click(function() { online_recorder.startRecording(); });
     } else {
         this.record_btn.text(gettext('Stop recording'));
         this.record_btn.button( {
             icons: { primary: "ui-icon-stop" },
             text: false
         });
-        this.record_btn.click( function(){ online_recorder.stopRecording();} );
+        this.record_btn.click(function() { online_recorder.stopRecording(); });
     }
-}
+};
 OnlineRecorder.prototype.showPlayButton = function(start_stop) {
     this.play_btn = this.elt.find('#playDiv');
     this.play_btn.unbind('click');
@@ -1014,16 +1013,16 @@ OnlineRecorder.prototype.showPlayButton = function(start_stop) {
             icons: { primary: "ui-icon-play" },
             text: false
         });
-        this.play_btn.click( function(){ online_recorder.startPlaying();} );
+        this.play_btn.click(function() { online_recorder.startPlaying(); } );
     } else {
         this.play_btn.text(gettext('Stop playing'));
         this.play_btn.button( {
             icons: { primary: "ui-icon-stop" },
             text: false
         });
-        this.play_btn.click( function(){ online_recorder.stopPlaying();} );
+        this.play_btn.click(function() { online_recorder.stopPlaying(); });
     }
-}
+};
 OnlineRecorder.prototype.showUploadButton = function() {
     this.upload_btn = this.elt.find('#uploadDiv');
     this.upload_btn.unbind('click');
@@ -1032,8 +1031,8 @@ OnlineRecorder.prototype.showUploadButton = function() {
         icons: { primary: "ui-icon-check" },
         text: false
     });
-    this.upload_btn.click( function(){ online_recorder.uploadAudio();} );
-}
+    this.upload_btn.click(function() { online_recorder.uploadAudio(); });
+};
 OnlineRecorder.prototype.checkSecurity = function() {
     this.settings = this.Wami.getSettings();
     if (this.settings.microphone.granted) {
@@ -1046,7 +1045,7 @@ OnlineRecorder.prototype.checkSecurity = function() {
         // http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/system/SecurityPanel.html
         this.Wami.showSecurity("privacy", "online_recorder.Wami.show", "online_recorder.checkSecurity", "online_recorder.zoomError");
     }
-}
+};
 OnlineRecorder.prototype.listen = function(active) {
     // activate (when recorder is used) or deactivate listening (when it is
     // unused because no recorder is used)
@@ -1069,53 +1068,53 @@ OnlineRecorder.prototype.listen = function(active) {
         window.onfocus = null;
         window.onblur = null;
     }
-}
+};
 OnlineRecorder.prototype.zoomError = function() {
     // The minimum size for the flash content is 214x137. Browser's zoomed out
     // too far won't show the panel.
     // We could play the game of re-embedding the Flash in a larger DIV here,
     // but instead we just warn the user:
     alert(gettext('Your browser may be zoomed too far out to show the Flash security settings panel.  Zoom in, and refresh.'));
-}
+};
 OnlineRecorder.prototype.uploadAudio = function() {
     this.Wami.uploadRecordedFile('/new/audio');
-}
+};
 /**
  * These methods are called on clicks from the GUI.
  */
 OnlineRecorder.prototype.startRecording = function() {
     this.showRecordButton('stop');
     this.Wami.startRecording("", "online_recorder.onRecordStart", "online_recorder.onRecordFinish", "online_recorder.onError");
-}
+};
 OnlineRecorder.prototype.stopRecording = function() {
     this.showRecordButton('start');
     this.Wami.stopRecording();
-}
+};
 OnlineRecorder.prototype.startPlaying = function() {
     this.showPlayButton('stop');
     this.Wami.startPlaying("", "online_recorder.onPlayStart", "online_recorder.onPlayFinish", "online_recorder.onError");
-}
+};
 OnlineRecorder.prototype.stopPlaying = function() {
     this.showPlayButton('start');
     this.Wami.stopPlaying();
-}
+};
 /**
  * Callbacks from the flash indicating certain events
  */
 OnlineRecorder.prototype.onError = function(e) {
     console.log(e);
     this.elt.find('#feedbackDiv').html(e);
-}
+};
 OnlineRecorder.prototype.onRecordStart = function() {
     console.log('OR onRecordStart');
-}
+};
 OnlineRecorder.prototype.onRecordFinish = function() {
     console.log('OR onRecordFinish');
-}
+};
 OnlineRecorder.prototype.onPlayStart = function() {
     console.log('OR onPlayStart');
-}
+};
 OnlineRecorder.prototype.onPlayFinish = function() {
     console.log('OR onPlayFinish');
     this.showPlayButton('start');
-}
+};
