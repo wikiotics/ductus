@@ -141,7 +141,6 @@ MIDDLEWARE_CLASSES = (
     'ductus.middleware.unvarying.UnvaryingResponseMiddleware',
     'ductus.middleware.common.DuctusCommonMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -161,6 +160,7 @@ LOCALE_PATHS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.csrf',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
