@@ -228,7 +228,11 @@ DUCTUS_MEDIACACHE_URL = '/mediacache' # no trailing slash
 DUCTUS_BLACKLIST_FILE = DUCTUS_SITE_ROOT + '/ip_blacklist.data'
 DUCTUS_BLACKLIST_STRICT = False # if True, will error on failure to load blacklist data
 
-CACHE_BACKEND = 'dummy:///'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
 CACHE_MIDDLEWARE_SECONDS = 86400
 
 LOGIN_URL = '/login'
