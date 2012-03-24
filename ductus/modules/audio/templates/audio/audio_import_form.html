@@ -3,7 +3,7 @@
 
 {% block content %}
 <p>{% trans "Please upload an ogg/vorbis file (preferably), or a mp4/aac file." %}</p>
-<form method="post" action="{{ request.escaped_full_path }}" enctype="multipart/form-data">
+<form method="post" action="{{ request.escaped_full_path }}" enctype="multipart/form-data">{% csrf_token %}
 <table>
 {{ form }}
 <tr><td></td><td><input type="submit" value="{% trans "Upload audio file" %}"/></td></tr>

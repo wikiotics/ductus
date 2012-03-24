@@ -84,8 +84,9 @@ def user_count(request, pagename):
     from django.contrib.auth.models import User
     from django.http import HttpResponse
     from django.db.models import F
-    from datetime import datetime, timedelta
-    week_ago = datetime.now() - timedelta(days=7)
+    from django.utils.timezone import now
+    from datetime import timedelta
+    week_ago = now() - timedelta(days=7)
     statements = [
         "There are {0} registered users.".format(User.objects.count()),
         "{0} of those users have at some point returned to the site.".format(User.objects.filter(last_login__gt=(F('date_joined') + timedelta(days=1))).count()),

@@ -10,14 +10,12 @@
 # security issues with any of the releases given below.
 
 Creoleparser==0.7.4
-#Django==1.3.1   # see below
+Django==1.4
 Genshi==0.6
 Pygments==1.5
 flickrapi==1.4.2
 recaptcha-client==1.0.6
-
-# We currently patch Django 1.3.1 to fix some issues with xgettext
--e git://github.com/garrison/django.git@e0237dd75ca1d86529c8eed7f69a0e20db909383#egg=Django
+pytz==2012b
 
 # The current version of python-magic will error when trying to install
 # ctypes (which is not needed for python >=2.5 anyway), so until a new

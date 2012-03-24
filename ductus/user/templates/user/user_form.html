@@ -3,7 +3,7 @@
 
 {% block content %}
 <h3>Account settings for {{ request.user }}</h3>
-<form method="post" action="{{ request.path }}">
+<form method="post" action="{{ request.path }}">{% csrf_token %}
    <table>
       {{ form }}
       <tr><td></td><td><input type="submit" value="{% trans "Save settings" %}"/></td></tr>

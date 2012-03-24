@@ -49,6 +49,7 @@ LOGGING = {
     }
 }
 
+USE_TZ = True
 TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
@@ -141,7 +142,6 @@ MIDDLEWARE_CLASSES = (
     'ductus.middleware.unvarying.UnvaryingResponseMiddleware',
     'ductus.middleware.common.DuctusCommonMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -161,6 +161,7 @@ LOCALE_PATHS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.csrf',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
@@ -228,7 +229,11 @@ DUCTUS_MEDIACACHE_URL = '/mediacache' # no trailing slash
 DUCTUS_BLACKLIST_FILE = DUCTUS_SITE_ROOT + '/ip_blacklist.data'
 DUCTUS_BLACKLIST_STRICT = False # if True, will error on failure to load blacklist data
 
-CACHE_BACKEND = 'dummy:///'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
 CACHE_MIDDLEWARE_SECONDS = 86400
 
 LOGIN_URL = '/login'
