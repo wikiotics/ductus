@@ -82,7 +82,7 @@
           <div class="ductus_wrap3_all">
             <div class="ductus_wrap4">
               <hr/>
-              <form action="{% url django.views.i18n.set_language %}" method="post">
+              <form action="{% url django.views.i18n.set_language %}" method="post">{% csrf_token %}
                 <p>
                   {% trans "Your language:" %}
                   <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />

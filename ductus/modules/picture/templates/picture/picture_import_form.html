@@ -8,7 +8,7 @@
 {% endfor %}
 </ul>
 
-<form method="post" action="{{ request.escaped_full_path }}">
+<form method="post" action="{{ request.escaped_full_path }}">{% csrf_token %}
 <table>
 {{ form }}
 <tr><td></td><td><input type="submit" value="Add picture"/></td></tr>

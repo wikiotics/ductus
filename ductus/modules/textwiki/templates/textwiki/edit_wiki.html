@@ -8,7 +8,7 @@
 {{ form.cleaned_data.text|creole:form.cleaned_data.natural_language }}
 </div>
 {% endif %}
-<form method="post" action="{{ request.escaped_full_path }}">
+<form method="post" action="{{ request.escaped_full_path }}">{% csrf_token %}
 <p>{% trans "Language:" %} {{ form.natural_language }}</p>
 <p>{{ form.text.errors }}</p>
 <p>{{ form.text }}</p>

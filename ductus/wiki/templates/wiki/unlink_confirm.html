@@ -3,7 +3,7 @@
 
 {% block content %}
 <h2>Delete page</h2>
-<form method="post">
+<form method="post">{% csrf_token %}
   {% trans "Log message:" %}
   <input name="log_message"/>
   <input type="submit" value="{% trans "Delete" %}"/>
