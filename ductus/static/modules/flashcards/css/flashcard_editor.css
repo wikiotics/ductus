@@ -141,7 +141,7 @@
     margin: 0 -1px .2em 0;
 }
 .ui-tabs-vertical .ui-tabs-nav li a {
-    display:block;
+    display: block;
 }
 .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-selected {
     padding-bottom: 0;
