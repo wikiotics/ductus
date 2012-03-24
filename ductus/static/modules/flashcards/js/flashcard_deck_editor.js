@@ -72,7 +72,7 @@ $(function () {
             $(this).next().toggle();
             return false;
         }).next().hide();
-    }
+    };
 
     function PhraseWidget(phrase) {
         ModelWidget.call(this, phrase, '<div class="ductus_PhraseWidget"></div>');
@@ -106,14 +106,14 @@ $(function () {
             'display': function() { return true; },
             'callback': function(target) {
                 window.global_copy_paste_buffer = {
-                        resource: {
-                            fqn: PhraseWidget.prototype.fqn,
-                            phrase: { text: this_.calling_widget.wrapped.input.val() }
-                                  }
-                    };
+                    resource: {
+                        fqn: PhraseWidget.prototype.fqn,
+                        phrase: { text: this_.calling_widget.wrapped.input.val() }
+                    }
+                };
             }
         }
-    }
+    };
 
     function PhraseCreator() {
         Widget.call(this, '<div class="ductus_PhraseCreator"><form><input/></form></div>');
@@ -275,7 +275,7 @@ $(function () {
         this.span.text(heading);
         this.input.val(heading);
         this.last_valid_heading = heading;
-    }
+    };
 
     function FlashcardDeckEditor(fcdw) {
         // this will edit:
@@ -312,7 +312,7 @@ $(function () {
         this.elt.empty().html("&nbsp;");
     };
     FlashcardSide.prototype.ui_widget = function () {
-        popup = $("#ductus_PopupWidget");
+        var popup = $("#ductus_PopupWidget");
         if (popup.length) {
             popup.data('widget_object').show_popup(this);
         }
@@ -343,7 +343,7 @@ $(function () {
             var fcd = $(".ductus_FlashcardDeck").data('widget_object');
             fcd.add_row();
         }
-    }
+    };
     // popup definition for an empty flashcard side
     FlashcardSide.prototype.popup_settings = {
         'left': {
@@ -358,7 +358,7 @@ $(function () {
                 });
                 caller.ensure_last_row_empty();
                 caller.wrapped.input.focus();
-            },
+            }
         },
         'right': {
             'html': gettext('new audio'),
@@ -375,7 +375,7 @@ $(function () {
                     this_.calling_widget.set_from_json(model_json_repr);
                 });
                 caller.ensure_last_row_empty();
-            },
+            }
         },
         'top': {
             'html': gettext('new picture'),
@@ -395,7 +395,7 @@ $(function () {
                     this_.calling_widget.set_from_json(model_json_repr);
                 });
                 caller.ensure_last_row_empty();
-            },
+            }
         },
         'bottom': {
             'html': gettext('paste'),
@@ -406,8 +406,8 @@ $(function () {
                 caller.set_from_json(window.global_copy_paste_buffer);
                 caller.ensure_last_row_empty();
             }
-        },
-    }
+        }
+    };
     FlashcardSide.widgets = [
         ['picture', PictureModelWidget],
         ['audio', AudioWidget],
@@ -452,7 +452,7 @@ $(function () {
     };
     Flashcard.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}flashcard';
     Flashcard.prototype.ui_widget = function () {
-        popup = $("#ductus_PopupWidget");
+        var popup = $("#ductus_PopupWidget");
         if (popup.length) {
             popup.data('widget_object').show_popup(this);
         }
@@ -491,10 +491,10 @@ $(function () {
             'display': function() { return true; },
             'callback': function(fc) {
                 var fcd = $(".ductus_FlashcardDeck").data('widget_object');
-                fcd.insert_row(fc.elt.index()-1);
+                fcd.insert_row(fc.elt.index() - 1);
             }
         }
-    }
+    };
 
     function ChoiceInteractionWidget(ci) {
         ModelWidget.call(this, ci, '<div class="ductus_ChoiceInteractionWidget"></div>');
@@ -604,7 +604,7 @@ $(function () {
                 console.log('would delete column now');
             }
         }
-    }
+    };
 
     function FlashcardDeck(fcd) {
         // if new, create default nested json with one column and one row
@@ -715,7 +715,7 @@ $(function () {
         $(this.rows).each(function (i, row) {
             row.elt.find('.row_td').text(i + 1);
         });
-    }
+    };
     FlashcardDeck.prototype.delete_row = function (fc) {
         var row_index = fc.elt.index() - 1;
         // remove each FlashcardSide in the flashcard
@@ -728,7 +728,7 @@ $(function () {
         $(this.rows).each(function (i, row) {
             row.elt.find('.row_td').text(i + 1);
         });
-    }
+    };
     FlashcardDeck.prototype._set_column_heading = function (column, heading) {
         column.heading = heading;
         if (heading)
@@ -756,14 +756,14 @@ $(function () {
         return column;
     };
     FlashcardDeck.prototype.column_ui_widget = function (column) {
-        popup = $("#ductus_PopupWidget");
+        var popup = $("#ductus_PopupWidget");
         if (popup.length) {
             popup.data('widget_object').show_popup(column);
         }
     };
     FlashcardDeck.prototype.ensure_min_width = function() {
         this.elt.css('min-width', this.table.width() + $('#side_toolbar').width() + 50);
-    }
+    };
 
     /*
      * popup menu for flashcard deck editor elements.
@@ -780,7 +780,7 @@ $(function () {
     function PopupWidget(calling_widget) {
         // the widget holding the popup menu that shows up when clicking items on the flashcard deck
         Widget.call(this, '<div id="ductus_PopupWidget"></div>');
-        this_ = this;
+        var this_ = this;
         $.each(['left', 'top', 'right', 'bottom'], function(i, side) {
             this_.elt.append('<div id="ductus_Popup' + side + '" class="ductus_Popup"></div>');
         });
@@ -788,13 +788,13 @@ $(function () {
     PopupWidget.prototype = chain_clone(Widget.prototype);
     PopupWidget.prototype.hide_popup = function (calling_widget) {
         // hide the popup menu and all deactivate click event handlers.
-        this_ = this;
+        var this_ = this;
         $.each(['left', 'top', 'right', 'bottom'], function(i, side) {
             var sub_popup = this_.elt.find('#ductus_Popup' + side).hide();
             sub_popup.unbind("click");
         });
         this.elt.hide();
-    }
+    };
     PopupWidget.prototype.setup_popup = function (side, content, click_cb, click_cb_arg) {
         // setup a popup on one of the sides of the clicked element
         // content is the HTML that will fill the popup menu side
@@ -804,33 +804,33 @@ $(function () {
         var sub_popup = this.elt.find('#ductus_Popup'+side);
         if (content) {
             sub_popup.html(content);
-            sub_popup.bind("click",
-                    {cb_arg: click_cb_arg},
-                    function(e) {
-                        click_cb(e.data.cb_arg);
-                        // prevent flashcard from picking up click event when it has a wrapped widget
-                        e.stopPropagation();
-                    });
+            sub_popup.bind("click", { cb_arg: click_cb_arg }, function(e) {
+                click_cb(e.data.cb_arg);
+                // prevent flashcard from picking up click event when it has a wrapped widget
+                e.stopPropagation();
+            });
             sub_popup.show();
         }
-    }
+    };
     PopupWidget.prototype.show_popup = function (calling_widget) {
-        // show the popup menu according to context. calling_widget is the widget that was clicked.
+        // show the popup menu according to context. calling_widget is
+        // the widget that was clicked.
 
         this.calling_widget = calling_widget;
-        this_ = this;
+        var this_ = this;
         this.hide_popup();
 
-        leftw = this.elt.find('#ductus_Popupleft');
-        rightw = this.elt.find('#ductus_Popupright');
-        topw = this.elt.find('#ductus_Popuptop');
-        bottomw = this.elt.find('#ductus_Popupbottom');
+        var leftw = this.elt.find('#ductus_Popupleft');
+        var rightw = this.elt.find('#ductus_Popupright');
+        var topw = this.elt.find('#ductus_Popuptop');
+        var bottomw = this.elt.find('#ductus_Popupbottom');
 
         this.elt.show();
         // determine which widget was clicked
         var popup_caller = null;
         if (this_.calling_widget.wrapped) {
-            // the flashcard side has some content: setup popup accordingly (content and callbacks)
+            // the flashcard side has some content: setup popup
+            // accordingly (content and callbacks)
             popup_caller = this_.calling_widget.wrapped;
         } else {
             // no wrapped widget
@@ -844,7 +844,8 @@ $(function () {
                     this_.setup_popup(side,
                         settings['html'],
                         function(arg) {
-                            // arg is a custom variable passed by the click event handler upon binding
+                            // arg is a custom variable passed by the
+                            // click event handler upon binding
                             settings['callback'](arg);
                             this_.elt.hide();
                         },
@@ -863,26 +864,26 @@ $(function () {
         }
         // position popup buttons around the clicked widget
         leftw.position({
-                    "my": "right center",
-                    "at": "left center",
-                    "of": positioning_elt
+            "my": "right center",
+            "at": "left center",
+            "of": positioning_elt
         });
         rightw.position({
-                    "my": "left center",
-                    "at": "right center",
-                    "of": positioning_elt
+            "my": "left center",
+            "at": "right center",
+            "of": positioning_elt
         });
         topw.position({
-                    "my": "center bottom",
-                    "at": "center top",
-                    "of": positioning_elt,
-                    "collision": "none"
+            "my": "center bottom",
+            "at": "center top",
+            "of": positioning_elt,
+            "collision": "none"
         });
         bottomw.position({
-                    "my": "center top",
-                    "at": "center bottom",
-                    "of": positioning_elt,
-                    "collision": "none"
+            "my": "center top",
+            "at": "center bottom",
+            "of": positioning_elt,
+            "collision": "none"
         });
         $(document).bind('keypress keyup', function(event) {
             if (event.keyCode == 27) {
@@ -907,7 +908,7 @@ $(function () {
     }
     TaggingWidget.prototype = chain_clone(Widget.prototype);
     TaggingWidget.prototype.inner_blueprint_repr = function () {
-    }
+    };
     TaggingWidget.prototype.get_tag_list = function () {
         // return a list of all tags (for use in blueprint)
         var tag_list = [];
@@ -915,7 +916,7 @@ $(function () {
             tag_list = this.input.val().split(" ");
         }
         return tag_list;
-    }
+    };
 
     var fcdw = new FlashcardDeck(resource_json);
     $('#side_toolbar').append(fcdw.sidebar);
@@ -929,4 +930,3 @@ $(function () {
         $('#ductus_PopupWidget').data('widget_object').hide_popup();
     });
 });
-
