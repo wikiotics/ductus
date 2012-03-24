@@ -897,13 +897,7 @@ $(function () {
         // the widget used to edit tags applied to the whole flashcard deck
         ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>' + gettext('Tags (space separated):') + '</label><input /></div>');
         this.input = this.elt.children('input');
-        var tag_string = '';
-        if (tags) {
-            for (var i = 0; i < tags.array.length; ++i) {
-                var tag = tags.array[i];
-                tag_string += tag.value + ' ';
-            }
-        }
+        var tag_string = tags ? tags.array.join(' ') : '';
         this.input.val(tag_string);
     }
     TaggingWidget.prototype = chain_clone(Widget.prototype);
