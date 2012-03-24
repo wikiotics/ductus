@@ -49,6 +49,7 @@ LOGGING = {
     }
 }
 
+USE_TZ = True
 TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
