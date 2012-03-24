@@ -31,7 +31,7 @@
     background: #bbb;
     z-index: 5;
     cursor: pointer;
-    background: url("/static/common/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
+    background: url("../../../common/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
     border-radius: 4px;
 }
 .ductus_non_uniq_col_header {
@@ -59,7 +59,7 @@
     font-size: 100px;
 }
 .ductus_file_upload_button {
-    background: url("/static/common/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
+    background: url("../../../common/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
     border: 1px solid #D3D3D3;
     color: #555555;
     display: inline-block;
