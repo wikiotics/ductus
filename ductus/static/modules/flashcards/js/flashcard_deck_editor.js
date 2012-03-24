@@ -108,7 +108,7 @@ $(function () {
                 window.global_copy_paste_buffer = {
                         resource: {
                             fqn: PhraseWidget.prototype.fqn,
-                            phrase: { text: this_.calling_widget.wrapped.input.val() }
+                            phrase: { text: this_.calling_widget.wrapped.input.val() }
                                   }
                     };
             }
