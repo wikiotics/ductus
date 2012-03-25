@@ -42,6 +42,11 @@ from ductus.util.http import query_string_not_found, render_json_response, Immed
 
 logger = logging.getLogger(__name__)
 
+# The following can be removed once we upgrade to Django 1.5, as it will
+# supposedly do a strict check to make sure SECRET_KEY is not blank.
+if not settings.SECRET_KEY:
+    raise Exception("You must define a SECRET_KEY in ductus_local_settings.py.")
+
 def view_frontpage(request):
     "Redirect based on the user's locale"
     return redirect('/%s' % _('en:main_page').replace(':', '/', 1))
