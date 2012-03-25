@@ -2,9 +2,9 @@
 
 # We use our own test script for now, until Django #10853 is fixed.
 
-import settings # Assumed to be in the same directory.
-from django.core.management import setup_environ
-setup_environ(settings)
+import os
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ductus.settings")
 
 import ductus.util
 import ductus.util.bcp47
