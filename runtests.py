@@ -4,17 +4,18 @@
 
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ductus.settings")
+if __name__ == "__main__":
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ductus.settings")
 
-import ductus.util
-import ductus.util.bcp47
-import ductus.license
+    import ductus.util
+    import ductus.util.bcp47
+    import ductus.license
 
-import unittest, doctest
+    import unittest, doctest
 
-suite = unittest.TestSuite()
-for mod in ductus.util, ductus.util.bcp47, ductus.license:
-    suite.addTest(doctest.DocTestSuite(mod))
+    suite = unittest.TestSuite()
+    for mod in ductus.util, ductus.util.bcp47, ductus.license:
+        suite.addTest(doctest.DocTestSuite(mod))
 
-runner = unittest.TextTestRunner()
-runner.run(suite)
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
