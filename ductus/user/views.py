@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as perform_login
 from django.contrib.auth.views import login as django_login, logout as django_logout
+from django.contrib import messages
 from django.utils.safestring import mark_safe
 from django import forms
 
@@ -83,7 +84,7 @@ def account_settings(request):
         form = UserEditForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            request.user.message_set.create(message=_("Your account settings have been updated."))
+            messages.success(request, _('Your account settings have been updated.'))
             return redirect(request.user)
     else:
         form = UserEditForm(instance=request.user)
