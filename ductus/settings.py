@@ -138,7 +138,6 @@ if not DEBUG:
 MIDDLEWARE_CLASSES = (
     'ductus.middleware.debug.DuctusDebugMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'ductus.middleware.upstream_ssl_proxy.UpstreamSslProxyMiddleware',
     'ductus.middleware.canonical_hostname.CanonicalHostnameMiddleware',
     'ductus.middleware.redirect.RedirectMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
