@@ -95,7 +95,7 @@ $(function() {
     function PhraseWidget(phrase) {
         ModelWidget.call(this, phrase, '<div class="ductus_PhraseWidget"></div>');
 
-        this.input = $('<textarea/>');
+        this.input = $('<textarea placeholder="' + gettext('Type what you hear...') + '"/>');
         if (phrase)
             this.input.val(phrase.resource.phrase.text);
         this.elt.append(this.input);
@@ -127,7 +127,7 @@ $(function() {
     function SubtitleFSWidget() {
         FiveSecWidget.call(this,
                 'Got 5 seconds?',
-                'Can you type in what you hear?'
+                'Press play'
                 );
         this.language = 'fr';
         this.init_widget();
