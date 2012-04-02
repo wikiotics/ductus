@@ -126,8 +126,8 @@ $(function() {
      */
     function SubtitleFSWidget() {
         FiveSecWidget.call(this,
-                'Got 5 seconds?',
-                'Press play'
+                gettext('Got 5 seconds?'),
+                gettext('Press play')
                 );
         this.language = 'fr';
         this.init_widget();
@@ -194,18 +194,18 @@ $(function() {
         var fsw = this;
         var controls = {
             'buttons': [
-                {'label': 'This is not ' + this.language,
+                {'label': gettext('This is not ') + this.language,
                  'callback': function() { fsw.incorrect_language(); return false; }
                 },
-                {'label': 'Save',
+                {'label': gettext('Save'),
                  'callback': function() { fsw.submit(); return false; }
                 }
             ],
             'links': [
-                {'label': 'skip',
+                {'label': gettext('skip'),
                     'callback': function() { widget.get_audio(); }
                 },
-                {'label': 'flag',
+                {'label': gettext('flag'),
                     'callback': function() {
                         widget.tags.push({value: 'flag:needs-review'});
                         widget.submit();
@@ -234,11 +234,11 @@ $(function() {
     }
     SubtitleFSWidget.prototype.thank_user = function() {
         // report success, and offer to take another quizz
-        this.set_answer('<div>Thank you for your contribution!</div>');
+        this.set_answer('<div>' + gettext('Thank you for your contribution!') + '</div>');
         this_ = this;
         var controls = {
             'buttons': [
-                {'label': 'One more!',
+                {'label': gettext('One more!'),
                  'shortcut': 'enter',
                  'callback': function() { this_.get_audio(); return false; }
                 }
@@ -300,7 +300,7 @@ $(function() {
         // get a JSON object to be passed to the audio element
         // response expected: {language: "langcode", blueprint: {the_blueprint}}
         this_ = this;
-        this.set_prompt('Loading...');
+        this.set_prompt(gettext('Loading...'));
         this.disable_controls();
         $.ajax({
             url: '/five-sec-widget/get-audio-to-subtitle',
@@ -311,7 +311,7 @@ $(function() {
                          this_.init_from_blueprint(data);
                      },
             error: function(xhr, textStatus, errorThrown) {
-                       this_.set_prompt('Error while loading audio content, sorry. Please contact the site administrator.');
+                       this_.set_prompt(gettext('Error while loading audio content, sorry. Please contact the site administrator.'));
                        this_.disable_controls();
                        console.log(xhr.status + ' error. Failed to get audio.');
                    },
