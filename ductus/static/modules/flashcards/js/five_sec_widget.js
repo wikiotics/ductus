@@ -68,11 +68,13 @@ $(function() {
             btn.button();
             btn.click(function() { button.callback(); });
         });
-        $.each(controls.links, function(i, link) {
-            var lnk = $('<a class="ductus_FSWlink" href="#">' + link.label + '</a>');
-            lnk.appendTo(ctrl);
-            lnk.click(function() { if (!lnk.hasClass('disabled')) { link.callback(); } });
-        });
+        if (typeof controls.links !== 'undefined') {
+            $.each(controls.links, function(i, link) {
+                var lnk = $('<a class="ductus_FSWlink" href="#">' + link.label + '</a>');
+                lnk.appendTo(ctrl);
+                lnk.click(function() { if (!lnk.hasClass('disabled')) { link.callback(); } });
+            });
+        }
     };
 
     /*
