@@ -171,7 +171,14 @@ $(function() {
         this.record_initial_inner_blueprint();
     };
     SubtitleFSWidget.prototype.setup_audio_prompt = function(data) {
+        var first_prompt = true;
+        if (typeof this.audio_widget !== 'undefined') {
+            first_prompt = false;
+        }
         this.audio_widget = new AudioWidget(data.resource.sides.array[1]);
+        // only autoplay after the user interacted with the widget
+        if (!first_prompt)
+            this.audio_widget.elt.find('audio').attr('autoplay', 'autoplay');
         this.card_sides[1] = this.audio_widget;
         this.set_prompt(this.audio_widget.elt);
     };
