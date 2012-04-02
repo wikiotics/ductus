@@ -66,7 +66,18 @@ $(function() {
             var btn = $('<div class="ductus_FSWButton">' + button.label + '</div>');
             btn.appendTo(ctrl);
             btn.button();
-            btn.click(function() { button.callback(); });
+            btn.click(function() {
+                button.callback();
+                $(document).unbind('keypress keyup');
+            });
+            if (button.shortcut) {
+                var keycodes = {'enter': 13 };
+                $(document).bind('keypress keyup', function(event) {
+                    if (event.keyCode == keycodes[button.shortcut]) {
+                        btn.click();
+                    }
+                });
+            }
         });
         if (typeof controls.links !== 'undefined') {
             $.each(controls.links, function(i, link) {
@@ -221,6 +232,7 @@ $(function() {
         var controls = {
             'buttons': [
                 {'label': 'One more!',
+                 'shortcut': 'enter',
                  'callback': function() { this_.get_audio(); return false; }
                 }
             ]};
