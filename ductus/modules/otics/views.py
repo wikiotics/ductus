@@ -20,6 +20,7 @@ from django.template import RequestContext
 from ductus.special.views import register_special_page
 from ductus.util.bcp47 import language_tag_to_description
 from ductus.util.tag_cloud import TagCloudElement, prepare_tag_cloud
+from ductus.util.http import render_json_response
 
 def otics_front_page(request, pagename=None):
     from ductus.index import get_indexing_mongo_database
@@ -55,3 +56,21 @@ def otics_front_page(request, pagename=None):
         'total_lesson_count': total_lesson_count,
         'total_language_count': len(languages),
     }, RequestContext(request))
+
+@register_special_page('ajax/language-tag-to-description')
+def ajax_language_tag_to_description(request, pagename):
+    """return a JSON object containing the language name for a code passed
+    in the request, such that:
+    (url)?code=en returns
+    {'en': u'English'}
+    or (url)?code=xx returns
+    {'error': 'invalid language code'}
+    """
+    if request.method == 'GET':
+        code = request.GET.get('code', '')
+        rv = {}
+        try:
+            rv[code] = language_tag_to_description(code)
+        except KeyError:
+            rv['error'] = 'invalid language code'
+        return render_json_response(rv)
