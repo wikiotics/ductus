@@ -6,6 +6,7 @@
 <form method="post" action="{{ request.path }}">{% csrf_token %}
    <table>
       {{ form }}
+      <tr><td></td><td><a href="{% url django.contrib.auth.views.password_change %}">{% trans "change password" %}</a></td></tr>
       <tr><td></td><td><input type="submit" value="{% trans "Save settings" %}"/></td></tr>
    </table>
 </form>
