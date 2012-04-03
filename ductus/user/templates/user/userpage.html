@@ -1,8 +1,9 @@
 {% extends "ductus_base.html" %}
+{% load i18n %}
 
 {% block content %}
-<p>This is the user page of {{ userpage_user.username }}.
-{% if pages_contributed_to %}This user has contributed to the following pages:{% endif %}</p>
+<p>{% blocktrans with name=userpage_user.username %}This is the user page of {{ name }}{% endblocktrans %}.
+{% if pages_contributed_to %}{% trans "This user has contributed to the following pages:" %}{% endif %}</p>
 
 <ul>
 {% for page in pages_contributed_to %}
@@ -11,7 +12,7 @@
 </ul>
 
 {% ifequal userpage_user user %}
-<div><a href="{% url ductus.user.views.account_settings %}">Edit my account settings</a></div>
+<div><a href="{% url ductus.user.views.account_settings %}">{% trans "Edit my account settings" %}</a></div>
 {% endifequal %}
 
 {% endblock %}
