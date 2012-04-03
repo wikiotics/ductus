@@ -5,7 +5,8 @@
 <h3>Account settings for {{ request.user }}</h3>
 <form method="post" action="{{ request.path }}">{% csrf_token %}
    <table>
-      {{ form }}
+      {{ userform }}
+      {{ profileform }}
       <tr><td></td><td><a href="{% url django.contrib.auth.views.password_change %}">{% trans "change password" %}</a></td></tr>
       <tr><td></td><td><input type="submit" value="{% trans "Save settings" %}"/></td></tr>
    </table>

@@ -16,6 +16,7 @@
 
 from django import forms
 from django.contrib.auth.models import User
+from ductus.user.models import UserProfile
 from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
 from django.utils.translation import ugettext_lazy
 
@@ -23,6 +24,11 @@ class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email',)
+
+class UserProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        exclude = ('user',)
 
 class UserCreationForm(DjangoUserCreationForm):
     class Meta:

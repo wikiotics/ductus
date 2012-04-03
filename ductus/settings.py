@@ -195,6 +195,8 @@ INSTALLED_APPS = (
     'ductus.special',
 )
 
+AUTH_PROFILE_MODULE = "ductus.user.UserProfile"
+
 DUCTUS_INSTALLED_MODULES = (
     'ductus.modules.audio',
     'ductus.modules.picture',

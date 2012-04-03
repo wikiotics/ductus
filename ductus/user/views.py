@@ -28,7 +28,8 @@ from django import forms
 
 from ductus.wiki.models import WikiPage
 from ductus.wiki.views import RegularWikiNamespace
-from ductus.user.forms import UserEditForm, UserCreationForm
+from ductus.user.models import UserProfile
+from ductus.user.forms import UserEditForm, UserProfileEditForm, UserCreationForm
 
 recaptcha = None
 if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):
@@ -81,16 +82,20 @@ def logout(request):
 @login_required
 def account_settings(request):
     if request.method == 'POST':
-        form = UserEditForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
+        userform = UserEditForm(request.POST, instance=request.user)
+        profileform = UserProfileEditForm(request.POST, instance=request.user.profile)
+        if userform.is_valid() and profileform.is_valid():
+            userform.save()
+            profileform.save()
             messages.success(request, _('Your account settings have been updated.'))
             return redirect(request.user)
     else:
-        form = UserEditForm(instance=request.user)
+        userform = UserEditForm(instance=request.user)
+        profileform = UserProfileEditForm(instance=request.user.profile)
 
     return render_to_response("user/user_form.html", {
-        'form': form,
+        'userform': userform,
+        'profileform': profileform,
     }, RequestContext(request))
 
 class UserNamespace(RegularWikiNamespace):
