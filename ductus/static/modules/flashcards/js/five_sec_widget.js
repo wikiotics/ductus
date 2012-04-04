@@ -68,6 +68,11 @@ $(function() {
             btn.button();
             btn.click(function() { button.callback(); });
         });
+        $.each(controls.links, function(i, link) {
+            var lnk = $('<a class="ductus_FSWlink" href="#">' + link.label + '</a>');
+            lnk.appendTo(ctrl);
+            lnk.click(function() { link.callback(); });
+        });
     };
 
     /*
@@ -122,21 +127,12 @@ $(function() {
                 '<option value="de">Deutsch</option>' +
                 '<option selected="selected" value="fr">Français</option>' +
                 '<option value="zh">中文 - Mandarin Chinese</option>' +
-                '</select>' +
-                '<a class="ductus_FSWlink" id="skip" href="#">skip</a>' +
-                '<a class="ductus_FSWlink" id="flag" href="#">flag</a>'
+                '</select>'
                 );
         widget = this;
         this.elt.find('#ductus_FSWLanguage').change(function() {
             widget.language = $(this).find(':selected').attr('value');
             widget.get_audio();
-        });
-        this.elt.find('.ductus_FSWlink#skip').click(function() {
-            widget.get_audio();
-        });
-        this.elt.find('.ductus_FSWlink#flag').click(function() {
-            widget.tags.push({value: 'flag:needs-review'});
-            widget.submit();
         });
     };
 
@@ -184,7 +180,19 @@ $(function() {
                 {'label': 'Save',
                  'callback': function() { fsw.submit(); return false; }
                 }
-            ]};
+            ],
+            'links': [
+                {'label': 'skip',
+                    'callback': function() { widget.get_audio(); }
+                },
+                {'label': 'flag',
+                    'callback': function() {
+                        widget.tags.push({value: 'flag:needs-review'});
+                        widget.submit();
+                    }
+                }
+            ]
+        };
         this.set_controls(controls);
     };
     SubtitleFSWidget.prototype.inner_blueprint_repr = function() {
