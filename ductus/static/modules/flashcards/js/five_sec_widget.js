@@ -135,10 +135,31 @@ $(function() {
                 gettext('Press play')
                 );
         this.language = 'fr';
+        this.language_name = this.language;
+        this.get_lang_name();
         this.init_widget();
         this.get_audio();
     }
     SubtitleFSWidget.prototype = chain_clone(FiveSecWidget.prototype);
+    SubtitleFSWidget.prototype.get_lang_name = function() {
+        var this_ = this;
+        $.ajax({
+            url: '/special/ajax/language-tag-to-description',
+            data: {
+                code: this.language
+            },
+            success: function(data) {
+                if (data[this_.language]) {
+                    this_.language_name = data[this_.language];
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.log(xhr.status + ' error. Could not retrieve language name.');
+            },
+            type: 'GET',
+            dataType: 'json'
+        });
+    };
     SubtitleFSWidget.prototype.init_widget = function() {
         this.set_footer(
                 '<select id="ductus_FSWLanguage" name="FSWLanguage">' +
@@ -150,6 +171,7 @@ $(function() {
         widget = this;
         this.elt.find('#ductus_FSWLanguage').change(function() {
             widget.language = $(this).find(':selected').attr('value');
+            widget.get_lang_name();
             widget.get_audio();
         });
     };
@@ -199,7 +221,7 @@ $(function() {
         var fsw = this;
         var controls = {
             'buttons': [
-                {'label': gettext('This is not ') + this.language,
+                {'label': gettext('This is not ') + this.language_name,
                  'callback': function() { fsw.incorrect_language(); return false; }
                 },
                 {'label': gettext('Save'),
