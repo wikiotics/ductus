@@ -253,6 +253,7 @@ $(function() {
                      },
             error: function(xhr, textStatus, errorThrown) {
                        this_.set_prompt('Error while loading audio content, sorry. Please contact the site administrator.');
+                       this_.elt.find('#ductus_FSWControls > .ductus_FSWButton').button('option', 'disabled', true);
                        console.log(xhr.status + ' error. Failed to get audio.');
                    },
             complete: function(xhr, textStatus) {
