@@ -71,7 +71,7 @@ $(function() {
         $.each(controls.links, function(i, link) {
             var lnk = $('<a class="ductus_FSWlink" href="#">' + link.label + '</a>');
             lnk.appendTo(ctrl);
-            lnk.click(function() { link.callback(); });
+            lnk.click(function() { if (!lnk.hasClass('disabled')) { link.callback(); } });
         });
     };
 
@@ -195,6 +195,11 @@ $(function() {
         };
         this.set_controls(controls);
     };
+    SubtitleFSWidget.prototype.disable_controls = function() {
+        this.elt.find('#ductus_FSWControls > .ductus_FSWButton').button('option', 'disabled', true);
+        this.elt.find('#ductus_FSWControls > .ductus_FSWlink').addClass('disabled');
+    };
+
     SubtitleFSWidget.prototype.inner_blueprint_repr = function() {
         var sides = [];
         $.each(this.card_sides, function(i, side) {
@@ -266,6 +271,7 @@ $(function() {
         // response expected: {language: "langcode", blueprint: {the_blueprint}}
         this_ = this;
         this.set_prompt('Loading...');
+        this.disable_controls();
         $.ajax({
             url: '/five-sec-widget/get-audio-to-subtitle',
             data: {
@@ -276,7 +282,7 @@ $(function() {
                      },
             error: function(xhr, textStatus, errorThrown) {
                        this_.set_prompt('Error while loading audio content, sorry. Please contact the site administrator.');
-                       this_.elt.find('#ductus_FSWControls > .ductus_FSWButton').button('option', 'disabled', true);
+                       this_.disable_controls();
                        console.log(xhr.status + ' error. Failed to get audio.');
                    },
             complete: function(xhr, textStatus) {

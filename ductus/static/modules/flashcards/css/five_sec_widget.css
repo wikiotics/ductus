@@ -16,7 +16,10 @@ div#ductus_FSWAnswer textarea {
     width: 90%;
     padding: 4%;
 }
-div#ductus_FSWFooter .ductus_FSWlink {
+div#ductus_FSWControls .ductus_FSWlink {
     margin-left: 1em;
     margin-right: 1em;
+}
+div#ductus_FSWControls .ductus_FSWlink.disabled {
+    color: #9999FF;
 }
