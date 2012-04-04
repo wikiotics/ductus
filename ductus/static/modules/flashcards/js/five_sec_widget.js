@@ -114,6 +114,8 @@ $(function() {
         // called when the audio prompt is received from AJAX to fill in the widget
         this_ = this;
         this.initial_href = data.href;
+        this.tags = [];
+        this.tags = data.resource.tags.array;
         this.card_sides = [];
         // TODO: use flashcard deck blueprint to decide where phrase and audio are, instead of hard coding them
         this.card_sides[0] = new PhraseWidget();
@@ -134,18 +136,19 @@ $(function() {
     };
     SubtitleFSWidget.prototype.setup_controls = function(data) {
         // setup buttons to save or cancel, skip...
-        var language = '';
+        this.language = '';
+        fsw = this;
         $.each(data.resource.tags.array, function(i, tag) {
             if (tag.value.substring(0, 9) == 'language:') {
-                language = tag.value.substring(9);
+                fsw.language = tag.value.substring(9);
                 return false;
             }
         });
         var fsw = this;
         var controls = {
             'buttons': [
-                {'label': 'This is not ' + language,
-                 'callback': function() { console.log('not english'); return false; }
+                {'label': 'This is not ' + this.language,
+                 'callback': function() { fsw.incorrect_language(); return false; }
                 },
                 {'label': 'Save',
                  'callback': function() { fsw.submit(); return false; }
@@ -163,11 +166,11 @@ $(function() {
                 sides.push(side);
             }
         });
-        return this.add_inner_blueprint_constructor({ sides: { array: sides } });
-    };
+        return this.add_inner_blueprint_constructor({ sides: { array: sides }, tags: { array: this.tags }});
+    }
     SubtitleFSWidget.prototype.thank_user = function() {
-        console.log('save successful');
-        this.set_answer('<div>Thank you for your contribution! You made a difference.</div>');
+        // report success, and offer to take another quizz
+        this.set_answer('<div>Thank you for your contribution!</div>');
         this_ = this;
         var controls = {
             'buttons': [
@@ -176,6 +179,16 @@ $(function() {
                 }
             ]};
         this.set_controls(controls);
+    };
+    SubtitleFSWidget.prototype.incorrect_language = function() {
+        // report an incorrect language by removing the corresponding
+        // "language:code" tag from the flashcard
+        function getKey(data) {
+              for (var prop in data)
+                      return prop;
+        }
+        this.tags.splice(getKey('language:' + this.language), 1);
+        this.submit();
     };
     SubtitleFSWidget.prototype.submit = function() {
         // build a blueprint and send it to the server for processing
