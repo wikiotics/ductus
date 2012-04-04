@@ -17,6 +17,9 @@ div#ductus_FSWAnswer textarea {
     width: 90%;
     padding: 4%;
 }
+div#ductus_FSWControls {
+    font-size: 80%;
+}
 div#ductus_FSWControls .ductus_FSWlink {
     margin-left: 1em;
     margin-right: 1em;
