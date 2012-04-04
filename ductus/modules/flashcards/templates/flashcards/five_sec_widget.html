@@ -1,0 +1,23 @@
+{% extends "ductus_document.html" %}
+{% load i18n %}
+{% load jsonize %}
+
+{% block head %}
+{{ block.super }}
+<script type="text/javascript">
+var resource_json = {{ resource_or_template|resource_json }};
+var DUCTUS_FLICKR_GROUP_ID = {{ DUCTUS_FLICKR_GROUP_ID|jsonize }};
+var writable_directories = {{ writable_directories|jsonize }};
+</script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.fileupload.modified.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.blockUI.min.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/widgets.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}modules/flashcards/js/five_sec_widget.js"></script>
+<link rel="stylesheet" href="{{ ductus_media_prefix }}modules/flashcards/css/five_sec_widget.css" type="text/css">
+{% endblock %}
+
+{% block body_classes %}ductus_wide{% endblock %}
+
+{% block content %}
+<div id="ductus_five_sec_widget"></div>
+{% endblock %}

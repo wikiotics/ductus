@@ -1,0 +1,18 @@
+div.ductus_FiveSecWidget {
+    border: solid 1px black;
+    width: 300px;
+}
+div#ductus_FSWTitle {
+    font-size: 125%;
+    color: #002BB8;
+}
+div#ductus_FSWInstructions {
+    font-size: 80%;
+}
+div#ductus_FSWPrompt {
+    margin-top: 1em;
+}
+div#ductus_FSWAnswer textarea {
+    width: 90%;
+    padding: 4%;
+}

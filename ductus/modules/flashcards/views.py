@@ -14,12 +14,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import random
+import json
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.core.cache import cache
+from django.http import HttpResponse
+from django.conf import settings
 
+from ductus.resource import get_resource_database
 from ductus.resource.ductmodels import tag_value_attribute_validator, ValidationError
+from ductus.wiki.templatetags.jsonize import resource_json
+from ductus.wiki.models import WikiPage
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
@@ -245,3 +253,32 @@ def mediacache_flashcard_deck(blob_urn, mime_type, additional_args, flashcard_de
         return mediacache_cat_audio(blob_urn, audio_urn_list, mime_type)
 
     return None
+
+def five_sec_widget(request):
+    """display a `five seconds widget` as specified by the query parameters
+    """
+    if request.method == 'POST':
+        return handle_blueprint_post(request, Flashcard)
+
+    return render_to_response('flashcards/five_sec_widget.html', {
+    }, RequestContext(request))
+
+def fsw_get_audio_to_subtitle(request):
+    """return a JSON flashcard object to the subtitle 5s widget
+    """
+    if request.method == 'GET':
+        # TODO: replace this with a call to the internal search engine
+        # that would return a random flashcard that matches a certain number
+        # of criteria defined by the site admin and the user's profile
+        # (when it's available!)
+        url = settings.FIVE_SEC_WIDGET_URLS[0]
+        page = WikiPage.objects.get(name=url)
+        revision = page.get_latest_revision()
+        urn = 'urn:' + revision.urn
+        resource_database = get_resource_database()
+        fcd = resource_database.get_resource_object(urn)
+        card_index = random.randint(0, len(fcd.cards.array))
+        fc = fcd.cards.array[card_index].get()
+        resource = resource_json(fc)
+
+    return HttpResponse(resource, content_type="application/json")
