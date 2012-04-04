@@ -28,6 +28,7 @@ $(function() {
                 '<div id="ductus_FSWAnswer"></div>' +
                 '<div id="ductus_FSWControls"></div>' +
             '</div>' +
+            '<div id="ductus_FSWFooter"></div>' +
             '</div>';
         ModelWidget.call(this, null, initial_html);
         if (title)
@@ -53,6 +54,9 @@ $(function() {
     };
     FiveSecWidget.prototype.set_answer = function(answer) {
         this.elt.find('#ductus_FSWAnswer').html(answer);
+    };
+    FiveSecWidget.prototype.set_footer = function(footer) {
+        this.elt.find('#ductus_FSWFooter').html(footer);
     };
     FiveSecWidget.prototype.set_controls = function(controls) {
         // replace existing buttons with the ones provided in argument
@@ -107,9 +111,26 @@ $(function() {
                 'Got 5 seconds?',
                 'Can you type in what you hear?'
                 );
+        this.language = 'fr';
+        this.init_widget();
         this.get_audio();
     }
     SubtitleFSWidget.prototype = chain_clone(FiveSecWidget.prototype);
+    SubtitleFSWidget.prototype.init_widget = function() {
+        this.set_footer(
+                '<select id="FSWLanguage" name="FSWLanguage">' +
+                '<option value="de">Deutsch</option>' +
+                '<option selected="selected" value="fr">Français</option>' +
+                '<option value="zh">中文 - Mandarin Chinese</option>' +
+                '</select>'
+                );
+        widget = this;
+        this.elt.find('#FSWLanguage').change(function() {
+            widget.language = $(this).find(':selected').attr('value');
+            widget.get_audio();
+        });
+    };
+
     SubtitleFSWidget.prototype.init_from_blueprint = function(data) {
         // called when the audio prompt is received from AJAX to fill in the widget
         this_ = this;
@@ -138,7 +159,6 @@ $(function() {
     };
     SubtitleFSWidget.prototype.setup_controls = function(data) {
         // setup buttons to save or cancel, skip...
-        this.language = '';
         fsw = this;
         $.each(data.resource.tags.array, function(i, tag) {
             if (tag.value.substring(0, 9) == 'language:') {
@@ -226,7 +246,7 @@ $(function() {
         $.ajax({
             url: '/five-sec-widget/get-audio-to-subtitle',
             data: {
-                language: 'fr',
+                language: this_.language
             },
             success: function(data) {
                          this_.init_from_blueprint(data);
