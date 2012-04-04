@@ -232,6 +232,7 @@ $(function() {
                          this_.init_from_blueprint(data);
                      },
             error: function(xhr, textStatus, errorThrown) {
+                       this_.set_prompt('Error while loading audio content, sorry. Please contact the site administrator.');
                        console.log(xhr.status + ' error. Failed to get audio.');
                    },
             complete: function(xhr, textStatus) {

@@ -21,7 +21,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.core.cache import cache
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.conf import settings
 
 from ductus.resource import get_resource_database
@@ -310,19 +310,26 @@ def fsw_get_audio_to_subtitle(request):
         # that would return a random flashcard that matches a certain number
         # of criteria defined by the site admin and the user's profile
         # (when it's available!)
-        url = settings.FIVE_SEC_WIDGET_URLS[0]
-        page = WikiPage.objects.get(name=url)
-        revision = page.get_latest_revision()
-        urn = 'urn:' + revision.urn
-        resource_database = get_resource_database()
-        fcd = resource_database.get_resource_object(urn)
-        card_index = random.randint(0, len(fcd.cards.array) - 1)
-        fc = fcd.cards.array[card_index].get()
-        resource = resource_json(fc)
-        # temporary hack for FSI: add the URL this flashcard is taken from
-        tmp_resource = json.loads(resource)
-        tmp_resource['fsi_url'] = url
-        tmp_resource['fsi_index'] = card_index
-        resource = json.dumps(tmp_resource)
+        url = getattr(settings, "FIVE_SEC_WIDGET_URLS", '')
+        if url != '':
+            url = url[0]
+            try:
+                page = WikiPage.objects.get(name=url)
+            except WikiPage.DoesNotExist:
+                raise Http404('wikipage does not exist')
 
-    return HttpResponse(resource, content_type="application/json")
+            revision = page.get_latest_revision()
+            urn = 'urn:' + revision.urn
+            resource_database = get_resource_database()
+            fcd = resource_database.get_resource_object(urn)
+            card_index = random.randint(0, len(fcd.cards.array) - 1)
+            fc = fcd.cards.array[card_index].get()
+            resource = resource_json(fc)
+            # temporary hack for FSI: add the URL this flashcard is taken from
+            tmp_resource = json.loads(resource)
+            tmp_resource['fsi_url'] = url
+            tmp_resource['fsi_index'] = card_index
+            resource = json.dumps(tmp_resource)
+            return HttpResponse(resource, content_type="application/json")
+
+        raise Http404('FIVE_SEC_WIDGET_URLS not set')
