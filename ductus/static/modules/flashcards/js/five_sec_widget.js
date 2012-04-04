@@ -243,6 +243,15 @@ $(function() {
     SubtitleFSWidget.prototype.submit = function() {
         // build a blueprint and send it to the server for processing
         // called when user clicks 'save'
+
+        // remove language tag if it exists, and add the correct language one
+        function getKey(data) {
+              for (var prop in data)
+                      return prop;
+        }
+        this.tags.splice(getKey('language:' + this.language), 1);
+        this.tags.push({ value: 'language:' + this.language });
+
         blueprint = {'resource': this.inner_blueprint_repr()};
         this_ = this;
         $.ajax({
