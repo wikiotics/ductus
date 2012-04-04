@@ -32,7 +32,7 @@ from ductus.wiki.models import WikiPage
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
-from ductus.util.http import query_string_not_found
+from ductus.util.http import query_string_not_found, render_json_response
 from ductus.util.bcp47 import language_tag_to_description
 from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction, StoryBookInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
@@ -346,7 +346,6 @@ def fsw_get_audio_to_subtitle(request):
             tmp_resource = json.loads(resource)
             tmp_resource['fsi_url'] = url
             tmp_resource['fsi_index'] = card_index
-            resource = json.dumps(tmp_resource)
-            return HttpResponse(resource, content_type="application/json")
+            return render_json_response(tmp_resource)
 
         raise Http404('FIVE_SEC_WIDGET_URLS not set')
