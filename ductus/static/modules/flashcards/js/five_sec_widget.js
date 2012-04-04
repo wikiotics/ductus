@@ -53,7 +53,12 @@ $(function() {
         this.elt.find('#ductus_FSWPrompt').html(prompt);
     };
     FiveSecWidget.prototype.set_answer = function(answer) {
-        this.elt.find('#ductus_FSWAnswer').html(answer);
+        var answer_div = this.elt.find('#ductus_FSWAnswer');
+        answer_div.html(answer);
+        var input = answer_div.find('input, textarea');
+        if (input.length) {
+            input.focus();
+        }
     };
     FiveSecWidget.prototype.set_footer = function(footer) {
         this.elt.find('#ductus_FSWFooter').html(footer);
