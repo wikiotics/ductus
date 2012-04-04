@@ -124,9 +124,10 @@ $(function() {
      * accessing /five-sec-widget/get-audio-to-subtitle?params...
      * and receives a JSON like:
      * { flashcard: blueprint for a flashcard with an empty phrase + an audio,
-     *   url: the url to the lesson from which it was taken, so the server knows what to update
+     *   fsi_url: the url to the lesson from which it was taken, so the server knows what to update
+     *   fsi_index: rank order of the flashcard in the deck, so the server knows where to update the deck
      * }
-     * (the url will be removed once indexing works on the server side.
+     * (the url and index will be removed once indexing works on the server side.
      * It sends the same JSON back with the phrase filled in for the server to update the database.
      */
     function SubtitleFSWidget() {
