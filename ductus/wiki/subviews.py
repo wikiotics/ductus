@@ -14,6 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Subviews: a quick way of returning some information based on a resource
+
+This file contains both the subviews framework, as well as some default
+subviews for resources.  These subviews can be overriden on a per-type basis by
+calling @register_subview(DuctModelName, 'subview-name') within a module's
+subviews.py.
+"""
+
 from functools import partial
 
 from ductus.wiki import registered_subviews
@@ -48,10 +56,16 @@ def contributor_set(resource):
 
 @register_subview(None, 'subresources')
 def subresources(resource):
-    return ()
+    """Returns the urns of each resource this resource includes
+
+    (Useful for assembling all the resources necessary for license
+    attribution, for instance)
+    """
+    return set()
 
 @register_subview(None, 'license_info')
 def license_info(resource):
+    """Returns the resource's license info as an HTML snippet"""
     from django.template import Context, loader
     t = loader.get_template('wiki/license_info.html')
     return t.render(Context({'resource': resource}))
