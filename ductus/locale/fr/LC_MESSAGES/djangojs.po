@@ -1,0 +1,294 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+#   <laurent.savaete@gmail.com>, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: ductus\n"
+"Report-Msgid-Bugs-To: http://code.ductus.us/query\n"
+"POT-Creation-Date: 2012-02-27 10:51+0100\n"
+"PO-Revision-Date: 2012-02-27 10:37+0000\n"
+"Last-Translator: bamse207 <laurent.savaete@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: static/common/js/widgets.js:240
+msgid "drag image here"
+msgstr "tirez l'image ici"
+
+#: static/common/js/widgets.js:244
+msgid "rotate left"
+msgstr "rotation gauche"
+
+#: static/common/js/widgets.js:245
+msgid "rotate right"
+msgstr "rotation droite"
+
+#: static/common/js/widgets.js:372
+msgid "What:"
+msgstr "Quoi:"
+
+#: static/common/js/widgets.js:372
+msgid "Where:"
+msgstr "Où:"
+
+#: static/common/js/widgets.js:372
+msgid "Recent"
+msgstr "Récent"
+
+#: static/common/js/widgets.js:372
+msgid "Interesting"
+msgstr "Intéressant"
+
+#: static/common/js/widgets.js:372
+msgid "Relevant | Search by"
+msgstr "Pertinent | Rechercher par"
+
+#: static/common/js/widgets.js:372
+msgid "Text"
+msgstr "Texte"
+
+#: static/common/js/widgets.js:372
+#: static/modules/flashcards/js/flashcard_deck_editor.js:640
+msgid "Tags"
+msgstr "Tags"
+
+#: static/common/js/widgets.js:374
+msgid "Restrict to project's Flickr group"
+msgstr "Limiter au groupe Flickr du projet"
+
+#: static/common/js/widgets.js:438
+msgid "File has not been uploaded yet."
+msgstr "Le fichier n'a pas encore été importé."
+
+#: static/common/js/widgets.js:463
+msgid "Warning: expected audio/ogg, but selected file is of type"
+msgstr "Attention: audio/ogg attendu, mais le fichier séléctionné est de type"
+
+#: static/common/js/widgets.js:469
+msgid "upload"
+msgstr "importer"
+
+#: static/common/js/widgets.js:503
+msgid "error uploading audio"
+msgstr "erreur lors de l'import audio"
+
+#: static/common/js/widgets.js:552
+msgid "record"
+msgstr "enregistrer"
+
+#: static/common/js/widgets.js:553
+msgid "copy"
+msgstr "copier"
+
+#: static/common/js/widgets.js:554
+msgid "search"
+msgstr "rechercher"
+
+#: static/common/js/widgets.js:555
+#: static/modules/flashcards/js/flashcard_deck_editor.js:95
+msgid "delete"
+msgstr "supprimer"
+
+#: static/common/js/widgets.js:572
+msgid ""
+"Your browser does not support File API, so you will not be able to upload "
+"anything."
+msgstr "Votre navigateur ne supporte pas File API, vous ne pourrez rien importer."
+
+#: static/common/js/widgets.js:577
+msgid "Upload a file"
+msgstr "Importer un fichier"
+
+#: static/common/js/widgets.js:603
+msgid "invalid arguments given to FullPagename constructor"
+msgstr "arguments invalides passés au constructeur FullPagename"
+
+#: static/common/js/widgets.js:608
+msgid "invalid pagename; it contains no \":\""
+msgstr "nom de page invalide, il ne contient pas de \":\""
+
+#: static/common/js/widgets.js:646
+msgid "the wiki page"
+msgstr "la page wiki"
+
+#: static/common/js/widgets.js:658
+msgid "Save to:"
+msgstr "Enregistrer sous:"
+
+#: static/common/js/widgets.js:665
+msgid "my user directory"
+msgstr "mon dossier utilisateur"
+
+#: static/common/js/widgets.js:669
+msgid ""
+"Only you will be able to edit %(pagetype) in place, but others can make "
+"improvements and save them elsewhere."
+msgstr "Vous seul pourrez modifier %(pagetype) en place, mais d'autres utilisateurs peuvent apporter des améliorations et les enregistrer ailleurs."
+
+#: static/common/js/widgets.js:676
+msgid "group: "
+msgstr "groupe:"
+
+#: static/common/js/widgets.js:680
+msgid "Only group members will be able to edit %(pagetype) in place."
+msgstr "Seuls les membres du groupe pouront modifier %(pagetype) en place."
+
+#: static/common/js/widgets.js:687
+msgid "community wiki for: "
+msgstr "wiki communautaire pour: "
+
+#: static/common/js/widgets.js:707
+msgid ""
+"Choose the language to be taught.  Anyone will be able to edit %(pagetype) "
+"in place."
+msgstr "Choisissez la langue à enseigner.  N'importe qui pourra modifier %(pagetype) en place."
+
+#: static/common/js/widgets.js:714
+msgid "Page title:"
+msgstr "Titre de la page:"
+
+#: static/common/js/widgets.js:784
+msgid "Log message: "
+msgstr "Résumé: "
+
+#: static/common/js/widgets.js:785
+#: static/modules/flashcards/js/flashcard_deck_editor.js:643
+msgid "Save"
+msgstr "Enregistrer"
+
+#: static/common/js/widgets.js:806
+msgid "saving ..."
+msgstr "enregistrement..."
+
+#: static/common/js/widgets.js:823
+msgid "saved!"
+msgstr "enregistré!"
+
+#: static/common/js/widgets.js:827
+msgid " error. save failed."
+msgstr "erreur. L'enregistrement a échoué."
+
+#: static/common/js/widgets.js:843
+msgid "an error occurred: "
+msgstr "une erreur s'est produite: "
+
+#: static/common/js/widgets.js:883
+msgid "Record online"
+msgstr "Enregistrer en ligne"
+
+#: static/common/js/widgets.js:918
+msgid "Start recording"
+msgstr "Démarrer l'enregistrement"
+
+#: static/common/js/widgets.js:925
+msgid "Stop recording"
+msgstr "Arrêter l'enregistrement"
+
+#: static/common/js/widgets.js:937
+msgid "Start playing"
+msgstr "Ecouter"
+
+#: static/common/js/widgets.js:944
+msgid "Stop playing"
+msgstr "Stop"
+
+#: static/common/js/widgets.js:955
+msgid "Upload recording"
+msgstr "Importer l'enregistrement"
+
+#: static/common/js/widgets.js:1003
+msgid ""
+"Your browser may be zoomed too far out to show the Flash security settings "
+"panel.  Zoom in, and refresh."
+msgstr "Votre navigateur est dézoomé trop loin pour pouvoir afficher le panneau des paramètres de sécurité de Flash. Réduisez le zoom, et raffraîchissez la page."
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:201
+msgid "Warning: each column name must be unique."
+msgstr "Attention: chaque nom de colonne doit être unique."
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:334
+msgid "new phrase"
+msgstr "nouvelle phrase"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:335
+msgid "new audio"
+msgstr "nouveau son"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:336
+msgid "new picture"
+msgstr "nouvelle image"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:337
+msgid "paste"
+msgstr "coller"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:372
+msgid "Search flickr for pictures"
+msgstr "Rechercher une image sur flickr"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:454
+msgid "add row"
+msgstr "ajouter une ligne"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:455
+msgid "delete row"
+msgstr "supprimer une ligne"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:456
+msgid "insert row"
+msgstr "insérer une ligne"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:477
+msgid "Prompt:"
+msgstr "Question:"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:477
+msgid "Answer:"
+msgstr "Réponse:"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:498
+msgid "Audio:"
+msgstr "Audio:"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:498
+msgid "Transcript (optional):"
+msgstr "Transcription (optionel):"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:522
+msgid "Add a \"choice\" interaction"
+msgstr "Ajouter une intéraction \"choix\""
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:525
+msgid "Add an audio lesson interaction"
+msgstr "Ajouter une intéraction audio"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:550
+msgid "delete interaction"
+msgstr "supprimer l'intéraction"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:569
+msgid "add column"
+msgstr "ajouter une colonne"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:570
+msgid "delete column"
+msgstr "supprimer la colonne"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:637
+msgid "Interactions"
+msgstr "Intéractions"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:710
+msgid "Side"
+msgstr "Côté"
+
+#: static/modules/flashcards/js/flashcard_deck_editor.js:851
+msgid "Tags (space separated):"
+msgstr "Tags (séparés par des espaces):"

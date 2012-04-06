@@ -13,6 +13,8 @@ var writable_directories = {{ writable_directories|jsonize }};
 <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.blockUI.min.js"></script>
 <script type="text/javascript" src="{{ ductus_media_prefix }}common/js/widgets.js"></script>
 <script type="text/javascript" src="{{ ductus_media_prefix }}modules/flashcards/js/flashcard_deck_editor.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/swfobject-2.2.min.js"></script>
+<script type="text/javascript" src="{{ ductus_media_prefix }}modules/audio/recorder.js"></script>
 <link type="text/css" href="{{ ductus_media_prefix }}modules/flashcards/css/flashcard_editor.css" rel="stylesheet"/>
 {% endblock %}
 
@@ -20,6 +22,6 @@ var writable_directories = {{ writable_directories|jsonize }};
 
 {% block content %}
 <div id="flashcard_deck_editor"></div>
-<div id="bottom_toolbar"></div>
-<div id="bottom_toolbar_spacer">&nbsp;</div>
+<div id="side_toolbar"></div>
+<div id="side_toolbar_spacer"></div>
 {% endblock %}

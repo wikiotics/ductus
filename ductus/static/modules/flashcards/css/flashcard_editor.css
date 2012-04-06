@@ -1,13 +1,71 @@
-#bottom_toolbar, #bottom_toolbar_spacer {
-    height: 260px;
-    width: 100%;
+#side_toolbar, #side_toolbar_spacer {
+    width: 200px;
 }
-#bottom_toolbar {
+#side_toolbar {
     position: fixed;
-    left: 0;
-    bottom: 0;
-    background: #bbb;
+    right: 0;
+    top: 20px;
     font-size: 85%;
+}
+#ductus_PopupWidget {
+    position: absolute;
+    display: none;
+    height: 0px;
+    width: 0px;
+}
+.ductus_SidebarWidgetHeader {
+    font-size: 125%;
+    padding: 5px;
+    cursor: pointer;
+    width: 95%;
+}
+.ductus_SidebarWidget {
+    background: white;
+    border: 1px solid #D3D3D3;
+}
+.ductus_Popup {
+    border: 1px solid #D3D3D3;
+    color: #555555;
+    width: 64px;
+    height: 64px;
+    background: #bbb;
+    z-index: 5;
+    cursor: pointer;
+    background: url("../../../common/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
+    border-radius: 4px;
+}
+.ductus_non_uniq_col_header {
+    position: absolute;
+    background-color: red;
+}
+.ductus_input_value_incorrect {
+    background-color: red;
+}
+.ductus_file_upload_wrapper {
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+}
+.ductus_file_upload_wrapper input {
+    cursor: pointer;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    filter: alpha(opacity=0);
+    -moz-opacity: 0;
+    opacity: 0;
+    font-size: 100px;
+}
+.ductus_file_upload_button {
+    background: url("../../../common/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;
+    border: 1px solid #D3D3D3;
+    color: #555555;
+    display: inline-block;
+    font-size: 80%;
+    font-weight: bold;
+    padding: 4px 10px;
 }
 .ductus-selected {
     background-color: #ddf;
@@ -15,6 +73,39 @@
 .ductus_FlashcardSide {
     height: 100%;
     width: 100%;
+}
+.ductus_AudioWidget .status .error {
+    font-size: 70%;
+}
+.ductus_PictureWidget {
+    position: relative;
+}
+.ductus_PictureSearchWidget form {
+    border-bottom: 1px solid #D3D3D3;
+    margin-bottom: 0.5em;
+    padding: 0.4em;
+    font-size: 80%;
+}
+.ductus_PictureSearchWidget form input {
+    margin-left: 0.3em;
+    margin-bottom: 0.4em;
+}
+.search_results span span {
+    margin: 5px;
+}
+.pic_search_pager a {
+    margin: 3px;
+    padding: 2px;
+    border: 1px solid #D3D3D3;
+}
+.pic_search_pager a.current_page {
+    color: black;
+    border: none;
+}
+.ductus_picture_controls {
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 .topleft_th {
     width: 20px;
@@ -50,7 +141,7 @@
     margin: 0 -1px .2em 0;
 }
 .ui-tabs-vertical .ui-tabs-nav li a {
-    display:block;
+    display: block;
 }
 .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-selected {
     padding-bottom: 0;
