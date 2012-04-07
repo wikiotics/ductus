@@ -372,7 +372,7 @@ $(function () {
                 }
                 caller._set_wrapped(FlashcardSide._global_audio_creator);
                 FlashcardSide._global_audio_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                    this_.calling_widget.set_from_json(model_json_repr);
+                    $('#ductus_PopupWidget').data('widget_object').calling_widget.set_from_json(model_json_repr);
                 });
                 caller.ensure_last_row_empty();
             }
