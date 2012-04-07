@@ -298,14 +298,14 @@ $(function () {
     }
     FlashcardSide.prototype = chain_clone(Widget.prototype);
     FlashcardSide.prototype.blueprint_repr = function () {
-        if (this.wrapped) {
+        if (this.wrapped && this.wrapped.blueprint_repr) {
             return this.wrapped.blueprint_repr();
         } else {
             return {resource: null};
         }
     };
     FlashcardSide.prototype.get_outstanding_presave_steps = function () {
-        return this.wrapped ? this.wrapped.get_outstanding_presave_steps() : [];
+        return (this.wrapped && this.wrapped.blueprint_repr) ? this.wrapped.get_outstanding_presave_steps() : [];
     };
     FlashcardSide.prototype.reset = function () {
         this.wrapped = null;
