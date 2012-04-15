@@ -27,10 +27,9 @@ class UserProfile(models.Model):
     ui_language = models.CharField(max_length=30, blank=True)
 
 def create_user_profile(sender, instance, created, **kwargs):
-    """create the profile if it doesn't exist, see above for details"""
+    """Django post_save handler for creating UserProfile objects"""
     if created:
         UserProfile.objects.create(user=instance)
 
-# catch the django signal to create the user profile when the user is first
-# saved
+# create the UserProfile when the User is first saved
 post_save.connect(create_user_profile, sender=User)
