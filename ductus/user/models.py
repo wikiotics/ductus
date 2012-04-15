@@ -24,7 +24,7 @@ class UserProfile(models.Model):
     """
     user = models.OneToOneField(User, unique=True, related_name='profile')
     # the language code to use for displaying the UI
-    ui_language = models.CharField(max_length=30)
+    ui_language = models.CharField(max_length=30, blank=True)
 
 def create_user_profile(sender, instance, created, **kwargs):
     """create the profile if it doesn't exist, see above for details"""
