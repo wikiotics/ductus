@@ -12,6 +12,7 @@ Contents:
    ductmodels
    genericwiki-storage
    genericwiki-dispatch
+   mediacache
    textwiki
    flashcard_deck
    resource_json
