@@ -2,7 +2,7 @@ function resolve_urn(urn) {
     return '/' + urn.split(':').join('/');
 }
 
-function resolve_mediacache_urn(resource, mime_type, additional_args, blob_urn) {
+function resolve_mediacache_url(resource, mime_type, additional_args, blob_urn) {
     var split_urn = (blob_urn || resource.resource.blob.href).split(':');
     var hash_type = split_urn[1];
     var digest = split_urn[2];

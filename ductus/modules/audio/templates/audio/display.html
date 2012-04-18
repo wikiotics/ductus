@@ -17,12 +17,12 @@ var filetype_map = {
 $(function () {
     var filetypes = [filetype_map[resource_json.resource.blob.mime_type]];
     var media_map = {};
-    media_map[filetypes[0]] = resolve_mediacache_urn(resource_json);
+    media_map[filetypes[0]] = resolve_mediacache_url(resource_json);
     var available_conversions = available_audio_formats[resource_json.resource.blob.mime_type];
     if (available_conversions) {
         for (var i = 0; i < available_conversions.length; ++i) {
             var filetype = filetype_map[available_conversions[i]];
-            media_map[filetype] = resolve_mediacache_urn(resource_json, available_conversions[i]);
+            media_map[filetype] = resolve_mediacache_url(resource_json, available_conversions[i]);
             filetypes.push(filetype);
         }
     }
