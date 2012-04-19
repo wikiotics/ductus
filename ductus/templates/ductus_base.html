@@ -94,7 +94,7 @@
                   <input type="submit" value="{% trans "Apply" %}"/>
                 </p>
               </form>
-              <p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>
+              {% block powered_by_ductus %}<p>{% blocktrans %}{{ ductus_site_name }} is powered by <a href="http://ductus.us/">Ductus</a>.{% endblocktrans %}</p>{% endblock %}
               {% block copyright_info %}<p class="copyright_info">{% blocktrans with ductus_default_license|license_name as default_license_name %}All contributions to this wiki will be licensed under the <a href="{{ ductus_default_license }}">{{ default_license_name }}</a> license.  Certain pieces of content may be available under a more permissive license; see a specific document's &lsquo;credits&rsquo; page for details.{% endblocktrans %}</p>{% endblock %}
               {% include "ductus_site_footer.html" %}
             </div>
