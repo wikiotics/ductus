@@ -42,6 +42,7 @@
                     &mdash; <a href="{% url ductus.user.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
 {% else %}
                   {% block login_button %}
+                    <li><a href="{% url ductus.user.views.user_creation %}" style="white-space: nowrap;">{% trans "Register" %}</a></li>
                     <li><a href="{% url ductus.user.views.login %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
                   {% endblock %}
 {% endif %}

@@ -120,6 +120,7 @@ h6 {
 #ductus_header ul li {
     display: inline;
     float: right;
+    margin-left: 1em;
 }
 #ductus_header a {
     text-decoration: none;
