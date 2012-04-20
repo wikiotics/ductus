@@ -58,7 +58,7 @@ def front_page(request, pagename):
         if lang[0] == 'el':  # temporary (?) override
             descr = u'Greek'
         language_tag_cloud.append(TagCloudElement(lang[1], label=descr, href=(u"/en/%s_lessons" % descr), data=lang[0]))
-    prepare_tag_cloud(language_tag_cloud, min_percent=70, max_percent=180)
+    prepare_tag_cloud(language_tag_cloud, min_percent=70, max_percent=150)
     return render_to_response('otics/front_page.html', {
         'language_tag_cloud': language_tag_cloud,
         'total_lesson_count': total_lesson_count,
