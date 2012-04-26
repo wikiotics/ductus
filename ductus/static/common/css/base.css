@@ -128,6 +128,9 @@ h6 {
     font-weight: bold;
     color: #002bb8;
 }
+#ductus_header a:hover {
+    text-decoration: underline;
+}
 
 #ductus_footer {
     border-top: 1px solid #ddd;
