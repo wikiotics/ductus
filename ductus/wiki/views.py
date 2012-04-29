@@ -48,7 +48,10 @@ if not settings.SECRET_KEY:
     raise Exception("You must define a SECRET_KEY in ductus_local_settings.py.")
 
 def view_frontpage(request):
-    "Redirect based on the user's locale"
+    "Use the custom 'otics' front page, or redirect based on the user's locale"
+    if 'ductus.modules.otics' in settings.DUCTUS_INSTALLED_MODULES:
+        from ductus.modules.otics.views import otics_front_page
+        return otics_front_page(request)
     return redirect('/%s' % _('en:main_page').replace(':', '/', 1))
 
 class DuctusRequestInfo(object):

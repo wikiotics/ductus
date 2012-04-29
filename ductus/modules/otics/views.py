@@ -21,8 +21,7 @@ from ductus.special.views import register_special_page
 from ductus.util.bcp47 import language_tag_to_description
 from ductus.util.tag_cloud import TagCloudElement, prepare_tag_cloud
 
-@register_special_page
-def front_page(request, pagename):
+def otics_front_page(request, pagename=None):
     # this is all temporarily hard-coded
     languages = (
         ('af', 1),
