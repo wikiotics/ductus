@@ -9,13 +9,13 @@ var resource_json = {{ resource_or_template|resource_json }};
 var DUCTUS_FLICKR_GROUP_ID = {{ DUCTUS_FLICKR_GROUP_ID|jsonize }};
 var writable_directories = {{ writable_directories|jsonize }};
 </script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.fileupload.modified.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.blockUI.min.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/widgets.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}modules/flashcards/js/flashcard_deck_editor.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/swfobject-2.2.min.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}modules/audio/recorder.js"></script>
-<link type="text/css" href="{{ ductus_media_prefix }}modules/flashcards/css/flashcard_editor.css" rel="stylesheet"/>
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.fileupload.modified.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.blockUI.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/widgets.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/modules/flashcards/js/flashcard_deck_editor.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/swfobject-2.2.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/modules/audio/recorder.js" %}"></script>
+<link type="text/css" href="{% static "ductus/modules/flashcards/css/flashcard_editor.css" %}" rel="stylesheet"/>
 {% endblock %}
 
 {% block body_classes %}ductus_wide{% endblock %}

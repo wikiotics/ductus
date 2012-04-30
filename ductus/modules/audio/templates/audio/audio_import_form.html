@@ -5,11 +5,11 @@
 {{ block.super }}
 
 {# swfobject is a commonly used library to embed Flash content #}
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/swfobject-2.2.min.js"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/swfobject-2.2.min.js" %}"></script>
 
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.fileupload.modified.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}modules/audio/recorder.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}modules/audio/gui_jquery.js"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.fileupload.modified.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/modules/audio/recorder.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/modules/audio/gui_jquery.js" %}"></script>
 
 <script type="text/javascript">
 	var recordButton, playButton;

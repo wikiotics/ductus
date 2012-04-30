@@ -5,7 +5,7 @@
 
 {% block head %}
 {{ block.super }}
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.min.js"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.min.js" %}"></script>
 <script type="text/javascript">
 var resource_json = {{ request.ductus.resource|resource_json }};
 var available_audio_formats = {{ available_audio_formats|jsonize }};

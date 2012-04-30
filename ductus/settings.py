@@ -73,11 +73,6 @@ MEDIA_ROOT = ''
 # Example: "http://media.lawrence.com"
 MEDIA_URL = ''
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
-
 # Make this unique, and don't share it with anybody.
 #SECRET_KEY = 'cpoong-0a^a(kp1q0jm*(okmdmcidh_!rqjzg4&ff%93flbwr$'
 
@@ -187,6 +182,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.markup',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'ductus',
     'ductus.initialize',
     'ductus.blacklist',
@@ -212,10 +208,15 @@ DUCTUS_STORAGE_BACKEND = 'ductus_site.storage_backend'
 
 #DUCTUS_TRUSTED_PROXY_SERVERS = ('127.0.0.1',)
 
-DUCTUS_MEDIA_PREFIX = '/static/ductus/'
 #DUCTUS_SITE_NAME = 'Example Ductus Site'
 #DUCTUS_SITE_DOMAIN = 'example.com'  # optional; used for linking to user pages
                                      # in the revision history
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    ('ductus', DUCTUS_SITE_ROOT + '/static'),
+)
 
 DUCTUS_ALLOWED_LICENSES = (
     'http://creativecommons.org/licenses/publicdomain/',

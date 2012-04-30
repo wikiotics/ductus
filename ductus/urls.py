@@ -4,14 +4,7 @@ from django.contrib import admin
 
 admin.autodiscover()
 
-urlpatterns = []
-
-if (settings.DEBUG and settings.DUCTUS_MEDIA_PREFIX.startswith('/')):
-    urlpatterns += patterns('',
-        url(r'^%s(?P<path>.*)$' % settings.DUCTUS_MEDIA_PREFIX[1:], 'django.views.static.serve', {'document_root': settings.DUCTUS_SITE_ROOT + '/static'}),
-    )
-
-urlpatterns += patterns('',
+urlpatterns = patterns('',
     url(r'^$', 'ductus.wiki.views.view_frontpage'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^mediacache/(.*)$', 'ductus.wiki.mediacache.mediacache_django_view'),

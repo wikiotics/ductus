@@ -5,8 +5,8 @@
 
 {% block head %}
 {{ block.super }}
-<script type="text/javascript" src="{{ ductus_media_prefix }}modules/flashcards/js/choice.js"></script>
-<link rel="stylesheet" type="text/css" media="screen, projection" href="{{ ductus_media_prefix }}modules/flashcards/css/choice.css" />
+<script type="text/javascript" src="{% static "ductus/modules/flashcards/js/choice.js" %}"></script>
+<link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/modules/flashcards/css/choice.css" %}" />
 {% endblock %}
 
 {% block javascript %}

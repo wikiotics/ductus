@@ -2,8 +2,8 @@
 
 {% block head %}
 {{ block.super }}
-<link rel="stylesheet" type="text/css" media="screen, projection" href="{{ ductus_media_prefix }}modules/phrase_choice/css/choice.css" />
-<script type="text/javascript" src="{{ ductus_media_prefix }}modules/phrase_choice/js/choice.js"></script>
+<link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/modules/phrase_choice/css/choice.css" %}" />
+<script type="text/javascript" src="{% static "ductus/modules/phrase_choice/js/choice.js" %}"></script>
 {% endblock %}
 
 {% block content %}
