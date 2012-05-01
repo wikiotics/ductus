@@ -16,6 +16,7 @@ Pygments==1.5
 flickrapi==1.4.2
 recaptcha-client==1.0.6
 pytz==2012c
+pytest==2.2.3
 
 # The current version of python-magic will error when trying to install
 # ctypes (which is not needed for python >=2.5 anyway), so until a new
