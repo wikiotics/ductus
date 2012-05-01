@@ -7,4 +7,4 @@ if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ductus.settings")
 
     import pytest
-    pytest.main(["ductus", "--doctest-modules"])
+    pytest.main(["--doctest-modules", "ductus", "tests"])
