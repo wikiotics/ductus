@@ -24,6 +24,7 @@ from django.contrib.auth import authenticate, login as perform_login
 from django.contrib.auth.views import login as django_login, logout as django_logout
 from django.contrib import messages
 from django.utils.safestring import mark_safe
+from django.views.decorators.debug import sensitive_post_parameters
 from django import forms
 
 from ductus.wiki.models import WikiPage
@@ -35,6 +36,7 @@ recaptcha = None
 if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):
     from recaptcha.client import captcha as recaptcha
 
+@sensitive_post_parameters('password1', 'password2')
 def user_creation(request, template_name='registration/create_user.html'):
     "Displays user creation form and handles its action"
     if request.method == "POST":
