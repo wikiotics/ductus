@@ -11,11 +11,6 @@
 <script type="text/javascript">
 var resource_json = {{ request.ductus.resource|resource_json }};
 var available_audio_formats = {{ available_audio_formats|jsonize }};
-var filetype_map = {
-    "audio/mp4": "m4a",
-    "audio/ogg": "oga",
-    "audio/webm": "webma"
-};
 $(function () {
     jplayer_play(resource_json);
     $(".jp-play").button({icons: {primary: 'ui-icon-play'}}).click(function() {

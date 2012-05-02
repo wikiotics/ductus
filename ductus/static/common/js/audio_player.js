@@ -1,3 +1,8 @@
+var filetype_map = {
+    "audio/mp4": "m4a",
+    "audio/ogg": "oga",
+    "audio/webm": "webma"
+};
 var _jplayer_instance = {};
 
 function get_jplayer_instance(mime_type) {
