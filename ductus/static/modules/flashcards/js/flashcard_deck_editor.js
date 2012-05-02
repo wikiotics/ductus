@@ -538,13 +538,13 @@ $(function () {
     };
     AudioLessonInteractionWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}audio_lesson_interaction';
 
-    function InteractionChooserWidget(ic) {
+    function InteractionChooserWidget(ic, fcd) {
         Widget.call(this, '<div class="ductus_InteractionChooserWidget"></div>');
         this.interactions = $('<ul class="ductus_InteractionChooserWidget_interactions"></ul>').appendTo(this.elt);
         this.new_interaction_buttons = $('<ul class="ductus_InteractionChooserWidget_add_buttons"></ul>').appendTo(this.elt);
         var this_ = this;
         $('<a href="javascript:void(0)">' + gettext('Add a "choice" interaction') + '</a>').click(function () {
-            this_.__add_interaction(new ChoiceInteractionWidget());
+            this_.__add_interaction(new ChoiceInteractionWidget(), fcd);
         }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
         $('<a href="javascript:void(0)">' + gettext('Add an audio lesson interaction') + '</a>').click(function () {
             this_.__add_interaction(new AudioLessonInteractionWidget());
@@ -554,7 +554,7 @@ $(function () {
             for (var i = 0; i < ic.array.length; ++i) {
                 var interaction = ic.array[i];
                 if (interaction.resource.fqn == ChoiceInteractionWidget.prototype.fqn) {
-                    this.__add_interaction(new ChoiceInteractionWidget(interaction));
+                    this.__add_interaction(new ChoiceInteractionWidget(interaction), fcd);
                 } else if (interaction.resource.fqn == AudioLessonInteractionWidget.prototype.fqn) {
                     this.__add_interaction(new AudioLessonInteractionWidget(interaction));
                 }
@@ -569,11 +569,13 @@ $(function () {
         });
         return { array: interactions };
     };
-    InteractionChooserWidget.prototype.__add_interaction = function (widget) {
+    InteractionChooserWidget.prototype.__add_interaction = function (widget, fcd) {
         var li = $('<li></li>').append(widget.elt).appendTo(this.interactions);
         $('<span>' + gettext('delete interaction') + '</span>').button({text: false, icons: {primary: 'ui-icon-close'}}).click(function () {
             $(this).parent('li').remove();
+            if (fcd) { fcd.remove_choice_interaction(); }
         }).appendTo(li);
+        if (fcd) { fcd.add_choice_interaction(); }
     };
 
     function FlashcardColumn(fcd) {
@@ -660,7 +662,9 @@ $(function () {
         // a jQuery object to attach sidebar widgets to
         this.sidebar = $('<div id="ductus_Sidebar"></div>');
 
-        this.interaction_chooser = new InteractionChooserWidget(fcd.resource.interactions);
+        // keep a counter of choice interactions on this widget so we can show dividers as needed
+        this.choice_interaction_count = 0;
+        this.interaction_chooser = new InteractionChooserWidget(fcd.resource.interactions, this);
         this.interaction_chooser.elt.make_sidebar_widget(gettext('Interactions'), this.sidebar);
 
         this.tagging_widget = new TaggingWidget(fcd.resource.tags);
@@ -672,6 +676,16 @@ $(function () {
         this.record_initial_inner_blueprint();
     }
     FlashcardDeck.prototype = chain_clone(ModelWidget.prototype);
+    FlashcardDeck.prototype.add_choice_interaction = function () {
+        ++this.choice_interaction_count;
+        this.elt.addClass('ductus_dividers_by_4');
+    };
+    FlashcardDeck.prototype.remove_choice_interaction = function () {
+        --this.choice_interaction_count;
+        if (this.choice_interaction_count == 0) {
+            this.elt.removeClass('ductus_dividers_by_4');
+        }
+    };
     FlashcardDeck.prototype.inner_blueprint_repr = function () {
         var cards = [];
         $.each(this.rows, function (i, row) {

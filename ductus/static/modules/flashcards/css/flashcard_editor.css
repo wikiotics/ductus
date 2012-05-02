@@ -156,3 +156,15 @@
     overflow: auto;
     height: 100%;
 }
+.ductus_dividers_by_4 tr:nth-child(8n+6) {
+    background-color: #EEE;
+}
+.ductus_dividers_by_4 tr:nth-child(8n+7) {
+    background-color: #EEE;
+}
+.ductus_dividers_by_4 tr:nth-child(8n+8) {
+    background-color: #EEE;
+}
+.ductus_dividers_by_4 tr:nth-child(8n+9) {
+    background-color: #EEE;
+}
