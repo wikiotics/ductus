@@ -54,7 +54,9 @@ var resource_displayer = {
         return $('<span class="phrase"></span>').text(resource.resource.phrase.text);
     },
     '{http://wikiotics.org/ns/2010/audio}audio': function (resource) {
-        return $('<span class="audio">(audio coming soon)</span>');
+        var rv = $('<span class="audio play-button">click to hear audio</span>');
+        rv.data('resource', resource);
+        return rv;
     }
 };
 
@@ -130,6 +132,9 @@ $(function () {
                 }
             }
         }
+        prepared_frame.find('span.audio').click(function () {
+            jplayer_play($(this).data('resource'));
+        });
     }
 
     var choice_actions_enabled = false;

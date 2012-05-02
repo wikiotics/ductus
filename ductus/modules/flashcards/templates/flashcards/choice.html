@@ -7,6 +7,8 @@
 {% block head %}
 {{ block.super }}
 <script type="text/javascript" src="{% static "ductus/modules/flashcards/js/choice.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/audio_player.js" %}"></script>
 <link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/modules/flashcards/css/choice.css" %}" />
 {% endblock %}
 
@@ -14,6 +16,7 @@
 var resource_json = {{ request.ductus.resource|resource_json }};
 var prompt_columns = {{ prompt_columns|jsonize }};
 var answer_column = {{ answer_column|jsonize }};
+var available_audio_formats = {{ available_audio_formats|jsonize }};
 {% endblock %}
 
 {% block content %}
