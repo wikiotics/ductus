@@ -80,13 +80,12 @@ def convert_wav_to_ogg(wav_filename):
     online recorder.
     """
     ogg_filename = wav_filename + '.ogg'
-    popen = subprocess.Popen([settings.FFMPEG_PATH, '-i', wav_filename, '-acodec', 'libvorbis', ogg_filename],
+    popen = subprocess.Popen([settings.FFMPEG_PATH, '-i', wav_filename, '-acodec', 'libvorbis', '-aq', '3', '-ac', '2', ogg_filename],
                             stdout=DEVNULL, stderr=subprocess.PIPE)
     stderr_output = popen.communicate()[1]
 
     if popen.returncode != 0:
         raise forms.ValidationError(self.error_messages['wav_conversion_failed'])
-
     return ogg_filename
 
 class AudioField(forms.FileField):
