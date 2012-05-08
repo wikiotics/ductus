@@ -190,6 +190,7 @@ INSTALLED_APPS = (
     'ductus.user',
     'ductus.group',
     'ductus.special',
+    'compressor',
 )
 
 AUTH_PROFILE_MODULE = "ductus.user.UserProfile"
@@ -217,6 +218,17 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     ('ductus', DUCTUS_SITE_ROOT + '/static'),
 )
+# django_compressor settings
+# for details, refer to http://django_compressor.readthedocs.org/en/latest/quickstart/
+# these settings do nothing, to actually use compressor, read the doc above and
+# setup your own site in ductus_local_settings.py
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+COMPRESS_ROOT = 'static/'   # defaults to STATIC_ROOT but since we don't set it, force some value here so compressor won't complain
+COMPRESS_ENABLED = False
 
 DUCTUS_ALLOWED_LICENSES = (
     'http://creativecommons.org/licenses/publicdomain/',

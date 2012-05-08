@@ -18,6 +18,7 @@ flickrapi==1.4.2
 recaptcha-client==1.0.6
 pytz==2012c
 pytest==2.2.3
+django_compressor==1.1.2
 
 # You probably don't want to bother compiling PIL and lxml, so the
 # following lines are commented out.  But the relevant versions used
