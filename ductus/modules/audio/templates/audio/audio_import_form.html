@@ -1,10 +1,11 @@
 {% extends "ductus_base.html" %}
 {% load i18n %}
 {% load staticfiles %}
+{% load compress %}
 
 {% block head %}
 {{ block.super }}
-
+{% compress js %}
 {# swfobject is a commonly used library to embed Flash content #}
 <script type="text/javascript" src="{% static "ductus/common/js/swfobject-2.2.min.js" %}"></script>
 
@@ -144,6 +145,7 @@
 	}
 	$(document).ready( function(){ setupRecorder(); });
 </script>
+{% endcompress %}
 {% endblock %}
 
 {% block content %}
