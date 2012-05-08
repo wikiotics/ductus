@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load jsonize %}
 {% load staticfiles %}
+{% load compress %}
 
 {% block head %}
 {{ block.super }}
@@ -10,13 +11,17 @@ var resource_json = {{ resource_or_template|resource_json }};
 var DUCTUS_FLICKR_GROUP_ID = {{ DUCTUS_FLICKR_GROUP_ID|jsonize }};
 var writable_directories = {{ writable_directories|jsonize }};
 </script>
+{% compress js %}
 <script type="text/javascript" src="{% static "ductus/common/js/jquery.fileupload.modified.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/jquery.blockUI.min.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/widgets.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/modules/flashcards/js/flashcard_deck_editor.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/swfobject-2.2.min.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/modules/audio/recorder.js" %}"></script>
+{% endcompress %}
+{% compress css %}
 <link type="text/css" href="{% static "ductus/modules/flashcards/css/flashcard_editor.css" %}" rel="stylesheet"/>
+{% endcompress %}
 {% endblock %}
 
 {% block body_classes %}ductus_wide{% endblock %}
