@@ -3,13 +3,18 @@
 {% load urn %}
 {% load jsonize %}
 {% load staticfiles %}
+{% load compress %}
 
 {% block head %}
 {{ block.super }}
+{% compress js %}
 <script type="text/javascript" src="{% static "ductus/modules/flashcards/js/choice.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.min.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/audio_player.js" %}"></script>
+{% endcompress %}
+{% compress css %}
 <link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/modules/flashcards/css/choice.css" %}" />
+{% endcompress %}
 {% endblock %}
 
 {% block javascript %}
