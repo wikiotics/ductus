@@ -1,20 +1,26 @@
-<!DOCTYPE html>{% load i18n %}{% load title %}{% load license_name %}{% load staticfiles %}{% load static %}
+<!DOCTYPE html>{% load i18n %}{% load title %}{% load license_name %}{% load staticfiles %}{% load static %}{% load  compress %}
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="utf-8"/>
     <title>{% block title %}{% title ductus_site_name %}{% endblock %}{% for title in title_list reversed %}{{ title }}{% if not forloop.last %} - {% endif %}{% endfor %}</title>
     <meta name="HandheldFriendly" content="True"/>
+    {% compress css %}
     <link type="text/css" href="{% static "ductus/common/css/normalize.css" %}" rel="stylesheet"/>
     <link type="text/css" href="{% static "ductus/common/css/smoothness/jquery-ui-1.8.17.custom.css" %}" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/common/css/base.css" %}" />
     {# include local (site-specific) css #}
+    {% endcompress %}
     <script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-1.6.4.min.js" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-ui-1.8.17.custom.min.js" %}"></script>
+    {% compress js %}
     <script type="text/javascript" src="{% static "ductus/common/js/json2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/base.js" %}"></script>
+    {% endcompress %}
     <!--[if IE]>
+      {% compress js %} 
       <script type="text/javascript" src="{% static "ductus/common/js/respond.min.js" %}"></script>
+      {% endcompress %}
     <![endif]-->
     <script type="text/javascript">
       var ductus_media_prefix = '{% get_static_prefix %}';
