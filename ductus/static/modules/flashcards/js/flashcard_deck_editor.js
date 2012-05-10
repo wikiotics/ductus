@@ -16,15 +16,6 @@
  */
 
 $(function () {
-    $.fn.verticaltabs = function () {
-        // for some reason tabs() fails if the element hasn't been inserted into the DOM yet, so we wait until it has been to call it
-        var this_ = this;
-        setTimeout(function () {
-            this_.tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-            this_.find("li").removeClass('ui-corner-top').addClass('ui-corner-left');
-        }, 0);
-        return this;
-    };
 
     var selected = null;
     var selected_wrapped_set;
@@ -112,86 +103,6 @@ $(function () {
                     }
                 };
             }
-        }
-    };
-
-    function PhraseCreator() {
-        Widget.call(this, '<div class="ductus_PhraseCreator"><form><input/></form></div>');
-
-        var this_ = this;
-        this.input = this.elt.find('input');
-        this.elt.find('form').submit(function (event) {
-            event.preventDefault();
-            this_.elt.trigger("ductus_element_selected", [{
-                resource: {
-                    phrase: { text: this_.input.val() },
-                    fqn: PhraseWidget.prototype.fqn
-                }
-            }]);
-            this_.input.val('');
-        });
-    }
-    PhraseCreator.prototype = chain_clone(Widget.prototype);
-    PhraseCreator.prototype.do_focus = function () {
-        this.input.focus();
-    };
-
-    function FlashcardSideEditor(fcsw) {
-        // the editor shown at the right side, allowing to add elements to a flashcard side, edit or remove them.
-        // fcsw is the calling FlashcardSide widget (the one that was clicked on the flashcard deck)
-        Widget.call(this, '<div class="ductus_FlashcardSideEditor"><ul></ul></div>');
-
-        var this_ = this;
-        var ul = this.elt.find("ul");
-
-        ul.append('<li class="display-only-if-editable">&nbsp;</li>');
-
-        var edit_tab_body = $('<div id="fcs-edit"></div>');
-        ul.append('<li><a href="#fcs-edit" id="fcs-edit-tab" class="display-only-if-editable">edit</a></li>');
-        this.elt.append(edit_tab_body);
-        this.edit_tab_body = edit_tab_body;
-
-        this.elt.verticaltabs();
-
-        // auto-focus on important element when tab is selected
-        this.elt.bind("tabsselect", function (event, ui) {
-            var widget_object = $(ui.panel).children().first().data("widget_object");
-            if (!widget_object)
-                return;
-            if (widget_object.do_focus) {
-                setTimeout(function () {
-                    widget_object.do_focus();
-                }, 0);
-            }
-        });
-    }
-    FlashcardSideEditor.prototype = chain_clone(Widget.prototype);
-    FlashcardSideEditor.prototype.set_fcsw = function (fcsw) {
-        if (this.fcsw === fcsw)
-            return;
-        this.fcsw = fcsw;
-        // show or hide edit/delete buttons as appropriate
-        this.elt.find('.display-only-if-editable').toggle(!!this.fcsw.wrapped);
-
-        // if no existing element, try to select a sensible "new" tab
-        if (!fcsw.wrapped) {
-            var display_index = fcsw.column.th.index() + 1;
-            // fixme: this next row assumes there is only one deck...
-            var first_td_in_column = $(".ductus_FlashcardDeck").find("td:nth-child(" + display_index + ")").first();
-            var first_fcsw_in_column = first_td_in_column.children().first().data("widget_object");
-            if (first_fcsw_in_column && first_fcsw_in_column.wrapped) {
-                for (var j = 0; j < FlashcardSide.widgets.length; ++j) {
-                    if (FlashcardSide.widgets[j][1].prototype.fqn == first_fcsw_in_column.wrapped.fqn)
-                        this.elt.tabs("select", "fcs-new-" + j);
-                }
-            }
-        }
-    };
-    FlashcardSideEditor.prototype.go_to_main_editor_tab = function () {
-        if (this.editor_widget) {
-            this.elt.tabs("select", "fcs-edit");
-            if (this.editor_widget.focus_on_editor)
-                this.editor_widget.focus_on_editor();
         }
     };
 
@@ -316,10 +227,6 @@ $(function () {
         if (popup.length) {
             popup.data('widget_object').show_popup(this);
         }
-    };
-    FlashcardSide.prototype.handle_double_click = function () {
-        if (FlashcardSide._global_flashcard_side_editor)
-            FlashcardSide._global_flashcard_side_editor.go_to_main_editor_tab();
     };
     FlashcardSide.prototype.set_from_json = function (fcs) {
         if (fcs && fcs.resource) {
@@ -463,9 +370,7 @@ $(function () {
         this.elt.append(td);
         td.ductus_selectable(function () {
             return fcsw.ui_widget();
-        }, null, function () {
-            fcsw.handle_double_click();
-        });
+        }, null);
     };
     // popup definition for a flashcard (a row)
     // FIXME: the width of the whole flashcard is used for positioning popup...
