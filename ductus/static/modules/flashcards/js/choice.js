@@ -1,8 +1,3 @@
-var dividers = []; // indices represent cards where dividers should be placed immediately before
-dividers.unshift(0);
-dividers.push(resource_json.resource.cards.array.length);
-// fixme: one day when we use bisect search below, we should at this point assert that the dividers are given in order
-
 function shuffle (a) {
     for (var j, x, i = a.length; i; j = parseInt(Math.random() * i), x = a[--i], a[i] = a[j], a[j] = x);
 }
@@ -87,6 +82,11 @@ $(function () {
             }
         };
     })();
+
+    // dividers exist immediately before each index provided here
+    var dividers = resource_json.resource.dividers || [];
+    dividers.unshift(0);
+    dividers.push(resource_json.resource.cards.array.length);
 
     function get_wrong_indices (correct_index) {
         var rv = array_range(max_lte(correct_index, dividers), min_gt(correct_index, dividers));

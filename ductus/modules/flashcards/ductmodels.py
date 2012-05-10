@@ -58,6 +58,17 @@ def _column_validator(re_like=''):
             raise ductmodels.ValidationError("incorrect number of columns given.  Expecting re-like matching '%s'." % re_like)
     return _do_column_validation
 
+def _divider_validator(v):
+    if not v:
+        return
+    dividers = v.split(',')
+    if not all(_is_canonical_int(a) for a in dividers):
+        raise ductmodels.ValidationError("each must be an integer in canonical form")
+    dividers = [int(a) for a in dividers]
+    for i in xrange(len(dividers) - 1):
+        if not dividers[i] < dividers[i + 1]:
+            raise ductmodels.ValidationError("dividers must be provided in order, without duplicates")
+
 @register_ductmodel
 class ChoiceInteraction(ductmodels.BaseDuctModel):
     ns = 'http://wikiotics.org/ns/2011/flashcards'
@@ -107,6 +118,9 @@ class FlashcardDeck(ductmodels.DuctModel):
 
     interactions = ductmodels.OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction, AudioLessonInteraction))
 
+    # dividers will be placed just before each index given here
+    dividers = ductmodels.Attribute(validator=_divider_validator, optional=True)
+
     def validate(self, strict=True):
         super(FlashcardDeck, self).validate(strict)
 
@@ -126,3 +140,9 @@ class FlashcardDeck(ductmodels.DuctModel):
         for interaction in self.interactions.array:
             if not all(c in r for c in interaction.get().get_columns_referenced()):
                 raise ductmodels.ValidationError("all referenced columns must exist in the FlashcardDeck")
+
+        if self.dividers:
+            first_divider_index = int(self.dividers.partition(',')[0])
+            last_divider_index = int(self.dividers.rpartition(',')[2])
+            if first_divider_index < 1 or last_divider_index >= len(self.cards):
+                raise ductmodels.ValidationError("divider index out of range")
