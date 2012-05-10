@@ -828,11 +828,20 @@ $(function () {
         // the widget used to edit tags applied to the whole flashcard deck
         ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>' + gettext('Tags (space separated):') + '</label><input /></div>');
         this.input = this.elt.children('input');
+        this.source_lang_input = $('<span id="source_lang_tag"><label>' + gettext('Source language:') + '</label><input /></span>').appendTo(this.elt).children('input');
+        this.target_lang_input = $('<span id="target_lang_tag"><label>' + gettext('Target language:') + '</label><input /></span>').appendTo(this.elt).children('input');
         var tag_string = '';
         var tag_names = [];
         if (tags) {
             for (var i = 0, l = tags.array.length; i < l; ++i) {
-                tag_names.push(tags.array[i].value);
+                var subtag = tags.array[i].value.substr(0, 16);
+                if (subtag == 'source-language:') {
+                    this.source_lang_input.val(tags.array[i].value.substr(16));
+                } else if (subtag == 'target-language:') {
+                    this.target_lang_input.val(tags.array[i].value.substr(16));
+                } else {
+                    tag_names.push(tags.array[i].value);
+                }
             }
             tag_string = tag_names.join(' ');
         }
@@ -846,6 +855,13 @@ $(function () {
         var tag_list = [];
         if (this.input && this.input.val()) {
             tag_list = this.input.val().split(" ");
+            // FIXME: deal with special tags incorrectly input here
+        }
+        if (this.source_lang_input && this.source_lang_input.val()) {
+            tag_list.push('source-language:' + this.source_lang_input.val());
+        }
+        if (this.target_lang_input && this.target_lang_input.val()) {
+            tag_list.push('target-language:' + this.target_lang_input.val());
         }
         return tag_list;
     };
