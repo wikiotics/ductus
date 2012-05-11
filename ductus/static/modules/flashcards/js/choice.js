@@ -84,9 +84,14 @@ $(function () {
     })();
 
     // dividers exist immediately before each index provided here
-    var dividers = resource_json.resource.dividers || [];
+    var dividers = resource_json.resource.dividers || '';
+    // the backend sends dividers as a comma-separated string, turn it into an array first
+    dividers = dividers.split(',');
     dividers.unshift(0);
     dividers.push(resource_json.resource.cards.array.length);
+    for (var i = dividers.length - 1; i; i--) {
+        dividers[i] = parseInt(dividers[i]);
+    }
 
     function get_wrong_indices (correct_index) {
         var rv = array_range(max_lte(correct_index, dividers), min_gt(correct_index, dividers));
