@@ -193,7 +193,7 @@ INSTALLED_APPS = (
     'compressor',
 )
 
-AUTH_PROFILE_MODULE = "ductus.user.UserProfile"
+AUTH_PROFILE_MODULE = "user.UserProfile"
 
 DUCTUS_INSTALLED_MODULES = (
     'ductus.modules.audio',
