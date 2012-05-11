@@ -63,6 +63,32 @@ function display_resource (resource) {
 
 $(function () {
 
+    // dividers exist immediately before each index provided here
+    var dividers = resource_json.resource.dividers || '';
+    // the backend sends dividers as a comma-separated string, turn it into an array first
+    dividers = dividers.split(',');
+    dividers.unshift(0);
+    dividers.push(resource_json.resource.cards.array.length);
+    for (var i = dividers.length - 1; i; i--) {
+        dividers[i] = parseInt(dividers[i]);
+    }
+    // ignore cards that have no answer, and update divider indices accordingly
+    // this MUST run first, since everything else relies on coherent cards and dividers
+    var original_length = resource_json.resource.cards.array.length;
+    for (var i = original_length; --i > -1; ) {
+        var card = resource_json.resource.cards.array[i];
+        if (card.resource.sides.array[answer_column].resource == null) {
+            resource_json.resource.cards.array.splice(i, 1);
+            // shift dividers accordingly
+            // TODO: tell the user to remove empty rows from the lesson in the editor
+            // this is a waste of time, but prevents buggy situations where the choice lesson
+            // won't be usable.
+            for (var d = min_gt(i, dividers)[0], end = dividers.length; d < end; d++) {
+                --dividers[d];
+            }
+        }
+    }
+
     // this is meant to be a generic interface, with `length` and `get_next` properties.
     // If there is no known length, it should return -1.  `get_next()` should be a function
     // that returns -1 after the final frame.
@@ -84,16 +110,6 @@ $(function () {
             }
         };
     })();
-
-    // dividers exist immediately before each index provided here
-    var dividers = resource_json.resource.dividers || '';
-    // the backend sends dividers as a comma-separated string, turn it into an array first
-    dividers = dividers.split(',');
-    dividers.unshift(0);
-    dividers.push(resource_json.resource.cards.array.length);
-    for (var i = dividers.length - 1; i; i--) {
-        dividers[i] = parseInt(dividers[i]);
-    }
 
     function get_wrong_indices (correct_index) {
         var rv = array_range(max_lte(correct_index, dividers)[1], min_gt(correct_index, dividers)[1]);
