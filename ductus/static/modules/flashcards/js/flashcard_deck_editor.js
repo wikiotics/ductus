@@ -31,7 +31,14 @@ $(function () {
         selected_wrapped_set = wrapped_set_func ? wrapped_set_func() : $(elt);
         selected_wrapped_set.addClass("ductus-selected");
     }
-
+    function _get_pseudo_dividers (row_count) {
+        // return a string like '4,8,12,16' marking indices of dividers
+        var dividers = [];
+        for (var i = 4; i < row_count; i += 4) {
+            dividers.push(i);
+        }
+        return dividers.join(',');
+    }
     $.fn.ductus_selectable = function (ui_widget_func, wrapped_set_func, dblclick_handler) {
         // set click/dblclick handlers for a selectable element
         // ui_widget_func: the "click handler" for the widget (also sets the editing widget)
@@ -571,6 +578,7 @@ $(function () {
         this.choice_interaction_count = 0;
         this.interaction_chooser = new InteractionChooserWidget(fcd.resource.interactions, this);
         this.interaction_chooser.elt.make_sidebar_widget(gettext('Interactions'), this.sidebar);
+        this.dividers = fcd.resource.dividers || '';
 
         this.tagging_widget = new TaggingWidget(fcd.resource.tags);
         this.tagging_widget.elt.make_sidebar_widget(gettext('Tags'), this.sidebar);
@@ -606,12 +614,17 @@ $(function () {
                 tags.push({value: tag});
             }
         });
-        return this.add_inner_blueprint_constructor({
+        var bp = {
             cards: {array: cards},
             headings: {array: headings},
             tags: {array: tags},
             interactions: this.interaction_chooser.blueprint_repr()
-        });
+        };
+        // we only need dividers if we have a choice interaction
+        if (this.choice_interaction_count) {
+            bp['dividers'] =  _get_pseudo_dividers(this.rows.length);
+        }
+        return this.add_inner_blueprint_constructor(bp);
     };
     FlashcardDeck.prototype.get_outstanding_presave_steps = function () {
         return ModelWidget.combine_presave_steps(this.rows);
