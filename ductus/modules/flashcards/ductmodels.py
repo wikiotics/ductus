@@ -69,6 +69,15 @@ def _divider_validator(v):
         if not dividers[i] < dividers[i + 1]:
             raise ductmodels.ValidationError("dividers must be provided in order, without duplicates")
 
+def _column_order_validator(v):
+    if not v:
+        return
+    column_order = v.split(',')
+    if not all(_is_canonical_int(a) and int(a) >= 0 for a in column_order):
+        raise ductmodels.ValidationError("each must be a nonnegative integer in canonical form")
+    if len(column_order) != len(set(column_order)):
+        raise ductmodels.ValidationError("a column index cannot be specified twice")
+
 @register_ductmodel
 class ChoiceInteraction(ductmodels.BaseDuctModel):
     ns = 'http://wikiotics.org/ns/2011/flashcards'
@@ -114,7 +123,7 @@ class FlashcardDeck(ductmodels.DuctModel):
 
     cards = ductmodels.ArrayElement(ductmodels.ResourceElement(Flashcard))
     headings = ductmodels.ArrayElement(ductmodels.TextElement())
-    column_order = ductmodels.Attribute(optional=True)
+    column_order = ductmodels.Attribute(validator=_column_order_validator, optional=True)
 
     interactions = ductmodels.OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction, AudioLessonInteraction))
 
@@ -146,3 +155,8 @@ class FlashcardDeck(ductmodels.DuctModel):
             last_divider_index = int(self.dividers.rpartition(',')[2])
             if first_divider_index < 1 or last_divider_index >= len(self.cards):
                 raise ductmodels.ValidationError("divider index out of range")
+
+        if self.column_order:
+            highest_column_index = max(int(a) for a in self.column_order.split(','))
+            if highest_column_index >= headings_length:
+                raise ductmodels.ValidationError("column index out of range")
