@@ -3,6 +3,8 @@
 # Ductus documentation build configuration file, created by
 # sphinx-quickstart on Sat Aug 28 00:07:53 2010.
 #
+# and manually modified...
+#
 # This file is execfile()d with the current directory set to its containing dir.
 #
 # Note that not all possible configuration values are present in this
@@ -13,6 +15,25 @@
 
 import sys, os
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ductus.settings")
+
+sys.path.append(os.path.abspath('..'))
+# check if we're running on RTD
+if "READTHEDOCS" in os.environ:
+    sys.path.append(os.path.abspath('../envs/latest/lib/python2.7/site-packages'))
+
+# =============================================================================
+# start by running apidoc to generate the .rst files
+#
+# XXX: it seems like a bad idea to execute code in a file called conf.py, but
+# that's what we do anyway.
+print "running apidoc"
+from sphinx.apidoc import main
+arguments = ['sphinx-apidoc', '-f', '-o', './', '../ductus/']
+main(arguments)
+print "done with apidoc"
+
+# =============================================================================
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.

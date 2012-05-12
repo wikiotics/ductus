@@ -18,6 +18,8 @@ flickrapi==1.4.2
 recaptcha-client==1.0.6
 pytz==2012c
 pytest==2.2.3
+Sphinx==1.1.3
+
 #django_compressor==1.1.2
 # use the dev version which fixes a couple bugs that affect us (offline compilation...)
 -e git://github.com/jezdez/django_compressor.git@d6d030ec3cd806bd282fd8becf65183b36918936#egg=django_compressor
