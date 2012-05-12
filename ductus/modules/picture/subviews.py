@@ -14,17 +14,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.wiki.subviews import register_subview, subview
+from django.template import Context, loader
+
+from ductus.wiki.subviews import register_subview
 from ductus.modules.picture.ductmodels import Picture
 
 @register_subview(Picture, 'license_info')
 def license_info(resource):
-    from django.template import Context, loader
     t = loader.get_template('picture/license_info.html')
     return t.render(Context({'resource': resource}))
 
 @register_subview(Picture, 'as_html')
 def as_html(resource):
-    from django.template import Context, loader
     t = loader.get_template('picture/as_html.html')
     return t.render(Context({'resource': resource}))
