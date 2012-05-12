@@ -74,3 +74,12 @@ def license_info(resource):
 def as_html(resource):
     """Returns an HTML representation/summary of the resource"""
     return u''
+
+@register_subview(None, 'tags_display')
+def tags_display(resource):
+    tags = [tag.value for tag in resource.tags]
+    from django.template import Context, loader
+    t = loader.get_template('wiki/tags_display.html')
+    return t.render(Context({
+        'tags': tags,
+    }))

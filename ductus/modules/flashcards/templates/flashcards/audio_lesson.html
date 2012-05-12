@@ -12,6 +12,7 @@
 
 <h3>{% trans "Full transcript of the lesson:" %}</h3>
 {{ request.ductus.resource|subview:"as_html" }}
+{{ request.ductus.resource|subview:"tags_display" }}
 {% endblock %}
 
 {% block sidebar %}

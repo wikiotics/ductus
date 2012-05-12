@@ -1,0 +1,8 @@
+<div class="ductus_tags_display">{% load i18n %}
+    <h4>{% trans "Tags:" %}</h4>
+    <ul>
+{% for tag in tags %}
+        <li>{{ tag }}</li>
+{% endfor %}
+    </ul>
+</div>
