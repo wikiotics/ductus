@@ -128,6 +128,9 @@ class FlashcardDeck(ductmodels.DuctModel):
     interactions = ductmodels.OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction, AudioLessonInteraction))
 
     # dividers will be placed just before each index given here
+    # dividers are 0 indexed to match row numbers
+    # e.g.: a divider value of 3 means the divider will be place before row 3 (visually before 4 on the editor)
+    # 0 is never included in the saved values, but implicitly added by the UI (a divider before the first card)
     dividers = ductmodels.Attribute(validator=_divider_validator, optional=True)
 
     def validate(self, strict=True):

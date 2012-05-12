@@ -33,6 +33,8 @@ $(function () {
     }
     function _get_pseudo_dividers (row_count) {
         // return a string like '4,8,12,16' marking indices of dividers
+        // dividers are zero-indexed to match row numbers, and placed just before the row number they indicate:
+        // e.g.: divider 4 is placed before row 4, ie: before line 5 on the UI (which is visually 1-indexed)
         var dividers = [];
         for (var i = 4; i < row_count; i += 4) {
             dividers.push(i);
