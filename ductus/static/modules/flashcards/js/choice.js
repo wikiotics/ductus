@@ -177,12 +177,13 @@ $(function () {
                 choice_actions_enabled = false;
                 var dc = $('.ductus_choice');
                 dc.height(dc.height()); // prevent the entire page from resizing
-                $('.ductus_choice td.incorrect div').hide(500, "linear", function () {
+                $('.ductus_choice td.incorrect div').hide(450, "linear");
+                setTimeout(function () {
                     if (!already_called) {
                         choice_correct_callback();
                     }
                     already_called = true;
-                });
+                }, 500);
             } else {
                 $(this).fadeTo(200, .25, "linear", function () {
                     if (!already_called) {
