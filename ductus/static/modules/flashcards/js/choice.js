@@ -147,12 +147,13 @@ $(function () {
             for (var j = 0; j < 2; ++j) {
                 var td = $('<td></td>').appendTo(tr);
                 var display_index = display_indices[i * 2 + j];
+                var div = $('<div></div>');
                 if (display_index !== undefined) {
                     var res = cards_array[display_index].resource.sides.array[answer_column];
-                    var div = $('<div></div>').append(display_resource(res));
-                    td.addClass("choice_item clickable").append(div);
-                    td.addClass(display_index == index ? "correct": "incorrect");
+                    div.append(display_resource(res));
                 }
+                td.addClass("choice_item clickable").append(div);
+                td.addClass(display_index == index ? "correct": "incorrect");
             }
         }
         prepared_frame.find('span.audio').click(function () {
