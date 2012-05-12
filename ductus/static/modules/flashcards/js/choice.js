@@ -21,21 +21,23 @@ function array_range (a, b, c) {
 }
 
 function min_gt(n, array) {
+    // return the minimum value in array > n and its index
     // fixme: use bisect algorithm
     var rv;
     for (var i = 0; i < array.length; ++i) {
-        if (array[i] > n && (array[i] < rv || rv === undefined))
-            rv = array[i];
+        if (array[i] > n && (rv === undefined || array[i] < rv[1]))
+            rv = [i, array[i]];
     }
     return rv;
 }
 
 function max_lte(n, array) {
+    // return the max value in array <= n and its index
     // fixme: use bisect algorithm
     var rv;
     for (var i = 0; i < array.length; ++i) {
-        if (array[i] <= n && (array[i] > rv || rv === undefined))
-            rv = array[i];
+        if (array[i] <= n && (rv === undefined || array[i] > rv[1]))
+            rv = [i, array[i]];
     }
     return rv;
 }
@@ -94,7 +96,7 @@ $(function () {
     }
 
     function get_wrong_indices (correct_index) {
-        var rv = array_range(max_lte(correct_index, dividers), min_gt(correct_index, dividers));
+        var rv = array_range(max_lte(correct_index, dividers)[1], min_gt(correct_index, dividers)[1]);
         rv.splice($.inArray(correct_index, rv), 1);
         shuffle(rv);
         return rv;
