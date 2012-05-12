@@ -22,3 +22,9 @@ def license_info(resource):
     from django.template import Context, loader
     t = loader.get_template('picture/license_info.html')
     return t.render(Context({'resource': resource}))
+
+@register_subview(Picture, 'as_html')
+def as_html(resource):
+    from django.template import Context, loader
+    t = loader.get_template('picture/as_html.html')
+    return t.render(Context({'resource': resource}))

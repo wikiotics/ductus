@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ductus.wiki.subviews import register_subview, subview
-from ductus.modules.flashcards.ductmodels import Flashcard, FlashcardDeck
+from ductus.wiki.subviews import register_subview
+from ductus.modules.flashcards.ductmodels import Flashcard, FlashcardDeck, Phrase
 
 @register_subview(Flashcard, 'subresources')
 def flashcard_subresources(resource):
@@ -32,3 +32,21 @@ def flashcard_deck_subresources(fcd):
         #s.add(fc.href)
         s.update(flashcard_subresources(fc.get()))
     return s
+
+@register_subview(Phrase, 'as_html')
+def phrase_as_html(phrase):
+    from django.utils.html import escape
+    from django.utils.safestring import mark_safe
+    return mark_safe('<div class="ductus_phrase">%s</div>' % escape(phrase.phrase.text))
+
+@register_subview(FlashcardDeck, 'as_html')
+def flashcard_as_html(flashcard_deck):
+    flashcards = [card.get() for card in flashcard_deck.cards]
+    headings = [heading.text for heading in flashcard_deck.headings]
+    from django.template import Context, loader
+    t = loader.get_template('flashcards/flashcard_deck_as_html.html')
+    return t.render(Context({
+        'flashcard_deck': flashcard_deck,
+        'flashcards': flashcards,
+        'headings': headings,
+    }))

@@ -1,5 +1,6 @@
 {% extends "ductus_document_columns.html" %}
 {% load i18n %}
+{% load subview %}
 
 {% block content %}
 {% if podcast_webm_relative_url %}
@@ -8,6 +9,9 @@
 {% else %}
 <p>{% trans "No audio available for podcast.  Try editing the page and adding some." %}</p>
 {% endif %}
+
+<h3>{% trans "Full transcript of the lesson:" %}</h3>
+{{ request.ductus.resource|subview:"as_html" }}
 {% endblock %}
 
 {% block sidebar %}

@@ -69,3 +69,8 @@ def license_info(resource):
     from django.template import Context, loader
     t = loader.get_template('wiki/license_info.html')
     return t.render(Context({'resource': resource}))
+
+@register_subview(None, 'as_html')
+def as_html(resource):
+    """Returns an HTML representation/summary of the resource"""
+    return u''
