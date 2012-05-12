@@ -63,19 +63,21 @@ function display_resource (resource) {
 
 $(function () {
 
+    var i;
+
     // dividers exist immediately before each index provided here
     var dividers = resource_json.resource.dividers || '';
     // the backend sends dividers as a comma-separated string, turn it into an array first
     dividers = dividers.split(',');
     dividers.unshift(0);
     dividers.push(resource_json.resource.cards.array.length);
-    for (var i = dividers.length - 1; i; i--) {
+    for (i = dividers.length - 1; i; i--) {
         dividers[i] = parseInt(dividers[i]);
     }
     // ignore cards that have no answer, and update divider indices accordingly
     // this MUST run first, since everything else relies on coherent cards and dividers
     var original_length = resource_json.resource.cards.array.length;
-    for (var i = original_length; --i > -1; ) {
+    for (i = original_length; --i > -1; ) {
         var card = resource_json.resource.cards.array[i];
         if (card.resource.sides.array[answer_column].resource == null) {
             resource_json.resource.cards.array.splice(i, 1);
