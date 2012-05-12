@@ -616,17 +616,14 @@ $(function () {
                 tags.push({value: tag});
             }
         });
-        var bp = {
+        return this.add_inner_blueprint_constructor({
             cards: {array: cards},
             headings: {array: headings},
             tags: {array: tags},
+            // we only save [pseudo-]dividers if we have a choice interaction
+            dividers: (this.choice_interaction_count ? _get_pseudo_dividers(this.rows.length) : ''),
             interactions: this.interaction_chooser.blueprint_repr()
-        };
-        // we only need dividers if we have a choice interaction
-        if (this.choice_interaction_count) {
-            bp['dividers'] =  _get_pseudo_dividers(this.rows.length);
-        }
-        return this.add_inner_blueprint_constructor(bp);
+        });
     };
     FlashcardDeck.prototype.get_outstanding_presave_steps = function () {
         return ModelWidget.combine_presave_steps(this.rows);
