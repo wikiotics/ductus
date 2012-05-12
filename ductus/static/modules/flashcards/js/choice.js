@@ -98,11 +98,15 @@ $(function () {
         var index = 0;
         var length = resource_json.resource.cards.array.length;
 
-        // each frame will be shown once
-        var a = array_range(length);
-
-        // shuffle everything all together, for now
-        shuffle(a);
+        // each frame will be shown once, and we will display each group
+        // in order, but the frames within each group will be shuffled.
+        var a = [];
+        for (var j = 0; j < dividers.length - 1; ++j) {
+            var b = array_range(dividers[j], dividers[j + 1]);
+            shuffle(b);
+            // extend array "a" with the contents of "b"
+            a.push.apply(a, b);
+        }
 
         return {
             length: length,
