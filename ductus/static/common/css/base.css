@@ -232,6 +232,17 @@ ul.radio_ul {
     margin: 1.5em 0;
 }
 
+.ductus_tags_display {
+    margin-top: 1em;
+}
+.ductus_tags_display ul {
+    display: inline;
+}
+.ductus_tags_display li {
+    display: inline;
+    margin-right: 1em;
+}
+
 /* for jquery */
 .ui-effects-transfer {
     border: 2px solid black;

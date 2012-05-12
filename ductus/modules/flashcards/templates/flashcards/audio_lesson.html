@@ -1,6 +1,15 @@
 {% extends "ductus_document_columns.html" %}
 {% load i18n %}
 {% load subview %}
+{% load staticfiles %}
+{% load compress %}
+
+{% block head %}
+{{ block.super }}
+{% compress css %}
+<link type="text/css" href="{% static "ductus/modules/flashcards/css/static_view.css" %}" rel="stylesheet"/>
+{% endcompress %}
+{% endblock %}
 
 {% block content %}
 {% if podcast_webm_relative_url %}

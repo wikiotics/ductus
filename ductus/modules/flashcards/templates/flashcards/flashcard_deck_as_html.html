@@ -1,4 +1,4 @@
-<table>{% load subview %}
+<table class="ductus_flashcard_deck_as_html">{% load subview %}
     <tr>
         <th></th>{# (empty column for row number) #}
 {% for heading in headings %}
@@ -7,7 +7,7 @@
     </tr>
 {% for flashcard in flashcards %}
     <tr>
-        <td>{{ forloop.counter }}</td>
+        <td class="row_header">{{ forloop.counter }}</td>
 {% for side in flashcard.sides %}
         <td>{% if side.get %}{{ side.get|subview:"as_html" }}{% endif %}</td>
 {% endfor %}

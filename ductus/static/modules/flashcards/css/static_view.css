@@ -1,0 +1,8 @@
+.ductus_flashcard_deck_as_html {
+    margin-top: 2em;
+}
+.ductus_flashcard_deck_as_html .row_header {
+    color: #ddd;
+    padding-right: 1em;
+    text-align: right;
+}
