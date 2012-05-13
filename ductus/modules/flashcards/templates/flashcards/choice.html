@@ -9,6 +9,8 @@
 {{ block.super }}
 {% compress js %}
 <script type="text/javascript" src="{% static "ductus/modules/flashcards/js/choice.js" %}"></script>
+{% endcompress %}
+{% compress js %}
 <script type="text/javascript" src="{% static "ductus/common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.min.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/audio_player.js" %}"></script>
 {% endcompress %}
