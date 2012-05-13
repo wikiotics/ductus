@@ -68,7 +68,7 @@ $(function () {
     // dividers exist immediately before each index provided here
     var dividers = resource_json.resource.dividers || '';
     // the backend sends dividers as a comma-separated string, turn it into an array first
-    dividers = dividers.split(',');
+    dividers = dividers ? dividers.split(',') : [];
     dividers.unshift(0);
     dividers.push(resource_json.resource.cards.array.length);
     for (i = dividers.length - 1; i; i--) {
