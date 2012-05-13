@@ -5,6 +5,10 @@ DUCTUS_SITE_ROOT = os.path.dirname(__file__)
 del os
 
 DEBUG = True
+try:
+    from ductus_local_settings import DEBUG
+except ImportError:
+    pass
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
