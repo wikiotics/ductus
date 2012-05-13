@@ -1,0 +1,6 @@
+{% load urn %}
+{% load i18n %}
+<div class="ductus_audio ui-button ui-state-default ui-button-text-icon-primary ui-corner-all" data-mime="{{ resource.blob.mime_type }}" data-res="{{ resource.urn }}" data-blob="{{ resource.blob.href }}">
+<span class="ui-button-icon-primary ui-icon ui-icon-play"></span>
+<span class="ui-button-text">{% trans "play" %}</span>
+</div>
