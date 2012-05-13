@@ -145,8 +145,9 @@ class FlashcardDeck(ductmodels.DuctModel):
         if headings_length == 0:
             raise ductmodels.ValidationError("there are no sides")
 
-        if any(len(card.get().sides) != headings_length for card in self.cards):
-            raise ductmodels.ValidationError("each card must have the same number of sides as headers given")
+        if strict:
+            if any(len(card.get().sides) != headings_length for card in self.cards):
+                raise ductmodels.ValidationError("each card must have the same number of sides as headers given")
 
         nonempty_headings = [h.text for h in self.headings if h.text]
         if len(frozenset(nonempty_headings)) != len(nonempty_headings):
