@@ -215,6 +215,14 @@ def handle_blueprint_post(request, expected_model=DuctModel):
         return HttpTextResponseBadRequest(str(e))
     except ValidationError, e:
         logger.debug("validation failed: %s", e)
+        if settings.DEBUG:
+            import sys
+            import traceback
+            exc_type, exc_info, tb = sys.exc_info()
+            msg = list(traceback.format_tb(tb))
+            msg.append(exc_type.__name__)
+            msg.append(repr(exc_info))
+            logger.error("\n".join(msg))
         return HttpTextResponseBadRequest(u"validation failed")
     return SuccessfulEditRedirect(urn)
 
