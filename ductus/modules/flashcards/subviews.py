@@ -40,7 +40,7 @@ def phrase_as_html(phrase):
     return mark_safe('<div class="ductus_phrase">%s</div>' % escape(phrase.phrase.text))
 
 @register_subview(FlashcardDeck, 'as_html')
-def flashcard_as_html(flashcard_deck):
+def flashcard_deck_as_html(flashcard_deck):
     flashcards = [card.get() for card in flashcard_deck.cards]
     headings = [heading.text for heading in flashcard_deck.headings]
     from django.template import Context, loader
