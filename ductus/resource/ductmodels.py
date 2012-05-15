@@ -473,13 +473,20 @@ class ResourceElement(LinkElement):
         self.allowed_resource_types = allowed_resource_types
         super(ResourceElement, self).__init__()
 
-    def store(self, resource):
+    def store(self, resource, save=True):
         self.__check_type(resource)
-        self.href = resource.save()
+        if save:
+            self.href = resource.save()
+        else:
+            self._unsaved_resource = resource
+            self.href = ""
 
     def get(self):
         if self.href == "":
-            return None
+            if hasattr(self, "_unsaved_resource"):
+                return self._unsaved_resource
+            else:
+                return None
         if hasattr(self, "_cached_resource") and self._cached_resource[0] == self.href:
             return self._cached_resource[1]
         resource = get_resource_database().get_resource_object(self.href)

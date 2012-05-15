@@ -42,3 +42,43 @@ class PictureChoiceLesson(ductmodels.DuctModel):
     nsmap = {'picture_choice': ns}
 
     groups = ductmodels.ArrayElement(ductmodels.ResourceElement(PictureChoiceGroup))
+
+    def legacy_ductmodel_conversion(self):
+        from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, Phrase
+
+        fcd = FlashcardDeck()
+
+        # set up the choice interaction
+        ci = ChoiceInteraction()
+        ci.prompt = "0,2"
+        ci.answer = "1"
+        fcd.interactions.array.append(fcd.interactions.new_item())
+        fcd.interactions.array[0].store(ci, False)
+
+        # set up each flashcard
+        for group in self.groups:
+            for element in group.get().group:
+                phrase = Phrase()
+                phrase.phrase.text = element.phrase.text
+
+                flashcard = Flashcard()
+                for i in xrange(3):
+                    flashcard.sides.array.append(flashcard.sides.new_item())
+                flashcard.sides.array[0].store(phrase, False)
+                flashcard.sides.array[1].href = element.picture.href
+                flashcard.sides.array[2].href = element.audio.href
+
+                new_item = fcd.cards.new_item()
+                new_item.store(flashcard, False)
+                fcd.cards.array.append(new_item)
+
+        # set up the headings
+        for h in ("phrase", "picture", "audio"):
+            new_item = fcd.headings.new_item()
+            new_item.text = h
+            fcd.headings.array.append(new_item)
+
+        # always, always, always preserve the DuctusCommonElement
+        fcd.common = self.common
+
+        return fcd

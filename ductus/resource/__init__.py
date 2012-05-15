@@ -247,6 +247,10 @@ class ResourceDatabase(object):
         resource.resource_database = self
         resource.populate_from_xml(root)
         resource.validate(strict=False)
+        while hasattr(resource, "legacy_ductmodel_conversion"):
+            resource = resource.legacy_ductmodel_conversion()
+            resource.urn = urn
+            resource.resource_database = self
         return resource
 
     def keys(self):
