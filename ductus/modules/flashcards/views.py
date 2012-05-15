@@ -22,26 +22,44 @@ from ductus.wiki.decorators import register_creation_view, register_view, regist
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
 from ductus.util.http import query_string_not_found
-from ductus.modules.flashcards.ductmodels import FlashcardDeck, ChoiceInteraction, AudioLessonInteraction
+from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
 from ductus.modules.flashcards import registered_interaction_views
 from ductus.modules.audio.views import get_joined_audio_mediacache_url, mediacache_cat_audio
 
-def picture_choice_flashcard_template():
+def choice_flashcard_template(headings, prompt, answer):
     deck = FlashcardDeck()
-    for heading in (_('Phrase'), _('Picture'), _('Audio')):
+
+    # set up headings
+    for heading in headings:
         new_heading = deck.headings.new_item()
         new_heading.text = heading
         deck.headings.array.append(new_heading)
+
+    # set up a default interaction
+    ci = ChoiceInteraction()
+    ci.prompt = str(prompt)
+    ci.answer = str(answer)
+    deck.interactions.array.append(deck.interactions.new_item())
+    deck.interactions.array[0].store(ci, False)
+
+    # create four empty rows (for now, at least)
+    for i in xrange(4):
+        card = Flashcard()
+        for j in xrange(len(headings)):
+            card.sides.array.append(card.sides.new_item())
+
+        new_card = deck.cards.new_item()
+        new_card.store(card, False)
+        deck.cards.array.append(new_card)
+
     return deck
 
+def picture_choice_flashcard_template():
+    return choice_flashcard_template((_('Phrase'), _('Picture'), _('Audio')), prompt="0,2", answer="1")
+
 def phrase_choice_flashcard_template():
-    deck = FlashcardDeck()
-    for heading in (_('Prompt'), _('Answer')):
-        new_heading = deck.headings.new_item()
-        new_heading.text = heading
-        deck.headings.array.append(new_heading)
-    return deck
+    return choice_flashcard_template((_('Prompt'), _('Answer')), prompt="0", answer="1")
 
 flashcard_templates = {
     'picture_choice': picture_choice_flashcard_template,
