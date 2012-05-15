@@ -16,6 +16,7 @@
 
 from ductus.wiki.subviews import register_subview
 from ductus.modules.flashcards.ductmodels import Flashcard, FlashcardDeck, Phrase
+from django.core.cache import cache
 
 @register_subview(Flashcard, 'subresources')
 def flashcard_subresources(resource):
@@ -41,12 +42,20 @@ def phrase_as_html(phrase):
 
 @register_subview(FlashcardDeck, 'as_html')
 def flashcard_deck_as_html(flashcard_deck):
-    flashcards = [card.get() for card in flashcard_deck.cards]
-    headings = [heading.text for heading in flashcard_deck.headings]
-    from django.template import Context, loader
-    t = loader.get_template('flashcards/flashcard_deck_as_html.html')
-    return t.render(Context({
-        'flashcard_deck': flashcard_deck,
-        'flashcards': flashcards,
-        'headings': headings,
-    }))
+    from django.utils import translation
+    # cache a version of the rendered fcd per UI language
+    cache_key = 'fcd_as_html' + translation.get_language() + flashcard_deck.urn
+    html = cache.get(cache_key)
+    if html is None:
+        flashcards = [card.get() for card in flashcard_deck.cards]
+        headings = [heading.text for heading in flashcard_deck.headings]
+        from django.template import Context, loader
+        t = loader.get_template('flashcards/flashcard_deck_as_html.html')
+        html = t.render(Context({
+            'flashcard_deck': flashcard_deck,
+            'flashcards': flashcards,
+            'headings': headings,
+        }))
+
+        cache.set(cache_key, html)
+    return html
