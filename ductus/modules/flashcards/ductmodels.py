@@ -168,3 +168,6 @@ class FlashcardDeck(ductmodels.DuctModel):
             highest_column_index = max(int(a) for a in self.column_order.split(','))
             if highest_column_index >= headings_length:
                 raise ductmodels.ValidationError("column index out of range")
+
+# register legacy ductmodels
+import ductus.modules.flashcards.legacy_ductmodels

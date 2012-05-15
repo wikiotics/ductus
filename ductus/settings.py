@@ -202,8 +202,6 @@ AUTH_PROFILE_MODULE = "user.UserProfile"
 DUCTUS_INSTALLED_MODULES = (
     'ductus.modules.audio',
     'ductus.modules.picture',
-    'ductus.modules.picture_choice',
-    'ductus.modules.phrase_choice',
     'ductus.modules.textwiki',
     'ductus.modules.flashcards',
     'ductus.modules.otics',
