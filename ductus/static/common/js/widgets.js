@@ -850,7 +850,7 @@ function SaveWidget (toplevel_blueprint_object, wikipage_type_shortname) {
     this.toplevel_blueprint_object = toplevel_blueprint_object;
     Widget.call(this, '<div class="ductus_SaveWidget"></div>');
     var this_ = this;
-    var original_pagename = resource_json && new FullPagename({pathname: location.pathname});
+    var original_pagename = resource_json && resource_json.href && new FullPagename({pathname: location.pathname});
     var target_pagename = urlParams['target'] && new FullPagename(urlParams['target']);
     this.destination_chooser = new SaveDestinationChooserWidget(original_pagename, target_pagename, wikipage_type_shortname);
     this.elt.append(this.destination_chooser.elt);
