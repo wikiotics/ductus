@@ -838,11 +838,10 @@ $(function () {
         // the widget used to edit tags applied to the whole flashcard deck
         // tags: an array of tag objects like { 'value': 'my_tag_text' }
         // fcdw: the flashcard deck widget this tagging widget is attached to
-        ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>' + gettext('Tags (space separated):') + '</label><input /></div>');
+        ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>' + gettext('Tags (space separated):') + '</label><input type="text" id="ductus_tag_input"/></div>');
         this.input = this.elt.children('input');
         this.lang_list = this.get_lang_list();  // this is until we have a backend that allows searching for the entire list of language codes
-        var tag_string = '';
-        var tag_names = [];
+        var tag_names = [], tokenized_tags = [], t;
         if (tags) {
             for (var i = 0, l = tags.array.length; i < l; ++i) {
                 var subtag = tags.array[i].value.substr(0, 16);
@@ -851,12 +850,20 @@ $(function () {
                 } else if (subtag == 'target-language:') {
                     this.target_lang = tags.array[i].value.substr(16);
                 } else {
-                    tag_names.push(tags.array[i].value);
+                    t = tags.array[i].value;
+                    tokenized_tags.push({id: t, name: t});
                 }
             }
-            tag_string = tag_names.join(' ');
         }
-        this.input.val(tag_string);
+        this.input.tokenInput([], {
+            minChars:1,
+            prePopulate: tokenized_tags,
+            onResult: function (results) {
+                var user_input = $("#token-input-ductus_tag_input").val();
+                results.push({id: user_input, name: user_input});
+                return results;
+            }
+        });
         this.target_lang_input = $('<span id="target_lang_tag"><label>' + gettext('Target language:') + '</label></span>').append(this.get_lang_selector('trg_lang', this.target_lang)).appendTo(this.elt).children('select');
         this.source_lang_input = null;
         if (fcdw.interaction_count[AudioLessonInteractionWidget.prototype.fqn] > 0) {
@@ -900,9 +907,9 @@ $(function () {
     };
     TaggingWidget.prototype.get_tag_list = function () {
         // return a list of all tags (for use in blueprint)
-        var tag_list = [];
-        if (this.input && this.input.val()) {
-            tag_list = this.input.val().split(" ");
+        var tag_list = [], tokens = this.input.val();
+        if (tokens) {
+            tag_list = tokens.split(",");
             // FIXME: deal with special tags incorrectly input here
         }
         if (this.source_lang_input && this.source_lang_input.val()) {

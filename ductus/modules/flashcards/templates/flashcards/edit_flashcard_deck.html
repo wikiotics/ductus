@@ -14,6 +14,7 @@ var writable_directories = {{ writable_directories|jsonize }};
 {% compress js %}
 <script type="text/javascript" src="{% static "ductus/common/js/jquery.fileupload.modified.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/jquery.blockUI.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.tokeninput.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/widgets.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/modules/flashcards/js/flashcard_deck_editor.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/swfobject-2.2.min.js" %}"></script>
@@ -21,6 +22,7 @@ var writable_directories = {{ writable_directories|jsonize }};
 {% endcompress %}
 {% compress css %}
 <link type="text/css" href="{% static "ductus/modules/flashcards/css/flashcard_editor.css" %}" rel="stylesheet"/>
+<link type="text/css" href="{% static "ductus/common/css/token-input.css" %}" rel="stylesheet"/>
 {% endcompress %}
 {% endblock %}
 
