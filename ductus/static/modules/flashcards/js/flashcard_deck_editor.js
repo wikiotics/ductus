@@ -461,7 +461,7 @@ $(function () {
             this_.__add_interaction(new ChoiceInteractionWidget(), fcd);
         }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
         $('<a href="javascript:void(0)">' + gettext('Add an audio lesson interaction') + '</a>').click(function () {
-            this_.__add_interaction(new AudioLessonInteractionWidget());
+            this_.__add_interaction(new AudioLessonInteractionWidget(), fcd);
         }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
 
         if (ic) {
@@ -470,7 +470,7 @@ $(function () {
                 if (interaction.resource.fqn == ChoiceInteractionWidget.prototype.fqn) {
                     this.__add_interaction(new ChoiceInteractionWidget(interaction), fcd);
                 } else if (interaction.resource.fqn == AudioLessonInteractionWidget.prototype.fqn) {
-                    this.__add_interaction(new AudioLessonInteractionWidget(interaction));
+                    this.__add_interaction(new AudioLessonInteractionWidget(interaction), fcd);
                 }
             }
         }
@@ -487,9 +487,9 @@ $(function () {
         var li = $('<li></li>').append(widget.elt).appendTo(this.interactions);
         $('<span>' + gettext('delete interaction') + '</span>').button({text: false, icons: {primary: 'ui-icon-close'}}).click(function () {
             $(this).parent('li').remove();
-            if (fcd) { fcd.remove_choice_interaction(); }
+            if (fcd) { fcd.remove_interaction(widget.fqn); }
         }).appendTo(li);
-        if (fcd) { fcd.add_choice_interaction(); }
+        if (fcd) { fcd.add_interaction(widget.fqn); }
     };
 
     function FlashcardColumn(fcd) {
@@ -577,12 +577,14 @@ $(function () {
         this.sidebar = $('<div id="ductus_Sidebar"></div>');
 
         // keep a counter of choice interactions on this widget so we can show dividers as needed
-        this.choice_interaction_count = 0;
+        this.interaction_count = {};
+        this.interaction_count[ChoiceInteractionWidget.prototype.fqn] = 0;
+        this.interaction_count[AudioLessonInteractionWidget.prototype.fqn] = 0;
         this.interaction_chooser = new InteractionChooserWidget(fcd.resource.interactions, this);
         this.interaction_chooser.elt.make_sidebar_widget(gettext('Interactions'), this.sidebar);
         this.dividers = fcd.resource.dividers || '';
 
-        this.tagging_widget = new TaggingWidget(fcd.resource.tags);
+        this.tagging_widget = new TaggingWidget(fcd.resource.tags, this);
         this.tagging_widget.elt.make_sidebar_widget(gettext('Tags'), this.sidebar);
 
         this.save_widget = new SaveWidget(this, 'the lesson');
@@ -591,13 +593,15 @@ $(function () {
         this.record_initial_inner_blueprint();
     }
     FlashcardDeck.prototype = chain_clone(ModelWidget.prototype);
-    FlashcardDeck.prototype.add_choice_interaction = function () {
-        ++this.choice_interaction_count;
-        this.elt.addClass('ductus_dividers_by_4');
+    FlashcardDeck.prototype.add_interaction = function (type) {
+        ++this.interaction_count[type];
+        if (type == ChoiceInteractionWidget.prototype.fqn) {
+            this.elt.addClass('ductus_dividers_by_4');
+        }
     };
-    FlashcardDeck.prototype.remove_choice_interaction = function () {
-        --this.choice_interaction_count;
-        if (this.choice_interaction_count == 0) {
+    FlashcardDeck.prototype.remove_interaction = function (type) {
+        --this.interaction_count[type];
+        if (type == ChoiceInteractionWidget.prototype.fqn && this.interaction_count[type] == 0) {
             this.elt.removeClass('ductus_dividers_by_4');
         }
     };
@@ -824,9 +828,10 @@ $(function () {
         });
     };
 
-    function TaggingWidget(tags) {
+    function TaggingWidget(tags, fcdw) {
         // the widget used to edit tags applied to the whole flashcard deck
         // tags: an array of tag objects like { 'value': 'my_tag_text' }
+        // fcdw: the flashcard deck widget this tagging widget is attached to
         ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>' + gettext('Tags (space separated):') + '</label><input /></div>');
         this.input = this.elt.children('input');
         this.lang_list = this.get_lang_list();  // this is until we have a backend that allows searching for the entire list of language codes
