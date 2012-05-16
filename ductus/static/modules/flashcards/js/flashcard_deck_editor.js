@@ -826,19 +826,19 @@ $(function () {
 
     function TaggingWidget(tags) {
         // the widget used to edit tags applied to the whole flashcard deck
+        // tags: an array of tag objects like { 'value': 'my_tag_text' }
         ModelWidget.call(this, tags, '<div id="ductus_TaggingWidget"><label>' + gettext('Tags (space separated):') + '</label><input /></div>');
         this.input = this.elt.children('input');
-        this.source_lang_input = $('<span id="source_lang_tag"><label>' + gettext('Source language:') + '</label><input /></span>').appendTo(this.elt).children('input');
-        this.target_lang_input = $('<span id="target_lang_tag"><label>' + gettext('Target language:') + '</label><input /></span>').appendTo(this.elt).children('input');
+        this.lang_list = this.get_lang_list();  // this is until we have a backend that allows searching for the entire list of language codes
         var tag_string = '';
         var tag_names = [];
         if (tags) {
             for (var i = 0, l = tags.array.length; i < l; ++i) {
                 var subtag = tags.array[i].value.substr(0, 16);
                 if (subtag == 'source-language:') {
-                    this.source_lang_input.val(tags.array[i].value.substr(16));
+                    this.source_lang = tags.array[i].value.substr(16);
                 } else if (subtag == 'target-language:') {
-                    this.target_lang_input.val(tags.array[i].value.substr(16));
+                    this.target_lang = tags.array[i].value.substr(16);
                 } else {
                     tag_names.push(tags.array[i].value);
                 }
@@ -846,9 +846,36 @@ $(function () {
             tag_string = tag_names.join(' ');
         }
         this.input.val(tag_string);
+        this.source_lang_input = $('<span id="source_lang_tag"><label>' + gettext('Source language:') + '</label></span>').append(this.get_lang_selector('src_lang', this.source_lang)).appendTo(this.elt).children('select');
+        this.target_lang_input = $('<span id="target_lang_tag"><label>' + gettext('Target language:') + '</label></span>').append(this.get_lang_selector('trg_lang', this.target_lang)).appendTo(this.elt).children('select');
     }
     TaggingWidget.prototype = chain_clone(Widget.prototype);
     TaggingWidget.prototype.inner_blueprint_repr = function () {
+    };
+    TaggingWidget.prototype.get_lang_selector = function(name, selected_lang) {
+        // return an HTML <select> element with the available languages
+        // result is a jQuery object
+        // name: the html name to use for the form element
+        // selected_lang: the code of the selected language
+        var i, option, sel = $('<select name="' + name + '"></select>');
+        for (i = 0, max = this.lang_list.length; i < max; i++) {
+            option = $('<option value="' + this.lang_list[i][0] + '">' + this.lang_list[i][1] + '</option>').appendTo(sel);
+            if (this.lang_list[i][0] == selected_lang) {
+                option.attr('selected', 1);
+            }
+        }
+        return sel;
+    };
+    TaggingWidget.prototype.get_lang_list = function() {
+        // build a list of [language_code, language_name] from writable_directories
+        // for use in building source/target language tag dropdown menus
+        var i, list = [], dirs = writable_directories;
+        for (i = 0, length = dirs.length; i < length; i++) {
+            if (dirs[i][1] == 'language_namespace') {
+                list.push([dirs[i][0].slice(0,-1), dirs[i][2]]);
+            }
+        }
+        return list;
     };
     TaggingWidget.prototype.get_tag_list = function () {
         // return a list of all tags (for use in blueprint)
