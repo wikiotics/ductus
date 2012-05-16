@@ -597,12 +597,18 @@ $(function () {
         ++this.interaction_count[type];
         if (type == ChoiceInteractionWidget.prototype.fqn) {
             this.elt.addClass('ductus_dividers_by_4');
+        } else if (type == AudioLessonInteractionWidget.prototype.fqn) {
+            if (this.tagging_widget) {
+                this.tagging_widget.show_source_lang_selector();
+            }
         }
     };
     FlashcardDeck.prototype.remove_interaction = function (type) {
         --this.interaction_count[type];
         if (type == ChoiceInteractionWidget.prototype.fqn && this.interaction_count[type] == 0) {
             this.elt.removeClass('ductus_dividers_by_4');
+        } else if (type == AudioLessonInteractionWidget.prototype.fqn) {
+            this.tagging_widget.hide_source_lang_selector();
         }
     };
     FlashcardDeck.prototype.inner_blueprint_repr = function () {
@@ -851,11 +857,21 @@ $(function () {
             tag_string = tag_names.join(' ');
         }
         this.input.val(tag_string);
-        this.source_lang_input = $('<span id="source_lang_tag"><label>' + gettext('Source language:') + '</label></span>').append(this.get_lang_selector('src_lang', this.source_lang)).appendTo(this.elt).children('select');
         this.target_lang_input = $('<span id="target_lang_tag"><label>' + gettext('Target language:') + '</label></span>').append(this.get_lang_selector('trg_lang', this.target_lang)).appendTo(this.elt).children('select');
+        this.source_lang_input = null;
+        if (fcdw.interaction_count[AudioLessonInteractionWidget.prototype.fqn] > 0) {
+            this.show_source_lang_selector(this.source_lang);
+        }
     }
     TaggingWidget.prototype = chain_clone(Widget.prototype);
-    TaggingWidget.prototype.inner_blueprint_repr = function () {
+    TaggingWidget.prototype.show_source_lang_selector = function() {
+        if (this.source_lang_input == null) {
+            this.source_lang_input = $('<span id="source_lang_tag"><label>' + gettext('Source language:') + '</label></span>').append(this.get_lang_selector('src_lang', this.source_lang)).insertBefore(this.elt.find('span#target_lang_tag')).children('select');
+        }
+    };
+    TaggingWidget.prototype.hide_source_lang_selector = function() {
+        this.elt.children('span#source_lang_tag').remove();
+        this.source_lang_input = null;
     };
     TaggingWidget.prototype.get_lang_selector = function(name, selected_lang) {
         // return an HTML <select> element with the available languages
