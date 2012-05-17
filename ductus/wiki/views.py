@@ -110,6 +110,7 @@ def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
             unvaried_etag = [urn, bool(wiki_page),
                              request.META.get("QUERY_STRING", "")]
             varied_etag = unvaried_etag + [request.LANGUAGE_CODE,
+                                           bool(request.is_secure()),
                                            request.META.get("HTTP_COOKIE", "")]
             unvaried_etag = __handle_etag(request, unvaried_etag)
             varied_etag = __handle_etag(request, varied_etag)
