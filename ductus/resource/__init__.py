@@ -32,16 +32,10 @@ hash_digest_size = hash_algorithm().digest_size
 max_urn_length = len('urn:%s:%s' % (hash_name, hash_encode(hash_algorithm(b'').digest()).decode("ascii")))
 
 class InvalidHeader(ValueError):
-    def __init__(self, value):
-        self.value = value
-    def __repr__(self):
-        return self.value
+    pass
 
 class UnexpectedHeader(ValueError):
-    def __init__(self, value):
-        self.value = value
-    def __repr__(self):
-        return self.value
+    pass
 
 class SizeTooLargeError(Exception):
     def __init__(self, value):
