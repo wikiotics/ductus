@@ -18,6 +18,7 @@ from urllib2 import urlopen, HTTPError
 
 from ductus.util import iterate_file_object
 from ductus.resource.storage.untrusted import UntrustedStorageMetaclass
+from ductus.resource.storage import UnsupportedOperation
 
 class RemoteDuctusStorageBackend(object):
     """Fetches resources from a remote Ductus over HTTP"""
@@ -51,16 +52,22 @@ class RemoteDuctusStorageBackend(object):
             raise KeyError(key)
 
     def put_file(self, key, tmpfile):
-        raise Exception("RemoteDuctusStorageBackend is read-only.")
+        raise UnsupportedOperation("RemoteDuctusStorageBackend is read-only.")
 
     def __delitem__(self, key):
-        raise Exception("RemoteDuctusStorageBackend is read-only.")
+        raise UnsupportedOperation("RemoteDuctusStorageBackend is read-only.")
+
+    def keys(self):
+        raise UnsupportedOperation("Unsupported")
+
+    def iterkeys(self):
+        raise UnsupportedOperation("Unsupported")
 
     def __iter__(self):
-        raise Exception("Unsupported")
+        raise UnsupportedOperation("Unsupported")
 
     def __len__(self):
-        raise Exception("Unsupported")
+        raise UnsupportedOperation("Unsupported")
 
 # We may also wish to extend this into a new backend that allows http PUT and
 # DELETE requests

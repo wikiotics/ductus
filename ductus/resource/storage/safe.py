@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from ductus.resource.storage import UnsupportedOperation
+
 class SafeStorageBackend(object):
     """Wraps a storage backend and removes its delete method."""
 
@@ -32,7 +34,7 @@ class SafeStorageBackend(object):
 
     def __delitem__(self, key):
         if self.error_on_delete:
-            raise Exception("Deleting resources is not allowed.")
+            raise UnsupportedOperation("Deleting resources is not allowed.")
 
     def __iter__(self):
         return iter(self.__backend)

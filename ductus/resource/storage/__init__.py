@@ -1,3 +1,6 @@
+class UnsupportedOperation(Exception):
+    pass
+
 from ductus.resource.storage.cache import CacheStorageBackend
 from ductus.resource.storage.mongogridfs import GridfsStorageBackend
 from ductus.resource.storage.local import LocalStorageBackend

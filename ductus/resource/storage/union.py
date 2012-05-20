@@ -15,7 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+
 from ductus.util import iterate_file_then_delete, iterator_to_tempfile
+from ductus.resource.storage import UnsupportedOperation
 
 class UnionStorageBackend(object):
     """
@@ -63,7 +65,7 @@ class UnionStorageBackend(object):
         raise KeyError(key)
 
     def __delitem__(self, key):
-        pass
+        raise UnsupportedOperation("Unsupported")
 
     def keys(self):
         # Sadly, this seems like the only way to do it.
