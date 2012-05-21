@@ -31,7 +31,7 @@ var available_audio_formats = {{ available_audio_formats|jsonize }};
 </div>
 <p class="choice_frame_count">
 {% blocktrans with '<span id="frame_number">1</span>' as current_frame and '<span id="number_of_frames">0</span>' as number_of_frames %}
-Frame {{ current_frame }} <span id="total_frames_text">of {{ number_of_frames }}</span>
+Frame {{ current_frame }} <span id="total_frames_text"> of {{ number_of_frames }}</span>
 {% endblocktrans %}
 {% blocktrans with '<span id="choice_correct_count">0</span>' as correct_count and '<span id="choice_incorrect_count">0</span>' as incorrect_count %}
 ({{ correct_count }} correct, {{ incorrect_count }} incorrect).
