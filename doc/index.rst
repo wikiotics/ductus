@@ -27,6 +27,7 @@ Contents:
    customizing-ductus
    contributing
    ductus
+   testing
 
 Indices and tables
 ==================
