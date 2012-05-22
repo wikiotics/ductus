@@ -71,7 +71,10 @@ class UnionStorageBackend(object):
         # Sadly, this seems like the only way to do it.
         all_keys = set()
         for backend in self.__backends:
-            all_keys.update(backend.keys())
+            try:
+                all_keys.update(backend.keys())
+            except UnsupportedOperation:
+                pass
         return list(all_keys)
 
     def iterkeys(self):
