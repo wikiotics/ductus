@@ -4,7 +4,15 @@
 {% load staticfiles %}
 {% load compress %}
 
-{% block head %}
+{% block css %}
+{{ block.super }}
+{% compress css %}
+<link type="text/css" href="{% static "ductus/modules/flashcards/css/flashcard_editor.css" %}" rel="stylesheet"/>
+<link type="text/css" href="{% static "ductus/common/css/token-input.css" %}" rel="stylesheet"/>
+{% endcompress %}
+{% endblock %}
+
+{% block js %}
 {{ block.super }}
 <script type="text/javascript">
 var resource_json = {{ resource_or_template|resource_json }};
@@ -19,10 +27,6 @@ var writable_directories = {{ writable_directories|jsonize }};
 <script type="text/javascript" src="{% static "ductus/modules/flashcards/js/flashcard_deck_editor.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/swfobject-2.2.min.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/modules/audio/recorder.js" %}"></script>
-{% endcompress %}
-{% compress css %}
-<link type="text/css" href="{% static "ductus/modules/flashcards/css/flashcard_editor.css" %}" rel="stylesheet"/>
-<link type="text/css" href="{% static "ductus/common/css/token-input.css" %}" rel="stylesheet"/>
 {% endcompress %}
 {% endblock %}
 
