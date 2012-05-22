@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/common/css/base.css" %}" />
     {# include local (site-specific) css #}
     {% endcompress %}
+    {% block css %}{% endblock %}
     <script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-1.7.2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-ui-1.8.20.custom.min.js" %}"></script>
@@ -23,6 +24,7 @@
       <script type="text/javascript" src="{% static "ductus/common/js/respond.min.js" %}"></script>
       {% endcompress %}
     <![endif]-->
+    {% block js %}{% endblock %}
     <script type="text/javascript">
       var ductus_media_prefix = '{% get_static_prefix %}';
       var ductus_mediacache_prefix = '{{ ductus_mediacache_prefix }}';
