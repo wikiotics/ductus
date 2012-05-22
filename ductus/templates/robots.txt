@@ -1,4 +1,5 @@
 # Don't index "special" pages or URNs
 User-agent: *
+Allow: /special/recent_changes
 Disallow: /special/
 Disallow: /urn/
