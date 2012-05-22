@@ -17,6 +17,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy, ugettext as _
+from django.core.cache import cache
 
 from ductus.resource.ductmodels import tag_value_attribute_validator, ValidationError
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
@@ -212,9 +213,16 @@ def _get_audio_urns_in_column(flashcard_deck, column):
 def podcast(request, interaction):
     column = int(interaction.audio)
     resource = request.ductus.resource
-    audio_urns = _get_audio_urns_in_column(resource, column)
-    podcast_webm_relative_url = get_joined_audio_mediacache_url(resource, audio_urns, 'audio/webm')
-    podcast_m4a_relative_url = get_joined_audio_mediacache_url(resource, audio_urns, 'audio/mp4')
+    # cache the podcasts urls, since building them is expensive
+    cache_key = 'podcast_urls' + resource.urn
+    urls = cache.get(cache_key)
+    if urls is None:
+        audio_urns = _get_audio_urns_in_column(resource, column)
+        podcast_webm_relative_url = get_joined_audio_mediacache_url(resource, audio_urns, 'audio/webm')
+        podcast_m4a_relative_url = get_joined_audio_mediacache_url(resource, audio_urns, 'audio/mp4')
+        cache.set(cache_key, [podcast_webm_relative_url, podcast_m4a_relative_url])
+    else:
+        podcast_webm_relative_url, podcast_m4a_relative_url = urls
 
     return render_to_response('flashcards/audio_lesson.html', {
         'podcast_webm_relative_url': podcast_webm_relative_url,
