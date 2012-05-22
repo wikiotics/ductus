@@ -3,3 +3,5 @@ User-agent: *
 Allow: /special/recent_changes
 Disallow: /special/
 Disallow: /urn/
+Disallow: /*?view=edit$
+Disallow: /*?view=copy$
