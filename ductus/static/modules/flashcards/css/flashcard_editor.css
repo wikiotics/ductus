@@ -134,3 +134,6 @@
 .ductus_dividers_by_4 tr:nth-child(8n+9) {
     background-color: #EEE;
 }
+img.ductus_rotate_button {
+    cursor: pointer;
+}
