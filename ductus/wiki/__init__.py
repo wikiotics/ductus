@@ -124,8 +124,9 @@ def get_writable_directories_for_user(user):
         rv.append(('user:%s/' % user.username, 'user', user.username))
         rv.extend(('group:%s/' % group.slug, 'group', group.name)
                   for group in user.groups.all())
-    rv.extend(('%s:' % lang, 'language_namespace', language_tag_to_description(lang))
-              for lang in settings.DUCTUS_NATURAL_LANGUAGES)
+    languages = sorted([('%s:' % lang, 'language_namespace', language_tag_to_description(lang))
+                        for lang in settings.DUCTUS_NATURAL_LANGUAGES], key=lambda tup: tup[2])
+    rv.extend(languages)
     return tuple(rv)
 
 registered_views = {}
