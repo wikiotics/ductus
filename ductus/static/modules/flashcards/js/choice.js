@@ -51,7 +51,7 @@ var resource_displayer = {
         return $('<span class="phrase"></span>').text(resource.resource.phrase.text);
     },
     '{http://wikiotics.org/ns/2010/audio}audio': function (resource) {
-        var rv = $('<span class="audio play-button">click to hear audio</span>');
+        var rv = $('<span class="audio play-button">Play</span>');
         rv.data('resource', resource);
         return rv;
     }
@@ -161,7 +161,7 @@ $(function () {
                 }
             }
         }
-        prepared_frame.find('span.audio').click(function () {
+        prepared_frame.find('span.audio').button({icons: { primary: 'ui-icon-play' }}).click(function () {
             jplayer_play($(this).data('resource'));
         });
     }
