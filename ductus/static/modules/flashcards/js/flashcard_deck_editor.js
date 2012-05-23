@@ -886,6 +886,10 @@ $(function () {
         // name: the html name to use for the form element
         // selected_lang: the code of the selected language
         var i, option, sel = $('<select name="' + name + '"></select>');
+        // add an empty choice if no language selected, so we don't force an unwanted language tag on the lesson
+        if (!selected_lang) {
+            $('<option value="" style="font-style: italic;">' + gettext('Select language') + '</option>').appendTo(sel);
+        }
         for (i = 0, max = this.lang_list.length; i < max; i++) {
             option = $('<option value="' + this.lang_list[i][0] + '">' + this.lang_list[i][1] + '</option>').appendTo(sel);
             if (this.lang_list[i][0] == selected_lang) {
