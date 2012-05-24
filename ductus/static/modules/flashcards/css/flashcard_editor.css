@@ -92,6 +92,7 @@
 }
 .search_results span span {
     margin: 5px;
+    cursor: pointer;
 }
 .pic_search_pager a {
     margin: 3px;
