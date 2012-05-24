@@ -338,7 +338,7 @@ def _get_creation_templates():
     rv.append({ 'class': 'picture_choice',
                 'name': _('Picture choice'),
                 'url': '/new/flashcard_deck?template=picture_choice',
-                'description': _('a lesson where you choose between multiple pics')})
+                'description': _('a lesson where you choose between multiple pictures')})
     rv.append({ 'class': 'phrase_choice',
                 'name': _('Phrase choice'),
                 'url': '/new/flashcard_deck?template=phrase_choice',
