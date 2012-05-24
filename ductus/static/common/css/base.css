@@ -256,6 +256,10 @@ div.ductus_creation_template.picture_choice a {
 div.ductus_creation_template.phrase_choice a {
     background: url(../img/200px-Phrase-choice-icon.png);
 }
+a.ductus_other_view {
+    float: right;
+    margin: 4em 10% 3em;
+}
 
 .quiet {
     font-size: 66%;

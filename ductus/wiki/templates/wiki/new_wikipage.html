@@ -18,6 +18,8 @@
     <dd>{{ creation_view.description }}</dd>
     {% endfor %}
     </dl>
+    <div style="clear: both"></div>
+    <a class="ductus_other_view" href="/new/">Standard view</a>
 {% else %}
     {# the normal view shows a fancy picture-enhanced list of user-friendly templates #}
     <div class="ductus_creation_templates">
@@ -28,5 +30,7 @@
         </div>
         {% endfor %}
     </div>
+    <div style="clear: both"></div>
+    <a class="ductus_other_view" href="/new/?advanced=true">advanced view</a>
 {% endif %}
 {% endblock %}
