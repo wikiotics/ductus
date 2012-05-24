@@ -348,6 +348,8 @@ def _get_creation_templates():
 def implicit_new_wikipage(request, prefix, pagename):
     c = RequestContext(request, {
         'absolute_pagename': join_pagename(prefix, pagename),
+        'advanced_view': 'advanced' in request.GET,
+        'creation_templates': _get_creation_templates(),
         'creation_views': _get_creation_views(),
     })
     check_create_permission(request, prefix, pagename)
