@@ -324,6 +324,27 @@ def _get_creation_views():
                       for v in creation_views]
     return creation_views
 
+def _get_creation_templates():
+    # put together a list of wiki content templates for the /new page
+    rv = []
+    rv.append({ 'class': 'wikitext',
+                'name': _('Wikitext'),
+                'url': '/new/wikitext',
+                'description': _('a regular wiki text page')})
+    rv.append({ 'class': 'podcast',
+                'name': _('Podcast'),
+                'url': '/new/flashcard_deck?template=podcast',
+                'description': _('a lesson that compiles into a downloadable podcast')})
+    rv.append({ 'class': 'picture_choice',
+                'name': _('Picture choice'),
+                'url': '/new/flashcard_deck?template=picture_choice',
+                'description': _('a lesson where you choose between multiple pics')})
+    rv.append({ 'class': 'phrase_choice',
+                'name': _('Phrase choice'),
+                'url': '/new/flashcard_deck?template=phrase_choice',
+                'description': _('a lesson where you choose between multiple phrases')})
+    return rv
+
 def implicit_new_wikipage(request, prefix, pagename):
     c = RequestContext(request, {
         'absolute_pagename': join_pagename(prefix, pagename),
@@ -335,6 +356,8 @@ def implicit_new_wikipage(request, prefix, pagename):
 
 def explicit_new_wikipage(request):
     return render_to_response('wiki/new_wikipage.html', {
+        'advanced_view': 'advanced' in request.GET,
+        'creation_templates': _get_creation_templates(),
         'creation_views': _get_creation_views(),
     }, RequestContext(request))
 
