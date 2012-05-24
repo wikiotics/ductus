@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from functools import partial
+
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -25,7 +27,6 @@ from ductus.resource import get_resource_database
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.namespaces import registered_namespaces, split_pagename, WikiPrefixNotProvided
-from ductus.wiki.forms import LogMessageField
 from ductus.modules.textwiki.ductmodels import Wikitext
 from ductus.util.bcp47 import language_tag_to_description
 
@@ -45,6 +46,8 @@ def view_textwiki(request):
 _natural_language_choices = [('', ugettext_lazy('Unspecified'))]
 _natural_language_choices.extend((code, ugettext_lazy(language_tag_to_description(code)))
                                  for code in settings.DUCTUS_NATURAL_LANGUAGES)
+
+LogMessageField = partial(forms.CharField, max_length=400, required=False)
 
 class WikiEditForm(forms.Form):
     textarea_attrs = {'cols': '80', 'rows': '30'}
