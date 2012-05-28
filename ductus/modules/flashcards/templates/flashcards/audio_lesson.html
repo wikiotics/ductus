@@ -43,8 +43,8 @@ $(function() {
 {% block content %}
 <div class="ductus_podcast_links">
 {% if podcast_webm_relative_url %}
-<a class="download" href="{{ ductus_mediacache_prefix }}{{ podcast_m4a_relative_url }}" title="Download the podcast in MP4/AAC format, compatible with most software, portable music players and mobile phones.">{% trans "Download the podcast" %}</a>
-<a class="listen" href="{{ ductus_mediacache_prefix }}{{ podcast_webm_relative_url }}" title="Listen to the podcast online. If you use an old browser, it will offer to download the file in webm format instead.">{% trans "Listen online" %}</a>
+<a class="download" href="{{ ductus_mediacache_prefix }}{{ podcast_m4a_relative_url }}" title="{% trans "Download the podcast in MP4/AAC format, compatible with most software, portable music players and mobile phones." %}">{% trans "Download the podcast" %}</a>
+<a class="listen" href="{{ ductus_mediacache_prefix }}{{ podcast_webm_relative_url }}" title="{% trans "Listen to the podcast online. If you use an old browser, it will offer to download the file in webm format instead." %}">{% trans "Listen online" %}</a>
 {% else %}
 <p>{% trans "No audio available for podcast.  Try editing the page and adding some." %}</p>
 {% endif %}
