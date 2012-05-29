@@ -924,7 +924,7 @@ SaveWidget.prototype.perform_save = function (save_and_return) {
  * Online recorder widget
  * makes use of wami recorder
  * this is the UI part of the recorder
- * the actual recording functionnality is in wami (recorder.js)
+ * the actual recording functionality is in wami (recorder.js)
  */
 var online_recorder;    // make this a global variable since this code is too messy. FIXME: clean this up
 function OnlineRecorder() {
