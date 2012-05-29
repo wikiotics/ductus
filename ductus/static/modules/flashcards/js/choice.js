@@ -51,7 +51,7 @@ var resource_displayer = {
         return $('<span class="phrase"></span>').text(resource.resource.phrase.text);
     },
     '{http://wikiotics.org/ns/2010/audio}audio': function (resource) {
-        var rv = $('<span class="audio play-button">Play</span>');
+        var rv = $('<span class="audio play-button"></span>').text(gettext("play audio"));
         rv.data('resource', resource);
         return rv;
     }
