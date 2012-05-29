@@ -208,59 +208,6 @@ a.broken {
     background: transparent url(../img/Icon_External_Link.png) no-repeat center right;
 }
 
-dl.ductus_creation_views {
-    padding-left: 2em;
-}
-dl.ductus_creation_views dd {
-    color: #666;
-    margin-left: 0;
-    padding-left: 2em;
-    margin-bottom: 1em;
-}
-div.ductus_creation_templates {
-    margin: 3em 1em 1em;
-}
-div.ductus_creation_template a {
-    display: block;
-    height: 200px;
-    margin: 5px;
-    width: 200px;
-}
-div.ductus_creation_template {
-    float: left;
-    text-align: center;
-    width: 210px;
-}
-div.ductus_creation_template:hover {
-    background-color: #DDF;
-}
-/*!
- * new text document icon:
- * Benjamin D. Esham / Wikimedia Commons [CC-BY-SA-2.5 (http://creativecommons.org/licenses/by-sa/2.5)], via Wikimedia Commons
- * https://commons.wikimedia.org/wiki/File%3ANew_text_document.svg
- */
-div.ductus_creation_template.wikitext a {
-    background: url(../img/200px-New_text_document.svg.png);
-}
-/*!
- * podcast icon:
- * By Yagraph (Own work) [GFDL (http://www.gnu.org/copyleft/fdl.html) or CC-BY-SA-3.0-2.5-2.0-1.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons
- * https://commons.wikimedia.org/wiki/File%3APodcast-icon.svg
- */
-div.ductus_creation_template.podcast a {
-    background: url(../img/200px-Podcast-icon.svg.png);
-}
-div.ductus_creation_template.picture_choice a {
-    background: url(../img/200px-Pic-choice-icon.png);
-}
-div.ductus_creation_template.phrase_choice a {
-    background: url(../img/200px-Phrase-choice-icon.png);
-}
-a.ductus_other_view {
-    float: right;
-    margin: 4em 10% 3em;
-}
-
 .quiet {
     font-size: 66%;
     color: #444;

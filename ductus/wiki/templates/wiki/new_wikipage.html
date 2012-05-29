@@ -2,6 +2,13 @@
 {% load underscores %}
 {% load i18n %}
 
+{% block css %}
+{{ block.super }}
+{% compress css %}
+<link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/common/css/new_wikipage.css" %}"/>
+{% endcompress %}
+{% endblock %}
+
 {% block content %}
 <p>
 {% if absolute_pagename %}
