@@ -22,6 +22,7 @@ from ductus.wiki.decorators import register_creation_view, register_view, regist
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
 from ductus.util.http import query_string_not_found
+from ductus.util.bcp47 import language_tag_to_description
 from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
 from ductus.modules.flashcards import registered_interaction_views
@@ -130,9 +131,24 @@ def view_flashcard_deck(request):
 
 @register_interaction_view(ChoiceInteraction)
 def choice(request, interaction):
+    """
+    Display a flashcard deck that has a ChoiceInteraction as a quizz
+    """
+    # find target language from tags
+    language_code = language_name = None
+    if hasattr(request.ductus.resource, 'tags'):
+        for tag in request.ductus.resource.tags:
+            split = tag.value.split(':')
+            if split[0] == 'target-language':
+                language_code = split[1]
+                break
+    if language_code is not None:
+        language_name = language_tag_to_description(language_code)
+
     return render_to_response('flashcards/choice.html', {
         'prompt_columns': [int(a) for a in interaction.prompt.split(',')],
         'answer_column': int(interaction.answer),
+        'target_language': {'code': language_code, 'name': language_name}
     }, RequestContext(request))
 
 def _get_audio_urns_in_column(flashcard_deck, column):

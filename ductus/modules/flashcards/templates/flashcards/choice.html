@@ -27,6 +27,7 @@
 var resource_json = {{ request.ductus.resource|resource_json }};
 var prompt_columns = {{ prompt_columns|jsonize }};
 var answer_column = {{ answer_column|jsonize }};
+var target_language = {{ target_language|jsonize }};
 var available_audio_formats = {{ available_audio_formats|jsonize }};
 {% endblock %}
 

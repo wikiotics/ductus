@@ -212,6 +212,9 @@ $(function () {
             $("#frame_number").html(frame + 1 + '');
             current_frame_incorrect_guess = false;
             prepare_frame();
+        } else {
+            // we've reached the end of the lesson, give the user something to do next
+            show_lesson_end();
         }
     }
 
@@ -229,6 +232,31 @@ $(function () {
             current_frame_incorrect_guess = true;
         }
     };
+
+    var show_lesson_end = function () {
+        // point the user to the portal of the target language of this lesson
+        // in the future, this should also suggest a logical next lesson to take
+        var url, epilogue;
+        if (window.target_language.code != null) {
+            url = '/en/' + window.target_language.name + '_lessons';
+            epilogue = gettext('Back to the main page for ') + window.target_language.name;
+        } else {
+            url = '/';
+            epilogue = gettext('Back to the main page');
+        }
+        var dc = $('.ductus_choice');
+        var container = $("#choice_frame_container");
+        container.height(dc.height()); // prevent the entire page from resizing
+        dc.hide(450, "linear");
+        setTimeout(function () {
+            var text = gettext('You completed the lesson. You can now continue by clicking one of those links:');
+            var dce = $('<div class="ductus_choice_epilogue"></div>');
+            $('<p>' + text + '</p>').appendTo(dce);
+            $('<a href="' + url + '">' + epilogue + '</a></div>').appendTo(dce);
+            $('<a href="javascript:history.back();">' + gettext('Back to previous page') + '</a>').appendTo(dce);
+            dce.appendTo(container);
+        }, 500);
+    }
 
     if (lesson_iterator.length != -1) {
         $("#number_of_frames").text('' + lesson_iterator.length);

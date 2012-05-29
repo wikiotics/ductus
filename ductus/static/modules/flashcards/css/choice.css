@@ -32,6 +32,12 @@
 .choice_frame_count {
     text-align: center;
 }
+.ductus_choice_epilogue {
+    margin-top: 3em;
+}
+.ductus_choice_epilogue a {
+    margin: 3em;
+}
 
 /* mobile devices */
 @media screen and (max-width: 420px) {
