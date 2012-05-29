@@ -1,9 +1,38 @@
 {% extends "ductus_document.html" %}
+{% load jsonize %}
+{% load staticfiles %}
+{% load compress %}
+
+{% block js %}
+{{ block.super }}
+{% compress js %}
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.blockUI.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.tokeninput.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/editing-widgets.js" %}"></script>
+{% endcompress %}
+{% compress js inline %}
+<script type="text/javascript">
+var resource_json = {'href': '{{ request.ductus.resource.urn }}'};
+var writable_directories = {{ writable_directories|jsonize }};
+
+function CopyWidget() {
+    ModelWidget.call(this, null, '<div class="ductus_CopyWidget"></div>');
+    var save_widget = new SaveWidget(this);
+    this.elt.append(save_widget.elt);
+}
+CopyWidget.prototype = chain_clone(ModelWidget.prototype);
+CopyWidget.prototype.blueprint_repr = function () {
+    return resource_json;
+};
+
+$(function () {
+    var copy_widget = new CopyWidget;
+    copy_widget.elt.appendTo("#ductus_copy_widget_holder");
+});
+</script>
+{% endcompress %}
+{% endblock %}
+
 {% block content %}
-<table>
-<form method="post" action="{{ request.escaped_full_path }}">{% csrf_token %}
-{{ form }}
-<tr><td></td><td><input type="submit"/></td></tr>
-</form>
-</table>
+<div id="ductus_copy_widget_holder"></div>
 {% endblock %}

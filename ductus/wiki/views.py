@@ -463,57 +463,9 @@ NewPageNamespace()
 def view_copy_resource(request):
     """Copies/forks the resource to a new location on the wiki
     """
-
-    from django import forms
-
-    class CopyPageForm(forms.Form):
-        source_urn = forms.CharField(widget=forms.HiddenInput())
-        target_pagename = forms.CharField(label=_('Target page name'), help_text=_('wiki location of the new resource'))
-
-        def clean_source_urn(self):
-            source_urn = self.cleaned_data['source_urn']
-            try:
-                source_resource = get_resource_database().get_resource_object(source_urn)
-            except Exception: # fixme: some day we should just be able to catch KeyError here, or something
-                raise forms.ValidationError(_('source resource does not exist'))
-            else:
-                return source_urn
-
-        def clean_target_pagename(self):
-            target_pagename = self.cleaned_data['target_pagename']
-
-            # convert spaces to underscores
-            r = re.compile(r'[\s_]+', re.UNICODE)
-            target_pagename = r.sub(u'_', target_pagename)
-            # remove leading and trailing underscores from each portion of
-            # path; remove extra slashes
-            target_pagename = u'/'.join(filter(lambda x: x, [a.strip(u'_') for a in target_pagename.split(u'/')]))
-
-            # deal with namespace
-            prefix, pagename = split_pagename(target_pagename, fallback_prefix=request.ductus_prefix)
-            target_pagename = join_pagename(prefix, pagename)
-
-            # make sure we can create the page
-            if not is_legal_wiki_pagename(prefix, pagename):
-                raise forms.ValidationError(_(u'Invalid page name')) # would be nice to tell the user why it's invalid...
-            if not user_has_edit_permission(request.user, prefix, pagename):
-                raise forms.ValidationError(_('you do not have permission to create/write to this resource'))
-            return target_pagename
-
-    if request.method == 'POST':
-        form = CopyPageForm(request.POST)
-        if form.is_valid():
-            source_urn = form.cleaned_data['source_urn']
-            source_resource = get_resource_database().get_resource_object(source_urn)
-            target_pagename = form.cleaned_data['target_pagename']
-            page, page_created = WikiPage.objects.get_or_create(name=target_pagename)
-            response = SuccessfulEditRedirect(source_urn)
-            return _handle_successful_wikiedit(request, response, page)
-    else:
-        form = CopyPageForm(initial={'source_urn': request.ductus.resource.urn})
-
+    from ductus.wiki import get_writable_directories_for_user
     return render_to_response('wiki/copy.html', {
-        'form': form,
+        'writable_directories': get_writable_directories_for_user(request.user),
     }, RequestContext(request))
 
 if settings.DEBUG:
