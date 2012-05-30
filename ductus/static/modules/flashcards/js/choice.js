@@ -256,7 +256,7 @@ $(function () {
             $('<a href="javascript:history.back();">' + gettext('Back to previous page') + '</a>').appendTo(dce);
             dce.appendTo(container);
         }, 500);
-    }
+    };
 
     if (lesson_iterator.length != -1) {
         $("#number_of_frames").text('' + lesson_iterator.length);
