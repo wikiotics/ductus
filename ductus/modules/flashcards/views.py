@@ -143,7 +143,10 @@ def choice(request, interaction):
                 language_code = split[1]
                 break
     if language_code is not None:
-        language_name = language_tag_to_description(language_code)
+        try:
+            language_name = language_tag_to_description(language_code)
+        except KeyError:
+            pass
 
     return render_to_response('flashcards/choice.html', {
         'prompt_columns': [int(a) for a in interaction.prompt.split(',')],
