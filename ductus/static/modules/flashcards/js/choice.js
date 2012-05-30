@@ -249,7 +249,7 @@ $(function () {
         container.height(dc.height()); // prevent the entire page from resizing
         dc.hide(450, "linear");
         setTimeout(function () {
-            var text = gettext('You completed the lesson. You can now continue by clicking one of those links:');
+            var text = gettext('You completed the lesson. You can now continue by clicking one of these links:');
             var dce = $('<div class="ductus_choice_epilogue"></div>');
             $('<p>' + text + '</p>').appendTo(dce);
             $('<a href="' + url + '">' + epilogue + '</a></div>').appendTo(dce);

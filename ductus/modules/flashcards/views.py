@@ -132,7 +132,7 @@ def view_flashcard_deck(request):
 @register_interaction_view(ChoiceInteraction)
 def choice(request, interaction):
     """
-    Display a flashcard deck that has a ChoiceInteraction as a quizz
+    Display a flashcard deck that has a ChoiceInteraction as a quiz
     """
     # find target language from tags
     language_code = language_name = None
