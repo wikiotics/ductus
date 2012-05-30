@@ -252,7 +252,7 @@ $(function () {
             var text = gettext('You completed the lesson. You can now continue by clicking one of these links:');
             var dce = $('<div class="ductus_choice_epilogue"></div>');
             $('<p>' + text + '</p>').appendTo(dce);
-            $('<a href="' + url + '">' + epilogue + '</a></div>').appendTo(dce);
+            $('<a href="' + url + '">' + epilogue + '</a>').appendTo(dce);
             $('<a href="javascript:history.back();">' + gettext('Back to previous page') + '</a>').appendTo(dce);
             dce.appendTo(container);
         }, 500);
