@@ -22,37 +22,24 @@ from ductus.util.bcp47 import language_tag_to_description
 from ductus.util.tag_cloud import TagCloudElement, prepare_tag_cloud
 
 def otics_front_page(request, pagename=None):
-    # this is all temporarily hard-coded
-    languages = (
-        ('af', 1),
-        ('ar', 1),
-        ('bs', 1),
-        ('ca', 1),
-        ('zh', 5),
-        ('nl', 1),
-        ('en', 43),
-        ('fi', 1),
-        ('fr', 3),
-        ('de', 1),
-        ('el', 3),
-        ('he', 1),
-        ('hi', 1),
-        ('is', 1),
-        ('it', 1),
-        ('ja', 1),
-        ('ko', 1),
-        ('no', 6),
-        ('fa', 1),
-        ('pt', 1),
-        ('ru', 1),
-        ('sk', 1),
-        ('es', 5),
-        ('sv', 1),
-        ('tr', 1),
-    )
-    total_lesson_count = sum(a[1] for a in languages)
+    from ductus.index import get_indexing_mongo_database
+    indexing_db = get_indexing_mongo_database()
+    collection = indexing_db.urn_index
+
+    languages = {}
+    relevant_pages = collection.find({
+        "tags": {"$regex": ["^target-language:"]},
+        "current_wikipages": {"$not": {"$size": 0}},
+    }, {"tags": 1})
+    for page in relevant_pages:
+        for tag in page["tags"]:
+            if tag.startswith("target-language:"):
+                lang_code = tag[len("target-language:"):]
+                languages[lang_code] = languages.get(lang_code, 0) + 1
+
+    total_lesson_count = sum(a for a in languages.values())
     language_tag_cloud = []
-    for lang in languages:
+    for lang in languages.items():
         descr = language_tag_to_description(lang[0])
         if lang[0] == 'el':  # temporary (?) override
             descr = u'Greek'
