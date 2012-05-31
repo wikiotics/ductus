@@ -216,14 +216,14 @@ PictureModelWidget.prototype.popup_settings = {
     'right': {
         'html': gettext('copy'),
         'display': function() { return true; },
-        'callback': function() {
+        'callback': function(target) {
             // copy the blueprint for pasting in another cell
             window.global_copy_paste_buffer = {
                 resource: {
                     fqn: PictureModelWidget.prototype.fqn,
-                    net_rotation: this_.calling_widget.wrapped._picture_widget.net_rotation
+                    net_rotation: target._picture_widget.net_rotation
                 },
-                href: this_.calling_widget.wrapped.initial_href
+                href: target.initial_href
             };
         }
     },
@@ -616,13 +616,13 @@ AudioWidget.prototype.popup_settings = {
     'right': {
         'html': gettext('copy'),
         'display': function() { return true; },
-        'callback': function() {
+        'callback': function(target) {
             // copy the blueprint for pasting in another cell
             window.global_copy_paste_buffer = $.extend(true, {
                 resource: {
                     fqn: AudioWidget.prototype.fqn
                 }
-            }, this_.calling_widget.blueprint_repr());
+            }, target.blueprint_repr());
         }
     },
     'top': {
