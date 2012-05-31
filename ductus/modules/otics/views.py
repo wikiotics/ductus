@@ -40,10 +40,14 @@ def otics_front_page(request, pagename=None):
     total_lesson_count = sum(a for a in languages.values())
     language_tag_cloud = []
     for lang in languages.items():
-        descr = language_tag_to_description(lang[0])
-        if lang[0] == 'el':  # temporary (?) override
-            descr = u'Greek'
-        language_tag_cloud.append(TagCloudElement(lang[1], label=descr, href=(u"/en/%s_lessons" % descr), data=lang[0]))
+        try:
+            descr = language_tag_to_description(lang[0])
+        except KeyError:
+            pass
+        else:
+            if lang[0] == 'el':  # temporary (?) override
+                descr = u'Greek'
+            language_tag_cloud.append(TagCloudElement(lang[1], label=descr, href=(u"/en/%s_lessons" % descr), data=lang[0]))
     prepare_tag_cloud(language_tag_cloud, min_percent=70, max_percent=150)
     return render_to_response('otics/front_page.html', {
         'language_tag_cloud': language_tag_cloud,
