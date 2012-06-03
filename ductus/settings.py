@@ -143,7 +143,7 @@ MIDDLEWARE_CLASSES = (
     'ductus.middleware.canonical_hostname.CanonicalHostnameMiddleware',
     'ductus.middleware.redirect.RedirectMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    'ductus.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'ductus.middleware.remote_addr.RemoteAddrMiddleware',
     'ductus.middleware.blacklist.IPAddressBlacklistMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -155,7 +155,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
-    'ductus.middleware.cache.FetchFromCacheMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'ductus.urls'
