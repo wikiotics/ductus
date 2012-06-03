@@ -92,39 +92,38 @@ def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
         response["ETag"] = etag
         return response
 
-    if True:
-        if request.method == "GET":
-            unvaried_etag = [urn, bool(wiki_page),
-                             request.META.get("QUERY_STRING", "")]
-            varied_etag = unvaried_etag + [request.LANGUAGE_CODE,
-                                           bool(request.is_secure()),
-                                           request.META.get("HTTP_COOKIE", "")]
-            unvaried_etag = __handle_etag(request, unvaried_etag)
-            varied_etag = __handle_etag(request, varied_etag)
+    if request.method == "GET":
+        unvaried_etag = [urn, bool(wiki_page),
+                         request.META.get("QUERY_STRING", "")]
+        varied_etag = unvaried_etag + [request.LANGUAGE_CODE,
+                                       bool(request.is_secure()),
+                                       request.META.get("HTTP_COOKIE", "")]
+        unvaried_etag = __handle_etag(request, unvaried_etag)
+        varied_etag = __handle_etag(request, varied_etag)
 
-        resource = resource_database.get_resource_object(urn)
-        request.ductus = DuctusRequestInfo(resource, requested_view,
-                                           wiki_page, wiki_revision)
+    resource = resource_database.get_resource_object(urn)
+    request.ductus = DuctusRequestInfo(resource, requested_view,
+                                       wiki_page, wiki_revision)
 
+    try:
+        f = registered_views[resource.fqn][requested_view]
+    except KeyError:
         try:
-            f = registered_views[resource.fqn][requested_view]
+            f = registered_views[None][requested_view]
         except KeyError:
-            try:
-                f = registered_views[None][requested_view]
-            except KeyError:
-                return query_string_not_found(request)
-        if not f.meets_requirements(request.ductus):
             return query_string_not_found(request)
-        response = f(request)
+    if not f.meets_requirements(request.ductus):
+        return query_string_not_found(request)
+    response = f(request)
 
-        if request.method == "GET" and not response.has_header("ETag"):
-            if getattr(response, "_unvarying", False):
-                response["ETag"] = unvaried_etag
-            else:
-                vary_headers = set([h.strip().lower() for h in response.get("Vary", "").split(',') if h])
-                if vary_headers.issubset(set(['cookie', 'accept-language'])):
-                    response["ETag"] = varied_etag
-        return response
+    if request.method == "GET" and not response.has_header("ETag"):
+        if getattr(response, "_unvarying", False):
+            response["ETag"] = unvaried_etag
+        else:
+            vary_headers = set([h.strip().lower() for h in response.get("Vary", "").split(',') if h])
+            if vary_headers.issubset(set(['cookie', 'accept-language'])):
+                response["ETag"] = varied_etag
+    return response
 
     raise Http404
 
