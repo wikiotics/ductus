@@ -39,12 +39,13 @@ from ductus.wiki.decorators import register_view
 from ductus.wiki.subviews import subview
 from ductus.decorators import unvarying
 from ductus.util.http import query_string_not_found, render_json_response, ImmediateResponse
+import ductus
 
 logger = logging.getLogger(__name__)
 
 # The following can be removed once we upgrade to Django 1.5, as it will
 # supposedly do a strict check to make sure SECRET_KEY is not blank.
-if not settings.SECRET_KEY:
+if not settings.SECRET_KEY and not hasattr(ductus, '_called_from_test'):
     raise Exception("You must define a SECRET_KEY in ductus_local_settings.py.")
 
 def view_frontpage(request):

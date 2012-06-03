@@ -278,10 +278,13 @@ MKVMERGE_PATH = '/usr/bin/mkvmerge'
 MP4BOX_PATH = '/usr/bin/MP4Box'
 FFMPEG_PATH = '/usr/bin/ffmpeg'
 
-try:
-    from ductus_local_settings import *
-except ImportError:
-    pass
+import ductus
+if not hasattr(ductus, '_called_from_test'):
+    try:
+        from ductus_local_settings import *
+    except ImportError:
+        pass
+del ductus
 
 if "LOCAL_INSTALLED_APPS" in locals():
     INSTALLED_APPS += LOCAL_INSTALLED_APPS
