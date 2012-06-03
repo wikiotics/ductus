@@ -109,6 +109,22 @@ class ElementMetaclass(type):
                 cls.subelements.update(base.subelements)
         cls.subelements.update(subelements)
 
+        # Precalculate a few things
+        cls._required_attributes = {
+            name_
+            for name_, attribute in cls.attributes.iteritems()
+            if not getattr(attribute, "optional", False)
+        }
+        cls._required_subelements = {
+            name_
+            for name_, subelement in cls.subelements.iteritems()
+            if not getattr(subelement, "optional", False)
+        }
+        cls._attributes_by_fqn = {
+            (attribute.fqn or name_): name_
+            for name_, attribute in cls.attributes.iteritems()
+        }
+
         super(ElementMetaclass, cls).__init__(name, bases, attrs)
 
 class NoChildElementMetaclass(ElementMetaclass):
@@ -235,41 +251,35 @@ class Element(object):
 
     def _populate_subelements_from_xml(self, xml_node, ns):
         used_tags = set()
-        subelements_by_fqn = {}
-        for name, subelement in self.subelements.items():
-            fqn = subelement.fqn or "{%s}%s" % (subelement.ns or ns, name)
-            subelements_by_fqn[fqn] = getattr(self, name)
         for child in xml_node:
-            if child.tag in used_tags:
-                raise Exception("Each tag must be unique")
-            used_tags.add(child.tag)
+            subelement_name = child.tag.partition('}')[2]  # remove the ns prefix
             try:
-                subelement = subelements_by_fqn[child.tag]
+                global_subelement = self.subelements[subelement_name]
+                fqn = global_subelement.fqn or "{%s}%s" % (global_subelement.ns or ns, subelement_name)
+                if fqn != child.tag:
+                    raise KeyError
             except KeyError:
                 raise Exception("Unrecognized tag")
+            if subelement_name in used_tags:
+                raise Exception("Each tag must be unique")
+            used_tags.add(subelement_name)
+            subelement = getattr(self, subelement_name)
             subelement.populate_from_xml(child, subelement.ns or ns)
-        required_tags = set(fqn for fqn, subelement in subelements_by_fqn.items()
-                            if not getattr(subelement, "optional", False))
-        missing_tags = required_tags.difference(used_tags)
+        missing_tags = self._required_subelements.difference(used_tags)
         if missing_tags:
             raise Exception("Missing tag(s)! %s" % tuple(missing_tags))
 
     def _populate_attributes_from_xml(self, xml_node, ns):
         used_attributes = set()
-        attributes_by_fqn = {}
-        for name, attribute in self.attributes.items():
-            fqn = attribute.fqn or name
-            attributes_by_fqn[fqn] = name
-        for attr, value in xml_node.attrib.items():
-            used_attributes.add(attr)
+        attributes_by_fqn = self._attributes_by_fqn
+        for attr, value in xml_node.attrib.iteritems():
             try:
                 name = attributes_by_fqn[attr]
             except KeyError:
                 raise Exception("Unrecognized attribute tag: %s" % attr)
+            used_attributes.add(name)
             setattr(self, name, value)
-        required_attributes = set(fqn for fqn, name in attributes_by_fqn.items()
-                                  if not getattr(self.attributes[name], "optional", False))
-        missing_attributes = required_attributes.difference(used_attributes)
+        missing_attributes = self._required_attributes.difference(used_attributes)
         if missing_attributes:
             raise Exception("Missing attribute(s)! %s" % tuple(missing_attributes))
 
