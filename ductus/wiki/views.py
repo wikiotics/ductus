@@ -78,35 +78,21 @@ def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
 
     requested_view = request.GET.get('view', None)
 
+    resource_database = get_resource_database()
+
     if requested_view == 'raw':
         etag = __handle_etag(request, ['raw', urn], weak=False)
         # fixme: we may also want to set last-modified, expires, max-age
-
-    resource_database = get_resource_database()
-    try:
-        data_iterator = resource_database[urn]
-    except KeyError:
-        raise Http404
-    header, data_iterator = determine_header(data_iterator)
-
-    if requested_view == 'raw':
+        try:
+            data_iterator = resource_database[urn]
+        except KeyError:
+            raise Http404
         response = HttpResponse(list(data_iterator), # see django #6527
                                 content_type='application/octet-stream')
         response["ETag"] = etag
         return response
 
-    if header == 'blob':
-        etag = __handle_etag(request, ['blob', urn], weak=False)
-        header, data_iterator = determine_header(data_iterator, False)
-        response = HttpResponse(list(data_iterator), # see django #6527
-                                content_type='application/octet-stream')
-        response["ETag"] = etag
-        return response
-
-    if header == 'xml':
-        del data_iterator
-
-        etag = None
+    if True:
         if request.method == "GET":
             unvaried_etag = [urn, bool(wiki_page),
                              request.META.get("QUERY_STRING", "")]
