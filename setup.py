@@ -5,7 +5,7 @@
 # <http://code.ductus.us/>.  See also requirements.txt, which lists the
 # specific packages this version of Ductus has been tested against.
 
-# Python >= 2.6 (< 3.0) is also a dependency.
+# Python 2.7.x is also a dependency.
 
 # fixme: recursive-include's in MANIFEST.in don't ignore text editor backup
 # files (such as *~)
@@ -24,7 +24,7 @@ setup(
     author_email='garrison@wikiotics.org',
     url='http://ductus.us/',
     install_requires=(
-        'Django >= 1.2',
+        'Django >= 1.4',
         'Creoleparser >= 0.7.3',
         'lxml',
         'PIL',
