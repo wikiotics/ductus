@@ -324,10 +324,11 @@ def fsw_get_audio_to_subtitle(request):
             resource_database = get_resource_database()
             while True:
                 url = url_list[random.randint(0, len(url_list) - 1)]
+                url_list.remove(url)
                 try:
                     page = WikiPage.objects.get(name=url)
                 except WikiPage.DoesNotExist:
-                    if len(url_list) > 1:
+                    if len(url_list) > 0:
                         continue
                     else:
                         raise Http404('wikipage does not exist: ' + url)
