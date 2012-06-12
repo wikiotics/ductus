@@ -1,0 +1,44 @@
+{% extends "ductus_document_columns.html" %}
+{% load i18n %}
+{% load urn %}
+{% load jsonize %}
+{% load staticfiles %}
+{% load compress %}
+
+{% block css %}
+{{ block.super }}
+{% compress css %}
+<link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/modules/flashcards/css/storybook.css" %}" />
+{% endcompress %}
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+{% compress js %}
+<script type="text/javascript" src="{% static "ductus/modules/flashcards/js/storybook.js" %}"></script>
+{% endcompress %}
+{% compress js %}
+<script type="text/javascript" src="{% static "ductus/common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/audio_player.js" %}"></script>
+{% endcompress %}
+{% endblock %}
+
+{% block javascript %}
+var resource_json = {{ request.ductus.resource|resource_json }};
+var target_language = {{ target_language|jsonize }};
+var available_audio_formats = {{ available_audio_formats|jsonize }};
+{% endblock %}
+
+{% block content %}
+<div id="storybook_frame_container"></div>
+<div id="storybook_pager"></div>
+<p class="storybook_frame_count">
+{% blocktrans with '<span id="frame_number">1</span>' as current_frame and '<span id="number_of_frames">0</span>' as number_of_frames %}
+Frame {{ current_frame }} <span id="total_frames_text"> of {{ number_of_frames }}</span>
+{% endblocktrans %}
+</p>
+{% endblock %}
+
+{% block sidebar %}
+{% include "sidebar_welcome_message.html" %}
+{% endblock %}
