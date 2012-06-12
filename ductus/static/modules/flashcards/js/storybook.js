@@ -105,10 +105,7 @@ $(function() {
     var pager = $('#storybook_pager');
     pager.append($('<div id="prev"></div>').text('<').button().click(previous_page));
     pager.append($('<div id="next"></div>').text('>').button().click(next_page));
-    /*if (lesson_iterator.length != -1) {
-        $("#number_of_frames").text('' + lesson_iterator.length);
-    }
-    $("#total_frames_text").toggle(lesson_iterator.length != -1);*/
+    $("#number_of_frames").text('' + resource_json.resource.cards.array.length);
 
     next = prepare_page(0);
     next_page();
