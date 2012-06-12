@@ -1,0 +1,28 @@
+.ductus_storybook {
+    height: 320px;
+    margin: auto;
+    text-align: center;
+    width: 250px;
+}
+.ductus_storybook .picture {
+    display: table-cell;
+    height: 250px;
+    margin: 1px auto;
+    text-align: center;
+    vertical-align: middle;
+    width: 250px;
+}
+#storybook_pager {
+    text-align: center;
+}
+.storybook_frame_count {
+    margin: .5em auto;
+    text-align: center;
+}
+.ductus_storybook_epilogue {
+        margin-top: 3em;
+}
+.ductus_storybook_epilogue a {
+        margin: 3em;
+}
+

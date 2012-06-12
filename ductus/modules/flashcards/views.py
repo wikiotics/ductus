@@ -157,6 +157,15 @@ def choice(request, interaction):
         'target_language': get_target_language_from_tags(request)
     }, RequestContext(request))
 
+@register_interaction_view(StoryBookInteraction)
+def storybook(request, interaction):
+    """
+    Display a flashcard deck that includes a StoryBook Interaction
+    """
+    return render_to_response('flashcards/storybook.html', {
+        'target_language': get_target_language_from_tags(request)
+    }, RequestContext(request))
+
 def _get_audio_urns_in_column(flashcard_deck, column):
     cells = [card.get().sides.array[column] for card in flashcard_deck.cards]
     return [cell.href for cell in cells if cell.href]
