@@ -34,7 +34,7 @@ var available_audio_formats = {{ available_audio_formats|jsonize }};
 <div id="storybook_pager"></div>
 <p class="storybook_frame_count">
 {% blocktrans with '<span id="frame_number">1</span>' as current_frame and '<span id="number_of_frames">0</span>' as number_of_frames %}
-Frame {{ current_frame }} <span id="total_frames_text"> of {{ number_of_frames }}</span>
+Page {{ current_frame }} <span id="total_frames_text"> of {{ number_of_frames }}</span>
 {% endblocktrans %}
 </p>
 {% endblock %}
