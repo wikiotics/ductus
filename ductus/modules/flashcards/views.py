@@ -90,10 +90,37 @@ def podcast_flashcard_template():
 
     return deck
 
+def storybook_flashcard_template():
+    """return a template flashcard deck object for an empty storybook lesson"""
+    deck = FlashcardDeck()
+
+    # set up headings
+    for heading in (_('Phrase'), _('Picture'), _('Audio')):
+        new_heading = deck.headings.new_item()
+        new_heading.text = heading
+        deck.headings.array.append(new_heading)
+
+    # set up default storybook interaction
+    sbi = StoryBookInteraction()
+    deck.interactions.array.append(deck.interactions.new_item())
+    deck.interactions.array[0].store(sbi, False)
+
+    # create an empty row
+    card = Flashcard()
+    for j in xrange(3):
+        card.sides.array.append(card.sides.new_item())
+
+    new_card = deck.cards.new_item()
+    new_card.store(card, False)
+    deck.cards.array.append(new_card)
+
+    return deck
+
 flashcard_templates = {
     'picture_choice': picture_choice_flashcard_template,
     'phrase_choice': phrase_choice_flashcard_template,
     'podcast': podcast_flashcard_template,
+    'storybook': storybook_flashcard_template,
 }
 
 @register_creation_view(FlashcardDeck, description=ugettext_lazy('a flexible lesson type arranged as a series of flashcards in a grid'), category='lesson')
