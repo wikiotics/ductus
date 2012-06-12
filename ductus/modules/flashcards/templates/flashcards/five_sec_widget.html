@@ -1,19 +1,31 @@
 {% extends "ductus_document.html" %}
 {% load i18n %}
 {% load jsonize %}
+{% load staticfiles %}
+{% load compress %}
 
-{% block head %}
+{% block css %}
 {{ block.super }}
-<script type="text/javascript">
+{% compress css %}
+<link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/modules/flashcards/css/five_sec_widget.css" %}" />
+{% endcompress %}
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+{% compress js %}
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.fileupload.modified.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.blockUI.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/editing-widgets.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/modules/flashcards/js/five_sec_widget.js" %}"></script>
+{% endcompress %}
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
 var resource_json = {{ resource_or_template|resource_json }};
 var DUCTUS_FLICKR_GROUP_ID = {{ DUCTUS_FLICKR_GROUP_ID|jsonize }};
 var writable_directories = {{ writable_directories|jsonize }};
-</script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.fileupload.modified.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/jquery.blockUI.min.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}common/js/widgets.js"></script>
-<script type="text/javascript" src="{{ ductus_media_prefix }}modules/flashcards/js/five_sec_widget.js"></script>
-<link rel="stylesheet" href="{{ ductus_media_prefix }}modules/flashcards/css/five_sec_widget.css" type="text/css">
 {% endblock %}
 
 {% block body_classes %}ductus_wide{% endblock %}
