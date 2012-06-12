@@ -32,9 +32,9 @@ $(function() {
 
         var prepared_page = $('<div class="ductus_storybook"></div>');
         var cards_array = resource_json.resource.cards.array;
-        for (i = 0; i < 3; i++) {
-            prepared_page.append(display_resource(cards_array[index].resource.sides.array[i]));
-        }
+        prepared_page.append($('<span></span>').append(display_resource(cards_array[index].resource.sides.array[1])));
+        prepared_page.append(display_resource(cards_array[index].resource.sides.array[2]));
+        prepared_page.append(display_resource(cards_array[index].resource.sides.array[0]));
         prepared_page.find('span.audio').button({icons: { primary: 'ui-icon-play' }}).click(function () {
             jplayer_play($(this).data('resource'));
         });
