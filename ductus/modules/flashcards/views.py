@@ -29,6 +29,8 @@ from ductus.resource import get_resource_database
 from ductus.resource.ductmodels import tag_value_attribute_validator, ValidationError
 from ductus.wiki.templatetags.jsonize import resource_json
 from ductus.wiki.models import WikiPage
+
+from ductus.index import search_pages_by_tags, IndexingError
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
@@ -263,7 +265,6 @@ def five_sec_widget(request):
 
         new_fc_urn = handle_blueprint_post(request, Flashcard)
         # temp hack for FSI, manually update the lesson we took the flashcard from
-        # TODO: replace this with lesson updates using indexing system when available
         from django.utils.safestring import mark_safe
         from ductus.resource.ductmodels import BlueprintSaveContext
         from ductus.wiki.views import _fully_handle_blueprint_post
@@ -308,30 +309,30 @@ def fsw_get_audio_to_subtitle(request):
     """return a JSON flashcard object to the subtitle 5s widget
     """
     if request.method == 'GET':
-        # TODO: replace this with a call to the internal search engine
-        # that would return a random flashcard that matches a certain number
-        # of criteria defined by the site admin and the user's profile
-        # (when it's available!)
-        language = request.GET.get('language', 'fr')
-        url_list = getattr(settings, "FIVE_SEC_WIDGET_URLS", '')
-        if url_list != '':
-            url_list = [url for url in url_list if url.split(':')[0] == language]
-            if url_list == []:
-                raise Http404('No material available for this language')
+        # get the language to search for
+        language = request.GET.get('language', getattr(settings, "FIVE_SEC_WIDGET_DEFAULT_LANGUAGE", 'en'))
+        # build list of tags to search for
+        search_tags = ['target-language:' + language] + getattr(settings, "FIVE_SEC_WIDGET_EXTRA_SEARCH_TAGS", 'five-sec-widget-fodder')
+        # get a list of pages tagged as we want
+        try:
+            url_list = search_pages_by_tags(search_tags)
+        except IndexingError:
+            raise Http404('Indexing error, contact the site administrator')
+
+        if url_list != []:
+            #url_list = [url for url in url_list if url.split(':')[0] == language]
             # pick a randomly chosen flashcard that has no text transcript in side[0]
-            # this is highly inefficient and only a hack until indexing is available
-            # FIVE_SEC_WIDGET_URLS should be kept clean of "mostly filled lessons"
             resource_database = get_resource_database()
             while True:
                 url = url_list[random.randint(0, len(url_list) - 1)]
                 url_list.remove(url)
                 try:
-                    page = WikiPage.objects.get(name=url)
+                    page = WikiPage.objects.get(name=url['absolute_pagename'])
                 except WikiPage.DoesNotExist:
                     if len(url_list) > 0:
                         continue
                     else:
-                        raise Http404('wikipage does not exist: ' + url)
+                        raise Http404('wikipage does not exist: ' + url['path'])
 
                 revision = page.get_latest_revision()
                 urn = 'urn:' + revision.urn
@@ -345,8 +346,8 @@ def fsw_get_audio_to_subtitle(request):
             resource = resource_json(fc)
             # temporary hack for FSI: add the URL this flashcard is taken from
             tmp_resource = json.loads(resource)
-            tmp_resource['fsi_url'] = url
+            tmp_resource['fsi_url'] = url['absolute_pagename']
             tmp_resource['fsi_index'] = card_index
             return render_json_response(tmp_resource)
 
-        raise Http404('FIVE_SEC_WIDGET_URLS not set')
+        raise Http404('No material available for this language')

@@ -278,6 +278,11 @@ MKVMERGE_PATH = '/usr/bin/mkvmerge'
 MP4BOX_PATH = '/usr/bin/MP4Box'
 FFMPEG_PATH = '/usr/bin/ffmpeg'
 
+# five second widget default settings
+# by default feed the widget from lessons tagged with ['five-sec-widget-fodder', 'target-language:en']
+FIVE_SEC_WIDGET_DEFAULT_LANGUAGE = 'en' # what to offer if no language given by the user
+FIVE_SEC_WIDGET_EXTRA_SEARCH_TAGS = ['five-sec-widget-fodder']  # tags to search for on top of 'target-language:xx' to feed the 5s widget
+
 import ductus
 if not hasattr(ductus, '_called_from_test'):
     try:
