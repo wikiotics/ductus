@@ -1,0 +1,16 @@
+{% extends "ductus_base.html" %}
+{% load title %}
+{% load i18n %}
+
+{% block title %}
+{{ block.super }}
+{% title "Search" %}
+{% endblock %}
+
+{% block content %}
+<ul>
+{% for result in results %}
+  <li><a href="{{ result.path }}">{{ result.absolute_pagename }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

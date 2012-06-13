@@ -23,7 +23,7 @@ from django.template import RequestContext
 from django.views.generic.list_detail import object_list
 
 from ductus.wiki.models import WikiRevision
-from ductus.wiki.namespaces import BaseWikiNamespace
+from ductus.wiki.namespaces import BaseWikiNamespace, registered_namespaces, split_pagename
 
 _special_page_dict = {}
 
@@ -105,6 +105,48 @@ for __pagename in __django_specialpages:
     @register_special_page(__pagename)
     def __redirect_to_django_specialpage(request, pagename):
         return redirect('/' + pagename.replace('_', '-'))
+
+@register_special_page
+def search(request, pagename):
+    from ductus.index import get_indexing_mongo_database
+    indexing_db = get_indexing_mongo_database()
+    if indexing_db is None:
+        raise Http404("indexing database is not available")
+    collection = indexing_db.urn_index
+
+    # construct the mongodb query
+    query = {}
+    if 'tag' in request.GET:
+        query["tags"] = {"$in": request.GET.getlist('tag')}
+
+    if not query:
+        # fixme: we should prompt the user for what they want to search
+        raise Http404
+
+    # perform the search
+    query["current_wikipages"] = {"$not": {"$size": 0}}
+    pages = collection.find(query, {"current_wikipages": 1})
+    results = []
+    for page in pages:
+        absolute_pagename = page["current_wikipages"][0]
+        prefix, pagename = split_pagename(absolute_pagename)
+        try:
+            wns = registered_namespaces[prefix]
+        except KeyError:
+            # for some reason there's a prefix we don't know about.  move
+            # along.
+            pass
+        else:
+            path = "/%s/%s" % (prefix, wns.path_func(pagename))
+            results.append({
+                "absolute_pagename": absolute_pagename,
+                "path": path,
+            })
+
+    # return results to the user
+    return render_to_response('special/search.html', {
+        'results': results,
+    }, RequestContext(request))
 
 class SpecialPageNamespace(BaseWikiNamespace):
     def page_exists(self, pagename):
