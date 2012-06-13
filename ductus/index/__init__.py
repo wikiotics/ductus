@@ -16,6 +16,7 @@
 
 from django.conf import settings
 from django.utils.importlib import import_module
+from ductus.wiki.namespaces import registered_namespaces, split_pagename
 
 _indexing_mongo_database = False  # False means uninitialized; None means
                                   # indexing is not in use
@@ -31,3 +32,53 @@ def get_indexing_mongo_database():
             mod_name, junk, var_name = indexing_db_obj.rpartition('.')
             _indexing_mongo_database = getattr(import_module(mod_name), var_name)
     return _indexing_mongo_database
+
+class IndexingError(Exception):
+    """a basic Exception for index related errors"""
+    def __init__(self, value):
+        self.value = value
+    def __repr__(self):
+        return self.value
+
+def search_pages_by_tags(tags):
+    """
+    return a list of pages tagged with all `tags` (boolean AND)
+    `tags`: a list of tag values like: ['tag1', 'target-language:en']
+    return a list like [{"absolute_pagename": name, "path": path}]
+    """
+
+    if not tags:
+        # fixme: we should prompt the user for what they want to search
+        raise IndexingError('your search query cannot be empty')
+
+    #from ductus.index import get_indexing_mongo_database
+    indexing_db = get_indexing_mongo_database()
+    if indexing_db is None:
+        raise IndexingError("indexing database is not available")
+    collection = indexing_db.urn_index
+
+    # construct the mongodb query
+    query = {}
+    query["tags"] = {"$all": tags}
+
+    # perform the search
+    query["current_wikipages"] = {"$not": {"$size": 0}}
+    pages = collection.find(query, {"current_wikipages": 1})
+    results = []
+    for page in pages:
+        absolute_pagename = page["current_wikipages"][0]
+        prefix, pagename = split_pagename(absolute_pagename)
+        try:
+            wns = registered_namespaces[prefix]
+        except KeyError:
+            # for some reason there's a prefix we don't know about.  move
+            # along.
+            pass
+        else:
+            path = "/%s/%s" % (prefix, wns.path_func(pagename))
+            results.append({
+                "absolute_pagename": absolute_pagename,
+                "path": path,
+            })
+
+    return results
