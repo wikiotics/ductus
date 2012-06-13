@@ -14,16 +14,18 @@ Contents:
    :maxdepth: 2
 
    overview
+   install
    resourcedatabase
    ductmodels
    genericwiki-storage
    genericwiki-dispatch
    mediacache
+   indexing
    textwiki
    flashcard_deck
    resource_json
    customizing-ductus
-   conventions
+   contributing
    ductus
 
 Indices and tables

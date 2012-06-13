@@ -16,7 +16,7 @@ handle freely-structured text.
 
 More information is available at http://code.ductus.us/
 
-Installation/bootstrap instructions are available at
-http://code.ductus.us/wiki/DuctusDevelopmentInstance
+Installation/bootstrap instructions are available in
+ductus/doc/install.rst
 
 .. _Wikiotics: http://wikiotics.org/
