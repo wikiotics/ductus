@@ -24,22 +24,23 @@ from ductus.util.tag_cloud import TagCloudElement, prepare_tag_cloud
 def otics_front_page(request, pagename=None):
     from ductus.index import get_indexing_mongo_database
     indexing_db = get_indexing_mongo_database()
-    collection = indexing_db.urn_index
 
     languages = {}
-    relevant_pages = collection.find({
-        "tags": {"$regex": ["^target-language:"]},
-        "current_wikipages": {"$not": {"$size": 0}},
-    }, {"tags": 1})
-    for page in relevant_pages:
-        for tag in page["tags"]:
-            if tag.startswith("target-language:"):
-                lang_code = tag[len("target-language:"):]
-                languages[lang_code] = languages.get(lang_code, 0) + 1
+    if indexing_db is not None:
+        collection = indexing_db.urn_index
+        relevant_pages = collection.find({
+            "tags": {"$regex": ["^target-language:"]},
+            "current_wikipages": {"$not": {"$size": 0}},
+        }, {"tags": 1})
+        for page in relevant_pages:
+            for tag in page["tags"]:
+                if tag.startswith("target-language:"):
+                    lang_code = tag[len("target-language:"):]
+                    languages[lang_code] = languages.get(lang_code, 0) + 1
 
     total_lesson_count = sum(a for a in languages.values())
     language_tag_cloud = []
-    for lang_code, description in languages.iteritems():
+    for lang_code, count in sorted(languages.iteritems()):
         try:
             descr = language_tag_to_description(lang_code)
         except KeyError:
@@ -47,7 +48,7 @@ def otics_front_page(request, pagename=None):
         else:
             if lang_code == 'el':  # temporary (?) override
                 descr = u'Greek'
-            language_tag_cloud.append(TagCloudElement(description, label=descr, href=(u"/en/%s_lessons" % descr), data=lang_code))
+            language_tag_cloud.append(TagCloudElement(count, label=descr, href=(u"/en/%s_lessons" % descr), data=lang_code))
     prepare_tag_cloud(language_tag_cloud, min_percent=70, max_percent=150)
     return render_to_response('otics/front_page.html', {
         'language_tag_cloud': language_tag_cloud,
