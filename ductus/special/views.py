@@ -117,7 +117,7 @@ def search(request, pagename):
     # construct the mongodb query
     query = {}
     if 'tag' in request.GET:
-        query["tags"] = {"$in": request.GET.getlist('tag')}
+        query["tags"] = {"$all": request.GET.getlist('tag')}
 
     if not query:
         # fixme: we should prompt the user for what they want to search
