@@ -63,8 +63,6 @@ class Command(NoArgsCommand):
 
         resource_database = get_resource_database()
 
-        logger.info("%d keys", len(resource_database.keys()))
-
         verified_urns = set()
         current_wikipages_map = {}
 
@@ -126,5 +124,14 @@ class Command(NoArgsCommand):
                 urn = 'urn:' + revision.urn
                 current_wikipages_map.setdefault(urn, set()).add(wikipage.name)
 
-        for key in resource_database.keys():
-            verify(key)
+        n_attempted = n_successful = 0
+        for key in resource_database.iterkeys():
+            n_attempted += 1
+            try:
+                verify(key)
+            except Exception:
+                logger.warning("Key failed: %s", key)
+            else:
+                n_successful += 1
+
+        logger.info("Successfully processed %d of %d keys", n_successful, n_attempted)

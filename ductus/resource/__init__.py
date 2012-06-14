@@ -250,6 +250,9 @@ class ResourceDatabase(object):
     def keys(self):
         return self.storage_backend.keys()
 
+    def iterkeys(self):
+        return self.storage_backend.iterkeys()
+
     def __getitem__(self, key):
         if not self.is_valid_urn(key):
             raise KeyError('invalid urn: {0}'.format(repr(key)))
