@@ -18,6 +18,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy, ugettext as _
 
+from ductus.resource.ductmodels import tag_value_attribute_validator, ValidationError
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
@@ -107,6 +108,16 @@ def edit_flashcard_deck(request):
         resource_or_template = request.ductus.resource
     elif request.GET.get('template') in flashcard_templates:
         resource_or_template = flashcard_templates[request.GET['template']]()
+        # add any provided tag(s) to the template object
+        for tag in request.GET.getlist('tag'):
+            try:
+                tag_value_attribute_validator(tag)
+            except ValidationError:
+                pass  # the given tag is invalid, so ignore it
+            else:
+                tag_elt = resource_or_template.tags.new_item()
+                tag_elt.value = tag
+                resource_or_template.tags.array.append(tag_elt)
 
     return render_to_response('flashcards/edit_flashcard_deck.html', {
         'writable_directories': get_writable_directories_for_user(request.user),

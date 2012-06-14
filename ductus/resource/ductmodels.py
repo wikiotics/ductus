@@ -626,7 +626,7 @@ class DuctusCommonElement(Element):
         self.author.href = save_context.author_full_absolute_url
         self.log_message.text = save_context.log_message
 
-def _tag_value_attribute_validator(v):
+def tag_value_attribute_validator(v):
     if not v:
         raise ValidationError("a tag cannot be blank")
     if v[0].isspace() or v[-1].isspace():
@@ -639,7 +639,7 @@ def _tag_value_attribute_validator(v):
         raise ValidationError("tags cannot contain commas")
 
 class TagElement(Element):
-    value = Attribute(validator=_tag_value_attribute_validator)
+    value = Attribute(validator=tag_value_attribute_validator)
 
 class BaseDuctModel(Element):
     """all functionality of DuctModel, but without the `common` or `tags` elements"""
