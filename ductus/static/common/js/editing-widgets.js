@@ -69,6 +69,20 @@ function ductus_unique_dom_id () {
     return 'ductus_unique_dom_id' + (window.__current_ductus_unique_id++);
 }
 
+$.fn.make_sidebar_widget = function (title, sidebar) {
+    // setup and insert the widget in the editor sidebar
+    // (add a title header and collapse/expand handler)
+    this.appendTo(sidebar);
+    var header = $('<div class="ductus_SidebarWidgetHeader">' + title + '</div>');
+    this.before(header);
+    this.addClass('ductus_SidebarWidget');
+    header.button({ icons: { secondary: "ui-icon-triangle-1-s" } });
+    header.bind('click', function() {
+        $(this).next().toggle();
+        return false;
+    }).next().hide();
+};
+
 function Widget(initial_html_code) {
     // the base "class" for widgets
     // each widget has its DOM bits in this.elt that jQuery can manipulate

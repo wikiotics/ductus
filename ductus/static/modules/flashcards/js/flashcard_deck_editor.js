@@ -60,20 +60,6 @@ $(function () {
         });
     };
 
-    $.fn.make_sidebar_widget = function (title, sidebar) {
-        // setup and insert the widget in the editor sidebar
-        // (add a title header and collapse/expand handler)
-        this.appendTo(sidebar);
-        var header = $('<div class="ductus_SidebarWidgetHeader">' + title + '</div>');
-        this.before(header);
-        this.addClass('ductus_SidebarWidget');
-        header.button({ icons: { secondary: "ui-icon-triangle-1-s" } });
-        header.bind('click', function() {
-            $(this).next().toggle();
-            return false;
-        }).next().hide();
-    };
-
     function PhraseWidget(phrase) {
         ModelWidget.call(this, phrase, '<div class="ductus_PhraseWidget"></div>');
 
