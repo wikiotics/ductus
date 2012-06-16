@@ -10,7 +10,6 @@
 <script type="text/javascript" src="{% static "ductus/common/js/jquery.tokeninput.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/editing-widgets.js" %}"></script>
 {% endcompress %}
-{% compress js inline %}
 <script type="text/javascript">
 var resource_json = {'href': '{{ request.ductus.resource.urn }}'};
 var writable_directories = {{ writable_directories|jsonize }};
@@ -30,7 +29,6 @@ $(function () {
     copy_widget.elt.appendTo("#ductus_copy_widget_holder");
 });
 </script>
-{% endcompress %}
 {% endblock %}
 
 {% block content %}
