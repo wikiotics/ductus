@@ -1,4 +1,4 @@
-INDEXING PLAN
+Indexing plan
 =============
 
 (This is currently a bit out of date.)
