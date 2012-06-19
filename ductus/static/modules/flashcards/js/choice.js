@@ -237,8 +237,8 @@ $(function () {
         // point the user to the portal of the target language of this lesson
         // in the future, this should also suggest a logical next lesson to take
         var url, epilogue;
-        if (window.target_language.code != null) {
-            url = '/en/' + window.target_language.name + '_lessons';
+        if (window.target_language.code) {
+            url = '/special/search?tag=target-language:' + window.target_language.code;
             epilogue = gettext('Back to the main page for ') + window.target_language.name;
         } else {
             url = '/';
