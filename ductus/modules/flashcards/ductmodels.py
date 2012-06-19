@@ -109,7 +109,7 @@ class StoryBookInteraction(ductmodels.BaseDuctModel):
     nsmap = {'flashcards': ns}
 
     def get_columns_referenced(self):
-        return []
+        return [0, 1, 2]
 
 @register_ductmodel
 class Flashcard(ductmodels.DuctModel):
