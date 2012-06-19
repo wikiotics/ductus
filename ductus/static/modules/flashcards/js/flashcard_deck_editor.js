@@ -431,6 +431,17 @@ $(function () {
     };
     ChoiceInteractionWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}choice_interaction';
 
+    function StoryBookInteractionWidget(sbi) {
+        ModelWidget.call(this, sbi, '<div class="ductus_StorybookInteractionWidget"></div>');
+        this.elt.append(gettext('Storybook'));
+        this.record_initial_inner_blueprint();
+    }
+    StoryBookInteractionWidget.prototype = chain_clone(ModelWidget.prototype);
+    StoryBookInteractionWidget.prototype.inner_blueprint_repr = function () {
+        return this.add_inner_blueprint_constructor({});
+    };
+    StoryBookInteractionWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}story_book_interaction';
+
     function AudioLessonInteractionWidget(ai) {
         ModelWidget.call(this, ai, '<div class="ductus_AudioLessonInteractionWidget"></div>');
         this.elt.append(gettext('Audio:') + ' <input name="audio" class="audio"/> ' + gettext('Transcript (optional):') + ' <input name="transcript" class="transcript"/>');
@@ -463,6 +474,9 @@ $(function () {
         $('<a href="javascript:void(0)">' + gettext('Add an audio lesson interaction') + '</a>').click(function () {
             this_.__add_interaction(new AudioLessonInteractionWidget(), fcd);
         }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
+        $('<a href="javascript:void(0)">' + gettext('Add a "storybook" interaction') + '</a>').click(function () {
+            this_.__add_interaction(new StoryBookInteractionWidget(), fcd);
+        }).appendTo($('<li></li>').appendTo(this.new_interaction_buttons));
 
         if (ic) {
             for (var i = 0; i < ic.array.length; ++i) {
@@ -471,6 +485,8 @@ $(function () {
                     this.__add_interaction(new ChoiceInteractionWidget(interaction), fcd);
                 } else if (interaction.resource.fqn == AudioLessonInteractionWidget.prototype.fqn) {
                     this.__add_interaction(new AudioLessonInteractionWidget(interaction), fcd);
+                } else if (interaction.resource.fqn == StoryBookInteractionWidget.prototype.fqn) {
+                    this.__add_interaction(new StoryBookInteractionWidget(interaction), fcd);
                 }
             }
         }

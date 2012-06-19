@@ -24,7 +24,7 @@ from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
 from ductus.util.http import query_string_not_found
 from ductus.util.bcp47 import language_tag_to_description
-from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction
+from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction, StoryBookInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
 from ductus.modules.flashcards import registered_interaction_views
 from ductus.modules.audio.views import get_joined_audio_mediacache_url, mediacache_cat_audio
@@ -91,10 +91,37 @@ def podcast_flashcard_template():
 
     return deck
 
+def storybook_flashcard_template():
+    """return a template flashcard deck object for an empty storybook lesson"""
+    deck = FlashcardDeck()
+
+    # set up headings
+    for heading in (_('Phrase'), _('Picture'), _('Audio')):
+        new_heading = deck.headings.new_item()
+        new_heading.text = heading
+        deck.headings.array.append(new_heading)
+
+    # set up default storybook interaction
+    sbi = StoryBookInteraction()
+    deck.interactions.array.append(deck.interactions.new_item())
+    deck.interactions.array[0].store(sbi, False)
+
+    # create an empty row
+    card = Flashcard()
+    for j in xrange(3):
+        card.sides.array.append(card.sides.new_item())
+
+    new_card = deck.cards.new_item()
+    new_card.store(card, False)
+    deck.cards.array.append(new_card)
+
+    return deck
+
 flashcard_templates = {
     'picture_choice': picture_choice_flashcard_template,
     'phrase_choice': phrase_choice_flashcard_template,
     'podcast': podcast_flashcard_template,
+    'storybook': storybook_flashcard_template,
 }
 
 @register_creation_view(FlashcardDeck, description=ugettext_lazy('a flexible lesson type arranged as a series of flashcards in a grid'), category='lesson')
@@ -140,12 +167,8 @@ def view_flashcard_deck(request):
         interaction_view = registered_interaction_views[interaction.fqn]
         return interaction_view(request, interaction)
 
-@register_interaction_view(ChoiceInteraction)
-def choice(request, interaction):
-    """
-    Display a flashcard deck that has a ChoiceInteraction as a quiz
-    """
-    # find target language from tags
+def get_target_language_from_tags(request):
+    """find target language of a lesson from its tags"""
     language_code = language_name = None
     if hasattr(request.ductus.resource, 'tags'):
         for tag in request.ductus.resource.tags:
@@ -159,10 +182,26 @@ def choice(request, interaction):
         except KeyError:
             pass
 
+    return {'code': language_code, 'name': language_name}
+
+@register_interaction_view(ChoiceInteraction)
+def choice(request, interaction):
+    """
+    Display a flashcard deck that has a ChoiceInteraction as a quiz
+    """
     return render_to_response('flashcards/choice.html', {
         'prompt_columns': [int(a) for a in interaction.prompt.split(',')],
         'answer_column': int(interaction.answer),
-        'target_language': {'code': language_code, 'name': language_name}
+        'target_language': get_target_language_from_tags(request)
+    }, RequestContext(request))
+
+@register_interaction_view(StoryBookInteraction)
+def storybook(request, interaction):
+    """
+    Display a flashcard deck that includes a StoryBook Interaction
+    """
+    return render_to_response('flashcards/storybook.html', {
+        'target_language': get_target_language_from_tags(request)
     }, RequestContext(request))
 
 def _get_audio_urns_in_column(flashcard_deck, column):

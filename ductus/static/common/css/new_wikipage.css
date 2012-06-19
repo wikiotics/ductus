@@ -46,6 +46,14 @@ div.ductus_creation_template.picture_choice a {
 div.ductus_creation_template.phrase_choice a {
     background: url(../img/200px-Phrase-choice-icon.png);
 }
+/*!
+ * storybook icon:
+ * By GNOME icon artists (GNOME SVN / GNOME FTP) [GPL (http://www.gnu.org/licenses/gpl.html)], via Wikimedia Commons
+ * http://commons.wikimedia.org/wiki/File%3AAccessories-dictionary.svg
+ */
+div.ductus_creation_template.storybook a {
+    background: url(../img/200px-Accessories-dictionary.svg.png);
+}
 a.ductus_other_view {
     float: right;
     margin: 4em 10% 3em;

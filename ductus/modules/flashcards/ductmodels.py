@@ -104,6 +104,14 @@ class AudioLessonInteraction(ductmodels.BaseDuctModel):
         return rv
 
 @register_ductmodel
+class StoryBookInteraction(ductmodels.BaseDuctModel):
+    ns = 'http://wikiotics.org/ns/2011/flashcards'
+    nsmap = {'flashcards': ns}
+
+    def get_columns_referenced(self):
+        return [0, 1, 2]
+
+@register_ductmodel
 class Flashcard(ductmodels.DuctModel):
     ns = 'http://wikiotics.org/ns/2011/flashcards'
     nsmap = {'flashcards': ns}
@@ -125,7 +133,7 @@ class FlashcardDeck(ductmodels.DuctModel):
     headings = ductmodels.ArrayElement(ductmodels.TextElement())
     column_order = ductmodels.Attribute(validator=_column_order_validator, optional=True)
 
-    interactions = ductmodels.OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction, AudioLessonInteraction))
+    interactions = ductmodels.OptionalArrayElement(ductmodels.ResourceElement(ChoiceInteraction, AudioLessonInteraction, StoryBookInteraction))
 
     # dividers will be placed just before each index given here.  they are
     # zero-indexed to match row numbers, e.g., a divider value of 3 means the

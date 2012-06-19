@@ -337,6 +337,12 @@ def _get_creation_templates():
             'url': '/new/flashcard_deck?template=phrase_choice',
             'description': _('a lesson where you choose between multiple phrases'),
         },
+        {
+            'class': 'storybook',
+            'name': _('Story Book'),
+            'url': '/new/flashcard_deck?template=storybook',
+            'description': _('a multimedia lesson that reads like a book'),
+        },
     )
 
 def implicit_new_wikipage(request, prefix, pagename):
