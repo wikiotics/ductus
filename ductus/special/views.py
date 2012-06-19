@@ -156,8 +156,22 @@ def search(request, pagename):
                 "path": path,
             })
 
+    # figure out target language (if given).
+    # fixme: this probably doesn't belong here
+    target_language_tags = [tag for tag in request.GET.getlist('tag')
+                            if tag.startswith('target-language:')]
+    if target_language_tags:
+        target_language_code = target_language_tags[0].partition(':')[2]
+        from ductus.util.bcp47 import language_tag_to_description
+        target_language_description = language_tag_to_description(target_language_code)
+    else:
+        target_language_code = None
+        target_language_description = None
+
     # return results to the user
     return render_to_response('special/search.html', {
+        'target_language_code': target_language_code,
+        'target_language_description': target_language_description,
         'results': results,
     }, RequestContext(request))
 

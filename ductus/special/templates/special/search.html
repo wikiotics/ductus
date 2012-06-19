@@ -8,6 +8,9 @@
 {% endblock %}
 
 {% block content %}
+{% if target_language_code %}
+<h3>{% blocktrans %}{{ target_language_description }} lessons{% endblocktrans %}</h3>
+{% endif %}
 <ul>
 {% for result in results %}
   <li><a href="{{ result.path }}">{{ result.absolute_pagename }}</a></li>
