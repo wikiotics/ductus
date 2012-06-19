@@ -325,10 +325,10 @@ def fsw_get_audio_to_subtitle(request):
             resource_database = get_resource_database()
             while True:
                 url = url_list[random.randint(0, len(url_list) - 1)]
-                url_list.remove(url)
                 try:
                     page = WikiPage.objects.get(name=url['absolute_pagename'])
                 except WikiPage.DoesNotExist:
+                    url_list.remove(url)
                     if len(url_list) > 0:
                         continue
                     else:
