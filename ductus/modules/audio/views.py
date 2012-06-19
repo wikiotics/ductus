@@ -181,25 +181,18 @@ def _cat_webm(audio_resources):
         rmtree(tmpdir, ignore_errors=True)
     output_filename = os.path.join(tmpdir, "joined_audio.webm")
     logger.info("Joining %d ogg/vorbis files" % len(filenames))
-    webm_successful = False
     try:
-        subprocess.check_call([settings.MKVMERGE_PATH, '-o', output_filename, '-w', '-q'] + _join_list(filenames, '+'))
-    except subprocess.CalledProcessError as e:
-        # webm format requires "compatible" vorbis codebooks in audio files, if not, we must reencode
         try:
+            subprocess.check_call([settings.MKVMERGE_PATH, '-o', output_filename, '-w', '-q'] + _join_list(filenames, '+'))
+        except subprocess.CalledProcessError as e:
+            # webm format requires "compatible" vorbis codebooks in audio files, if not, we must reencode
             logger.info("couldn't merge files, reencoding the whole podcast")
             # there must be no space between 'concat:' and the first filename, so pass the args as a string
             files = 'concat:' + ''.join(_join_list(filenames, '|'))
-            cl = [settings.FFMPEG_PATH , '-i', files, '-y', '-aq', '3', output_filename]
-            subprocess.check_call(cl)
-            webm_successful = True
-        except Exception:
-            delete_tmpdir()
-            raise
+            subprocess.check_call([settings.FFMPEG_PATH, '-i', files, '-y', '-aq', '3', output_filename])
     except Exception:
-        if not webm_successful:
-            delete_tmpdir()
-            raise
+        delete_tmpdir()
+        raise
     return iterate_file_then_delete(output_filename, delete_func=delete_tmpdir)
 
 def _cat_m4a(audio_resources):
