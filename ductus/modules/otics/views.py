@@ -41,6 +41,10 @@ def otics_front_page(request, pagename=None):
     total_lesson_count = sum(a for a in languages.values())
     language_tag_cloud = []
     for lang_code, count in sorted(languages.iteritems()):
+        if count < 2:
+            # XXX: until the tag cloud is fixed, don't display languages with
+            # only one lesson
+            continue
         try:
             descr = language_tag_to_description(lang_code)
         except KeyError:
