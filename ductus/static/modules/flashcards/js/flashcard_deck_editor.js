@@ -631,7 +631,7 @@ $(function () {
             headings: {array: headings},
             tags: {array: tags},
             // we only save [pseudo-]dividers if we have a choice interaction
-            dividers: (this.choice_interaction_count ? _get_pseudo_dividers(this.rows.length) : ''),
+            dividers: (this.interaction_count[ChoiceInteractionWidget.prototype.fqn] ? _get_pseudo_dividers(this.rows.length) : ''),
             interactions: this.interaction_chooser.blueprint_repr()
         });
     };
