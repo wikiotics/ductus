@@ -233,6 +233,15 @@ class ResourceDatabase(object):
         return etree.parse(StringIO(''.join(self.get_xml(urn))))
 
     def get_resource_object(self, urn):
+        # as a stopgap measure, look in cache for parsed resource object.  see
+        # recent discussion on ductus-developers for details [garrison,
+        # 2012-06-19]
+        from django.core.cache import cache
+        cache_key = "gro:" + urn
+        cached_resource = cache.get(cache_key)
+        if cached_resource is not None:
+            return cached_resource
+
         tree = self.get_xml_tree(urn) # fixme: what exceptions can this throw?
         root = tree.getroot()
         model_class = _registered_ductmodels[root.tag] # fixme: may raise KeyError
@@ -245,6 +254,10 @@ class ResourceDatabase(object):
             resource = resource.legacy_ductmodel_conversion()
             resource.urn = urn
             resource.resource_database = self
+
+        # as a stopgap measure (see above), cache the parsed resource object
+        cache.set(cache_key, resource)
+
         return resource
 
     def keys(self):
