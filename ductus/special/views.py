@@ -107,6 +107,19 @@ for __pagename in __django_specialpages:
         return redirect('/' + pagename.replace('_', '-'))
 
 @register_special_page
+def preview_textwiki(request, pagename):
+    """Return HTML rendered from Creole markup sent via AJAX request"""
+
+    from ductus.util.http import render_json_response
+    if request.method == 'POST':
+        from ductus.modules.textwiki.templatetags.textwiki import creole
+        markup = request.POST.get('text', '')
+        rv = creole(markup)
+        return render_json_response({"html": rv})
+
+    return render_json_response({"error": "Error previewing your changes"})
+
+@register_special_page
 def search(request, pagename):
     from ductus.index import get_indexing_mongo_database
     indexing_db = get_indexing_mongo_database()

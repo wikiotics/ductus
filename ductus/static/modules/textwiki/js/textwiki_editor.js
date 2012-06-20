@@ -37,6 +37,25 @@ $(function() {
             }
         });
     };
+    TextWiki.prototype.preview = function() {
+        // get the rendered markup from an AJAX call and insert it above the editor
+        $.ajax({
+            url: '/special/preview_textwiki',
+            type: 'POST',
+            dataType: 'json',
+            data: {text: this.textarea.val()},
+            success: function(data) {
+                if (data['html']) {
+                    $('#textwiki-preview').empty().append(data['html']);
+                } else {
+                    $('#textwiki-preview').empty().append(data['error']);
+                }
+            },
+            error: function() {
+                alert(gettext('Error previewing your changes'));
+            }
+        });
+    }
 
     var page = new TextWiki(resource_json);
     $('#textwiki-save-widget').append(page.sidebar);
