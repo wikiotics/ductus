@@ -19,7 +19,7 @@ $(function() {
 
         this.sidebar = $('<div id="ductus_Sidebar"></div>');
 
-        this.textarea = this.elt.append($('<textarea />')).find('textarea');
+        this.textarea = this.elt.append($('<textarea cols=80 rows=30/>')).find('textarea');
         this.textarea.val(tw.resource.blob.text);
 
         this.tagging_widget = new TaggingWidget(tw.resource.tags);
@@ -68,7 +68,7 @@ $(function() {
     }
 
     var page = new TextWiki(resource_json);
-    $('#textwiki-save-widget').append(page.sidebar);
+    $('#side_toolbar').append(page.sidebar);
     $('#textwiki-editor').append(page.elt);
 
 });

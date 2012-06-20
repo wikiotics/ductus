@@ -8,6 +8,7 @@
 {{ block.super }}
 {% compress css %}
 <link type="text/css" href="{% static "ductus/common/css/token-input.css" %}" rel="stylesheet"/>
+<link type="text/css" href="{% static "ductus/modules/textwiki/css/textwiki_editor.css" %}" rel="stylesheet"/>
 {% endcompress %}
 {% endblock %}
 
@@ -31,7 +32,7 @@ var writable_directories = {{ writable_directories|jsonize }};
 {% block content %}
 <div id="textwiki-preview"></div>
 <div id="textwiki-editor"></div>
-<div id="textwiki-save-widget"></div>
+<div id="side_toolbar"></div>
 <div id="editor-help">
 <dl>
 <dt>Emphasis</dt><dd>//<em>italics</em>//; **<strong>bold</strong>**; **//<em><strong>bold italics</strong></em>//**; //<em>mixed </em>**<em><strong>bold</strong>** and italics</em>//; </dd>

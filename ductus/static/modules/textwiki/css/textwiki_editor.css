@@ -1,0 +1,19 @@
+#side_toolbar, #side_toolbar_spacer {
+    width: 200px;
+}
+#side_toolbar {
+    position: fixed;
+    right: 0;
+    top: 20px;
+    font-size: 85%;
+}
+.ductus_SidebarWidgetHeader {
+    font-size: 125%;
+    padding: 5px;
+    cursor: pointer;
+    width: 95%;
+}
+.ductus_SidebarWidget {
+    background: white;
+    border: 1px solid #D3D3D3;
+}
