@@ -221,10 +221,21 @@ class ResourceDatabase(object):
         return data_iterator
 
     def get_xml(self, urn):
+        # as a stopgap measure, look in cache for the xml data
+        from ductus.util.cache import cache_compressed
+        cache_key = "xml-urn:" + urn
+        cached_resource = cache_compressed.get(cache_key)
+        if cached_resource is not None:
+            return iter([cached_resource])
+
         header, data_iterator = determine_header(self[urn], False)
         if header != 'xml':
             raise UnexpectedHeader("Expecting 'xml', but received '%s'" % header)
-        return data_iterator
+
+        # as a stopgap measure (see above), cache the xml data
+        data = b''.join(data_iterator)
+        cache_compressed.set(cache_key, data)
+        return iter([data])
 
     def get_xml_tree(self, urn):
         from cStringIO import StringIO
