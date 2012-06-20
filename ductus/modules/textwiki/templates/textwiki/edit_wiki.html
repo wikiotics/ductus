@@ -1,22 +1,26 @@
 {% extends "ductus_document.html" %}
 {% load i18n %}
+{% load jsonize %}
+{% load static %}
+{% load compress %}
+
+{% block js %}
+{{ block.super }}
+{% compress js %}
+<script type="text/javascript" src="{% static "ductus/common/js/editing-widgets.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.blockUI.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/modules/textwiki/js/textwiki_editor.js" %}"></script>
+{% endcompress %}
+{% endblock %}
+
+{% block javascript %}
+var resource_json = {{ resource_json|resource_json }};
+var writable_directories = {{ writable_directories|jsonize }};
+{% endblock %}
 
 {% block content %}
-{% if show_preview %}
-<div class="ductus_textwiki_preview ductus_textwiki_content" lang="">
-{% load textwiki %}
-{{ form.cleaned_data.text|creole:form.cleaned_data.natural_language }}
-</div>
-{% endif %}
-<form method="post" action="{{ request.escaped_full_path }}">{% csrf_token %}
-<p>{% trans "Language:" %} {{ form.natural_language }}</p>
-<p>{{ form.text.errors }}</p>
-<p>{{ form.text }}</p>
-{{ captcha }}
-<p>{% trans "Log message:" %} {{ form.log_message }}</p>
-{% if parent_urn %}<input type="hidden" name="parent" value="{{ parent_urn }}"/>{% endif %}
-<p><input type="submit" name="preview" value="{% trans "Preview" %}"/> <input type="submit" value="{% trans "Save" %}"/> {#<input type="submit" value="{% trans "Preview" %}" name="preview"/>#}</p>
-</form>
+<div id="textwiki-editor"></div>
+<div id="textwiki-save-widget"></div>
 <div id="editor-help">
 <dl>
 <dt>Emphasis</dt><dd>//<em>italics</em>//; **<strong>bold</strong>**; **//<em><strong>bold italics</strong></em>//**; //<em>mixed </em>**<em><strong>bold</strong>** and italics</em>//; </dd>

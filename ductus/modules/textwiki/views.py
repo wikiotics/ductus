@@ -25,9 +25,9 @@ from django import forms
 
 from ductus.resource import get_resource_database
 from ductus.wiki.decorators import register_view, register_creation_view
-from ductus.wiki import SuccessfulEditRedirect
+from ductus.wiki import SuccessfulEditRedirect, get_writable_directories_for_user
 from ductus.wiki.namespaces import registered_namespaces, split_pagename, WikiPrefixNotProvided
-from ductus.modules.textwiki.ductmodels import Wikitext
+from ductus.modules.textwiki.ductmodels import Wikitext   #FIXME: drop useless class
 from ductus.util.bcp47 import language_tag_to_description
 
 recaptcha = None
@@ -67,76 +67,19 @@ def add_author_and_log_message(request, resource):
 @register_creation_view(Wikitext, description=ugettext_lazy('a "regular" text-based wiki page, using wiki-creole as markup'))
 @register_view(Wikitext, 'edit')
 def edit_textwiki(request):
-    resource_database = get_resource_database()
-    if "parent" in request.POST:
-        # fixme: this could raise exceptions if not found
-        resource = resource_database.get_resource_object(request.POST["parent"])
-        if not isinstance(resource, Wikitext):
-            raise Exception
-    elif hasattr(request, 'ductus'):
-        resource = request.ductus.resource
-    else:
-        resource = None
 
-    preview_requested = ('preview' in request.POST)
+    resource_database = get_resource_database()
 
     if request.method == 'POST':
-        if recaptcha is not None and not request.user.is_authenticated():
-            if not ('recaptcha_challenge_field' in request.POST
-                    and 'recaptcha_response_field' in request.POST
-                    and recaptcha.submit(request.POST['recaptcha_challenge_field'],
-                                         request.POST['recaptcha_response_field'],
-                                         settings.RECAPTCHA_PRIVATE_KEY,
-                                         request.remote_addr).is_valid):
-                from django.http import HttpResponseForbidden
-                return HttpResponseForbidden("invalid captcha")
+        handle_blueprint_post(request, Wikitext)
 
-        form = WikiEditForm(request.POST)
-
-        if form.is_valid() and not preview_requested:
-            if form.cleaned_data['text'].strip() == '':
-                raise Exception
-            if resource:
-                resource = resource.clone()
-            else:
-                resource = Wikitext()
-            resource.text = form.cleaned_data['text'].replace('\r', '')
-            resource.blob.natural_language = form.cleaned_data['natural_language']
-            add_author_and_log_message(request, resource)
-            urn = resource.save()
-            return SuccessfulEditRedirect(urn)
-
-    else:
-        if resource:
-            form = WikiEditForm(initial={
-                'text': resource.text,
-                'natural_language': resource.blob.natural_language or '',
-            })
-        else:
-            # blank form, but try to guess the natural language
-            try:
-                prefix, pagename = split_pagename(request.GET.get('target', ''))
-            except WikiPrefixNotProvided:
-                prefix = None
-            if (prefix and
-                    prefix in [p for p, n in _natural_language_choices] and
-                    prefix in registered_namespaces):
-                form = WikiEditForm(initial={'natural_language': prefix})
-            else:
-                form = WikiEditForm()
-
-    captcha_html = ""
-    if recaptcha is not None and not request.user.is_authenticated():
-        captcha_html = recaptcha.displayhtml(settings.RECAPTCHA_PUBLIC_KEY,
-                                             use_ssl=request.is_secure())
-        captcha_html = captcha_html.replace('frameborder="0"',
-                                            'style="border: 0"')
+    resource = None
+    if hasattr(request, 'ductus') and getattr(request.ductus, 'resource', None):
+        resource = request.ductus.resource
 
     return render_to_response('textwiki/edit_wiki.html', {
-        'form': form,
-        'parent_urn': (resource and resource.urn),
-        'captcha': mark_safe(captcha_html),
-        'show_preview': (preview_requested and form.is_valid()),
+        'resource_json': resource,
+        'writable_directories': get_writable_directories_for_user(request.user),
     }, context_instance=RequestContext(request))
 
 new_textwiki = edit_textwiki
