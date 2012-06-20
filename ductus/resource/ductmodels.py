@@ -571,8 +571,19 @@ class TypedBlobElement(BlobElement):
             raise ValidationError("not an allowed mime type")
 
 class TextBlobElement(BlobElement):
-    # fixme: textual diff
-    pass
+    def output_json_dict(self):
+        rv = super(TextBlobElement, self).output_json_dict()
+        rv['text'] = b''.join(self).decode('utf-8')
+        return rv
+
+    def patch_from_blueprint(self, blueprint, save_context):
+        super(TextBlobElement, self).patch_from_blueprint(blueprint, save_context)
+        if 'text' in blueprint:
+            text = blueprint['text']
+            blueprint_expects_string(text)
+            self.store([text.encode('utf-8')])
+
+    # fixme: implement textual diff
 
 class _AuthorElement(LinkElement, TextElement):
     pass
