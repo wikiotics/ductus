@@ -14,9 +14,9 @@
 {% block js %}
 {{ block.super }}
 {% compress js %}
-<script type="text/javascript" src="{% static "ductus/common/js/editing-widgets.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/jquery.blockUI.min.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/jquery.tokeninput.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/editing-widgets.js" %}"></script>
 {% endcompress %}
 {% compress js %}
 <script type="text/javascript" src="{% static "ductus/modules/textwiki/js/textwiki_editor.js" %}"></script>
