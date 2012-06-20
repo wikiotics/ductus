@@ -1169,7 +1169,7 @@ function TaggingWidget(tags, fcdw) {
     });
     this.target_lang_input = $('<span id="target_lang_tag"><label>' + gettext('Target language:') + '</label></span>').append(this.get_lang_selector('trg_lang', this.target_lang)).appendTo(this.elt).children('select');
     this.source_lang_input = null;
-    if (fcdw.interaction_count[AudioLessonInteractionWidget.prototype.fqn] > 0) {
+    if (fcdw && fcdw.interaction_count['{http://wikiotics.org/ns/2011/flashcards}audio_lesson_interaction'] > 0) {
         this.show_source_lang_selector(this.source_lang);
     }
 }
