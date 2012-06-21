@@ -10,7 +10,7 @@ $(function() {
                     blob: {
                         markup_language: 'creole-1.0',
                         natural_language: 'en',
-                        text: "",
+                        text: ""
                     }
                 }
            }
