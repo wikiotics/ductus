@@ -27,7 +27,8 @@ from ductus.resource import get_resource_database
 from ductus.wiki.decorators import register_view, register_creation_view
 from ductus.wiki import SuccessfulEditRedirect, get_writable_directories_for_user
 from ductus.wiki.namespaces import registered_namespaces, split_pagename, WikiPrefixNotProvided
-from ductus.modules.textwiki.ductmodels import Wikitext   #FIXME: drop useless class
+from ductus.wiki.views import handle_blueprint_post
+from ductus.modules.textwiki.ductmodels import Wikitext   # FIXME: drop useless class
 from ductus.util.bcp47 import language_tag_to_description
 
 recaptcha = None

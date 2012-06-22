@@ -13,13 +13,13 @@ $(function() {
                         text: ""
                     }
                 }
-           }
+            };
         }
         ModelWidget.call(this, tw, '<div class="ductus_TextWiki"></div>');
 
         this.sidebar = $('<div id="ductus_Sidebar"></div>');
 
-        this.textarea = this.elt.append($('<textarea cols=80 rows=30/>')).find('textarea');
+        this.textarea = $('<textarea cols=80 rows=30></textarea>').appendTo(this.elt);
         this.textarea.val(tw.resource.blob.text);
 
         this.tagging_widget = new TaggingWidget(tw.resource.tags);
@@ -65,7 +65,7 @@ $(function() {
                 alert(gettext('Error previewing your changes'));
             }
         });
-    }
+    };
 
     var page = new TextWiki(resource_json);
     $('#side_toolbar').append(page.sidebar);
