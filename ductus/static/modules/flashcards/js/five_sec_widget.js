@@ -31,6 +31,7 @@ $(function() {
             '<div id="ductus_FSWFooter"></div>' +
             '</div>';
         ModelWidget.call(this, null, initial_html);
+        this.language_name = '';
         if (title)
             this.set_title(title);
         if (instructions)
@@ -143,6 +144,25 @@ $(function() {
             ]};
         this.set_controls(controls);
     };
+    FiveSecWidget.prototype.get_lang_name = function() {
+        var this_ = this;
+        $.ajax({
+            url: '/special/ajax/language-tag-to-description',
+            data: {
+                code: this.language
+            },
+            success: function(data) {
+                if (data[this_.language]) {
+                    this_.language_name = data[this_.language];
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.log(xhr.status + ' error. Could not retrieve language name.');
+            },
+            type: 'GET',
+            dataType: 'json'
+        });
+    };
 
     /*
      * a simplified phrasewidget copied from flashcarddeck editor to avoid
@@ -194,25 +214,6 @@ $(function() {
     }
     SubtitleFSWidget.prototype = chain_clone(FiveSecWidget.prototype);
     SubtitleFSWidget.prototype.get_prompt_url = '/five-sec-widget/get-audio-to-subtitle';
-    SubtitleFSWidget.prototype.get_lang_name = function() {
-        var this_ = this;
-        $.ajax({
-            url: '/special/ajax/language-tag-to-description',
-            data: {
-                code: this.language
-            },
-            success: function(data) {
-                if (data[this_.language]) {
-                    this_.language_name = data[this_.language];
-                }
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                console.log(xhr.status + ' error. Could not retrieve language name.');
-            },
-            type: 'GET',
-            dataType: 'json'
-        });
-    };
     SubtitleFSWidget.prototype.init_widget = function() {
         this.set_footer(
                 '<select id="ductus_FSWLanguage" name="FSWLanguage">' +
