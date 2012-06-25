@@ -305,14 +305,17 @@ def five_sec_widget(request):
     }, RequestContext(request))
 
 @never_cache
-def fsw_get_audio_to_subtitle(request):
-    """return a JSON flashcard object to the subtitle 5s widget
+def fsw_get_flashcard(request, extra_tags, prompt_side, answer_side):
+    """return a JSON flashcard object
+    extra_tags: a list of tags the flashcard deck must have
+    prompt_side: the index (0 based) of the side to use as prompt (which cannot be empty)
+    answer_side: the index (0 based) of the side that must be empty
     """
     if request.method == 'GET':
         # get the language to search for
         language = request.GET.get('language', getattr(settings, "FIVE_SEC_WIDGET_DEFAULT_LANGUAGE", 'en'))
-        # build list of tags to search for
-        search_tags = ['target-language:' + language] + getattr(settings, "FIVE_SEC_WIDGET_EXTRA_SEARCH_TAGS", 'five-sec-widget-fodder')
+        search_tags = ['target-language:' + language] + extra_tags
+        print search_tags
         # get a list of pages tagged as we want
         try:
             url_list = search_pages_by_tags(search_tags)
@@ -339,8 +342,9 @@ def fsw_get_audio_to_subtitle(request):
                 fcd = resource_database.get_resource_object(urn)
                 card_index = random.randint(0, len(fcd.cards.array) - 1)
                 fc = fcd.cards.array[card_index].get()
-                side = fc.sides.array[0].get()
-                if not side:
+                prompt = fc.sides.array[prompt_side].get()
+                answer = fc.sides.array[answer_side].get()
+                if prompt and not answer:
                     break
 
             resource = resource_json(fc)
@@ -351,3 +355,18 @@ def fsw_get_audio_to_subtitle(request):
             return render_json_response(tmp_resource)
 
         raise Http404('No material available for this language')
+
+@never_cache
+def fsw_get_audio_to_subtitle(request):
+    """return a JSON flashcard (JSON) object to the subtitle 5s widget
+    """
+    # build list of tags to search for
+    extra_tags = getattr(settings, "FIVE_SEC_WIDGET_SUBTITLE_EXTRA_SEARCH_TAGS", ['five-sec-widget-fodder'])
+    return fsw_get_flashcard(request, extra_tags, prompt_side=1, answer_side=0)
+
+@never_cache
+def fsw_get_phrase_to_record(request):
+    """return a JSON flashcard (JSON) object to the record 5s widget
+    """
+    extra_tags = getattr(settings, "FIVE_SEC_WIDGET_RECORD_EXTRA_SEARCH_TAGS", ['five-sec-widget-record-fodder'])
+    return fsw_get_flashcard(request, extra_tags, prompt_side=0, answer_side=1)

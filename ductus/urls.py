@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     url(r'^jsi18n$', 'django.views.i18n.javascript_catalog', {'domain': 'djangojs', 'packages': ('ductus',)}),
     url(r'^five-sec-widget$', 'ductus.modules.flashcards.views.five_sec_widget'),
     url(r'^five-sec-widget/get-audio-to-subtitle$', 'ductus.modules.flashcards.views.fsw_get_audio_to_subtitle'),
+    url(r'^five-sec-widget/get-phrase-to-record$', 'ductus.modules.flashcards.views.fsw_get_phrase_to_record'),
     # this must come last since it matches practically everything...
     url(r'^(?P<prefix>\w+)/(?P<pagename>.+)$', 'ductus.wiki.views.wiki_dispatch'),
 )
