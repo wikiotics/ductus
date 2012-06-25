@@ -178,6 +178,41 @@ $(function() {
             widget.get_prompt();
         });
     };
+    FiveSecWidget.prototype.submit = function(log_msg) {
+        // build a blueprint and send it to the server for processing
+        // called when user clicks 'save'
+
+        // remove language tag if it exists, and add the correct language one
+        function getKey(data) {
+              for (var prop in data)
+                      return prop;
+        }
+        this.tags.splice(getKey('language:' + this.language), 1);
+        this.tags.push({ value: 'language:' + this.language });
+
+        blueprint = {'resource': this.inner_blueprint_repr()};
+        this_ = this;
+        $.ajax({
+            url: window.location.pathname,
+            data: {
+                blueprint: JSON.stringify(blueprint),
+                // temp hack for fsi upload
+                fsi_url: this_.fsi_url,
+                fsi_index: this_.fsi_index,
+                log_message: log_msg ? log_msg : '5 sec widget'
+            },
+            success: function(data) {
+                this_.thank_user(data);
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.log(xhr.status + ' error. save failed.');
+            },
+            complete: function(xhr, textStatus) {
+            },
+            type: 'POST',
+            dataType: 'json'
+        });
+    };
 
 
     /*
@@ -279,7 +314,7 @@ $(function() {
                  'callback': function() { fsw.incorrect_language(); return false; }
                 },
                 {'label': gettext('Save'),
-                 'callback': function() { fsw.submit(); return false; }
+                 'callback': function() { fsw.submit('5 sec widget (subtitle)'); return false; }
                 }
             ],
             'links': [
@@ -289,7 +324,7 @@ $(function() {
                 {'label': gettext('flag'),
                     'callback': function() {
                         widget.tags.push({value: 'flag:needs-review'});
-                        widget.submit();
+                        widget.submit('5 sec widget (subtitle) - flag');
                     }
                 }
             ]
@@ -315,43 +350,9 @@ $(function() {
                 this.tags.push({ value: 'language:en'});
             }
         });
-        this.submit();
+        this.submit('5 sec widget (subtitle) - Incorrect language');
     };
-    SubtitleFSWidget.prototype.submit = function() {
-        // build a blueprint and send it to the server for processing
-        // called when user clicks 'save'
-
-        // remove language tag if it exists, and add the correct language one
-        function getKey(data) {
-              for (var prop in data)
-                      return prop;
         }
-        this.tags.splice(getKey('language:' + this.language), 1);
-        this.tags.push({ value: 'language:' + this.language });
-
-        blueprint = {'resource': this.inner_blueprint_repr()};
-        this_ = this;
-        $.ajax({
-            url: window.location.pathname,
-            data: {
-                blueprint: JSON.stringify(blueprint),
-                // temp hack for fsi upload
-                fsi_url: this_.fsi_url,
-                fsi_index: this_.fsi_index,
-                log_message: '5sec-widget (subtitle)'
-            },
-            success: function(data) {
-                this_.thank_user(data);
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                console.log(xhr.status + ' error. save failed.');
-            },
-            complete: function(xhr, textStatus) {
-            },
-            type: 'POST',
-            dataType: 'json'
-        });
-    };
     };
 
     var fsw = new SubtitleFSWidget();
