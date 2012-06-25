@@ -118,7 +118,18 @@ $(function() {
             dataType: 'json'
         });
     };
-
+    FiveSecWidget.prototype.inner_blueprint_repr = function() {
+        var sides = [];
+        $.each(this.card_sides, function(i, side) {
+            if (i < 2) {
+                bp = side.blueprint_repr();
+                sides.push(bp);
+            } else {
+                sides.push(side);
+            }
+        });
+        return this.add_inner_blueprint_constructor({ sides: { array: sides }, tags: { array: this.tags }});
+    };
 
     /*
      * a simplified phrasewidget copied from flashcarddeck editor to avoid
@@ -276,18 +287,6 @@ $(function() {
         this.elt.find('#ductus_FSWControls > .ductus_FSWlink').addClass('disabled');
     };
 
-    SubtitleFSWidget.prototype.inner_blueprint_repr = function() {
-        var sides = [];
-        $.each(this.card_sides, function(i, side) {
-            if (i < 2) {
-                bp = side.blueprint_repr();
-                sides.push(bp);
-            } else {
-                sides.push(side);
-            }
-        });
-        return this.add_inner_blueprint_constructor({ sides: { array: sides }, tags: { array: this.tags }});
-    }
     SubtitleFSWidget.prototype.thank_user = function() {
         // report success, and offer to take another quizz
         this.set_answer('<div>' + gettext('Thank you for your contribution!') + '</div>');
