@@ -130,6 +130,19 @@ $(function() {
         });
         return this.add_inner_blueprint_constructor({ sides: { array: sides }, tags: { array: this.tags }});
     };
+    FiveSecWidget.prototype.thank_user = function() {
+        // report success, and offer to take another quizz
+        this.set_answer('<div>' + gettext('Thank you for your contribution!') + '</div>');
+        this_ = this;
+        var controls = {
+            'buttons': [
+                {'label': gettext('One more!'),
+                 'shortcut': 'enter',
+                 'callback': function() { this_.get_prompt(); return false; }
+                }
+            ]};
+        this.set_controls(controls);
+    };
 
     /*
      * a simplified phrasewidget copied from flashcarddeck editor to avoid
@@ -287,19 +300,6 @@ $(function() {
         this.elt.find('#ductus_FSWControls > .ductus_FSWlink').addClass('disabled');
     };
 
-    SubtitleFSWidget.prototype.thank_user = function() {
-        // report success, and offer to take another quizz
-        this.set_answer('<div>' + gettext('Thank you for your contribution!') + '</div>');
-        this_ = this;
-        var controls = {
-            'buttons': [
-                {'label': gettext('One more!'),
-                 'shortcut': 'enter',
-                 'callback': function() { this_.get_prompt(); return false; }
-                }
-            ]};
-        this.set_controls(controls);
-    };
     SubtitleFSWidget.prototype.incorrect_language = function() {
         // report an incorrect language by removing the corresponding
         // "language:code" tag from the flashcard
