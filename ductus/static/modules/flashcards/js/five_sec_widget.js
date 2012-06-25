@@ -163,6 +163,22 @@ $(function() {
             dataType: 'json'
         });
     };
+    FiveSecWidget.prototype.init_widget = function() {
+        this.set_footer(
+                '<select id="ductus_FSWLanguage" name="FSWLanguage">' +
+                '<option value="de">Deutsch</option>' +
+                '<option selected="selected" value="fr">Français</option>' +
+                '<option value="zh">中文 - Mandarin Chinese</option>' +
+                '</select>'
+                );
+        widget = this;
+        this.elt.find('#ductus_FSWLanguage').change(function() {
+            widget.language = $(this).find(':selected').attr('value');
+            widget.get_lang_name();
+            widget.get_prompt();
+        });
+    };
+
 
     /*
      * a simplified phrasewidget copied from flashcarddeck editor to avoid
@@ -214,22 +230,6 @@ $(function() {
     }
     SubtitleFSWidget.prototype = chain_clone(FiveSecWidget.prototype);
     SubtitleFSWidget.prototype.get_prompt_url = '/five-sec-widget/get-audio-to-subtitle';
-    SubtitleFSWidget.prototype.init_widget = function() {
-        this.set_footer(
-                '<select id="ductus_FSWLanguage" name="FSWLanguage">' +
-                '<option value="de">Deutsch</option>' +
-                '<option selected="selected" value="fr">Français</option>' +
-                '<option value="zh">中文 - Mandarin Chinese</option>' +
-                '</select>'
-                );
-        widget = this;
-        this.elt.find('#ductus_FSWLanguage').change(function() {
-            widget.language = $(this).find(':selected').attr('value');
-            widget.get_lang_name();
-            widget.get_prompt();
-        });
-    };
-
     SubtitleFSWidget.prototype.init_from_blueprint = function(data) {
         // called when the audio prompt is received from AJAX to fill in the widget
         this_ = this;
