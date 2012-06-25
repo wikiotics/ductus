@@ -92,6 +92,33 @@ $(function() {
             });
         }
     };
+    FiveSecWidget.prototype.get_prompt = function() {
+        // get a JSON object to be passed to the audio element
+        // response expected: {language: "langcode", blueprint: {the_blueprint}}
+        this_ = this;
+        this.set_prompt(gettext('Loading...'));
+        this.disable_controls();
+        $.ajax({
+            url: this.get_prompt_url,
+            data: {
+                language: this_.language
+            },
+            success: function(data) {
+                         this_.init_from_blueprint(data);
+                     },
+            error: function(xhr, textStatus, errorThrown) {
+                       this_.set_prompt(gettext('Error while loading content, sorry. Please contact the site administrator.'));
+                       this_.disable_controls();
+                       console.log(xhr.status + ' error. Failed to get prompt.');
+                   },
+            complete: function(xhr, textStatus) {
+                          console.log('ajax complete');
+                      },
+            type: 'GET',
+            dataType: 'json'
+        });
+    };
+
 
     /*
      * a simplified phrasewidget copied from flashcarddeck editor to avoid
@@ -139,9 +166,10 @@ $(function() {
         this.language_name = this.language;
         this.get_lang_name();
         this.init_widget();
-        this.get_audio();
+        this.get_prompt();
     }
     SubtitleFSWidget.prototype = chain_clone(FiveSecWidget.prototype);
+    SubtitleFSWidget.prototype.get_prompt_url = '/five-sec-widget/get-audio-to-subtitle';
     SubtitleFSWidget.prototype.get_lang_name = function() {
         var this_ = this;
         $.ajax({
@@ -173,7 +201,7 @@ $(function() {
         this.elt.find('#ductus_FSWLanguage').change(function() {
             widget.language = $(this).find(':selected').attr('value');
             widget.get_lang_name();
-            widget.get_audio();
+            widget.get_prompt();
         });
     };
 
@@ -231,7 +259,7 @@ $(function() {
             ],
             'links': [
                 {'label': gettext('skip'),
-                    'callback': function() { widget.get_audio(); }
+                    'callback': function() { widget.get_prompt(); }
                 },
                 {'label': gettext('flag'),
                     'callback': function() {
@@ -268,7 +296,7 @@ $(function() {
             'buttons': [
                 {'label': gettext('One more!'),
                  'shortcut': 'enter',
-                 'callback': function() { this_.get_audio(); return false; }
+                 'callback': function() { this_.get_prompt(); return false; }
                 }
             ]};
         this.set_controls(controls);
@@ -324,31 +352,6 @@ $(function() {
             dataType: 'json'
         });
     };
-    SubtitleFSWidget.prototype.get_audio = function() {
-        // get a JSON object to be passed to the audio element
-        // response expected: {language: "langcode", blueprint: {the_blueprint}}
-        this_ = this;
-        this.set_prompt(gettext('Loading...'));
-        this.disable_controls();
-        $.ajax({
-            url: '/five-sec-widget/get-audio-to-subtitle',
-            data: {
-                language: this_.language
-            },
-            success: function(data) {
-                         this_.init_from_blueprint(data);
-                     },
-            error: function(xhr, textStatus, errorThrown) {
-                       this_.set_prompt(gettext('Error while loading audio content, sorry. Please contact the site administrator.'));
-                       this_.disable_controls();
-                       console.log(xhr.status + ' error. Failed to get audio.');
-                   },
-            complete: function(xhr, textStatus) {
-                          console.log('ajax complete');
-                      },
-            type: 'GET',
-            dataType: 'json'
-        });
     };
 
     var fsw = new SubtitleFSWidget();
