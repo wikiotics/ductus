@@ -350,8 +350,6 @@ $(function() {
         });
         this.submit('5 sec widget (subtitle) - Incorrect language');
     };
-        }
-    };
 
     var fsw = new SubtitleFSWidget();
     fsw.elt.appendTo('#ductus_five_sec_widget');
