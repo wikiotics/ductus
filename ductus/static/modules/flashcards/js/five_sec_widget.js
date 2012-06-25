@@ -213,7 +213,10 @@ $(function() {
             dataType: 'json'
         });
     };
-
+    FiveSecWidget.prototype.disable_controls = function() {
+        this.elt.find('#ductus_FSWControls > .ductus_FSWButton').button('option', 'disabled', true);
+        this.elt.find('#ductus_FSWControls > .ductus_FSWlink').addClass('disabled');
+    };
 
     /*
      * a simplified phrasewidget copied from flashcarddeck editor to avoid
@@ -331,11 +334,6 @@ $(function() {
         };
         this.set_controls(controls);
     };
-    SubtitleFSWidget.prototype.disable_controls = function() {
-        this.elt.find('#ductus_FSWControls > .ductus_FSWButton').button('option', 'disabled', true);
-        this.elt.find('#ductus_FSWControls > .ductus_FSWlink').addClass('disabled');
-    };
-
     SubtitleFSWidget.prototype.incorrect_language = function() {
         // report an incorrect language by removing the corresponding
         // "language:code" tag from the flashcard
