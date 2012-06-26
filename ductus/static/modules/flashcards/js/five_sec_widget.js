@@ -217,6 +217,39 @@ $(function() {
         this.elt.find('#ductus_FSWControls > .ductus_FSWButton').button('option', 'disabled', true);
         this.elt.find('#ductus_FSWControls > .ductus_FSWlink').addClass('disabled');
     };
+    FiveSecWidget.prototype.setup_controls = function(data) {
+        // setup buttons to save or cancel, skip...
+        fsw = this;
+        $.each(data.resource.tags.array, function(i, tag) {
+            if (tag.value.substring(0, 9) == 'language:') {
+                fsw.language = tag.value.substring(9);
+                return false;
+            }
+        });
+        var fsw = this;
+        var controls = {
+            'buttons': [
+                {'label': gettext('This is not ') + this.language_name,
+                 'callback': function() { fsw.incorrect_language(); return false; }
+                },
+                {'label': gettext('Save'),
+                 'callback': function() { fsw.submit('5 sec widget (subtitle)'); return false; }
+                }
+            ],
+            'links': [
+                {'label': gettext('skip'),
+                    'callback': function() { widget.get_prompt(); }
+                },
+                {'label': gettext('flag'),
+                    'callback': function() {
+                        widget.tags.push({value: 'flag:needs-review'});
+                        widget.submit('5 sec widget (subtitle) - flag');
+                    }
+                }
+            ]
+        };
+        this.set_controls(controls);
+    };
 
     /*
      * a simplified phrasewidget copied from flashcarddeck editor to avoid
@@ -300,39 +333,6 @@ $(function() {
             this.audio_widget.elt.find('audio').attr('autoplay', 'autoplay');
         this.card_sides[1] = this.audio_widget;
         this.set_prompt(this.audio_widget.elt);
-    };
-    SubtitleFSWidget.prototype.setup_controls = function(data) {
-        // setup buttons to save or cancel, skip...
-        fsw = this;
-        $.each(data.resource.tags.array, function(i, tag) {
-            if (tag.value.substring(0, 9) == 'language:') {
-                fsw.language = tag.value.substring(9);
-                return false;
-            }
-        });
-        var fsw = this;
-        var controls = {
-            'buttons': [
-                {'label': gettext('This is not ') + this.language_name,
-                 'callback': function() { fsw.incorrect_language(); return false; }
-                },
-                {'label': gettext('Save'),
-                 'callback': function() { fsw.submit('5 sec widget (subtitle)'); return false; }
-                }
-            ],
-            'links': [
-                {'label': gettext('skip'),
-                    'callback': function() { widget.get_prompt(); }
-                },
-                {'label': gettext('flag'),
-                    'callback': function() {
-                        widget.tags.push({value: 'flag:needs-review'});
-                        widget.submit('5 sec widget (subtitle) - flag');
-                    }
-                }
-            ]
-        };
-        this.set_controls(controls);
     };
     SubtitleFSWidget.prototype.incorrect_language = function() {
         // report an incorrect language by removing the corresponding
