@@ -1,0 +1,13 @@
+div.ductus_textwiki_content h1 {
+    padding-bottom: .3em;
+    border-bottom: 1px solid #ddd;
+}
+div.ductus_textwiki_content td {
+    border: 1px solid #ddd;
+    padding: .3em;
+}
+div.ductus_textwiki_content th {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: .3em;
+}

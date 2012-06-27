@@ -1,6 +1,15 @@
 {% extends "ductus_document_columns.html" %}
 {% load textwiki %}
+{% load static %}
+{% load compress %}
 {% load title %}
+
+{% block css %}
+{{ block.super }}
+{% compress css %}
+<link type="text/css" rel="stylesheet" href="{% static "ductus/modules/textwiki/css/textwiki.css" %}"/>
+{% endcompress %}
+{% endblock %}
 
 {% block title %}
 {{ block.super }}
