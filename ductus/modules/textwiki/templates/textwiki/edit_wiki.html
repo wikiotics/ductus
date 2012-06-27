@@ -9,6 +9,7 @@
 {% compress css %}
 <link type="text/css" href="{% static "ductus/common/css/token-input.css" %}" rel="stylesheet"/>
 <link type="text/css" href="{% static "ductus/modules/textwiki/css/textwiki_editor.css" %}" rel="stylesheet"/>
+<link type="text/css" href="{% static "ductus/modules/textwiki/css/textwiki.css" %}" rel="stylesheet"/>
 {% endcompress %}
 {% endblock %}
 
@@ -30,7 +31,7 @@ var writable_directories = {{ writable_directories|jsonize }};
 {% endblock %}
 
 {% block content %}
-<div id="textwiki-preview"></div>
+<div id="textwiki-preview" class="ductus_textwiki_content"></div>
 <div id="textwiki-editor"></div>
 <div id="side_toolbar"></div>
 <div id="editor-help">
