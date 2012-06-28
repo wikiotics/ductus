@@ -203,10 +203,6 @@ a:visited {
 a.broken {
     color: #c20;
 }
-.ductus_textwiki_content a.external {
-    padding-right: 14px;
-    background: transparent url(../img/Icon_External_Link.png) no-repeat center right;
-}
 
 .quiet {
     font-size: 66%;
