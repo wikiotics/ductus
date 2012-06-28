@@ -1,3 +1,8 @@
+.ductus_textwiki_content a.external {
+    padding-right: 14px;
+    background: transparent url(../img/Icon_External_Link.png) no-repeat center right;
+}
+
 div.ductus_textwiki_content h1 {
     padding-bottom: .3em;
     border-bottom: 1px solid #ddd;
