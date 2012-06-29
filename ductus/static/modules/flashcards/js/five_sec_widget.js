@@ -16,7 +16,7 @@
  */
 
 $(function() {
-    // this file requires widget.js to be included
+    // this file requires editing-widgets.js to be included
 
     function FiveSecWidget(title, instructions, prompt, answer, controls) {
         // common stuff for 5 sec widgets
@@ -352,6 +352,72 @@ $(function() {
     };
 
     var fsw = new SubtitleFSWidget();
+    /*
+     * The record widget proposes a phrase (text) to be recorded by the user.
+     * The user can listen reads out aloud what s/he is prompted with.
+     * The widget requests a prompt from the server by
+     * accessing /five-sec-widget/get-phrase-to-record?params...
+     * and receives a JSON like:
+     * { flashcard: blueprint for a flashcard with a phrase but no audio,
+     *   fsi_url: the url to the lesson from which it was taken, so the server knows what to update
+     *   fsi_index: rank order of the flashcard in the deck, so the server knows where to update the deck
+     * }
+     * the url and index will be removed once indexing works on the server side.
+     * It sends the same JSON back with the audio filled in for the server to update the database.
+     * The expected format of the flashcard is that of the podcast template:
+     * side[0] text phrase (filled)
+     * side[1] empty: audio to be inserted by the widget
+     * other sides will be left untouched by the widget
+     */
+    function RecordFSWidget() {
+        FiveSecWidget.call(this,
+                gettext('Got 5 seconds?'),
+                gettext('Read out this phrase')
+                );
+        this.language = 'fr';
+        this.language_name = this.language;
+        this.init_widget();
+        this.get_prompt();
+    }
+    RecordFSWidget.prototype = chain_clone(FiveSecWidget.prototype);
+    RecordFSWidget.prototype.get_prompt_url = '/five-sec-widget/get-phrase-to-record';
+    RecordFSWidget.prototype.init_from_blueprint = function(data) {
+        // called when the audio prompt is received from AJAX to fill in the widget
+        this_ = this;
+        this.initial_href = data.href;
+        this.fsi_url = data.fsi_url;
+        this.fsi_index = data.fsi_index;
+        this.tags = [];
+        this.tags = data.resource.tags.array;
+        this.card_sides = [];
+        // TODO: use flashcard deck blueprint to decide where phrase and audio are, instead of hard coding them
+        this.card_sides[1] = new AudioCreationWidget();
+        this.set_answer(this.card_sides[1].elt);
+        this.card_sides[1].elt.bind('ductus_element_selected', function (event, model_json_repr) {
+                this_.card_sides[1].elt.children().detach();
+                var aw = new AudioWidget(model_json_repr);
+                this_.card_sides[1] = aw;
+                this_.set_answer(aw.elt);
+        });
+        this.setup_phrase_prompt(data);
+        $.each(data.resource.sides.array, function(i, side) {
+            if (i > 1) {
+                this_.card_sides[i] = {'href': data.resource.sides.array[i].href};
+            }
+        });
+        this.setup_controls(data);
+        this.record_initial_inner_blueprint();
+    };
+    RecordFSWidget.prototype.setup_phrase_prompt = function(data) {
+        var first_prompt = true;
+        if (typeof this.audio_widget !== 'undefined') {
+            first_prompt = false;
+        }
+        this.phrase_widget = new PhraseWidget(data.resource.sides.array[0]);
+        this.card_sides[0] = this.phrase_widget;
+        this.set_prompt(this.phrase_widget.elt);
+    };
+
     fsw.elt.appendTo('#ductus_five_sec_widget');
 });
 
