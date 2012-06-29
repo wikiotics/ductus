@@ -652,28 +652,42 @@ AudioWidget.prototype.popup_settings = {
         }
     }
 };
-
 AudioWidget.creation_ui_widget = function () {
+    return new AudioCreationWidget();
+}
+
+/*
+ * Creation widget for audio, it includes a file upload and an online recording part
+ * Inherit ModelWidget's prototype for use in 5s widget, FCD editor does not make use
+ * of those extra properties/methods.
+ */
+function AudioCreationWidget() {
+
     if (typeof FileReader == 'undefined') {
         // File API is not supported, so don't provide file selection element
         return { elt: $('<div>' + gettext('Your browser does not support File API, so you will not be able to upload anything.') + '</div>') };
     }
-    var upload_widget_elt = $('<div class="AudioWidget_creation_widget"></div>');
+    ModelWidget.call(this, null, '<div class="AudioWidget_creation_widget"></div>');
     var file_input = $('<span class="ductus_file_upload_wrapper">' +
         '<input type="file" accept="audio/ogg" />' +
         '<span class="ductus_file_upload_button">' + gettext('Upload a file') + '</span>' +
         '</span>');
-    var input = file_input.appendTo(upload_widget_elt).find('input');
+    var input = file_input.appendTo(this.elt).find('input');
+    var this_ = this;
     input.change(function () {
         var file = this.files[0];
-        upload_widget_elt.trigger("ductus_element_selected", [{
+        this.elt.trigger("ductus_element_selected", [{
             resource: { fqn: AudioWidget.prototype.fqn, _file: file }
         }]);
     });
 
     var recording_widget = new OnlineRecorder();
-    recording_widget.elt.appendTo(upload_widget_elt);
-    return { elt: upload_widget_elt };
+    recording_widget.elt.appendTo(this.elt);
+    this.initial_inner_blueprint = {resource: ""};
+    return this;
+};
+AudioCreationWidget.prototype = chain_clone(ModelWidget.prototype);
+AudioCreationWidget.prototype.inner_blueprint_repr = function() {
 };
 
 function FullPagename (arg) {
