@@ -285,7 +285,7 @@ $(function() {
      *   fsi_url: the url to the lesson from which it was taken, so the server knows what to update
      *   fsi_index: rank order of the flashcard in the deck, so the server knows where to update the deck
      * }
-     * (the url and index will be removed once indexing works on the server side.
+     * the url and index will be removed once indexing works on the server side.
      * It sends the same JSON back with the phrase filled in for the server to update the database.
      */
     function SubtitleFSWidget() {
@@ -351,7 +351,6 @@ $(function() {
         this.submit('5 sec widget (subtitle) - Incorrect language');
     };
 
-    var fsw = new SubtitleFSWidget();
     /*
      * The record widget proposes a phrase (text) to be recorded by the user.
      * The user can listen reads out aloud what s/he is prompted with.
@@ -418,6 +417,13 @@ $(function() {
         this.set_prompt(this.phrase_widget.elt);
     };
 
+    // start widget according to url parameter
+    if (urlParams['type'] == 'record') {
+        var fsw = new RecordFSWidget();
+    } else {
+        // default to the subtitle widget
+        var fsw = new SubtitleFSWidget();
+    }
     fsw.elt.appendTo('#ductus_five_sec_widget');
 });
 
