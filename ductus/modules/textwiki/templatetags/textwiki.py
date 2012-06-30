@@ -101,7 +101,10 @@ def creole(value, default_prefix=None):
             'wiki_links_path_func': __interwiki_links_path_funcs[default_prefix],
             'wiki_links_class_func': __wiki_links_class_func(default_prefix),
             'interwiki_links_base_urls': __interwiki_links_base_urls,
-            'interwiki_links_path_funcs': __interwiki_links_path_funcs,
+            # on the next line, we copy the dict first because creoleparser's
+            # create_dialect function modifies it inexplicably! (see
+            # creoleparser issue #50)
+            'interwiki_links_path_funcs': dict(__interwiki_links_path_funcs),
             'interwiki_links_class_funcs': __interwiki_links_class_funcs,
             'external_links_class': 'external',
             'disable_external_content': True,
