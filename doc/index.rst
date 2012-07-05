@@ -28,6 +28,7 @@ Contents:
    contributing
    ductus
    testing
+   glossary
 
 Indices and tables
 ==================
