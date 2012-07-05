@@ -2,7 +2,7 @@
 Glossary
 ========
 
-DAG
+DAG: directed acyclic graph
 
 Resource == hash == "URN"
 
