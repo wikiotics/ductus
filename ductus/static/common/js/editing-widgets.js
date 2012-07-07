@@ -963,7 +963,7 @@ SaveWidget.prototype.perform_save = function (save_and_return) {
 var online_recorder;    // make this a global variable since this code is too messy. FIXME: clean this up
 function OnlineRecorder() {
     var recorder_div = (
-        '<div id="ductus_OnlineRecorder" style="position: relative; width:414px">' +
+        '<div id="ductus_OnlineRecorder" style="position: relative;">' +
             '<div id="record_online_button"></div>' +
             '<div id="rec_controls">' +
                 '<button id="recordDiv"></button>' +
