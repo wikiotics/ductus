@@ -971,11 +971,14 @@ function OnlineRecorder() {
                 '<button id="uploadDiv"></button>' +
             '</div>' +
             '<div id="feedbackDiv" style="position: absolute; left: 30px; top: 95px"></div>' +
-            '<div id="wami"></div>' +
         '</div>'
     );
     Widget.call(this, recorder_div);
     online_recorder = this;     // set the global variable
+    // make #wami a dialog, so that the minimal size of the flash panel does not impact our gorgeous JS interface :)
+    this.wami_dialog = $('<div id="wami"></div>');
+    this.wami_dialog.appendTo('body'); // we attach to body to be sure $('#wami') always returns something
+    this.wami_dialog.dialog({autoOpen: false});
     this.init();
 }
 OnlineRecorder.prototype = chain_clone(Widget.prototype);
@@ -1000,6 +1003,8 @@ OnlineRecorder.prototype.setupRecorder = function() {
         this.Wami = new Wami('wami', function() {
             online_recorder.checkSecurity();
         });
+        // #wami must be visible when we call Wami.setup() for the flash "setup complete" callback to work
+        this.wami_dialog.dialog('open');
         this.Wami.setup();
     } else {
         this.checkSecurity();
@@ -1071,6 +1076,7 @@ OnlineRecorder.prototype.checkSecurity = function() {
     if (this.settings.microphone.granted) {
         this.listen(true);
         this.Wami.hide();
+        this.wami_dialog.dialog('close');
         this.setupButtons();
     } else {
         // Show any Flash settings panel you want using the string constants
