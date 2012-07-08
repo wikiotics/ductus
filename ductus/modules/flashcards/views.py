@@ -14,16 +14,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import random
+import json
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.core.cache import cache
+from django.views.decorators.cache import never_cache
+from django.http import HttpResponse, Http404
+from django.conf import settings
 
+from ductus.resource import get_resource_database
 from ductus.resource.ductmodels import tag_value_attribute_validator, ValidationError
+from ductus.wiki.templatetags.jsonize import resource_json
+from ductus.wiki.models import WikiPage
+
+from ductus.index import search_pages_by_tags, IndexingError
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
-from ductus.util.http import query_string_not_found
+from ductus.util.http import query_string_not_found, render_json_response
 from ductus.util.bcp47 import language_tag_to_description
 from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction, StoryBookInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
@@ -245,3 +256,98 @@ def mediacache_flashcard_deck(blob_urn, mime_type, additional_args, flashcard_de
         return mediacache_cat_audio(blob_urn, audio_urn_list, mime_type)
 
     return None
+
+def five_sec_widget(request):
+    """display a `five seconds widget` as specified by the query parameters.
+    Also handle POST requests from the widget, saving blueprints and performing related updates.
+    """
+    if request.method == 'POST':
+
+        new_fc_urn = handle_blueprint_post(request, Flashcard)
+        # temp hack for FSI, manually update the lesson we took the flashcard from
+        from django.utils.safestring import mark_safe
+        from ductus.resource.ductmodels import BlueprintSaveContext
+        from ductus.wiki.views import _fully_handle_blueprint_post
+        try:
+            url = request.POST['fsi_url']
+            card_index = int(request.POST['fsi_index'])
+        except KeyError:
+            raise ValidationError("the widget should provide FSI specific fields")
+
+        page = WikiPage.objects.get(name=url)
+        revision = page.get_latest_revision()
+        urn = 'urn:' + revision.urn
+        resource_database = get_resource_database()
+        old_fcd = resource_database.get_resource_object(urn)
+        fcd_bp = json.loads(resource_json(old_fcd))
+
+        # remove href and add a @patch statement so that the blueprint updates the database
+        fcd_bp['resource']['@patch'] = urn
+        del fcd_bp['href']
+
+        # set the flashcard href saved above
+        fcd_bp['resource']['cards']['array'][card_index]['href'] = new_fc_urn.urn
+        # remove all 'resource' keys in the blueprint as ResourceElement ignores the hrefs otherwise
+        for fc in fcd_bp['resource']['cards']['array']:
+            del fc['resource']
+        for interaction in fcd_bp['resource']['interactions']['array']:
+            del interaction['resource']
+
+        request.POST = request.POST.copy()
+        request.POST['blueprint'] = json.dumps(fcd_bp)
+        request.POST['log_message'] = '5sec widget (subtitle)'
+        prefix, pagename = url.split(':')
+        response = _fully_handle_blueprint_post(request, prefix, pagename)
+
+        return response
+
+    return render_to_response('flashcards/five_sec_widget.html', {
+    }, RequestContext(request))
+
+@never_cache
+def fsw_get_audio_to_subtitle(request):
+    """return a JSON flashcard object to the subtitle 5s widget
+    """
+    if request.method == 'GET':
+        # get the language to search for
+        language = request.GET.get('language', getattr(settings, "FIVE_SEC_WIDGET_DEFAULT_LANGUAGE", 'en'))
+        # build list of tags to search for
+        search_tags = ['target-language:' + language] + getattr(settings, "FIVE_SEC_WIDGET_EXTRA_SEARCH_TAGS", 'five-sec-widget-fodder')
+        # get a list of pages tagged as we want
+        try:
+            url_list = search_pages_by_tags(search_tags)
+        except IndexingError:
+            raise Http404('Indexing error, contact the site administrator')
+
+        if url_list != []:
+            #url_list = [url for url in url_list if url.split(':')[0] == language]
+            # pick a randomly chosen flashcard that has no text transcript in side[0]
+            resource_database = get_resource_database()
+            while True:
+                url = url_list[random.randint(0, len(url_list) - 1)]
+                try:
+                    page = WikiPage.objects.get(name=url['absolute_pagename'])
+                except WikiPage.DoesNotExist:
+                    url_list.remove(url)
+                    if len(url_list) > 0:
+                        continue
+                    else:
+                        raise Http404('wikipage does not exist: ' + url['path'])
+
+                revision = page.get_latest_revision()
+                urn = 'urn:' + revision.urn
+                fcd = resource_database.get_resource_object(urn)
+                card_index = random.randint(0, len(fcd.cards.array) - 1)
+                fc = fcd.cards.array[card_index].get()
+                side = fc.sides.array[0].get()
+                if not side:
+                    break
+
+            resource = resource_json(fc)
+            # temporary hack for FSI: add the URL this flashcard is taken from
+            tmp_resource = json.loads(resource)
+            tmp_resource['fsi_url'] = url['absolute_pagename']
+            tmp_resource['fsi_index'] = card_index
+            return render_json_response(tmp_resource)
+
+        raise Http404('No material available for this language')
