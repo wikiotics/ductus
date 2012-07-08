@@ -27,6 +27,7 @@ from django.conf import settings
 
 from ductus.resource import get_resource_database
 from ductus.resource.ductmodels import tag_value_attribute_validator, ValidationError
+from ductus.special.views import register_special_page
 from ductus.wiki.templatetags.jsonize import resource_json
 from ductus.wiki.models import WikiPage
 
@@ -257,7 +258,8 @@ def mediacache_flashcard_deck(blob_urn, mime_type, additional_args, flashcard_de
 
     return None
 
-def five_sec_widget(request):
+@register_special_page('five-sec-widget')
+def five_sec_widget(request, pagename):
     """display a `five seconds widget` as specified by the query parameters.
     Also handle POST requests from the widget, saving blueprints and performing related updates.
     """
@@ -300,6 +302,17 @@ def five_sec_widget(request):
         response = _fully_handle_blueprint_post(request, prefix, pagename)
 
         return response
+
+    # define what to do when GETing /special/five-sec-widget?method=something
+    if request.method == 'GET':
+        methods = {
+            'get-audio-to-subtitle': fsw_get_audio_to_subtitle,
+            'get-phrase-to-record': fsw_get_phrase_to_record,
+        }
+        try:
+            return methods[request.GET.get('method', None)](request)
+        except KeyError:
+            pass
 
     return render_to_response('flashcards/five_sec_widget.html', {
     }, RequestContext(request))

@@ -279,7 +279,7 @@ $(function() {
      * The user can listen to a recorded phrase for which we have no written transcription,
      * and type in what s/he hears.
      * The widget requests a prompt from the server (server side handling to be defined) by
-     * accessing /five-sec-widget/get-audio-to-subtitle?params...
+     * accessing /special/five-sec-widget?method=get-audio-to-subtitle&params...
      * and receives a JSON like:
      * { flashcard: blueprint for a flashcard with an empty phrase + an audio,
      *   fsi_url: the url to the lesson from which it was taken, so the server knows what to update
@@ -300,7 +300,7 @@ $(function() {
         this.get_prompt();
     }
     SubtitleFSWidget.prototype = chain_clone(FiveSecWidget.prototype);
-    SubtitleFSWidget.prototype.get_prompt_url = '/five-sec-widget/get-audio-to-subtitle';
+    SubtitleFSWidget.prototype.get_prompt_url = '/special/five-sec-widget?method=get-audio-to-subtitle';
     SubtitleFSWidget.prototype.init_from_blueprint = function(data) {
         // called when the audio prompt is received from AJAX to fill in the widget
         this_ = this;
@@ -355,7 +355,7 @@ $(function() {
      * The record widget proposes a phrase (text) to be recorded by the user.
      * The user can listen reads out aloud what s/he is prompted with.
      * The widget requests a prompt from the server by
-     * accessing /five-sec-widget/get-phrase-to-record?params...
+     * accessing /special/five-sec-widget?method=get-phrase-to-record&params...
      * and receives a JSON like:
      * { flashcard: blueprint for a flashcard with a phrase but no audio,
      *   fsi_url: the url to the lesson from which it was taken, so the server knows what to update
@@ -379,7 +379,7 @@ $(function() {
         this.get_prompt();
     }
     RecordFSWidget.prototype = chain_clone(FiveSecWidget.prototype);
-    RecordFSWidget.prototype.get_prompt_url = '/five-sec-widget/get-phrase-to-record';
+    RecordFSWidget.prototype.get_prompt_url = '/special/five-sec-widget?method=get-phrase-to-record';
     RecordFSWidget.prototype.init_from_blueprint = function(data) {
         // called when the audio prompt is received from AJAX to fill in the widget
         this_ = this;
