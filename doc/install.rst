@@ -1,3 +1,5 @@
+.. _install:
+
 Ductus installation
 ===================
 
@@ -112,4 +114,4 @@ Assuming the above command returns no error messages, you can now point your bro
 Develop Ductus
 --------------
 
-Improve code.  Submit patches.  Read the DuctusDevelopmentGuide.  If your goal is to get patches accepted, bring up any major changes on the discussion list first.  Read the git documentation to understand how to rebase your changes onto the most recent development version of Ductus in the future.  If you haven't made any changes to your local version of Ductus, a regular "git pull" will suffice to update your repository and checkout.
+Improve code.  Submit patches.  Read the :ref:`overview`.  If your goal is to get patches accepted, bring up any major changes on the discussion list first.  Read the git documentation to understand how to rebase your changes onto the most recent development version of Ductus in the future.  If you haven't made any changes to your local version of Ductus, a regular "git pull" will suffice to update your repository and checkout.

@@ -1,8 +1,6 @@
 Ductus Contributor Guide
 ========================
 
-See also DuctusDevelopmentGuide for a high-level overview of the software; DuctusDevelopmentInstance for information on setting up a local (or public) development server.
-
 Interacting with the project team
 ---------------------------------
 
@@ -80,3 +78,9 @@ Other "required" reading
 ------------------------
 
  * http://blog.wikiotics.net/
+
+See also
+--------
+
+ * :ref:`overview`
+ * 'ref:`install`

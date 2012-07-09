@@ -193,8 +193,8 @@ htmlhelp_basename = 'Ductusdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Ductus.tex', u'Ductus Documentation',
-   u'Jim Garrison', 'manual'),
+    ('index', 'Ductus.tex', u'Ductus Documentation',
+     u'Jim Garrison', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -213,3 +213,5 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_use_modindex = True
+
+todo_include_todos = True
