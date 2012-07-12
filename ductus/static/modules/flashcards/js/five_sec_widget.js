@@ -167,6 +167,7 @@ $(function() {
         this.set_footer(
                 '<select id="ductus_FSWLanguage" name="FSWLanguage">' +
                 '<option value="de">Deutsch</option>' +
+                '<option value="en">English</option>' +
                 '<option selected="selected" value="fr">Français</option>' +
                 '<option value="zh">中文 - Mandarin Chinese</option>' +
                 '</select>'
