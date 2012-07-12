@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ductus\n"
 "Report-Msgid-Bugs-To: http://code.ductus.us/query\n"
-"POT-Creation-Date: 2011-09-16 07:26+0000\n"
-"PO-Revision-Date: 2012-02-27 11:37+0000\n"
+"POT-Creation-Date: 2012-07-12 17:33+0000\n"
+"PO-Revision-Date: 2012-07-12 20:36+0000\n"
 "Last-Translator: bamse207 <laurent.savaete@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -53,40 +53,52 @@ msgstr "Creative Commons Paternité 2.5"
 msgid "Creative Commons Attribution 3.0"
 msgstr "Creative Commons Paternité 3.0"
 
-#: modules/audio/forms.py:70
+#: modules/audio/forms.py:93
 msgid ""
 "Unrecognized file type.  Please upload an ogg/vorbis file or mp4/AAC file."
 msgstr "Type de fichier non reconnu.  Merci d'importer un fichier ogg/vorbis ou mp4/AAC."
 
-#: modules/audio/forms.py:71
+#: modules/audio/forms.py:94
 msgid "Not a valid ogg/vorbis file."
 msgstr "Fichier ogg/vorbis invalide."
 
-#: modules/audio/forms.py:72
+#: modules/audio/forms.py:95
+msgid "Not a valid wav file."
+msgstr "Pas un fichier wav valide."
+
+#: modules/audio/forms.py:96
+msgid "There was a problem converting the WAV file you sent."
+msgstr "Problème lors de la conversion du fichier WAV que vous avez envoyé."
+
+#: modules/audio/forms.py:97
 msgid "Not a valid low-complexity AAC file in mp4 container."
 msgstr "Fichier mp4/AAC non valide."
 
-#: modules/audio/forms.py:73
+#: modules/audio/forms.py:98
 msgid ""
 "The given file contains a theora (video) stream, but only audio is expected."
 msgstr "Le fichier contient un flux theora (video), mais seul l'audio était attendu."
 
-#: modules/audio/forms.py:74
+#: modules/audio/forms.py:99
 #, python-format
 msgid ""
 "The file you chose is too large.  Please select a file that contains fewer "
 "than %d bytes."
 msgstr "Le fichier choisi est trop gros.  Choisissez un fichier contenant moins de %d octets."
 
-#: modules/audio/views.py:47
+#: modules/audio/views.py:49
 msgid "a standalone audio file"
 msgstr "fichier audio autonome"
 
-#: modules/audio/templates/audio/audio_import_form.html:5
+#: modules/audio/templates/audio/as_html.html:5
+msgid "play"
+msgstr "Jouer"
+
+#: modules/audio/templates/audio/audio_import_form.html:152
 msgid "Please upload an ogg/vorbis file (preferably), or a mp4/aac file."
 msgstr "Importez un fichier ogg/vorbis (de préférence) ou mp4/aac."
 
-#: modules/audio/templates/audio/audio_import_form.html:9
+#: modules/audio/templates/audio/audio_import_form.html:156
 msgid "Upload audio file"
 msgstr "Importer un fichier audio"
 
@@ -101,61 +113,101 @@ msgid ""
 "You may instead wish to <a "
 "href=\"/new/%(creation_view_key)s?target=%(escaped_page_name)s\">replace "
 "this audio file with another recording</a>."
-msgstr ""
+msgstr "Vous pouvez aussi <a href=\"/new/%(creation_view_key)s?target=%(escaped_page_name)s\">remplacer ce fichier audio par un autre enregistrement</a>."
 
-#: modules/flashcards/views.py:29
+#: modules/flashcards/views.py:74 modules/flashcards/views.py:84
+#: modules/flashcards/views.py:112
+msgid "Phrase"
+msgstr "Phrase"
+
+#: modules/flashcards/views.py:74 modules/flashcards/views.py:112
+msgid "Picture"
+msgstr "Image"
+
+#: modules/flashcards/views.py:74 modules/flashcards/views.py:84
+#: modules/flashcards/views.py:112
+msgid "Audio"
+msgstr "Audio"
+
+#: modules/flashcards/views.py:77
+msgid "Prompt"
+msgstr "Question"
+
+#: modules/flashcards/views.py:77
+msgid "Answer"
+msgstr "Réponse"
+
+#: modules/flashcards/views.py:84
+msgid "Speaker"
+msgstr "Locuteur"
+
+#: modules/flashcards/views.py:140
 msgid "a flexible lesson type arranged as a series of flashcards in a grid"
 msgstr "un type de leçon organisé comme une série de cartes-mémoires dans une grille."
 
-#: modules/flashcards/templates/flashcards/choice.html:22
+#: modules/flashcards/templates/flashcards/audio_lesson.html:46
+msgid ""
+"Download the podcast in MP4/AAC format, compatible with most software, "
+"portable music players and mobile phones."
+msgstr "Télécharger le podcast au format MP4/AAC, compatible avec la plupart des logiciels, balladeurs numériques et téléphones portables."
+
+#: modules/flashcards/templates/flashcards/audio_lesson.html:46
+msgid "Download the podcast"
+msgstr "Télécharger le podcast"
+
+#: modules/flashcards/templates/flashcards/audio_lesson.html:47
+msgid ""
+"Listen to the podcast online. If you use an old browser, it will offer to "
+"download the file in webm format instead."
+msgstr "Ecouter le podcast en ligne. Si vous utiliser un navigateur obsolète, il vous proposera de télécharger le fichier au format webm."
+
+#: modules/flashcards/templates/flashcards/audio_lesson.html:47
+msgid "Listen online"
+msgstr "Ecouter en ligne"
+
+#: modules/flashcards/templates/flashcards/audio_lesson.html:49
+msgid "No audio available for podcast.  Try editing the page and adding some."
+msgstr "Pas de son disponible pour le podcast.  Essayez de modifier la page et d'en ajouter."
+
+#: modules/flashcards/templates/flashcards/audio_lesson.html:53
+msgid "Full transcript of the lesson:"
+msgstr "Transcription complète de la leçon:"
+
+#: modules/flashcards/templates/flashcards/choice.html:38
 #, python-format
 msgid ""
 "\n"
-"Frame %(current_frame)s <span id=\"total_frames_text\">of %(number_of_frames)s</span>\n"
-msgstr ""
+"Frame %(current_frame)s <span id=\"total_frames_text\"> of %(number_of_frames)s</span>\n"
+msgstr "\nPage %(current_frame)s <span id=\"total_frames_text\"> sur %(number_of_frames)s</span>\n"
 
-#: modules/flashcards/templates/flashcards/choice.html:25
-#: modules/phrase_choice/templates/phrase_choice/lesson.html:47
-#: modules/picture_choice/templates/picture_choice/lesson.html:47
+#: modules/flashcards/templates/flashcards/choice.html:41
 #, python-format
 msgid ""
 "\n"
 "(%(correct_count)s correct, %(incorrect_count)s incorrect).\n"
-msgstr ""
+msgstr "\n(%(correct_count)s correctes, %(incorrect_count)s incorrectes).\n"
 
-#: modules/phrase_choice/edit_views.py:25
-msgid ""
-"a phrase is displayed as a prompt with four other phrases as possible "
-"answers (this will soon be deprecated in favor of the new flashcard lesson "
-"format)"
-msgstr ""
-
-#: modules/phrase_choice/templates/phrase_choice/edit_lesson.html:18
-msgid "add phrase choice group"
-msgstr ""
-
-#: modules/phrase_choice/templates/phrase_choice/edit_lesson.html:20
-#: modules/textwiki/templates/textwiki/edit_wiki.html:16
-#: wiki/templates/wiki/unlink_confirm.html:7
-msgid "Log message:"
-msgstr "Résumé:"
-
-#: modules/phrase_choice/templates/phrase_choice/edit_lesson.html:22
-#: modules/textwiki/templates/textwiki/edit_wiki.html:18
-msgid "Save"
-msgstr "Enregistrer"
-
-#: modules/phrase_choice/templates/phrase_choice/edit_lesson.html:25
-msgid "Save and continue editing"
-msgstr "Enregistrer et continuer l'édition"
-
-#: modules/phrase_choice/templates/phrase_choice/lesson.html:44
-#: modules/picture_choice/templates/picture_choice/lesson.html:44
+#: modules/flashcards/templates/flashcards/storybook.html:36
 #, python-format
 msgid ""
 "\n"
-"Frame %(current_frame)s of %(number_of_frames)s\n"
-msgstr ""
+"Page %(current_frame)s <span id=\"total_frames_text\"> of %(number_of_frames)s</span>\n"
+msgstr "\nPage %(current_frame)s <span id=\"total_frames_text\"> sur %(number_of_frames)s</span>\n"
+
+#: modules/otics/templates/otics/front_page_base.html:35
+msgid "Try a lesson in:"
+msgstr "Essayez une leçon en:"
+
+#: modules/otics/templates/otics/front_page_base.html:42
+#, python-format
+msgid "%(total_lesson_count)s lessons in %(total_language_count)s languages."
+msgstr "%(total_lesson_count)s leçons en %(total_language_count)s langues."
+
+#: modules/otics/templates/otics/front_page_base.html:43
+msgid ""
+"<span class=\"lesson_count\"></span> lesson(s) in <span "
+"class=\"language_name\"></span>."
+msgstr "<span class=\"lesson_count\"></span> leçon(s) en <span class=\"language_name\"></span>."
 
 #: modules/picture/edit_views.py:34
 msgid "a standalone image"
@@ -190,31 +242,17 @@ msgstr "Cette URN n'a pas pu être trouvée sur le serveur auquel vous accédez.
 msgid "This urn represents content that is not a picture."
 msgstr "Cette URN représente un contenu qui n'est pas une image."
 
-#: modules/picture_choice/edit_views.py:26
-msgid ""
-"a phrase is displayed as a prompt with four pictures as possible answers "
-"(this will soon be deprecated in favor of the new flashcard lesson format)"
-msgstr ""
-
-#: modules/picture_choice/templates/picture_choice/edit_lesson.html:20
-msgid "add picture choice group"
-msgstr ""
-
-#: modules/textwiki/views.py:44
+#: modules/textwiki/views.py:47
 msgid "Unspecified"
 msgstr "Non spécifié"
 
-#: modules/textwiki/views.py:63
+#: modules/textwiki/views.py:68
 msgid "a \"regular\" text-based wiki page, using wiki-creole as markup"
-msgstr ""
+msgstr "une page wiki texte habituelle, utilisant le langage de markup wiki-creole"
 
-#: modules/textwiki/templates/textwiki/edit_wiki.html:12
-msgid "Language:"
-msgstr "Langue:"
-
-#: modules/textwiki/templates/textwiki/edit_wiki.html:18
-msgid "Preview"
-msgstr "Prévisualisation"
+#: special/templates/special/recent_changes.html:13
+msgid "(deleted)"
+msgstr "(supprimé)"
 
 #: special/templates/special/recent_changes.html:17
 msgid "&laquo; Newer"
@@ -224,29 +262,38 @@ msgstr "&laquo; Plus récent"
 msgid "Older &raquo;"
 msgstr "Plus ancien &raquo;"
 
-#: templates/ductus_base.html:47
+#: special/templates/special/search.html:12
+#, python-format
+msgid "%(target_language_description)s lessons"
+msgstr "leçons en %(target_language_description)s"
+
+#: templates/ductus_base.html:51
 msgid "Log out"
 msgstr "Déconnexion"
 
-#: templates/ductus_base.html:50 templates/registration/login.html:20
+#: templates/ductus_base.html:54
+msgid "Register"
+msgstr "Créer un compte"
+
+#: templates/ductus_base.html:56 templates/registration/login.html:20
 msgid "Log in"
 msgstr "Connexion"
 
-#: templates/ductus_base.html:74
-msgid "user interface language:"
-msgstr "Langue de l'interface utilisateur:"
+#: templates/ductus_base.html:99
+msgid "Your language:"
+msgstr "Votre langue:"
 
-#: templates/ductus_base.html:80
+#: templates/ductus_base.html:105
 msgid "Apply"
 msgstr "Appliquer"
 
-#: templates/ductus_base.html:83
+#: templates/ductus_base.html:109
 #, python-format
 msgid ""
 "%(ductus_site_name)s is powered by <a href=\"http://ductus.us/\">Ductus</a>."
 msgstr "%(ductus_site_name)s est animé par <a href=\"http://ductus.us/\">Ductus</a>."
 
-#: templates/ductus_base.html:84
+#: templates/ductus_base.html:110
 #, python-format
 msgid ""
 "All contributions to this wiki will be licensed under the <a "
@@ -259,52 +306,48 @@ msgstr "Toute contribution au wiki sera enregistrée sous la licence <a href=\"%
 msgid "Return to front page"
 msgstr "Retour à la page d'accueil"
 
-#: templates/ductus_document.html:19
+#: templates/ductus_document.html:24
 #, python-format
 msgid ""
 "You may be viewing an old version of this page.  <a "
 "href=\"%(current_url)s\">Click here to see the most up-to-date version.</a>"
 msgstr "Vous visualisez peut-être une ancienne version de cette page.  <a href=\"%(current_url)s\">Cliquez ici pour voir la dernière version.</a>"
 
-#: templates/ductus_document.html:20
+#: templates/ductus_document.html:25
 msgid "You are viewing a URN.  This page is static and will never change."
 msgstr "Vous visualisez une URN.  Cette page est statique et ne changera jamais."
 
-#: templates/ductus_document.html:31
+#: templates/ductus_document.html:45
 msgid "document"
 msgstr "document"
 
-#: templates/ductus_document.html:35
+#: templates/ductus_document.html:49
 msgid "edit"
 msgstr "modifier"
 
-#: templates/ductus_document.html:36
+#: templates/ductus_document.html:50
 msgid "copy"
 msgstr "copier"
 
-#: templates/ductus_document.html:37
+#: templates/ductus_document.html:51
 msgid "delete"
 msgstr "supprimer"
 
-#: templates/ductus_document.html:41
+#: templates/ductus_document.html:55
 msgid "history"
 msgstr "historique"
 
-#: templates/ductus_document.html:43
+#: templates/ductus_document.html:57
 msgid "credits"
 msgstr "credits"
 
-#: templates/ductus_document.html:45
+#: templates/ductus_document.html:59
 msgid "more views"
 msgstr "plus de vues"
 
 #: templates/registration/create_user.html:9
 msgid "Create Account"
 msgstr "Créer un compte"
-
-#: templates/registration/logged_out.html:5
-msgid "You are logged out!"
-msgstr "Vous êtes déconnecté!"
 
 #: templates/registration/login.html:13
 msgid "Your username and password did not match. Please try again."
@@ -333,6 +376,10 @@ msgstr "<a href=\"%(user_creation_url)s\">Créer un compte</a>?"
 #: templates/registration/password_change_done.html:5
 msgid "Your password has been changed."
 msgstr "Votre mot de passe a été modifié."
+
+#: templates/registration/password_change_done.html:6
+msgid "Back to account settings page"
+msgstr "Retour aux paramètres du compte"
 
 #: templates/registration/password_change_form.html:8
 #: templates/registration/password_reset_confirm.html:10
@@ -374,62 +421,100 @@ msgstr "Bonjour %(user)s,\n\nQuelqu'un a demandé à réinitialiser votre mot de
 msgid "Reset password"
 msgstr "Réinitialiser le mot de passe"
 
-#: templates/registration/user_created.html:6
-#, python-format
-msgid ""
-"Created user %(username)s.  Now you may <a href=\"%(login_url)s\">log "
-"in</a>."
-msgstr "Compte %(username)s créé.  Vous pouvez maintenant <a href=\"%(login_url)s\">vous connecter</a>."
+#: user/forms.py:40 user/forms.py:41
+msgid "Email address"
+msgstr "Adresse email"
 
-#: user/views.py:76
+#: user/forms.py:43
+msgid "Providing an email address is completely optional."
+msgstr "L'adresse email est optionnelle."
+
+#: user/views.py:92
 msgid "Your account settings have been updated."
 msgstr "Vos paramètres ont été mis à jour."
 
-#: user/templates/user/user_form.html:9
+#: user/templates/user/user_form.html:10
+msgid "change password"
+msgstr "changer le mot de passe"
+
+#: user/templates/user/user_form.html:11
 msgid "Save settings"
 msgstr "Enregistrer les paramètres"
+
+#: user/templates/user/userpage.html:5
+#, python-format
+msgid "This is the user page of %(name)s"
+msgstr "Ceci est la page utilisateur de %(name)s"
+
+#: user/templates/user/userpage.html:6
+msgid "This user has contributed to the following pages:"
+msgstr "Cet utilisateur a contribué aux pages suivantes:"
+
+#: user/templates/user/userpage.html:15
+msgid "Edit my account settings"
+msgstr "Modifier les paramètres de mon compte"
 
 #: wiki/models.py:74
 #, python-format
 msgid "urn is not in database: urn:%s"
-msgstr ""
+msgstr "l'urn: %s n'existe pas dans la base de données"
 
 #: wiki/models.py:76
 msgid "A user or IP address must be given when saving a revision"
 msgstr "Un nom d'utilisateur ou une adresse IP doit être fournie pour enregistrer une révision."
 
-#: wiki/views.py:47
+#: wiki/views.py:56
 msgid "en:main_page"
-msgstr ""
+msgstr "fr:accueil"
 
-#: wiki/views.py:417
-msgid "Target page name"
-msgstr "Nom de page cible"
+#: wiki/views.py:318
+msgid "Wikitext"
+msgstr "Wikitexte"
 
-#: wiki/views.py:417
-msgid "wiki location of the new resource"
-msgstr ""
+#: wiki/views.py:320
+msgid "a regular wiki text page"
+msgstr "une page wiki habituelle"
 
-#: wiki/views.py:424
-msgid "source resource does not exist"
-msgstr ""
+#: wiki/views.py:324
+msgid "Podcast"
+msgstr "Podcast"
 
-#: wiki/views.py:444
-msgid "Invalid page name"
-msgstr "Nom de page invalide"
+#: wiki/views.py:326
+msgid "a lesson that compiles into a downloadable podcast"
+msgstr "une leçon qui génère un podcast téléchargeable"
 
-#: wiki/views.py:446
-msgid "you do not have permission to create/write to this resource"
-msgstr "Vous n'avez pas le droit de créer/modifier cette ressource."
+#: wiki/views.py:330
+msgid "Picture choice"
+msgstr "Question à choix d'images multiples"
 
-#: wiki/templates/wiki/new_wikipage.html:8
+#: wiki/views.py:332
+msgid "a lesson where you choose between multiple pictures"
+msgstr "une leçon dans laquelle vous choisissez entre plusieurs images"
+
+#: wiki/views.py:336
+msgid "Phrase choice"
+msgstr "Question à choix multiples"
+
+#: wiki/views.py:338
+msgid "a lesson where you choose between multiple phrases"
+msgstr "une leçon dans laquelle vous choisissez entre plusieurs phrases"
+
+#: wiki/views.py:342
+msgid "Story Book"
+msgstr "Livre de contes"
+
+#: wiki/views.py:344
+msgid "a multimedia lesson that reads like a book"
+msgstr "une leçon multimédia qui se lit comme un livre"
+
+#: wiki/templates/wiki/new_wikipage.html:17
 #, python-format
 msgid ""
 "There exists no page at <tt>%(absolute_pagename)s</tt>, so you must create "
 "one to move forward."
 msgstr "La page <tt>%(absolute_pagename)s</tt> n'existe pas, vous devez la créer pour continuer."
 
-#: wiki/templates/wiki/new_wikipage.html:10
+#: wiki/templates/wiki/new_wikipage.html:19
 msgid "Please choose a type of page to create:"
 msgstr "Choisissez un type de page à créer:"
 
@@ -445,6 +530,14 @@ msgstr "Vous n'avez pas le droit de modifier cette page."
 msgid "You do not have permission to delete this page."
 msgstr "Vous n'avez pas le droit de supprimer cette page."
 
+#: wiki/templates/wiki/tags_display.html:2
+msgid "Tags:"
+msgstr "Tags:"
+
+#: wiki/templates/wiki/unlink_confirm.html:7
+msgid "Log message:"
+msgstr "Résumé:"
+
 #: wiki/templates/wiki/unlink_confirm.html:9
 msgid "Delete"
 msgstr "Supprimer"
@@ -456,7 +549,7 @@ msgstr "La page <tt>%(absolute_pagename)s</tt> a été supprimée."
 
 #: wiki/templates/wiki/view_index.html:5
 msgid "Content-specific views"
-msgstr ""
+msgstr "Vues spécifiques au contenu"
 
 #: wiki/templates/wiki/view_index.html:18
 msgid "Generic views"
