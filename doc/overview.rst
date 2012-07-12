@@ -71,11 +71,6 @@ HttpRequest.escaped_full_path() (see ticket #32)
 
 304 handling: source:ductus/wiki/views.py ; source:ductus/wiki/decorators.py ; source:ductus/middleware/unvarying.py ; ticket #20
 
-Internationalization / Localization
-===================================
-
-It is built around the Django i18n framework. Read more about our setup at https://code.ductus.us/wiki/DuctusInternationalization
-
 Browser support
 ===============
 

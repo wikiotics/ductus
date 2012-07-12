@@ -1,0 +1,135 @@
+.. _i18n-page:
+
+Translating Ductus
+==================
+
+Just to be clear:
+ * internationalization / i18n is the process of making the software capable of running in / displaying several languages. This is done by developers.
+ * localization / l10n is the process of translating the software into a variety of languages. This is mostly done by translators.
+
+Internationalization (i18n)
+---------------------------
+
+Ductus relies on the i18n framework provided by Django. The Django website has extensive documentation for `i18n`_ and `l10n`_.
+
+.. _i18n: https://docs.djangoproject.com/en/dev/topics/i18n/
+.. _l10n: https://docs.djangoproject.com/en/dev/topics/i18n/translation/
+
+Getting a string translatable
+'''''''''''''''''''''''''''''
+
+in python code::
+
+   from django.utils.translation import ugettext_lazy, ugettext as _
+   mystring = _('some string that needs to be translated')
+   mylazystring = ugettext_lazy('another string to be lazily translated')
+
+For more details, in particular for choosing between `ugettext` and `ugettext_lazy`, read the extensive django doc mentioned above.
+
+in javascript code, simply::
+
+   gettext('a string that needs to be translated');
+
+in any javascript file within ductus, as the required i18n code is included in templates/ductus_base.html
+
+Localization (l10n)
+-------------------
+
+We use `Transifex`_ to make translation easy. The transifex `project page`_ is the starting point to work on translating strings.
+
+.. _project page: https://www.transifex.net/projects/p/ductus/
+.. _Transifex: http://transifex.net/
+
+Generating .po files
+''''''''''''''''''''
+
+To get all .po files for the project, run::
+
+   cd <ductus_root>/ductus
+   ../ductusenv/bin/python ../manage.py makemessages -a
+   ../ductusenv/bin/python ../manage.py makemessages -d djangojs -a
+
+from the root folder of ductus.
+The first command will collect messages from python and template files, the second one will do the same for javascript files.
+The -a (--all) argument will generate locales for each folder like ductus/locale/<lang>.
+
+To do the same for a specific language, just run::
+
+   cd <ductus_root>/ductus
+   ../ductusenv/bin/python ../manage.py makemessages -l <lang>
+   ../ductusenv/bin/python ../manage.py makemessages -d djangojs -l <lang>
+
+where <lang> is the language code you're interested in.
+
+Compiling .mo files
+'''''''''''''''''''
+
+You must then compile the .po files into more efficient .mo files by running::
+
+   cd <ductus_root>/ductus
+   ../ductusenv/bin/python ../manage.py compilemessages
+
+Done! Your translations should now be available on the site.
+
+Getting translations onto transifex and back
+''''''''''''''''''''''''''''''''''''''''''''
+
+This section is for developers only. If you are only translating, you should not need this.
+
+Install transifex-client and gettext::
+
+   apt-get install transifex-client gettext
+
+Setting up transifex::
+
+   cd <ductus_root>
+   tx init
+   tx set --execute --auto-local -r ductus.djangopo -s en -f ductus/locale/en/LC_MESSAGES/django.po 'ductus/locale/<lang>/LC_MESSAGES/django.po'
+   tx set --execute --auto-local -r ductus.djangojs -s en -f ductus/locale/en/LC_MESSAGES/djangojs.po 'ductus/locale/<lang>/LC_MESSAGES/djangojs.po'
+
+This creates a .tx/config file in the current directory, and defines what the source file is for translations, as well as the naming pattern for l10n files.
+First run of tx init will ask for your account login/password on transifex.net and store the info in ~/.transifexrc
+
+Now you can::
+
+   tx pull -l <lang>
+
+to download the .po file for <lang>. This will only update the local .po file if it is older than the transifex.net version. Use -f to force download.
+
+Run::
+
+   tx pull -a
+
+to get all translation files from transifex.net. This will update local files, and you can then run a git commit::
+
+   tx push --source --translations
+
+will send the status of local .po files to transifex. Careful! this could result in loss of data. More details in the `transifex client docs`_.
+
+.. _transifex client docs: http://help.transifex.net/features/client/index.html
+
+Current workflow
+----------------
+
+Transifex is setup so that source language files (in English) are automatically updated from the `gitorious repository`_.
+
+Translators can work directly in transifex, and not worry about strings being outdated.
+
+As a developer, the normal workflow will be the following:
+
+ * to get new strings in transifex::
+
+      cd <ductus_root>/ductus
+      ../ductusenv/bin/python ../manage.py makemessages -l en
+      ../ductusenv/bin/python ../manage.py makemessages -d djangojs -l en
+
+   This will generate new .po files for english. Then just commit/push them to gitorious/master. Transifex will auto-update within a few hours.
+
+ * to get new translations from transifex into the git repository::
+
+      cd <ductus_root>
+      tx pull -a
+
+   then commit the changes.
+
+.. _gitorious repository: https://gitorious.org/ductus/ductus

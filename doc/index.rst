@@ -26,9 +26,10 @@ Contents:
    resource_json
    customizing-ductus
    contributing
-   ductus
+   i18n
    testing
    glossary
+   ductus
 
 Indices and tables
 ==================
