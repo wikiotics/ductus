@@ -26,6 +26,7 @@ Contents:
    resource_json
    customizing-ductus
    contributing
+   browser_support
    i18n
    testing
    glossary
