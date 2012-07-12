@@ -221,12 +221,14 @@ $(function() {
     FiveSecWidget.prototype.setup_controls = function(data) {
         // setup buttons to save or cancel, skip...
         fsw = this;
-        $.each(data.resource.tags.array, function(i, tag) {
-            if (tag.value.substring(0, 9) == 'language:') {
-                fsw.language = tag.value.substring(9);
-                return false;
-            }
-        });
+        if (fsw.tags.length) {
+            $.each(fsw.tags, function(i, tag) {
+                if (tag.value.substring(0, 9) == 'language:') {
+                    fsw.language = tag.value.substring(9);
+                    return false;
+                }
+            });
+        }
         var fsw = this;
         var controls = {
             'buttons': [
@@ -308,8 +310,7 @@ $(function() {
         this.initial_href = data.href;
         this.fsi_url = data.fsi_url;
         this.fsi_index = data.fsi_index;
-        this.tags = [];
-        this.tags = data.resource.tags.array;
+        this.tags = data.resource.tags ? data.resource.tags.array : [];
         this.card_sides = [];
         // TODO: use flashcard deck blueprint to decide where phrase and audio are, instead of hard coding them
         this.card_sides[0] = new PhraseWidget();
@@ -387,8 +388,7 @@ $(function() {
         this.initial_href = data.href;
         this.fsi_url = data.fsi_url;
         this.fsi_index = data.fsi_index;
-        this.tags = [];
-        this.tags = data.resource.tags.array;
+        this.tags = data.resource.tags ? data.resource.tags.array : [];
         this.card_sides = [];
         // TODO: use flashcard deck blueprint to decide where phrase and audio are, instead of hard coding them
         this.card_sides[1] = new AudioCreationWidget();
