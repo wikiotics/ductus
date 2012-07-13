@@ -688,6 +688,7 @@ function AudioCreationWidget() {
 };
 AudioCreationWidget.prototype = chain_clone(ModelWidget.prototype);
 AudioCreationWidget.prototype.inner_blueprint_repr = function() {
+    return null;  // pretend we are an empty flashcard side so that no-one sees this if the user saves while the recorder is open
 };
 
 function FullPagename (arg) {
