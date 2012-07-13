@@ -221,14 +221,12 @@ $(function() {
     FiveSecWidget.prototype.setup_controls = function(data) {
         // setup buttons to save or cancel, skip...
         fsw = this;
-        if (fsw.tags.length) {
-            $.each(fsw.tags, function(i, tag) {
-                if (tag.value.substring(0, 9) == 'language:') {
-                    fsw.language = tag.value.substring(9);
-                    return false;
-                }
-            });
-        }
+        $.each(fsw.tags, function(i, tag) {
+            if (tag.value.substring(0, 9) == 'language:') {
+                fsw.language = tag.value.substring(9);
+                return false;
+            }
+        });
         var fsw = this;
         var controls = {
             'buttons': [
