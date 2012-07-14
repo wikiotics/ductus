@@ -243,7 +243,7 @@ $(function () {
         // ensure there is always an empty row at the bottom of the deck
         if (this.elt.closest('tr').is(':last-child')) {
             var fcd = $(".ductus_FlashcardDeck").data('widget_object');
-            fcd.add_row();
+            fcd.add_row(null, true);    // auto-type card sides
         }
     };
     // popup definition for an empty flashcard side
@@ -367,6 +367,27 @@ $(function () {
             return fcsw.ui_widget();
         }, null);
     };
+    Flashcard.prototype.auto_type_cells = function () {
+        // ensure pretyping of cells according to what is found in previous row.
+        // currently only handles text cells, other types are ignored.
+        // must be called on the Flashcard object representing the row being inserted/added
+        // which must be appended to the main DOM tree before calling this function.
+        var row = this;
+        $.each(row.elt.closest('tr').prev().find('.ductus_FlashcardSide'), function(column_index, cell) {
+            // check what we have in FC sides one row above, and add those elements in this row as well (only text for now)
+            var wrapped = $(cell).data('widget_object').wrapped;
+            if (wrapped) {
+                if (wrapped.fqn == PhraseWidget.prototype.fqn) {
+                    $(row.elt.find('.ductus_FlashcardSide')[column_index]).data('widget_object').set_from_json({
+                        resource: {
+                            phrase: { text: '' },
+                            fqn: PhraseWidget.prototype.fqn
+                        }
+                    });
+                }
+            }
+        });
+    };
     // popup definition for a flashcard (a row)
     // FIXME: the width of the whole flashcard is used for positioning popup...
     Flashcard.prototype.popup_settings = {
@@ -375,7 +396,7 @@ $(function () {
             'display': function() { return true; },
             'callback': function() {
                 var fcd = $(".ductus_FlashcardDeck").data('widget_object');
-                fcd.add_row();
+                fcd.add_row(null, true);
             }
         },
         'bottom': {
@@ -641,11 +662,20 @@ $(function () {
         return ModelWidget.combine_presave_steps(this.rows);
     };
     FlashcardDeck.prototype.fqn = '{http://wikiotics.org/ns/2011/flashcards}flashcard_deck';
-    FlashcardDeck.prototype.add_row = function (fc) {
+    FlashcardDeck.prototype.add_row = function (fc, auto_type) {
+        // add a row at the end of the flashcard deck with content initialised to fc (a flashcard object)
+
+        // if auto_type is true (and fc is null), auto insert widgets based on the widgets found one row above (defaults to false)
+        if (typeof(auto_type) == undefined) {
+            auto_type = false;
+        }
         var row = new Flashcard(fc, this.columns);
         this.rows.push(row);
         row.elt.find(".row_td").text(this.rows.length);
         this.table.append(row.elt);
+        if (auto_type && fc == null) {
+            row.auto_type_cells();
+        }
     };
     FlashcardDeck.prototype.insert_row = function (row_index, fc) {
         // insert a row (flashcard) in the flashcard deck
@@ -658,6 +688,7 @@ $(function () {
         $(this.rows).each(function (i, row) {
             row.elt.find('.row_td').text(i + 1);
         });
+        row.auto_type_cells();
     };
     FlashcardDeck.prototype.delete_row = function (fc) {
         var row_index = fc.elt.index() - 1;
