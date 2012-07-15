@@ -358,7 +358,6 @@ def implicit_new_wikipage(request, prefix, pagename):
 
 def explicit_new_wikipage(request):
     return render_to_response('wiki/new_wikipage.html', {
-        'advanced_view': 'advanced' in request.GET,
         'creation_templates': _get_creation_templates(),
         'creation_views': _get_creation_views(),
     }, RequestContext(request))

@@ -11,6 +11,15 @@
 {% endcompress %}
 {% endblock %}
 
+{% block javascript %}
+{{ block.super }}
+$(function() {
+    $('a.ductus_other_view').click(function() {
+        $('dl.ductus_creation_views').toggle('fast');
+    });
+});
+{% endblock %}
+
 {% block content %}
 <p>
 {% if absolute_pagename %}
@@ -18,19 +27,7 @@
 {% endif %}
 {% trans "Please choose a type of page to create:" %}
 </p>
-
-{% if advanced_view %}
-    {# the advanced view lists types in a tech-oriented way #}
-    <dl class="ductus_creation_views">
-    {% for creation_view in creation_views %}
-    <dt><a href="/new/{{ creation_view.name|urlencode }}{% if absolute_pagename %}?target={{ absolute_pagename|urlencode }}{% endif %}">{{ creation_view.name|underscores_to_spaces }}</a></dt>
-    <dd>{{ creation_view.description }}</dd>
-    {% endfor %}
-    </dl>
-    <div style="clear: both"></div>
-    <a class="ductus_other_view" href="/new">Standard view</a>
-{% else %}
-    {# the normal view shows a fancy picture-enhanced list of user-friendly templates #}
+    {# show a fancy picture-enhanced list of user-friendly templates #}
     <div class="ductus_creation_templates">
         {% for creation_template in creation_templates %}
         <div class="ductus_creation_template {{ creation_template.class }}">
@@ -40,6 +37,13 @@
         {% endfor %}
     </div>
     <div style="clear: both"></div>
-    <a class="ductus_other_view" href="/new?advanced=true">advanced view</a>
-{% endif %}
+    <a class="ductus_other_view">additional options</a>
+    {# list types in a tech-oriented way #}
+    <dl class="ductus_creation_views">
+    {% for creation_view in creation_views %}
+    <dt><a href="/new/{{ creation_view.name|urlencode }}{% if absolute_pagename %}?target={{ absolute_pagename|urlencode }}{% endif %}">{{ creation_view.name|underscores_to_spaces }}</a></dt>
+    <dd>{{ creation_view.description }}</dd>
+    {% endfor %}
+    </dl>
+    <div style="clear: both"></div>
 {% endblock %}

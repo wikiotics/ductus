@@ -1,4 +1,6 @@
 dl.ductus_creation_views {
+    clear: both;
+    display: none;
     padding-left: 2em;
 }
 dl.ductus_creation_views dd {
@@ -6,6 +8,9 @@ dl.ductus_creation_views dd {
     margin-left: 0;
     padding-left: 2em;
     margin-bottom: 1em;
+}
+a.ductus_other_view {
+    cursor: pointer;
 }
 div.ductus_creation_templates {
     margin: 3em 1em 1em;
