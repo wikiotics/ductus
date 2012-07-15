@@ -43,11 +43,6 @@ import ductus
 
 logger = logging.getLogger(__name__)
 
-# The following can be removed once we upgrade to Django 1.5, as it will
-# supposedly do a strict check to make sure SECRET_KEY is not blank.
-if not settings.SECRET_KEY and not hasattr(ductus, '_called_from_test'):
-    raise Exception("You must define a SECRET_KEY in ductus_local_settings.py.")
-
 def view_frontpage(request):
     "Use the custom 'otics' front page, or redirect based on the user's locale"
     if 'ductus.modules.otics' in settings.DUCTUS_INSTALLED_MODULES:
