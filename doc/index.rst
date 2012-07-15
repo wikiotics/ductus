@@ -20,6 +20,7 @@ Contents:
    genericwiki-storage
    genericwiki-dispatch
    mediacache
+   online_recording
    indexing
    textwiki
    flashcard_deck
