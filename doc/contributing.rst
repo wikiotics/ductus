@@ -57,6 +57,25 @@ Patches can either be uploaded to the corresponding ticket on trac, or a develop
 
 If using git, never ever ever commit unrelated changes in the same changeset.  Each commit should be one logical change.  And it should attempt to break nothing and to introduce no additional brokenness.  The same is true for patches submitted to trac.
 
+Documentation for ductus
+------------------------
+
+This is the doc about the doc :)
+
+The docs use sphinx and reStructuredText.
+
+There are two ways to access the docs:
+
+ * The main documentation is built at http://ductus.readthedocs.org/en/latest/ and updated every few hours. The file ``<ductus_root>/doc/conf.py`` has a special section (look for READTHEDOCS in there) to deal with their specific build process.
+ * You can build your own local copy of the docs from the source code by running::
+
+      cd <ductus_root>/doc
+      make html SPHINXBUILD=../ductusenv/bin/sphinx-build
+
+   This assumes sphinx is installed in your virtualenv. If not, you will get a copious amount of warnings about libraries/packages not found.
+
+If you want to write additional documentation, awesome! Just be aware that when building the docs, a number of files are created/overwritten by sphinx-apidoc. Just run the build to get the list of files (right after "running apidoc" in the output).
+
 Documentation for software/specifications we use and depend on
 --------------------------------------------------------------
 
