@@ -22,6 +22,29 @@ sys.path.append(os.path.abspath('..'))
 if "READTHEDOCS" in os.environ:
     sys.path.append(os.path.abspath('../envs/latest/lib/python2.7/site-packages'))
 
+    # copied from http://read-the-docs.readthedocs.org/en/latest/faq.html#i-get-import-errors-on-libraries-that-depend-on-c-modules
+    class Mock(object):
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def __call__(self, *args, **kwargs):
+            return Mock()
+
+        @classmethod
+        def __getattr__(self, name):
+            if name in ('__file__', '__path__'):
+                return '/dev/null'
+            elif name[0] == name[0].upper():
+                return type(name, (), {})
+            else:
+                return Mock()
+
+    # update the list below with modules that ductus depends on, and that we want documented
+    MOCK_MODULES = ['compressor', 'flickrapi']
+    for mod_name in MOCK_MODULES:
+        sys.modules[mod_name] = Mock()
+    # /copied from ...
+
 # =============================================================================
 # start by running apidoc to generate the .rst files
 #
