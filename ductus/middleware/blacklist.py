@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from socket import inet_aton
+import socket
 import logging
 
 from django.conf import settings
@@ -26,7 +26,12 @@ logger = logging.getLogger(__name__)
 class IPAddressBlacklistMiddleware(object):
     def process_request(self, request):
         if request.method == "POST":
-            ip = inet_aton(request.remote_addr)
+            try:
+                ip = socket.inet_aton(request.remote_addr)
+            except socket.error:
+                # not a valid ipv4 address (maybe it's ipv6)?  allow the user
+                # to pass.
+                return
             try:
                 banned_ips = file(settings.DUCTUS_BLACKLIST_FILE).read()
             except IOError:
