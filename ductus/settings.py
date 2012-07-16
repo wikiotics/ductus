@@ -248,8 +248,6 @@ DUCTUS_ALLOWED_LICENSES = (
 
 DUCTUS_DEFAULT_LICENSE = 'http://creativecommons.org/licenses/by-sa/3.0/'
 
-DUCTUS_FRONT_PAGE = '/wiki/front_page'
-
 #DUCTUS_MEDIACACHE_DIR = ''
 DUCTUS_MEDIACACHE_URL = '/mediacache' # no trailing slash
 #DUCTUS_MEDIACACHE_URL_SECURE = None
