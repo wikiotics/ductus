@@ -59,7 +59,7 @@ class WikiRevision(models.Model):
         # blank "urn" means the page has been unlinked (i.e. "deleted")
 
     author = models.ForeignKey(User, blank=True, null=True)
-    author_ip = models.IPAddressField(blank=True, null=True)
+    author_ip = models.GenericIPAddressField(blank=True, null=True)
     log_message = models.CharField(max_length=400, blank=True)
 
     class Meta:
