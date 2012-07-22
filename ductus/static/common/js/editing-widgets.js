@@ -1077,7 +1077,9 @@ OnlineRecorder.prototype.checkSecurity = function() {
     if (this.settings.microphone.granted) {
         this.listen(true);
         this.Wami.hide();
-        this.wami_dialog.dialog('close');
+        // jqueryUI.dialog('close') causes a css('display', 'none') which loses flash event handlers in chromium (webkit?)
+        // the following line prevents loss of said handlers.
+        this.wami_dialog.dialog('widget').css('visibility', 'hidden');
         this.setupButtons();
     } else {
         // Show any Flash settings panel you want using the string constants

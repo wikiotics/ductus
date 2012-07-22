@@ -77,7 +77,7 @@ Wami.prototype.swfinit_callback = function() {
 };
 
 Wami.prototype.delegate = function(name) {
-    wami = this;
+    var wami = this;
     this[name] = function() {
         return wami.recorder[name].apply(wami.recorder, arguments);
     };
