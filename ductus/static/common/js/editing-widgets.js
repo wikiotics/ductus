@@ -969,8 +969,6 @@ function OnlineRecorder() {
         '<div id="ductus_OnlineRecorder" style="position: relative;">' +
             '<div id="rec_controls">' +
                 '<button id="recordDiv"></button>' +
-                /*'<button id="playDiv"></button>' +*/
-                '<button id="uploadDiv"></button>' +
             '</div>' +
             '<div id="feedbackDiv" style="position: absolute; left: 30px; top: 95px"></div>' +
         '</div>'
@@ -1008,7 +1006,6 @@ OnlineRecorder.prototype.setupButtons = function() {
     this.elt.find('button').attr('visibility', 'hidden');
     this.elt.find('#rec_controls').hide();
     this.showRecordButton('start');
-    this.showUploadButton();
     this.elt.find('#rec_controls').buttonset();
     this.elt.find('#rec_controls').show();
 };
