@@ -967,10 +967,9 @@ var online_recorder;    // make this a global variable since this code is too me
 function OnlineRecorder() {
     var recorder_div = (
         '<div id="ductus_OnlineRecorder" style="position: relative;">' +
-            '<div id="record_online_button"></div>' +
             '<div id="rec_controls">' +
                 '<button id="recordDiv"></button>' +
-                '<button id="playDiv"></button>' +
+                /*'<button id="playDiv"></button>' +*/
                 '<button id="uploadDiv"></button>' +
             '</div>' +
             '<div id="feedbackDiv" style="position: absolute; left: 30px; top: 95px"></div>' +
@@ -991,15 +990,7 @@ OnlineRecorder.prototype.init = function() {
     if (this.record_btn) {
         this.listen(false);
     }
-    if (!this.record_online_btn) {
-        this.record_online_btn = this.elt.find('#record_online_button');
-        this.record_online_btn.button( { label: gettext('Record online') } );
-    }
-    this.record_online_btn.button().show();
-    this.record_online_btn.click( function() {
-        $(this).hide();
-        online_recorder.setupRecorder();
-    });
+    online_recorder.setupRecorder();
 };
 OnlineRecorder.prototype.setupRecorder = function() {
     if (!this.Wami) {
@@ -1017,11 +1008,9 @@ OnlineRecorder.prototype.setupButtons = function() {
     this.elt.find('button').attr('visibility', 'hidden');
     this.elt.find('#rec_controls').hide();
     this.showRecordButton('start');
-    this.showPlayButton('start');
     this.showUploadButton();
     this.elt.find('#rec_controls').buttonset();
     this.elt.find('#rec_controls').show();
-    this.record_online_btn.hide();
 };
 OnlineRecorder.prototype.hideButtons = function() {
     this.elt.find('#rec_controls').hide();
@@ -1134,14 +1123,6 @@ OnlineRecorder.prototype.stopRecording = function() {
     this.showRecordButton('start');
     this.Wami.stopRecording();
 };
-OnlineRecorder.prototype.startPlaying = function() {
-    this.showPlayButton('stop');
-    this.Wami.startPlaying("", "online_recorder.onPlayStart", "online_recorder.onPlayFinish", "online_recorder.onError");
-};
-OnlineRecorder.prototype.stopPlaying = function() {
-    this.showPlayButton('start');
-    this.Wami.stopPlaying();
-};
 /**
  * Callbacks from the flash indicating certain events
  */
@@ -1155,13 +1136,7 @@ OnlineRecorder.prototype.onRecordStart = function() {
 OnlineRecorder.prototype.onRecordFinish = function() {
     console.log('OR onRecordFinish');
 };
-OnlineRecorder.prototype.onPlayStart = function() {
-    console.log('OR onPlayStart');
-};
-OnlineRecorder.prototype.onPlayFinish = function() {
-    console.log('OR onPlayFinish');
-    this.showPlayButton('start');
-};
+
 function TaggingWidget(tags, fcdw) {
     // the widget used to edit tags applied to the whole flashcard deck
     // tags: an array of tag objects like { 'value': 'my_tag_text' }
