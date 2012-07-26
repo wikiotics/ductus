@@ -1135,6 +1135,7 @@ OnlineRecorder.prototype.onRecordStart = function() {
 };
 OnlineRecorder.prototype.onRecordFinish = function() {
     console.log('OR onRecordFinish');
+    this.uploadAudio();
 };
 
 function TaggingWidget(tags, fcdw) {
