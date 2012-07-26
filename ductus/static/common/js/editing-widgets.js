@@ -668,6 +668,10 @@ function AudioCreationWidget() {
         return { elt: $('<div>' + gettext('Your browser does not support File API, so you will not be able to upload anything.') + '</div>') };
     }
     ModelWidget.call(this, null, '<div class="AudioWidget_creation_widget"></div>');
+
+    var recording_widget = new OnlineRecorder();
+    recording_widget.elt.appendTo(this.elt);
+
     var file_input = $('<span class="ductus_file_upload_wrapper">' +
         '<input type="file" accept="audio/ogg" />' +
         '<span class="ductus_file_upload_button">' + gettext('Upload a file') + '</span>' +
@@ -681,8 +685,6 @@ function AudioCreationWidget() {
         }]);
     });
 
-    var recording_widget = new OnlineRecorder();
-    recording_widget.elt.appendTo(this.elt);
     this.initial_inner_blueprint = {resource: ""};
     return this;
 };
