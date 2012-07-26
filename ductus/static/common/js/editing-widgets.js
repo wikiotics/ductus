@@ -1031,35 +1031,6 @@ OnlineRecorder.prototype.showRecordButton = function(start_stop) {
         this.record_btn.click(function() { online_recorder.stopRecording(); });
     }
 };
-OnlineRecorder.prototype.showPlayButton = function(start_stop) {
-    this.play_btn = this.elt.find('#playDiv');
-    this.play_btn.unbind('click');
-    if (start_stop == 'start') {
-        this.play_btn.text(gettext('Start playing'));
-        this.play_btn.button( {
-            icons: { primary: "ui-icon-play" },
-            text: false
-        });
-        this.play_btn.click(function() { online_recorder.startPlaying(); } );
-    } else {
-        this.play_btn.text(gettext('Stop playing'));
-        this.play_btn.button( {
-            icons: { primary: "ui-icon-stop" },
-            text: false
-        });
-        this.play_btn.click(function() { online_recorder.stopPlaying(); });
-    }
-};
-OnlineRecorder.prototype.showUploadButton = function() {
-    this.upload_btn = this.elt.find('#uploadDiv');
-    this.upload_btn.unbind('click');
-    this.upload_btn.text(gettext('Upload recording'));
-    this.upload_btn.button( {
-        icons: { primary: "ui-icon-check" },
-        text: false
-    });
-    this.upload_btn.click(function() { online_recorder.uploadAudio(); });
-};
 OnlineRecorder.prototype.checkSecurity = function() {
     this.settings = this.Wami.getSettings();
     if (this.settings.microphone.granted) {
