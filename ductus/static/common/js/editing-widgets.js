@@ -680,7 +680,7 @@ function AudioCreationWidget() {
     var this_ = this;
     input.change(function () {
         var file = this.files[0];
-        this.elt.trigger("ductus_element_selected", [{
+        this_.elt.trigger("ductus_element_selected", [{
             resource: { fqn: AudioWidget.prototype.fqn, _file: file }
         }]);
     });
