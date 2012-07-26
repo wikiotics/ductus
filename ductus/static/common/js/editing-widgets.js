@@ -674,7 +674,7 @@ function AudioCreationWidget() {
 
     var file_input = $('<span class="ductus_file_upload_wrapper">' +
         '<input type="file" accept="audio/ogg" />' +
-        '<span class="ductus_file_upload_button">' + gettext('Upload a file') + '</span>' +
+        '<span class="ductus_file_upload_button">' + gettext('or upload a file...') + '</span>' +
         '</span>');
     var input = file_input.appendTo(this.elt).find('input');
     var this_ = this;
