@@ -50,3 +50,7 @@ div#ductus_FSWControls .ductus_FSWlink.disabled {
     font-size: 80%;
     padding: 4px 10px;
 }
+#recordDiv {
+    margin-left: 0.2em;
+    width: 5em;
+}
