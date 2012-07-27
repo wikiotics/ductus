@@ -1034,6 +1034,12 @@ OnlineRecorder.prototype.showRecordButton = function(start_stop) {
         this.record_btn.click(function() { online_recorder.stopRecording(); });
     }
 };
+OnlineRecorder.prototype.showSpinner = function() {
+    this.record_btn.addClass('ductus_spinner');
+};
+OnlineRecorder.prototype.hideSpinner = function() {
+    this.record_btn.removeClass('ductus_spinner');
+};
 OnlineRecorder.prototype.checkSecurity = function() {
     this.settings = this.Wami.getSettings();
     if (this.settings.microphone.granted) {
@@ -1096,6 +1102,7 @@ OnlineRecorder.prototype.startRecording = function() {
 };
 OnlineRecorder.prototype.stopRecording = function() {
     this.showRecordButton('start');
+    this.showSpinner();
     this.Wami.stopRecording();
 };
 OnlineRecorder.prototype.cancelRecording = function() {

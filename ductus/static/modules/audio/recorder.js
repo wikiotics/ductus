@@ -210,6 +210,7 @@ Wami.prototype.handle_upload_errors = function(e) {
 };
 Wami.prototype.handle_upload_success = function(data) {
     // feedback the urn to the recorded audio to the caller
+    online_recorder.hideSpinner();
     online_recorder.elt.parent().trigger('ductus_element_selected',
             { href: data.urn,
               resource: { fqn: AudioWidget.prototype.fqn }

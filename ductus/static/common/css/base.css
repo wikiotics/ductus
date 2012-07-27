@@ -182,7 +182,9 @@ h6 {
 .ductus_save_notice {
     color: #a00;
 }
-
+.ductus_spinner .ui-icon {
+    background: url(../img/loading.svg) center center no-repeat;
+}
 hr {
     border: 0;
     height: 1px;
