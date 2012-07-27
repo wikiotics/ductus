@@ -270,6 +270,13 @@ $(function () {
                 if (!FlashcardSide._global_audio_creator) {
                     FlashcardSide._global_audio_creator = AudioWidget.creation_ui_widget();
                 } else {
+                    // the widget has already been created, just reset it
+                    // and cleanup the cell where it was previously (so popup works again)
+                    var cell = online_recorder.elt.closest('div.ductus_FlashcardSide');
+                    if (cell.length) {
+                        FlashcardSide._global_audio_creator.elt.detach();
+                        cell.data('widget_object').reset();
+                    }
                     online_recorder.init();
                 }
                 caller._set_wrapped(FlashcardSide._global_audio_creator);
