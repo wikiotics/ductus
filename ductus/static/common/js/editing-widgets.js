@@ -1103,6 +1103,8 @@ OnlineRecorder.prototype.startRecording = function() {
 OnlineRecorder.prototype.stopRecording = function() {
     this.showRecordButton('start');
     this.showSpinner();
+    // take a reference to the parent cell in case the recorder is moved while uploading
+    this.upload_target = this.elt.parent().parent();
     this.Wami.stopRecording();
 };
 OnlineRecorder.prototype.cancelRecording = function() {

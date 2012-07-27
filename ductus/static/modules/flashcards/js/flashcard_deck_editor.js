@@ -281,7 +281,14 @@ $(function () {
                 }
                 caller._set_wrapped(FlashcardSide._global_audio_creator);
                 FlashcardSide._global_audio_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
-                    $('#ductus_PopupWidget').data('widget_object').calling_widget.set_from_json(model_json_repr);
+                    if (online_recorder.upload_target) {
+                        // it's a recorded file, to avoid inserting it in the wrong location we use the reference taken at record time
+                        // (the user might have moved the recorder during upload)
+                        online_recorder.upload_target.data('widget_object').set_from_json(model_json_repr);
+                        delete(online_recorder.upload_target);
+                    } else {
+                        $('#ductus_PopupWidget').data('widget_object').calling_widget.set_from_json(model_json_repr);
+                    }
                 });
                 caller.ensure_last_row_empty();
             }
