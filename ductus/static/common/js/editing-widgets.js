@@ -984,7 +984,7 @@ function OnlineRecorder() {
 OnlineRecorder.prototype = chain_clone(Widget.prototype);
 OnlineRecorder.prototype.init = function() {
     // set or reset the widget to its initial status: upload or record buttons
-    if (this.Wami) {
+    if (this.Wami && this.recording) {
         this.cancelRecording();   // ensure there's no recording ongoing if the user forgets to stop it before creating some audio elsewhere in a page
     }
     this.hideButtons();
@@ -1092,6 +1092,7 @@ OnlineRecorder.prototype.uploadAudio = function() {
 OnlineRecorder.prototype.startRecording = function() {
     this.showRecordButton('stop');
     this.Wami.startRecording("", "online_recorder.onRecordStart", "online_recorder.onRecordFinish", "online_recorder.onError");
+    this.recording = true;
 };
 OnlineRecorder.prototype.stopRecording = function() {
     this.showRecordButton('start');
@@ -1113,6 +1114,7 @@ OnlineRecorder.prototype.onRecordStart = function() {
 };
 OnlineRecorder.prototype.onRecordFinish = function() {
     console.log('OR onRecordFinish');
+    this.recording = false;
     if (!this.cancel_recording) {
         this.uploadAudio();
     } else {
