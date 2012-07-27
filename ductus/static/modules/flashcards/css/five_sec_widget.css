@@ -54,3 +54,6 @@ div#ductus_FSWControls .ductus_FSWlink.disabled {
     margin-left: 0.2em;
     width: 5em;
 }
+.ductus_recorder_security {
+        visibility: hidden;
+}
