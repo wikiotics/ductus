@@ -978,7 +978,7 @@ function OnlineRecorder() {
     // make #wami a dialog, so that the minimal size of the flash panel does not impact our gorgeous JS interface :)
     this.wami_dialog = $('<div id="wami"></div>');
     this.wami_dialog.appendTo('body'); // we attach to body to be sure $('#wami') always returns something
-    this.wami_dialog.dialog({autoOpen: false, dialogClass: "ductus_recorder_security"});
+    this.wami_dialog.dialog({autoOpen: false, dialogClass: "ductus_recorder_security", title: gettext('Autorize recording')});
     this.init();
 }
 OnlineRecorder.prototype = chain_clone(Widget.prototype);
@@ -1045,6 +1045,8 @@ OnlineRecorder.prototype.checkSecurity = function() {
         this.setupButtons();
     } else {
         this.wami_dialog.dialog('widget').css('visibility', 'visible');
+        var msg = $('<div class="ductus_instructions"></div>').insertAfter(this.wami_dialog.dialog('widget').children().eq(0));
+        msg.text(gettext('In the panel below, please click "Allow", check "Remember" and click "Close" so the site can access your microphone to record audio.'));
         // Show any Flash settings panel you want using the string constants
         // defined here:
         // http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/system/SecurityPanel.html

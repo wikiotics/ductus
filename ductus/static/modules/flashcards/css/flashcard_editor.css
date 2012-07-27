@@ -71,6 +71,13 @@
 .ductus_recorder_security {
     visibility: hidden;
 }
+.ductus_recorder_security #wami {
+    margin: 0.5em 2em;
+}
+.ductus_recorder_security .ductus_instructions {
+    font-size: 60%;
+    margin: 0.5em;
+}
 .ductus-selected {
     background-color: #ddf;
 }
