@@ -978,7 +978,7 @@ function OnlineRecorder() {
     // make #wami a dialog, so that the minimal size of the flash panel does not impact our gorgeous JS interface :)
     this.wami_dialog = $('<div id="wami"></div>');
     this.wami_dialog.appendTo('body'); // we attach to body to be sure $('#wami') always returns something
-    this.wami_dialog.dialog({autoOpen: false, dialogClass: "ductus_recorder_security", title: gettext('Autorize recording')});
+    this.wami_dialog.dialog({autoOpen: false, dialogClass: "ductus_recorder_security", title: gettext('Authorize recording')});
     this.init();
 }
 OnlineRecorder.prototype = chain_clone(Widget.prototype);
