@@ -42,6 +42,9 @@ def new_picture(request):
             save_context = BlueprintSaveContext.from_request(request)
             urn = form.save(save_context)
             return SuccessfulEditRedirect(urn)
+        else:
+            if request.is_ajax():
+                return render_json_response({'errors': form.errors})
     else:
         form = PictureImportForm()
 
