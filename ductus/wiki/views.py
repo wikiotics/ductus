@@ -286,7 +286,7 @@ def view_wikipage(request, prefix, pagename):
                 response = f(request)
 
     if response is None:
-        response = implicit_new_wikipage(request, prefix, pagename)
+        response = new_wikipage(request, prefix, pagename)
 
     # wikipage urls expire immediately since they can frequently be edited
     patch_response_headers(response, cache_timeout=0)
@@ -317,45 +317,61 @@ def _get_creation_templates():
         {
             'class': 'podcast',
             'name': _('Podcast'),
-            'url': '/new/flashcard_deck?template=podcast',
+            'url': '/new/flashcard_deck',
+            'template_name': 'podcast',
             'description': _('a lesson that compiles into a downloadable podcast'),
         },
         {
             'class': 'picture_choice',
             'name': _('Picture choice'),
-            'url': '/new/flashcard_deck?template=picture_choice',
+            'url': '/new/flashcard_deck',
+            'template_name': 'picture_choice',
             'description': _('a lesson where you choose between multiple pictures'),
         },
         {
             'class': 'phrase_choice',
             'name': _('Phrase choice'),
-            'url': '/new/flashcard_deck?template=phrase_choice',
+            'url': '/new/flashcard_deck',
+            'template_name': 'phrase_choice',
             'description': _('a lesson where you choose between multiple phrases'),
         },
         {
             'class': 'storybook',
             'name': _('Story Book'),
-            'url': '/new/flashcard_deck?template=storybook',
+            'url': '/new/flashcard_deck',
+            'template_name': 'storybook',
             'description': _('a multimedia lesson that reads like a book'),
         },
     )
 
-def implicit_new_wikipage(request, prefix, pagename):
-    c = RequestContext(request, {
-        'absolute_pagename': join_pagename(prefix, pagename),
-        'advanced_view': 'advanced' in request.GET,
-        'creation_templates': _get_creation_templates(),
-        'creation_views': _get_creation_views(),
-    })
-    check_create_permission(request, prefix, pagename)
-    t = loader.get_template('wiki/new_wikipage.html')
-    return HttpResponse(t.render(c), status=404)
+def new_wikipage(request, prefix=None, pagename=None):
+    url_params = request.GET.copy()
+    http_status = 200
+    absolute_pagename = None
+    # handle implicit page creation (when a url does not exist)
+    if pagename:
+        check_create_permission(request, prefix, pagename)
+        http_status = 404
+        absolute_pagename = join_pagename(prefix, pagename)
+        url_params.update({'target': absolute_pagename})
 
-def explicit_new_wikipage(request):
-    return render_to_response('wiki/new_wikipage.html', {
-        'creation_templates': _get_creation_templates(),
+    # merge all url parameters into a string for each template
+    creation_templates = _get_creation_templates()
+    for template in creation_templates:
+        params = url_params.copy()
+        if 'template_name' in template:
+            params['template'] = template['template_name']
+        template['params'] = params.urlencode()
+
+    c = RequestContext(request, {
+        'absolute_pagename': absolute_pagename,
+        'creation_templates': creation_templates,
         'creation_views': _get_creation_views(),
-    }, RequestContext(request))
+        'url_params': url_params.urlencode(),
+        'params_list': url_params.lists(),
+    })
+    t = loader.get_template('wiki/new_wikipage.html')
+    return HttpResponse(t.render(c), status=http_status)
 
 def creation_view(request, page_type):
     try:

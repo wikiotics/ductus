@@ -31,7 +31,7 @@ $(function() {
     <div class="ductus_creation_templates">
         {% for creation_template in creation_templates %}
         <div class="ductus_creation_template {{ creation_template.class }}">
-            <a href="{{ creation_template.url }}{% if absolute_pagename %}?target={{ absolute_pagename|urlencode }}{% endif %}" title="{{ creation_template.description }}"></a>
+            <a href="{{ creation_template.url }}{% if creation_template.params %}?{{ creation_template.params }}{% endif %}" title="{{ creation_template.description }}"></a>
             {{ creation_template.name }}
         </div>
         {% endfor %}
@@ -41,7 +41,7 @@ $(function() {
     {# list types in a tech-oriented way #}
     <dl class="ductus_creation_views">
     {% for creation_view in creation_views %}
-    <dt><a href="/new/{{ creation_view.name|urlencode }}{% if absolute_pagename %}?target={{ absolute_pagename|urlencode }}{% endif %}">{{ creation_view.name|underscores_to_spaces }}</a></dt>
+    <dt><a href="/new/{{ creation_view.name|urlencode }}{% if url_params %}?{{ url_params }}{% endif %}">{{ creation_view.name|underscores_to_spaces }}</a></dt>
     <dd>{{ creation_view.description }}</dd>
     {% endfor %}
     </dl>
