@@ -190,6 +190,37 @@ FlickrPictureSource.prototype.inner_blueprint_repr = function () {
 FlickrPictureSource.prototype.clone = function () {
     return this;
 };
+FlickrPictureSource.prototype.attempt_upload = function (upload_success_cb, error_cb) {
+    // called in presave steps to save pictures on the server
+    // return the urn for the saved picture
+    //var flickr_photo = this.flickr_photo;
+    if (!this.flickr_photo) {
+        // no flickr photo, this should not have been called (really, this should never happen)
+        if (error_cb) error_cb();
+        return;
+    }
+    var fps = this;
+    this._upload_in_progress = true;
+    function handle_upload_errors(errors) {
+        for (var i = 0; i < errors.length; ++i) {
+            _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
+        }
+        _this._upload_in_progress = false;
+        if (error_cb) error_cb(gettext('error uploading audio'));
+    }
+    $.ajax({
+        url: '/new/picture',
+        type: 'POST',
+        dataType: 'json',
+        data: {'uri': fps.flickr_photo.page_url },
+        success: function(data) {
+            upload_success_cb(data.urn);
+        },
+        error: function() {
+            if (error_cb) { error_cb(); }
+        }
+    });
+};
 
 function PictureModelWidget(picture) {
     // the widget shown in a flashcard side cell for a picture
@@ -227,6 +258,36 @@ PictureModelWidget.creation_ui_widget = function () {
 };
 PictureModelWidget.prototype.edit_ui_widget = function () {
     return { elt: this._picture_widget.rotation_controls };
+};
+PictureModelWidget.prototype.get_outstanding_presave_steps = function () {
+    // make sure the image is uploaded to server before saving the blueprint
+    // to limit transfer to/from the client, we simply POST the url of the picture to the server
+    // and get a urn in return.
+
+    // only perform a presave action if we need to
+    if (this._picture_widget._picture_source.flickr_photo) {
+        var pm_widget = this;
+        return [function (success_cb, error_cb) { return pm_widget.attempt_upload(success_cb, error_cb); }];
+    }
+    // picture is already on the server
+    return [];
+};
+PictureModelWidget.prototype.attempt_upload = function (success_cb, error_cb) {
+    // send a relevant reference to the server to trigger picture upload
+    if (this._picture_widget._picture_source.flickr_photo) {
+        var pm_widget = this;
+        var flickr_success_cb = function(urn) {
+            pm_widget._set_from_urn(urn);
+            if (success_cb) { success_cb() }
+        };
+        this._picture_widget._picture_source.attempt_upload(flickr_success_cb, error_cb);
+    }
+};
+PictureModelWidget.prototype._set_from_urn = function (urn) {
+    // called to handle ajax upload success. Replace the flickr picture source with a UrnPictureSource
+    var picture_source = new UrnPictureSource(urn);
+    this._picture_widget = new PictureWidget(picture_source);
+    this.elt.empty().append(this._picture_widget.elt);  // do we really need this, since we save right after this and display is frozen anyway
 };
 PictureModelWidget.prototype.popup_settings = {
     'left': {
