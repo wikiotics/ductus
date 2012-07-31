@@ -129,9 +129,16 @@ ModelWidget.prototype.blueprint_repr = function () {
     }
 };
 ModelWidget.prototype.get_outstanding_presave_steps = function () {
+    // query the widget for actions to perform before saving the blueprint
+    // return a list of functions to call
     return [];
 };
 ModelWidget.combine_presave_steps = function (widgets, additional_steps) {
+    // build a list of presave_steps: actions to perform before sending the blueprint to the server for saving
+    // each function in the list takes 2 arguments: a success callback, and an error callback
+    // widgets: the list of widgets to query
+    // additional_steps: a list of functions to call before saving
+    // return a list of functions
     var i, rv = [];
     for (i = 0; i < widgets.length; ++i) {
         $.merge(rv, widgets[i].get_outstanding_presave_steps());
@@ -513,6 +520,7 @@ AudioWidget.prototype.blueprint_repr = function () {
     return { href: this._urn };
 };
 AudioWidget.prototype.get_outstanding_presave_steps = function () {
+    // make sure the audio is uploaded to server before saving the blueprint
     if (this.file) {
         var this_ = this;
         return [function (success_cb, error_cb) { return this_.attempt_upload(success_cb, error_cb); }];
