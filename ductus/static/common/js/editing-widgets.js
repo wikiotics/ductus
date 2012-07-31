@@ -181,12 +181,6 @@ FlickrPictureSource.prototype.get_images = function () {
         '1024x1024': this.flickr_photo.large_url
     };
 };
-FlickrPictureSource.prototype.inner_blueprint_repr = function () {
-    return {
-        '@create': PictureModelWidget.prototype.fqn,
-        'flickr_photo_id': this.flickr_photo.id
-    };
-};
 FlickrPictureSource.prototype.clone = function () {
     return this;
 };
