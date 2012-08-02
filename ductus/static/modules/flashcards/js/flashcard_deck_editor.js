@@ -199,8 +199,8 @@ $(function () {
         // a FlashcardSide widget. Visually, the cell in the flashcard deck
         // either empty or containing a ModelWidget in this.wrapped
         Widget.call(this, '<div class="ductus_FlashcardSide"></div>');
-        this.set_from_json(fcs);
         this.column = column;
+        this.set_from_json(fcs);
     }
     FlashcardSide.prototype = chain_clone(Widget.prototype);
     FlashcardSide.prototype.blueprint_repr = function () {
@@ -223,12 +223,27 @@ $(function () {
             popup.data('widget_object').show_popup(this);
         }
     };
+    FlashcardSide.prototype.pretype_column = function (fcs) {
+        // set a predefined type for the column where this side is
+        // type defaults to 'empty' and is set to whatever fqn is used in the column
+        // unless 2 different fqns are mixed, in which case it is null.
+        // empty sides are ignored
+        var column = this.column;
+        if (this.wrapped) {
+            if (column.pretype == 'empty') {
+                column.pretype = this.wrapped.fqn;
+            } else if (column.pretype && column.pretype != this.wrapped.fqn) {
+                column.pretype = null;
+            }
+        }
+    };
     FlashcardSide.prototype.set_from_json = function (fcs) {
         if (fcs && fcs.resource) {
             this._set_wrapped(new FlashcardSide.widgets_by_fqn[fcs.resource.fqn](fcs));
         } else {
             this.reset();
         }
+        this.pretype_column();
     };
     FlashcardSide.prototype._set_wrapped = function (wrapped) {
         if (!wrapped) {
@@ -527,6 +542,7 @@ $(function () {
         this.header = new FlashcardColumnEditor(fcd, this);
         this.th.append(this.header.elt);
         this.fcd = fcd;
+        this.pretype = 'empty';    // store the fqn of a "predefined type" if it is the same in the whole column, null otherwise
     }
     FlashcardColumn.prototype = chain_clone(Widget.prototype);
 
