@@ -407,14 +407,6 @@ $(function () {
     // popup definition for a flashcard (a row)
     // FIXME: the width of the whole flashcard is used for positioning popup...
     Flashcard.prototype.popup_settings = {
-        'left': {
-            'html': gettext('add row'),
-            'display': function() { return true; },
-            'callback': function() {
-                var fcd = $(".ductus_FlashcardDeck").data('widget_object');
-                fcd.add_row(null, true);
-            }
-        },
         'bottom': {
             'html': gettext('delete row'),
             'display': function() { return true; },
