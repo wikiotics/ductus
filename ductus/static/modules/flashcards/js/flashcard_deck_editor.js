@@ -616,6 +616,10 @@ $(function () {
         this.save_widget = new SaveWidget(this, 'the lesson');
         this.save_widget.elt.make_sidebar_widget(gettext('Save...'), this.sidebar);
 
+        this.add_row_button = $('<div class="ductus_add_row">+</div>').appendTo(this.elt);
+        this.add_row_button.click(function() {
+            this_.add_row(null, true);
+        });
         this.record_initial_inner_blueprint();
     }
     FlashcardDeck.prototype = chain_clone(ModelWidget.prototype);
