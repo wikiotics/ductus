@@ -689,7 +689,6 @@ $(function () {
         if (auto_type && fc == null) {
             row.auto_type_cells();
         }
-        console.log("types ", this.columns[0].pretype, this.columns[1].pretype, this.columns[2].pretype, this.columns[3].pretype, this.columns[4].pretype);
     };
     FlashcardDeck.prototype.insert_row = function (row_index, fc) {
         // insert a row (flashcard) in the flashcard deck
