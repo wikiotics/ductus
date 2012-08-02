@@ -254,18 +254,23 @@ $(function () {
         this.elt.children().detach();
         this.elt.append(wrapped.elt);
     };
+    FlashcardSide.prototype.preset_to_phrase = function() {
+        // wrap an empty text input in the flashcard side
+        // this is just a convenience function to avoid repeating this code
+        this.set_from_json({
+            resource: {
+                phrase: { text: '' },
+                fqn: PhraseWidget.prototype.fqn
+            }
+        });
+    };
     // popup definition for an empty flashcard side
     FlashcardSide.prototype.popup_settings = {
         'left': {
             'html': gettext('new phrase'),
             'display': function() { return true; },
             'callback': function(caller) {
-                caller.set_from_json({
-                    resource: {
-                        phrase: { text: '' },
-                        fqn: PhraseWidget.prototype.fqn
-                    }
-                });
+                caller.preset_to_phrase();
                 caller.wrapped.input.focus();
             }
         },
@@ -395,12 +400,7 @@ $(function () {
             var fcs = $(this).data('widget_object');
             var pretype = fcs.column.pretype;
             if (pretype == PhraseWidget.prototype.fqn) {
-                fcs.set_from_json({
-                    resource: {
-                        phrase: { text: '' },
-                        fqn: PhraseWidget.prototype.fqn
-                    }
-                });
+                fcs.preset_to_phrase();
             }
         });
     };
