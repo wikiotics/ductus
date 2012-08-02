@@ -386,23 +386,21 @@ $(function () {
         }, null);
     };
     Flashcard.prototype.auto_type_cells = function () {
-        // ensure pretyping of cells according to what is found in previous row.
+        // ensure pretyping of cells according to column.pretype
         // currently only handles text cells, other types are ignored.
         // must be called on the Flashcard object representing the row being inserted/added
         // which must be appended to the main DOM tree before calling this function.
         var row = this;
-        $.each(row.elt.closest('tr').prev().find('.ductus_FlashcardSide'), function(column_index, cell) {
-            // check what we have in FC sides one row above, and add those elements in this row as well (only text for now)
-            var wrapped = $(cell).data('widget_object').wrapped;
-            if (wrapped) {
-                if (wrapped.fqn == PhraseWidget.prototype.fqn) {
-                    $(row.elt.find('.ductus_FlashcardSide')[column_index]).data('widget_object').set_from_json({
-                        resource: {
-                            phrase: { text: '' },
-                            fqn: PhraseWidget.prototype.fqn
-                        }
-                    });
-                }
+        this.elt.find('td').children().each(function (i) {
+            var fcs = $(this).data('widget_object');
+            var pretype = fcs.column.pretype;
+            if (pretype == PhraseWidget.prototype.fqn) {
+                fcs.set_from_json({
+                    resource: {
+                        phrase: { text: '' },
+                        fqn: PhraseWidget.prototype.fqn
+                    }
+                });
             }
         });
     };
@@ -699,6 +697,7 @@ $(function () {
         if (auto_type && fc == null) {
             row.auto_type_cells();
         }
+        console.log("types ", this.columns[0].pretype, this.columns[1].pretype, this.columns[2].pretype, this.columns[3].pretype, this.columns[4].pretype);
     };
     FlashcardDeck.prototype.insert_row = function (row_index, fc) {
         // insert a row (flashcard) in the flashcard deck
