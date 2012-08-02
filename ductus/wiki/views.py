@@ -209,6 +209,18 @@ def handle_blueprint_post(request, expected_model=DuctModel):
             msg.append(repr(exc_info))
             logger.error("\n".join(msg))
         return HttpTextResponseBadRequest(u"validation failed")
+
+    # edit successful: update the index
+    from ductus.index import update_index_on_save
+    try:
+        # try to get the parent urn from the blueprint, as it is already in memory
+        parent_urn = blueprint['resource']['@patch']
+    except KeyError:
+        parent_urn = None
+    url = request.path
+    url = ':'.join(url[1:].split('/', 1))
+    update_index_on_save(urn, url, parent_urn)
+
     return SuccessfulEditRedirect(urn)
 
 def _fully_handle_blueprint_post(request, prefix, pagename):

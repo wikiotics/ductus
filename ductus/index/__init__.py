@@ -16,7 +16,9 @@
 
 from django.conf import settings
 from django.utils.importlib import import_module
+from ductus.resource import get_resource_database, hash_name, UnexpectedHeader
 from ductus.wiki.namespaces import registered_namespaces, split_pagename
+from lxml import etree
 
 _indexing_mongo_database = False  # False means uninitialized; None means
                                   # indexing is not in use
@@ -100,3 +102,96 @@ def search_pages(**kwargs):
             })
 
     return results
+
+def perform_upsert(collection, urn, obj, ignore=None):
+    """Update/insert the index document for a `urn` in mongo.
+
+    `collection` is the collection for the index.
+    `urn`: the urn for which to store the object.
+    `obj`: a dict object representing the data to store.
+    """
+    # REMEMBER that dictionary order matters in mongodb; we just ignore
+    # it
+
+    # fixme: first inspect element to see if things might already be
+    # right.  also check to make sure there aren't any unexpected
+    # attributes on the toplevel element.  and do the same thing for
+    # blobs too.
+
+    obj = dict(obj)
+    obj["urn"] = urn
+    collection.update({"urn": urn}, obj, upsert=True, safe=True)
+
+def verify(collection, urn, current_wikipages_list, force_update=False):
+    """Updates a urn's indexing info and returns the set of its recursive links.
+
+    `collection`: the mongo collection to use as returned by ``get_indexing_mongo_database()``.
+    `urn`: the urn to update the index for.
+    `wikipages_url_list` is the sorted list of urls pointing to `urn`.
+    `force_update`: set to True to update the index even if `urn` is already in the index (defaults to ``False``).
+    """
+    if not force_update:
+        q = collection.find_one({"urn": urn}, {"recursive_links": 1})
+        if q:
+            try:
+                return set(q["recursive_links"])
+            except KeyError:
+                return set()
+
+    resource_database = get_resource_database()
+
+    try:
+        tree = resource_database.get_xml_tree(urn)
+    except UnexpectedHeader:
+        # it must be a blob
+        perform_upsert(collection, urn, {"fqn": None})
+        return set()
+
+    links = set()
+    for event, element in etree.iterwalk(tree):
+        if '{http://www.w3.org/1999/xlink}href' in element.attrib and element.getparent().tag != '{http://ductus.us/ns/2009/ductus}parents':
+            link = element.attrib['{http://www.w3.org/1999/xlink}href']
+            if link.startswith('urn:%s:' % hash_name):
+                links.add(link)
+
+    recursive_links = set(links)
+    for link in links:
+        additional_links = verify(collection, link, [])
+        recursive_links.update(additional_links)
+
+    resource = resource_database.get_resource_object(urn)
+
+    assert resource.fqn is not None
+    obj = {
+        "fqn": resource.fqn,
+        "links": list(links),
+        "recursive_links": sorted(recursive_links),
+        "current_wikipages": sorted(current_wikipages_list),
+    }
+    try:
+        obj["parents"] = sorted([parent.href for parent in resource.common.parents])
+        obj["tags"] = sorted([tag.value for tag in resource.tags])
+    except AttributeError:
+        pass
+    perform_upsert(collection, urn, obj)
+
+    return recursive_links
+
+
+def update_index_on_save(urn, url, parent_urn=None):
+    """
+    Update the index for the specified urn (to be used when saving a blueprint), and for its parents (if any, i.e: if modifying an existing wikipage).
+    Note that this function assumes a single url is linked to the urn, which is true only for wiki edits. Do not call this function for maintenance purposes.
+
+    `urn` is the urn of the newly saved blueprint (ie: the latest revision).
+    `url` is the url under which the urn is saved.
+    `parent_urn` is the urn to the parent of `urn` (optional).
+    """
+    indexing_db = get_indexing_mongo_database()
+    if indexing_db is None:
+        raise Exception
+    collection = indexing_db.urn_index
+
+    verify(collection, urn, [url])
+    if parent_urn:
+        verify(collection, parent_urn, [], force_update=True)
