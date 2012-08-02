@@ -239,13 +239,6 @@ $(function () {
         this.elt.children().detach();
         this.elt.append(wrapped.elt);
     };
-    FlashcardSide.prototype.ensure_last_row_empty = function () {
-        // ensure there is always an empty row at the bottom of the deck
-        if (this.elt.closest('tr').is(':last-child')) {
-            var fcd = $(".ductus_FlashcardDeck").data('widget_object');
-            fcd.add_row(null, true);    // auto-type card sides
-        }
-    };
     // popup definition for an empty flashcard side
     FlashcardSide.prototype.popup_settings = {
         'left': {
@@ -258,7 +251,6 @@ $(function () {
                         fqn: PhraseWidget.prototype.fqn
                     }
                 });
-                caller.ensure_last_row_empty();
                 caller.wrapped.input.focus();
             }
         },
@@ -290,7 +282,6 @@ $(function () {
                         $('#ductus_PopupWidget').data('widget_object').calling_widget.set_from_json(model_json_repr);
                     }
                 });
-                caller.ensure_last_row_empty();
             }
         },
         'top': {
@@ -310,7 +301,6 @@ $(function () {
                 FlashcardSide._global_picture_creator.elt.bind("ductus_element_selected", function (event, model_json_repr) {
                     $('#ductus_PopupWidget').data('widget_object').calling_widget.set_from_json(model_json_repr);
                 });
-                caller.ensure_last_row_empty();
             }
         },
         'bottom': {
@@ -320,7 +310,6 @@ $(function () {
             },
             'callback': function(caller) {
                 caller.set_from_json(window.global_copy_paste_buffer);
-                caller.ensure_last_row_empty();
             }
         }
     };
