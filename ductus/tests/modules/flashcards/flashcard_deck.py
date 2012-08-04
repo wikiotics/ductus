@@ -41,3 +41,12 @@ class FlashcardDeckTests(LiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url, '/new/flashcard_deck?template=podcast'))
         w = self.selenium.find_elements_by_class_name('ductus_FlashcardDeck_column')
         assert len(w) == 3, "Podcast template broken: wrong number of columns"
+
+    def test_fcd_template_podcast_tag(self):
+        # check that the template is created with preset tag given in url
+        tagname = 'sometag'
+        self.selenium.get('%s%s' % (self.live_server_url, '/new/flashcard_deck?template=podcast&tag=' + tagname))
+        w = self.selenium.find_elements_by_css_selector('li.token-input-token p')
+        assert len(w) == 1, "preset tags not loading"
+        text = self.selenium.execute_script('return $("li.token-input-token p").text()')
+        assert text == tagname
