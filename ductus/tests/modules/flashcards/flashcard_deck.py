@@ -50,3 +50,16 @@ class FlashcardDeckTests(LiveServerTestCase):
         assert len(w) == 1, "preset tags not loading"
         text = self.selenium.execute_script('return $("li.token-input-token p").text()')
         assert text == tagname
+
+    def test_fcd_add_row_button(self):
+        # check that the bottom left add row button creates a new row when clicked
+        self.selenium.get('%s%s' % (self.live_server_url, '/new/flashcard_deck'))
+        button = self.selenium.find_elements_by_class_name('ductus_add_row')
+        assert len(button) == 1
+        button = button[0]
+        rows = self.selenium.find_elements_by_class_name('ductus_Flashcard')
+        assert len(rows) == 1
+        for i in xrange(6):
+            button.click()
+            rows = self.selenium.find_elements_by_class_name('ductus_Flashcard')
+            assert len(rows) == i + 2
