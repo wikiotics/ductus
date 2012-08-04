@@ -2,3 +2,4 @@
 # (see http://stackoverflow.com/a/5160779)
 
 from modules.flashcards.flashcard_deck import *
+from modules.textwiki.textwiki import *
