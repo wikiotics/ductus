@@ -1,19 +1,6 @@
-# docs at https://docs.djangoproject.com/en/dev/topics/testing/#live-test-server
+from ductus.tests.basecase import JSTestCase
 
-from django.test import LiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver
-
-class TextwikiTests(LiveServerTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.selenium = WebDriver()
-        super(TextwikiTests, cls).setUpClass()
-
-    @classmethod
-    def tearDownClass(cls):
-        super(TextwikiTests, cls).tearDownClass()
-        cls.selenium.quit()
+class TextwikiTests(JSTestCase):
 
     def test_wikitext_save_widget(self):
         # check that the save widget is present when creating a new wikitext page from scratch

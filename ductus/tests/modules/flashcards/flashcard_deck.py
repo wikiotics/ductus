@@ -1,20 +1,7 @@
-# docs at https://docs.djangoproject.com/en/dev/topics/testing/#live-test-server
+from ductus.tests.basecase import JSTestCase
 
-from django.test import LiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver
-
-class FlashcardDeckTests(LiveServerTestCase):
+class FlashcardDeckTests(JSTestCase):
     fixtures = ['user-data.json']
-
-    @classmethod
-    def setUpClass(cls):
-        cls.selenium = WebDriver()
-        super(FlashcardDeckTests, cls).setUpClass()
-
-    @classmethod
-    def tearDownClass(cls):
-        super(FlashcardDeckTests, cls).tearDownClass()
-        cls.selenium.quit()
 
     def test_login(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/login'))
