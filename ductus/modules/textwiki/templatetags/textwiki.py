@@ -27,6 +27,8 @@ from django.conf import settings
 
 from ductus.wiki.models import WikiPage
 from ductus.wiki.namespaces import registered_namespaces
+from ductus.modules.textwiki import internal_bodied_macros, internal_non_bodied_macros
+from ductus.modules.textwiki.decorators import register_creoleparser_non_bodied_macro
 
 register = template.Library()
 
@@ -67,9 +69,11 @@ def create_image_path_func(original_path_func):
 __interwiki_links_base_urls = None
 __interwiki_links_path_funcs = None
 __interwiki_links_class_funcs = None
+__bodied_macros = None
+__non_bodied_macros = None
 
-def __prepare_interwiki_links_dicts():
-    global __interwiki_links_base_urls, __interwiki_links_path_funcs, __interwiki_links_class_funcs
+def __prepare_global_data_structures():
+    global __interwiki_links_base_urls, __interwiki_links_path_funcs, __interwiki_links_class_funcs, __bodied_macros, __non_bodied_macros
 
     if __interwiki_links_base_urls is not None:
         return
@@ -82,6 +86,13 @@ def __prepare_interwiki_links_dicts():
         __interwiki_links_path_funcs[wns.prefix] = (wns.path_func, create_image_path_func(wns.path_func))
         __interwiki_links_class_funcs[wns.prefix] = __wiki_links_class_func(wns.prefix)
 
+        __bodied_macros = dict(internal_bodied_macros)
+        if CREOLEPARSER_BODIED_MACROS:
+            __bodied_macros.update(CREOLEPARSER_BODIED_MACROS)
+        __non_bodied_macros = dict(internal_non_bodied_macros)
+        if CREOLEPARSER_NON_BODIED_MACROS:
+            __non_bodied_macros.update(CREOLEPARSER_NON_BODIED_MACROS)
+
 @register.filter
 @stringfilter
 def creole(value, default_prefix=None):
@@ -93,7 +104,7 @@ def creole(value, default_prefix=None):
             raise template.TemplateSyntaxError, "Error in {% creole %} filter: The Python creoleparser library isn't installed."
         return value
     else:
-        __prepare_interwiki_links_dicts()
+        __prepare_global_data_structures()
         default_prefix = default_prefix or u'en'
         parser_kwargs = {
             'wiki_links_base_url': '/%s/' % default_prefix,
@@ -108,11 +119,9 @@ def creole(value, default_prefix=None):
             'interwiki_links_class_funcs': __interwiki_links_class_funcs,
             'external_links_class': 'external',
             'disable_external_content': True,
+            'bodied_macros': __bodied_macros,
+            'non_bodied_macros': __non_bodied_macros,
         }
-        if CREOLEPARSER_BODIED_MACROS:
-            parser_kwargs['bodied_macros'] = CREOLEPARSER_BODIED_MACROS
-        if CREOLEPARSER_NON_BODIED_MACROS:
-            parser_kwargs['non_bodied_macros'] = CREOLEPARSER_NON_BODIED_MACROS
         creole2html = Parser(create_dialect(creole11_base, **parser_kwargs))
 
         return mark_safe(creole2html(value))
@@ -127,3 +136,34 @@ def creole_guess_title(value):
         return s.group(1)
     else:
         return u''
+
+@register_creoleparser_non_bodied_macro('PageList')
+def search_pages_macro(macro, environ, **kwargs):
+    """
+    A creole macro that lists wiki pages according to various criteria (tags only for now).
+    Usage: <<PageList tags=tag1,tag2,tag3>>
+    """
+    from genshi import Markup
+    from ductus.resource.ductmodels import tag_value_attribute_validator
+    from ductus.index import search_pages
+
+    tags = kwargs.get("tags", '')
+
+    try:
+        parsed_tags = tags.split(',')
+        for tag in parsed_tags:
+            tag_value_attribute_validator(tag)
+    except Exception:
+        return Markup('<p>Invalid tag search</p>')
+
+    try:
+        pages = search_pages(parsed_tags)
+    except Exception:
+        return Markup('<p>Search failed</p>')
+
+    html = ['<ul>']
+    for page in pages:
+        html.append('<li><a href="{0}">{1}</a></li>'.format(page['path'], page['absolute_pagename']))
+
+    html.append('</ul>')
+    return Markup('<p class="search_results">' + '\n'.join(html) + '</p>')
