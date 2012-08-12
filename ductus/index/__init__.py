@@ -64,7 +64,7 @@ def search_pages(tags):
 
     # perform the search
     query["current_wikipages"] = {"$not": {"$size": 0}}
-    pages = collection.find(query, {"current_wikipages": 1})
+    pages = collection.find(query, {"current_wikipages": 1}).sort("current_wikipages")
     results = []
     for page in pages:
         absolute_pagename = page["current_wikipages"][0]
