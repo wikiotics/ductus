@@ -40,11 +40,12 @@ class IndexingError(Exception):
     def __repr__(self):
         return self.value
 
-def search_pages_by_tags(tags):
+def search_pages(tags):
     """
     return a list of pages tagged with all `tags` (boolean AND)
-    `tags`: a list of tag values like: ['tag1', 'target-language:en']
-    return a list like [{"absolute_pagename": name, "path": path}]
+    like [{"absolute_pagename": name, "path": path}]
+
+    :param tags: a list of tag values like: ['tag1', 'target-language:en']. This is assumed to be valid tags, no checking is performed in this function!
     """
 
     if not tags:

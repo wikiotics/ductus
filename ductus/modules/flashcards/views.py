@@ -31,7 +31,7 @@ from ductus.special.views import register_special_page
 from ductus.wiki.templatetags.jsonize import resource_json
 from ductus.wiki.models import WikiPage
 
-from ductus.index import search_pages_by_tags, IndexingError
+from ductus.index import search_pages, IndexingError
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
@@ -331,7 +331,7 @@ def fsw_get_flashcard(request, extra_tags, prompt_side, answer_side):
         print search_tags
         # get a list of pages tagged as we want
         try:
-            url_list = search_pages_by_tags(search_tags)
+            url_list = search_pages(tags=search_tags)
         except IndexingError:
             raise Http404('Indexing error, contact the site administrator')
 
