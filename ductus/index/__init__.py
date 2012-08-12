@@ -24,7 +24,7 @@ _indexing_mongo_database = False  # False means uninitialized; None means
 def get_indexing_mongo_database():
     """Returns the pymongo database object used for indexing"""
     global _indexing_mongo_database
-    if _indexing_mongo_database == False:
+    if _indexing_mongo_database is False:
         indexing_db_obj = getattr(settings, "DUCTUS_INDEXING_MONGO_DATABASE", None)
         if indexing_db_obj is None:
             _indexing_mongo_database = None
