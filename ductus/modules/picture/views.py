@@ -115,6 +115,8 @@ def mediacache_picture(blob_urn, mime_type, additional_args, picture):
         else:
             im = adjust_orientation_from_exif(im)
         im.thumbnail((max_width, max_height), Image.ANTIALIAS)
+        if im.mode != "RGB":
+            im = im.convert("RGB")
         output = StringIO()
         im.save(output, 'JPEG', quality=90) # PIL manual says avoid quality > 95
         return iter([output.getvalue()])
