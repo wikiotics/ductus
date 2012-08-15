@@ -3,3 +3,4 @@
 
 from modules.flashcards.flashcard_deck import *
 from modules.textwiki.textwiki import *
+from wiki.new_lesson_page import *
