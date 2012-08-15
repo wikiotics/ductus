@@ -20,7 +20,7 @@ from ductus.resource import ductmodels, register_ductmodel
 from ductus.util import create_property
 
 class WikiBlobElement(ductmodels.TextBlobElement):
-    allowed_markup_languages = ('creole-1.0',)
+    allowed_markup_languages = ('creole-1.0', 'ductus-html5',)
     allowed_natural_languages = (None, '') + tuple(settings.DUCTUS_NATURAL_LANGUAGES)
     markup_language = ductmodels.Attribute(validator=ductmodels.allowed_values_attribute_validator(allowed_markup_languages))
     natural_language = ductmodels.Attribute(validator=ductmodels.allowed_values_attribute_validator(allowed_natural_languages), optional=True, blank_is_null=True)
@@ -29,7 +29,7 @@ class WikiBlobElement(ductmodels.TextBlobElement):
         # fixme: if Attribute had a "default" argument, we wouldn't need to
         # override this constructor to set such a default
         super(WikiBlobElement, self).__init__()
-        self.markup_language = "creole-1.0"
+        self.markup_language = "ductus-html5"
 
 @register_ductmodel
 class Wikitext(ductmodels.DuctModel):

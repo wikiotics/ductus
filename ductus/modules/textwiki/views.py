@@ -42,6 +42,7 @@ def view_textwiki(request):
     return render_to_response('textwiki/display_wiki.html', {
         'text': request.ductus.resource.text,
         'natural_language': request.ductus.resource.blob.natural_language or None,
+        'markup_language': request.ductus.resource.blob.markup_language,
     }, context_instance=RequestContext(request))
 
 _natural_language_choices = [('', ugettext_lazy('Unspecified'))]

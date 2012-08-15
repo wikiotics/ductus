@@ -20,6 +20,10 @@
 
 {% block content %}
 <div class="ductus_textwiki_content" lang="">
+{% if markup_language == "creole-1.0" %}
 {{ text|creole:natural_language }}
+{% elif markup_language == "ductus-html5" %}
+{{ text|safe }}
+{% endif %}
 </div>
 {% endblock %}
