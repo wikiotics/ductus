@@ -297,6 +297,7 @@ PictureModelWidget.prototype.popup_settings = {
             window.global_copy_paste_buffer = {
                 resource: {
                     fqn: PictureModelWidget.prototype.fqn,
+                    _picture_source: target._picture_widget._picture_source,
                     net_rotation: target._picture_widget.net_rotation
                 },
                 href: target.initial_href
