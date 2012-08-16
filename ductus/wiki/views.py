@@ -30,7 +30,7 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.conf import settings
 
-from ductus.resource import get_resource_database, determine_header
+from ductus.resource import get_resource_database, UnexpectedHeader
 from ductus.resource.ductmodels import DuctModel
 from ductus.wiki import registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, is_legal_wiki_pagename, user_has_edit_permission, user_has_unlink_permission
 from ductus.wiki.namespaces import BaseWikiNamespace, registered_namespaces, split_pagename, join_pagename, WikiPrefixNotProvided
@@ -96,7 +96,12 @@ def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
         unvaried_etag = __handle_etag(request, unvaried_etag)
         varied_etag = __handle_etag(request, varied_etag)
 
-    resource = resource_database.get_resource_object(urn)
+    try:
+        resource = resource_database.get_resource_object(urn)
+    except KeyError:
+        raise Http404("resource does not exist")
+    except UnexpectedHeader as e:
+        raise Http404(str(e))
     request.ductus = DuctusRequestInfo(resource, requested_view,
                                        wiki_page, wiki_revision)
 
@@ -119,8 +124,6 @@ def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
             if vary_headers.issubset(set(['cookie', 'accept-language'])):
                 response["ETag"] = varied_etag
     return response
-
-    raise Http404
 
 def view_urn(request, hash_type, hash_digest):
     urn = 'urn:%s:%s' % (hash_type, hash_digest)
