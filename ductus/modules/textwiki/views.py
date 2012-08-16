@@ -91,3 +91,27 @@ def edit_textwiki(request):
     }, context_instance=RequestContext(request))
 
 new_textwiki = edit_textwiki
+
+# this should be in index/views.py
+from ductus.special.views import register_special_page
+from ductus.index import search_pages, IndexingError
+from ductus.util.http import query_string_not_found, render_json_response
+from django.http import Http404
+
+@register_special_page('ajax/search-pages')
+def ajax_search_pages(request, pagename):
+    """return a JSON object containing the urls matching the query
+    in the request, such that:
+    TODO: document
+    """
+    # TODO: limit the number of results returned, add support for fulltext search on url name
+    if request.method == 'GET':
+        search_text = request.GET.get('text', '')
+        search_tags = request.GET.getlist('tag', '')
+        rv = {}
+        try:
+            urls = search_pages(tags=search_tags)
+        except IndexingError:
+            raise Http404('indexing error')
+
+        return render_json_response(urls)
