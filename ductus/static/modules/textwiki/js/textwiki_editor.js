@@ -8,7 +8,7 @@ $(function() {
             tw = {
                 resource: {
                     blob: {
-                        markup_language: 'creole-1.0',
+                        markup_language: 'ductus-html5',
                         natural_language: 'en',
                         text: ""
                     }
@@ -42,7 +42,7 @@ $(function() {
         return this.add_inner_blueprint_constructor({
             blob: {
                 text: this.textarea.val(),
-                markup_language: "creole-1.0"
+                markup_language: "ductus-html5"
             },
             tags: {array: tags}
         });
