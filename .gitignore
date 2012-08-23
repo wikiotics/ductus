@@ -7,3 +7,4 @@ dist
 MANIFEST
 ip_blacklist.data
 doc/_build/
+ductus/static/modules/textwiki/aloha/
