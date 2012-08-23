@@ -365,6 +365,8 @@
                          '^jquery-1.5.*$|' +
                          '^jquery-1.6.*$|' +
                          '^jquery-1.7.1.js$|' +
+                         '^aloha-sidebar.css$|' +
+                         '^repository-browser$|' +
                          '^\\.)',
 
     preserveLicenseComments: true,
