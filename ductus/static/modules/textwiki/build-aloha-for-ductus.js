@@ -1,4 +1,8 @@
 ({
+    // a custom build file for aloha in ductus.
+    // Read the Ductus docs (http://docs.ductus.us) to find out how to use it.
+    // adapted from aloha's default build-profile-with-common-plugins.js
+
     //The top level directory that contains your app. If this option is used
     //then it assumed your scripts are in a subdirectory under this path.
     //This option is not required. If it is not specified, then baseUrl
