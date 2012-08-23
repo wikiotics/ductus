@@ -321,6 +321,52 @@
 
     ],
 
+    // use a multiline string to build the regexp so git diffs stay readable
+    fileExclusionRegExp: '(^demo$|' +
+                         '^test$|' +
+                         '^bg.png$|' +
+                         '^package.json$|' +
+                         '^abbr$|' +
+                         '^align$|' +
+                         '^attributes$|' +
+                         '^browser$|' +
+                         '^captioned-image$|' +
+                         '^characterpicker$|' +
+                         '^cite$|' +
+                         '^commands$|' +
+                         '^comments$|' +
+                         '^contenthandler$|' +
+                         '^dom-to-xhtml$|' +
+                         '^draganddropfiles$|' +
+                         '^flag-icons$|' +
+                         '^formatlesspaste$|' +
+                         '^googletranslate$|' +
+                         '^headerids$|' +
+                         '^horizontalruler$|' +
+                         '^hints$|' +
+                         '^image$|' +
+                         '^imagebrowser$|' +
+                         '^linkbrowser$|' +
+                         '^linkchecker$|' +
+                         '^list$|' +
+                         '^listenforcer$|' +
+                         '^metaview$|' +
+                         '^numerated-headers$|' +
+                         '^profiler$|' +
+                         '^proxy$|' +
+                         '^ribbon$|' +
+                         '^sourceview$|' +
+                         '^speak$|' +
+                         '^toc$|' +
+                         '^table$|' +
+                         '^undo$|' +
+                         '^wai-lang$|' +
+                         '^zemanta$|' +
+                         '^jquery-1.5.*$|' +
+                         '^jquery-1.6.*$|' +
+                         '^jquery-1.7.1.js$|' +
+                         '^\\.)',
+
     preserveLicenseComments: true,
 
     //Sets the logging level. It is a number. If you want "silent" running,
