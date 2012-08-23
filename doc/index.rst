@@ -23,6 +23,7 @@ Contents:
    online_recording
    indexing
    textwiki
+   visual_editing
    flashcard_deck
    resource_json
    customizing-ductus
