@@ -6,8 +6,13 @@
     //then all the files from the app directory will be copied to the dir:
     //output area, and baseUrl will assume to be a relative path under
     //this directory.
-    appDir: "../../src/",
+    appDir: "../../../../submodules/Aloha-Editor/src/",
 
+    // paths to the fragments to insert before/after source files to turn them into a closure
+    wrap: {
+        startFile: "../../../../submodules/Aloha-Editor/build/aloha/closure-start.frag",
+        endFile: "../../../../submodules/Aloha-Editor/build/aloha/closure-end.frag",
+    },
     //By default, all modules are located relative to this path. If baseUrl
     //is not explicitly set, then all modules are loaded relative to
     //the directory that holds the build file. If appDir is set, then
@@ -216,7 +221,7 @@
     //The directory path to save the output. If not specified, then
     //the path will default to be a directory called "build" as a sibling
     //to the build file. All relative paths are relative to the build file.
-    dir: "../../target/build-profile-with-common-plugins/rjs-output",
+    dir: "./aloha",
 
     //As of RequireJS 2.0.2, the dir above will be deleted before the
     //build starts again. If you have a big build and are not doing
@@ -530,10 +535,6 @@
     //window.myGlobal = requirejs('myModule');
     //File paths are relative to the build file, or if running a commmand
     //line build, the current directory.
-    wrap: {
-        startFile: "closure-start.frag",
-        endFile: "closure-end.frag",
-    },
 
     //When the optimizer copies files from the source location to the
     //destination directory, it will skip directories and files that start
