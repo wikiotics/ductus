@@ -10,6 +10,7 @@
 <link type="text/css" href="{% static "ductus/common/css/token-input.css" %}" rel="stylesheet"/>
 <link type="text/css" href="{% static "ductus/modules/textwiki/css/textwiki_editor.css" %}" rel="stylesheet"/>
 <link type="text/css" href="{% static "ductus/modules/textwiki/css/textwiki.css" %}" rel="stylesheet"/>
+<link rel="stylesheet" href="{% static "ductus/modules/textwiki/aloha/css/aloha.css" %}" type="text/css">
 {% endcompress %}
 {% endblock %}
 
@@ -23,6 +24,18 @@
 {% compress js %}
 <script type="text/javascript" src="{% static "ductus/modules/textwiki/js/textwiki_editor.js" %}"></script>
 {% endcompress %}
+<script type="text/javascript" src="{% static "ductus/modules/textwiki/aloha/lib/require.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/modules/textwiki/aloha/lib/vendor/jquery-1.7.2.js" %}"></script>
+<script type="text/javascript">
+var Aloha = {
+    settings: {
+        jQuery: window.jQuery.noConflict(true),
+        sidebar: { disabled: true }
+        }
+};
+</script>
+<script type="text/javascript" src="{% static "ductus/modules/textwiki/aloha/lib/aloha.js" %}"
+  data-aloha-plugins="common/ui,common/format,common/highlighteditables,common/link"></script>
 {% endblock %}
 
 {% block javascript %}

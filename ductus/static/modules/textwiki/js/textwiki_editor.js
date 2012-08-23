@@ -19,8 +19,8 @@ $(function() {
 
         this.sidebar = $('<div id="ductus_Sidebar"></div>');
 
-        this.textarea = $('<textarea cols=80 rows=30></textarea>').appendTo(this.elt);
-        this.textarea.val(tw.resource.blob.text);
+        this.content_editor = $('<div class="content-editor"></div>').appendTo(this.elt);
+        this.content_editor.append(tw.resource.blob.text);
 
         this.tagging_widget = new TaggingWidget(tw.resource.tags);
         this.tagging_widget.elt.make_sidebar_widget(gettext('Tags'), this.sidebar);
@@ -39,9 +39,18 @@ $(function() {
                 tags.push({value: tag});
             }
         });
+
+        // get the editor content from aloha
+        var text = '';
+        if (Aloha.editables && Aloha.editables.length) {
+            text = Aloha.editables[0].getContents();
+        } else {
+            text = this.content_editor.html();
+        }
+
         return this.add_inner_blueprint_constructor({
             blob: {
-                text: this.textarea.val(),
+                text: text,
                 markup_language: "ductus-html5"
             },
             tags: {array: tags}
@@ -71,4 +80,7 @@ $(function() {
     $('#side_toolbar').append(page.sidebar);
     $('#textwiki-editor').append(page.elt);
 
+    Aloha.ready( function() {
+         Aloha.jQuery('div.content-editor').aloha();
+     });
 });
