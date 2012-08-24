@@ -14,4 +14,7 @@ node ../../../../submodules/Aloha-Editor/build/r.js -o ./build-aloha-for-ductus.
 cp aloha-css-for-ductus.css_template aloha/css/aloha-css-for-ductus.css
 node ../../../../submodules/Aloha-Editor/build/r.js -o cssIn=aloha/css/aloha-css-for-ductus.css out=aloha/css/aloha.css optimizeCss=standard
 # remove original css files after compiling them into aloha.css so they don't trigger errors in the django collectstatic stage
+echo "removing CSS source files"
 rm aloha/css/aloha-*
+echo "removing any @import statements left in aloha.css"
+sed -i 's/@import[^;]*;//g'  aloha/css/aloha.css
