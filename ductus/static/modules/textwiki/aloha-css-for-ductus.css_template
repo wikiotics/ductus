@@ -1,6 +1,9 @@
 /* This file should only contain import statements, only one each for
  * the core and plugins, so that it is easy to make variations of this
  * file that exclude some plugins.
+ *
+ * This must be a valid CSS file, but is named with a .template extension so
+ * django's collectstatic won't touch it
  */
 @import "aloha-core.css";
 @import "../plugins/common/ui/css/ui.css";
