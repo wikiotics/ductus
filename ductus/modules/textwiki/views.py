@@ -29,6 +29,7 @@ from ductus.wiki import SuccessfulEditRedirect, get_writable_directories_for_use
 from ductus.wiki.namespaces import registered_namespaces, split_pagename, WikiPrefixNotProvided
 from ductus.wiki.views import handle_blueprint_post
 from ductus.modules.textwiki.ductmodels import Wikitext   # FIXME: drop useless class
+from ductus.modules.textwiki.templatetags.textwiki import creole
 from ductus.util.bcp47 import language_tag_to_description
 
 recaptcha = None
@@ -78,6 +79,11 @@ def edit_textwiki(request):
     resource = None
     if hasattr(request, 'ductus') and getattr(request.ductus, 'resource', None):
         resource = request.ductus.resource
+        # handle old creole content: make it look like ductus-html5 so we can edit it
+        # content is not saved to creole anymore, only to ductus-html5
+        if resource.blob.markup_language == 'creole-1.0':
+            resource.blob.markup_language = 'ductus-html5'
+            resource.text = creole(resource.text, resource.blob.natural_language)
 
     return render_to_response('textwiki/edit_wiki.html', {
         'resource_json': resource,
