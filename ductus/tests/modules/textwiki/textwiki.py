@@ -23,3 +23,22 @@ class TextWikiBackendTests(TestCase):
         self.assertRedirects(response, target_url)  # check that we got a 302 redirect plus a 200 to target_url
         self.assertContains(response, '<h1>test title</h1>', html=True)
         self.assertContains(response, '<li>element number two</li>', html=True)
+
+    def test_textwiki_save_and_view_html5_page(self):
+        """send a simple ductus-html5 blueprint to the server and check the resulting displayed content"""
+        c = Client()
+        target_url = '/hr/sometest_textpage'
+        text = '<h1>test title</h1>\
+                <p>some text in a paragraph</p>\
+                <ul><li>element number one</li>\
+                <li>element number two</li>\
+                <li>element number three</li></ul>\
+                <h2>some other heading</h2>'
+        POST = {
+            'blueprint': '{"resource":{"blob":{"text":"' + text + '","markup_language":"ductus-html5"},"tags":{"array":[]},"@create":"{http://wikiotics.org/ns/2009/wikitext}wikitext"}}',
+            'log_message': 'created from unit tests'
+        }
+        response = c.post(target_url, POST, follow=True)
+        self.assertRedirects(response, target_url)  # check that we got a 302 redirect plus a 200 to target_url
+        self.assertContains(response, '<h1>test title</h1>', html=True)
+        self.assertContains(response, '<li>element number two</li>', html=True)
