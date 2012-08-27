@@ -958,12 +958,6 @@ function SaveWidget (toplevel_blueprint_object, wikipage_type_shortname) {
     });
     this.save_buttons = this.elt.find("input:submit");
 
-    // if the calling widget has a preview method, show a "preview" button next to "save"
-    if (!!this.toplevel_blueprint_object.preview) {
-        var preview_btn = $('<span class="ductus_preview_button">' + gettext('Preview') + '</span>').button();
-        preview_btn.click(function() { this_.toplevel_blueprint_object.preview(); });
-        this.elt.find('.save_form').append(preview_btn);
-    }
     function handle_destination_changed(event, destination) {
         this_.save_buttons.attr("disabled", !destination);
     }
