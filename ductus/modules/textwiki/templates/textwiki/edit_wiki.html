@@ -30,12 +30,34 @@
 var Aloha = {
     settings: {
         jQuery: window.jQuery.noConflict(true),
-        sidebar: { disabled: true }
+        sidebar: { disabled: true },
+        contentHandler: {
+            initEditable: [ 'sanitize' ],
+            getContents: [ 'sanitize' ],
+            sanitize: 'relaxed', // relaxed, restricted, basic,
+                allows: {
+                    elements: [
+                        'a', 'b', 'div', 'dl', 'dt', 'em',
+                        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'i', 'li', 'ol', 'p', 'pre', 'sub',
+                        'sup', 'u', 'ul'],
+                    attributes: {
+                        'a'         : ['href'],
+                     },
+                    protocols: {
+                        'a'         : {'href': ['ftp', 'http', 'https', 'mailto', '__relative__']}, // Sanitize.RELATIVE
+                    }
+                },
+                handler: {
+                    generic: {
+                        transformFormattings: false // this will disable the transformFormattings method in the generic content handler
+                    }
+                }
+            }
         }
 };
 </script>
 <script type="text/javascript" src="{% static "ductus/modules/textwiki/aloha/lib/aloha.js" %}"
-  data-aloha-plugins="common/ui,common/format,common/highlighteditables,common/link"></script>
+  data-aloha-plugins="common/ui,common/format,common/highlighteditables,common/link,common/contenthandler"></script>
 {% endblock %}
 
 {% block javascript %}
