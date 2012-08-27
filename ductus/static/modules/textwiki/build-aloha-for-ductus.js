@@ -307,7 +307,7 @@
 				//"image/image-plugin",
 				"highlighteditables/highlighteditables-plugin",
 				//"dom-to-xhtml/dom-to-xhtml-plugin",
-				//"contenthandler/contenthandler-plugin",
+				"contenthandler/contenthandler-plugin",
 				//"characterpicker/characterpicker-plugin",
 				//"commands/commands-plugin",
 				//"block/block-plugin",
@@ -335,7 +335,6 @@
                          '^cite$|' +
                          '^commands$|' +
                          '^comments$|' +
-                         '^contenthandler$|' +
                          '^dom-to-xhtml$|' +
                          '^draganddropfiles$|' +
                          '^flag-icons$|' +
