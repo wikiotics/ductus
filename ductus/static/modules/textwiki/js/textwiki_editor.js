@@ -68,6 +68,9 @@ $(function() {
             jQ('#toolbar-container').append(toolbar);
             Scopes.setScope('Aloha.continuoustext');
             UiPlugin.showToolbar();
+            Aloha.bind('aloha-editable-deactivated', function(){
+                UiPlugin.showToolbar();
+            });
         });
      });
 });
