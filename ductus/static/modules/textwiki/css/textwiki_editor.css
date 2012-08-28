@@ -19,5 +19,14 @@
 }
 #textwiki-editor {
     background: #ddd;
-    margin-top: 120px;
+}
+#toolbar-container {
+    margin-bottom: 10px;
+    height: 75px;
+}
+.aloha-ui-pin {
+    display:none !important;
+}
+.aloha-ui-toolbar {
+    position: static !important;
 }

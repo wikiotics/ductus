@@ -62,6 +62,12 @@ $(function() {
     $('#textwiki-editor').append(page.elt);
 
     Aloha.ready( function() {
-         Aloha.jQuery('div.content-editor').aloha();
+        Aloha.jQuery('div.content-editor').aloha();
+        Aloha.require(['jquery', 'ui/scopes', 'ui/ui-plugin'],function(jQ, Scopes, UiPlugin){
+            var toolbar = jQ('.aloha-toolbar');
+            jQ('#toolbar-container').append(toolbar);
+            Scopes.setScope('Aloha.continuoustext');
+            UiPlugin.showToolbar();
+        });
      });
 });
