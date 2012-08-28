@@ -303,7 +303,7 @@
 				"link/link-plugin",
 				//"table/table-plugin",
 				"format/format-plugin",
-				//"list/list-plugin",
+				"list/list-plugin",
 				//"image/image-plugin",
 				"highlighteditables/highlighteditables-plugin",
 				//"dom-to-xhtml/dom-to-xhtml-plugin",
@@ -347,7 +347,6 @@
                          '^imagebrowser$|' +
                          '^linkbrowser$|' +
                          '^linkchecker$|' +
-                         '^list$|' +
                          '^listenforcer$|' +
                          '^metaview$|' +
                          '^numerated-headers$|' +
