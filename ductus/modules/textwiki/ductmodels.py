@@ -17,7 +17,10 @@
 from django.conf import settings
 
 from ductus.resource import ductmodels, register_ductmodel
+from ductus.resource.ductmodels import ValidationError
 from ductus.util import create_property
+from genshi.filters import HTMLSanitizer
+from genshi.input import HTML
 
 class WikiBlobElement(ductmodels.TextBlobElement):
     allowed_markup_languages = ('creole-1.0', 'ductus-html5',)
@@ -43,3 +46,17 @@ class Wikitext(ductmodels.DuctModel):
         def fset(s, v):
             s.blob.store([v.encode('utf-8')])
         return locals()
+
+    def save(self, encoding=None):
+        """validate incoming html using genshi's HTMLSanitizer, throw an error if invalid (ie: anything changed in input)"""
+
+        # let creole content go through unverified, the parser will clean it up anyway
+        if self.blob.markup_language == 'ductus-html5':
+            html = HTML(self.text)
+            #TODO: define our own set of acceptable tags/attributes in settings.py
+            sanitizer = HTMLSanitizer()
+            safe_html = html | sanitizer
+            if html.render() != safe_html.render():
+                raise ValidationError(u'invalid html content')
+
+        return super(Wikitext, self).save(encoding)
