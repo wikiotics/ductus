@@ -73,9 +73,9 @@ $(function () {
     PhraseWidget.prototype = chain_clone(ModelWidget.prototype);
     PhraseWidget.prototype.inner_blueprint_repr = function () {
         return {
-	    '@create': PhraseWidget.prototype.fqn,
-	    'phrase': {text: this.input.val()}
-	};
+        '@create': PhraseWidget.prototype.fqn,
+        'phrase': {text: this.input.val()}
+    };
     };
     PhraseWidget.prototype.fqn = '{http://wikiotics.org/ns/2011/phrase}phrase';
     // define popup menu content and callbacks
