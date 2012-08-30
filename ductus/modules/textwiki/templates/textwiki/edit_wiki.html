@@ -47,9 +47,12 @@ var Aloha = {
                     elements: [
                         'a', 'b', 'div', 'dl', 'dt', 'em',
                         'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'i', 'li', 'ol', 'p', 'pre', 'sub',
-                        'sup', 'u', 'ul'],
+                        'sup', 'table', 'tbody', 'td', 'th', 'tr', 'u', 'ul'],
                     attributes: {
                         'a'         : ['class', 'href'],
+                        'table'     : ['summary'],
+                        'td'        : ['colspan', 'rowspan'],
+                        'th'        : ['scope'],
                      },
                     protocols: {
                         'a'         : {'href': ['ftp', 'http', 'https', 'mailto', '__relative__']}, // Sanitize.RELATIVE
@@ -65,7 +68,7 @@ var Aloha = {
 };
 </script>
 <script type="text/javascript" src="{% static "ductus/modules/textwiki/aloha/lib/aloha.js" %}"
-  data-aloha-plugins="common/ui,common/format,common/highlighteditables,common/link,common/contenthandler,common/list"></script>
+  data-aloha-plugins="common/ui,common/format,common/highlighteditables,common/link,common/contenthandler,common/list,common/table"></script>
 {% endblock %}
 
 {% block javascript %}

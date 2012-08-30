@@ -302,7 +302,7 @@
 				// all common plugins
 				"ui/ui-plugin",
 				"link/link-plugin",
-				//"table/table-plugin",
+				"table/table-plugin",
 				"format/format-plugin",
 				"list/list-plugin",
 				//"image/image-plugin",
@@ -357,7 +357,6 @@
                          '^sourceview$|' +
                          '^speak$|' +
                          '^toc$|' +
-                         '^table$|' +
                          '^undo$|' +
                          '^wai-lang$|' +
                          '^zemanta$|' +
