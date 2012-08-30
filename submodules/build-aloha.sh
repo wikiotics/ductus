@@ -6,6 +6,11 @@
 
 # build aloha.js
 cd ../ductus/static/modules/textwiki
+# remove the build directory
+rm -r aloha
+mkdir -p aloha/plugins
+# copy our own plugins
+cp -R js/aloha-plugins/* aloha/plugins
 node ../../../../submodules/Aloha-Editor/build/r.js -o ./build-aloha-for-ductus.js
 
 # compile aloha.css

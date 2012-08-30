@@ -212,7 +212,8 @@
     //to the build file. All relative paths are relative to the build file.
     dir: "./aloha",
 
-    keepBuildDir: false,
+    // rely on the build script to clear the output dir and copy our own plugins
+    keepBuildDir: true,
 
     //How to optimize all the JS files in the build output directory.
     //Right now only the following values
