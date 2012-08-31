@@ -132,8 +132,23 @@
     color: #888;
     text-align: center;
     cursor: default;
+    width: 2.5em;
 }
-
+.row_num {
+    display: inline;
+}
+.row_handle {
+    background: url("../../../common/css/smoothness/images/ui-icons_222222_256x240.png") no-repeat;
+    background-position: -128px -48px;
+    cursor: move;
+    float: right;
+    height: 16px;
+    opacity: 0.3;
+    width: 16px;
+}
+.row_handle:hover {
+    opacity: 1;
+}
 .ductus_dividers_by_4 tr:nth-child(8n+6) {
     background-color: #EEE;
 }

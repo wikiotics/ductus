@@ -345,7 +345,7 @@ $(function () {
 
     function Flashcard(fc, columns) {
         // flashcard widget (a row visually)
-        ModelWidget.call(this, fc, '<tr class="ductus_Flashcard"><td class="row_td"></td></tr>');
+        ModelWidget.call(this, fc, '<tr class="ductus_Flashcard"><td class="row_td"><span class="row_num"></span></td></tr>');
 
         var this_ = this;
         $.each(columns, function (i, column) {
@@ -356,21 +356,21 @@ $(function () {
             return this_.ui_widget();
         }, function () {
             return this_.elt.find("td");
-        });
+        }).append($('<span class="row_handle"></span>'));
 
         this.record_initial_inner_blueprint();
     }
     Flashcard.prototype = chain_clone(ModelWidget.prototype);
     Flashcard.prototype.inner_blueprint_repr = function () {
         var sides = [];
-        this.elt.find("td").children().each(function (i) {
+        this.elt.find("td:nth-child(n+2)").children().each(function (i) {
             sides.push($(this).data("widget_object").blueprint_repr());
         });
         return this.add_inner_blueprint_constructor({ sides: { array: sides } });
     };
     Flashcard.prototype.get_outstanding_presave_steps = function () {
         var sides = [];
-        this.elt.find("td").children().each(function (i) {
+        this.elt.find("td:nth-child(n+2)").children().each(function (i) {
             sides.push($(this).data("widget_object"));
         });
         return ModelWidget.combine_presave_steps(sides);
@@ -396,7 +396,7 @@ $(function () {
         // must be called on the Flashcard object representing the row being inserted/added
         // which must be appended to the main DOM tree before calling this function.
         var row = this;
-        this.elt.find('td').children().each(function (i) {
+        this.elt.find('td:nth-child(n+2)').children().each(function (i) {
             var fcs = $(this).data('widget_object');
             var pretype = fcs.column.pretype;
             if (pretype == PhraseWidget.prototype.fqn) {
@@ -684,7 +684,7 @@ $(function () {
         }
         var row = new Flashcard(fc, this.columns);
         this.rows.push(row);
-        row.elt.find(".row_td").text(this.rows.length);
+        row.elt.find(".row_td > .row_num").text(this.rows.length);
         this.table.append(row.elt);
         if (auto_type && fc == null) {
             row.auto_type_cells();
@@ -699,21 +699,21 @@ $(function () {
         this.rows.splice(row_index, 0, row);
         // reindex row headers
         $(this.rows).each(function (i, row) {
-            row.elt.find('.row_td').text(i + 1);
+            row.elt.find('.row_td > .row_num').text(i + 1);
         });
         row.auto_type_cells();
     };
     FlashcardDeck.prototype.delete_row = function (fc) {
         var row_index = fc.elt.index() - 1;
         // remove each FlashcardSide in the flashcard
-        fc.elt.find("td").children().each(function (i) {
+        fc.elt.find("td:nth-child(n+2)").children().each(function (i) {
             $(this).data("widget_object").reset();
         });
         fc.elt.remove();
         this.rows.splice(row_index, 1);
         // reindex row headers
         $(this.rows).each(function (i, row) {
-            row.elt.find('.row_td').text(i + 1);
+            row.elt.find('.row_td > .row_num').text(i + 1);
         });
     };
     FlashcardDeck.prototype._set_column_heading = function (column, heading) {
