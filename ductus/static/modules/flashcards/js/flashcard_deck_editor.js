@@ -605,6 +605,15 @@ $(function () {
             this.rows[0].elt.find('td:not(.row_td)').first().click();
         }
 
+        // make the deck sortable, so we can move rows around
+        this.elt.find('table > tbody').sortable({
+            handle: '.row_handle',
+            items: ".ductus_Flashcard", // the table header is not sortable
+            stop: function(event, ui) {
+                this_.reorder_rows(event, ui);
+                }
+            });
+
         // a jQuery object to attach sidebar widgets to
         this.sidebar = $('<div id="ductus_Sidebar"></div>');
 
@@ -702,6 +711,19 @@ $(function () {
             row.elt.find('.row_td > .row_num').text(i + 1);
         });
         row.auto_type_cells();
+    };
+    FlashcardDeck.prototype.reorder_rows = function (event, ui) {
+        // event handler for "sortstop" event when a row has been moved around
+        // we don't know which row went where, so we go through the whole table
+        var row,
+            length = this.rows.length,
+            table_rows = $('.ductus_Flashcard');
+
+        this.rows = [];
+        for (row = 0; row < length; row++) {
+            this.rows.push($(table_rows[row]).data('widget_object'));
+            $(table_rows[row]).find('.row_td > .row_num').text(row + 1);
+        }
     };
     FlashcardDeck.prototype.delete_row = function (fc) {
         var row_index = fc.elt.index() - 1;
