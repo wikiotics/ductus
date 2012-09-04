@@ -52,7 +52,6 @@ def search_pages(tags):
         # fixme: we should prompt the user for what they want to search
         raise IndexingError('your search query cannot be empty')
 
-    #from ductus.index import get_indexing_mongo_database
     indexing_db = get_indexing_mongo_database()
     if indexing_db is None:
         raise IndexingError("indexing database is not available")
