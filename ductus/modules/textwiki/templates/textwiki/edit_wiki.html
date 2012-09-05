@@ -31,7 +31,14 @@ var Aloha = {
     settings: {
         plugins: {
             link: {
-                cssclass: 'external'
+                onHrefChange: function(obj, href, item) {
+                    // figure out if we have an internal or external link, and mark it as such
+                    if (item) {
+                        $(obj).removeClass('external').addClass('internal');
+                    } else {
+                        $(obj).removeClass('internal').addClass('external');
+                    }
+                }
             }
         },
         jQuery: window.jQuery.noConflict(true),
