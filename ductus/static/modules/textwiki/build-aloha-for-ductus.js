@@ -348,6 +348,7 @@
                          '^imagebrowser$|' +
                          '^linkbrowser$|' +
                          '^linkchecker$|' +
+                         '^linklist.js$|' +
                          '^listenforcer$|' +
                          '^metaview$|' +
                          '^numerated-headers$|' +
