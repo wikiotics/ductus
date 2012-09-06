@@ -124,12 +124,12 @@ $(function () {
             'html': gettext('copy'),
             'display': function() { return true; },
             'callback': function(target) {
-                window.global_copy_paste_buffer = {
+                ductus_Clipboard.copy({
                     resource: {
                         fqn: PhraseWidget.prototype.fqn,
                         phrase: { text: target.input.val() }
                     }
-                };
+                });
             }
         }
     };
@@ -359,10 +359,10 @@ $(function () {
         'bottom': {
             'html': gettext('paste'),
             'display': function() {
-                return (typeof(window.global_copy_paste_buffer) != 'undefined');
+                return !ductus_Clipboard.isempty();
             },
             'callback': function(caller) {
-                caller.set_from_json(window.global_copy_paste_buffer);
+                caller.set_from_json(ductus_Clipboard.paste());
             }
         }
     };

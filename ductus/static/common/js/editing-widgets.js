@@ -294,14 +294,14 @@ PictureModelWidget.prototype.popup_settings = {
         'display': function() { return true; },
         'callback': function(target) {
             // copy the blueprint for pasting in another cell
-            window.global_copy_paste_buffer = {
+            window.Clipboard.copy({
                 resource: {
                     fqn: PictureModelWidget.prototype.fqn,
                     _picture_source: target._picture_widget._picture_source,
                     net_rotation: target._picture_widget.net_rotation
                 },
                 href: target.initial_href
-            };
+            });
         }
     },
     'top': {
@@ -696,11 +696,12 @@ AudioWidget.prototype.popup_settings = {
         'display': function() { return true; },
         'callback': function(target) {
             // copy the blueprint for pasting in another cell
-            window.global_copy_paste_buffer = $.extend(true, {
+            //window.global_copy_paste_buffer = $.extend(true, {
+            window.Clipboard.copy($.extend(true, {
                 resource: {
                     fqn: AudioWidget.prototype.fqn
                 }
-            }, target.blueprint_repr());
+            }, target.blueprint_repr()));
         }
     },
     'top': {
