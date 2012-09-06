@@ -33,7 +33,8 @@ class IPAddressBlacklistMiddleware(object):
                 # to pass.
                 return
             try:
-                banned_ips = file(settings.DUCTUS_BLACKLIST_FILE).read()
+                with file(settings.DUCTUS_BLACKLIST_FILE) as f:
+                    banned_ips = f.read()
             except IOError:
                 if settings.DUCTUS_BLACKLIST_STRICT:
                     raise
