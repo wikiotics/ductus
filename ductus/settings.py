@@ -254,7 +254,7 @@ DUCTUS_MEDIACACHE_URL = '/mediacache' # no trailing slash
 
 #DUCTUS_FLICKR_API_KEY = ""
 
-DUCTUS_BLACKLIST_FILE = DUCTUS_SITE_ROOT + '/ip_blacklist.data'
+DUCTUS_BLACKLIST_FILE = None # DUCTUS_SITE_ROOT + '/ip_blacklist.data'
 DUCTUS_BLACKLIST_STRICT = False # if True, will error on failure to load blacklist data
 
 CACHES = {
