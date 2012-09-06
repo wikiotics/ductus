@@ -225,7 +225,7 @@
     //- "closure.keepLines": Same as closure option, but keeps line returns
     //in the minified files.
     //- "none": no minification will be done.
-    optimize: "none",
+    optimize: "uglify",
 
     //See https://github.com/mishoo/UglifyJS for the possible values.
     uglify: {
