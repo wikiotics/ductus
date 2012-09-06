@@ -8,6 +8,18 @@ Visual editing is based on the use of `Aloha editor`_
 
 .. _Aloha editor: http://aloha-editor.org
 
+HTML cleanup and validation
+---------------------------
+
+As HTML can potentially contain dangerous code that could allow XSS attacks or other similar issues, the server validates any input to only allow acceptable content.
+
+Aloha (client side/javascript) cleans up its own job before sending the content to the server. This is defined in ``edit_wiki.html`` template, under ``aloha.settings.contentHandler`` settings.
+The server validates input, ie. it's a pass or fail process, and the server will reject anything it's not happy with. This is set in ``ductus/modules/textwiki/ductmodels.py``.
+Both are whitelisting systems, so anything not explicitly allowed is rejected.
+The server-side system uses the default genshi list (see `genshi docs`_ and source code for details) plus 2 aloha microdata attributes.
+
+.. _genshi docs: http://genshi.edgewall.org/wiki/Documentation/filters.html
+
 For ductus developers: installing/upgrading aloha
 -------------------------------------------------
 
