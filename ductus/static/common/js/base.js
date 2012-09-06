@@ -1,6 +1,11 @@
 function resolve_urn(urn) {
     return '/' + urn.split(':').join('/');
 }
+function fqpagename_from_url(url) {
+    // the reverse of resolve_urn()
+    // does "/en/somepage/subpage" => "en:somepage/subpage"
+    return url.substr(1).replace('/', ':');
+}
 
 function resolve_mediacache_url(resource, mime_type, additional_args, blob_urn) {
     var split_urn = (blob_urn || resource.resource.blob.href).split(':');
