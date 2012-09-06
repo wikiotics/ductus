@@ -18,12 +18,17 @@ import socket
 import logging
 
 from django.conf import settings
+from django.core.exceptions import MiddlewareNotUsed
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 logger = logging.getLogger(__name__)
 
 class IPAddressBlacklistMiddleware(object):
+    def __init__(self):
+        if not settings.DUCTUS_BLACKLIST_FILE:
+            raise MiddlewareNotUsed
+
     def process_request(self, request):
         if request.method == "POST":
             try:
