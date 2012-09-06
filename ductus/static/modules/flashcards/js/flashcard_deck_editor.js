@@ -60,6 +60,39 @@ $(function () {
         });
     };
 
+    window.ductus_Clipboard = (function () {
+        // a local clipboard that works on any browser.
+        // if localStorage is supported, then content can be copy/pasted across lessons (in a same browser)
+        // if not, it only works within a single editor.
+        // the variable is global so that widgets in editing_widgets.js can access it too
+
+        if (window.localStorage) {
+            return {
+                copy: function(content) {
+                    window.localStorage.setItem('copy_paste_buffer', JSON.stringify(content));
+                },
+                paste: function() {
+                    return JSON.parse(window.localStorage.getItem('copy_paste_buffer'));
+                },
+                isempty: function() {
+                    return !this.paste();
+                }
+            }
+        } else {
+            return {
+                copy: function(content) {
+                    window.global_copy_paste_buffer = content;
+                },
+                paste: function() {
+                    return window.global_copy_paste_buffer;
+                },
+                isempty: function() {
+                    return !window.global_copy_paste_buffer;
+                }
+            }
+        }
+    })();
+
     function PhraseWidget(phrase) {
         ModelWidget.call(this, phrase, '<div class="ductus_PhraseWidget"></div>');
 
