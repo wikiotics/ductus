@@ -40,15 +40,19 @@ class IndexingError(Exception):
     def __repr__(self):
         return self.value
 
-def search_pages(tags):
+def search_pages(**kwargs):
     """
     return a list of pages tagged with all `tags` (boolean AND)
     like [{"absolute_pagename": name, "path": path}]
 
-    :param tags: a list of tag values like: ['tag1', 'target-language:en']. This is assumed to be valid tags, no checking is performed in this function!
+    :param **kwargs: the search parameters (which are $and'ed together, so a page must match all criteria to be returned). Format:
+        {
+        tags: a list of tag values like: ['tag1', 'target-language:en']. This is assumed to be valid tags, no checking is performed in this function!
+        pagename: a string to (partially) match in the page urls/names
+        }
     """
 
-    if not tags:
+    if not len(kwargs):
         # fixme: we should prompt the user for what they want to search
         raise IndexingError('your search query cannot be empty')
 
@@ -59,10 +63,18 @@ def search_pages(tags):
 
     # construct the mongodb query
     query = {}
-    query["tags"] = {"$all": tags}
+    query["current_wikipages"] = {"$not": {"$size": 0}}
+    for key in kwargs:
+        if key == 'tags':
+            query["tags"] = {"$all": kwargs[key]}
+        if key == 'pagename':
+            query['current_wikipages']['$regex'] = kwargs[key]
+            query['current_wikipages']['$options'] = 'i'
+
+    if len(query) > 1:
+        query = {'$and': [query]}
 
     # perform the search
-    query["current_wikipages"] = {"$not": {"$size": 0}}
     pages = collection.find(query, {"current_wikipages": 1}).sort("current_wikipages")
     results = []
     for page in pages:

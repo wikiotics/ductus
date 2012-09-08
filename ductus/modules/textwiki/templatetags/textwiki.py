@@ -157,7 +157,7 @@ def search_pages_macro(macro, environ, **kwargs):
         return Markup('<p>Invalid tag search</p>')
 
     try:
-        pages = search_pages(parsed_tags)
+        pages = search_pages(tags=parsed_tags)
     except Exception:
         return Markup('<p>Search failed</p>')
 

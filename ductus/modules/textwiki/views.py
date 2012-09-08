@@ -104,13 +104,14 @@ def ajax_search_pages(request, pagename):
     in the request, such that:
     TODO: document
     """
-    # TODO: limit the number of results returned, add support for fulltext search on url name
+    # TODO: limit the number of results returned
     if request.method == 'GET':
-        search_text = request.GET.get('text', '')
-        search_tags = request.GET.getlist('tag', '')
+        params = {}
+        params['pagename'] = request.GET.get('pagename', '')
+        params['tags'] = request.GET.getlist('tag', '')
         rv = {}
         try:
-            urls = search_pages(tags=search_tags)
+            urls = search_pages(**params)
         except IndexingError:
             raise Http404('indexing error')
 
