@@ -49,6 +49,7 @@ $(function() {
             markers.removeAttr('id')
                    .removeClass('aloha-block-DuctusPageListMacroBlock')
                    .removeAttr('data-aloha-block-type')
+                   .removeAttr('data-block-skip-scope')
                    .removeAttr('data-sortable-item');   // this attr seems to appear a bit randomly, we remove it, just in case
             // DO NOT remove the contenteditable attribute, it breaks the whole plugin
 
