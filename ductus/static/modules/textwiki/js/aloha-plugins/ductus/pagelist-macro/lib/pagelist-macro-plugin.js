@@ -54,6 +54,7 @@ define([
             });
             this._tagField = AttributeField({
                 width: 250,
+                label: 'Tags',
                 name: 'PageListTags',
                 scope: 'pagelisttags'
             });
