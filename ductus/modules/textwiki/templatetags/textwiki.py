@@ -126,6 +126,34 @@ def creole(value, default_prefix=None):
 
         return mark_safe(creole2html(value))
 
+def register_html_macro(macro_name):
+    def _register_html_macro(func):
+        _registered_html_macros[macro_name] = func
+        return func
+    return _register_html_macro
+
+_registered_html_macros = {}
+
+@register.filter
+@stringfilter
+def process_macros(html_input):
+    """
+    A template tag that processes a "ductus-html5" string into viewable html5.
+    For now, it only runs macros.
+    """
+
+    from lxml import etree, cssselect
+    source = etree.HTML(html_input)
+    macro_tags = cssselect.CSSSelector('div.ductus-macro')(source)
+    for mt in macro_tags:
+        macro_name = mt.get('data-macro-name')
+        try:
+            mt = _registered_html_macros[macro_name](mt, source)
+        except KeyError:
+            pass    # macros are simply <div> tags in the input, fail silently if we don't know how to process them
+
+    return etree.tostring(source)
+
 __title_re = re.compile(r'^\s*=+\s*(.*?)\s*=*\s*$', re.MULTILINE | re.UNICODE)
 
 @register.filter
