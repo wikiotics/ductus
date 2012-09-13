@@ -134,6 +134,37 @@ def register_html_macro(macro_name):
 
 _registered_html_macros = {}
 
+@register_html_macro('pagelist')
+def html5_pagelist_macro(macro_tag, fullpagesource):
+    """ generate the html output for the pagelist macro"""
+
+    from lxml import etree
+    from ductus.resource.ductmodels import tag_value_attribute_validator
+    from ductus.index import search_pages
+
+    tags = macro_tag.get("data-tags", '')
+
+    try:
+        parsed_tags = tags.split(',')
+        for tag in parsed_tags:
+            tag_value_attribute_validator(tag)
+    except Exception:
+        rv = etree.fromstring('<p>Invalid tag search</p>')
+
+    try:
+        pages = search_pages(tags=parsed_tags)
+    except Exception:
+        rv = etree.fromstring('<p>Search failed</p>')
+
+    rv = etree.Element('ul')
+    rv.set("class", "search_results")
+    for page in pages:
+        li = etree.SubElement(rv, 'li')
+        a = etree.SubElement(li, 'a', href=page['path'])
+        a.text = page['absolute_pagename']
+
+    return macro_tag.append(rv)
+
 @register.filter
 @stringfilter
 def process_macros(html_input):
