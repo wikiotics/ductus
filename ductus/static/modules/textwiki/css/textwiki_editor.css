@@ -30,3 +30,9 @@
 .aloha-ui-toolbar {
     position: static !important;
 }
+div.ductus-macro {
+    background-color: gray;
+}
+div.ductus-macro:before {
+    content: "Macro placeholder";
+}

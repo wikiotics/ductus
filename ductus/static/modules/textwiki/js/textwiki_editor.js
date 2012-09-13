@@ -43,6 +43,15 @@ $(function() {
         // get the editor content from aloha
         var text = '';
         if (Aloha.editables && Aloha.editables.length) {
+            // return aloha blocks to their initial state, ie: remove all the extra stuff that aloha uses during editing
+            var markers = Aloha.jQuery('div.ductus-macro');
+            markers.mahaloBlock();  // cannot chain, aloha's jQuery extension is buggy
+            markers.removeAttr('id')
+                   .removeClass('aloha-block-DuctusPageListMacroBlock')
+                   .removeAttr('data-aloha-block-type')
+                   .removeAttr('data-sortable-item');   // this attr seems to appear a bit randomly, we remove it, just in case
+            // DO NOT remove the contenteditable attribute, it breaks the whole plugin
+
             text = Aloha.editables[0].getContents();
         } else {
             text = this.content_editor.html();
