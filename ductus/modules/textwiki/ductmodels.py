@@ -54,7 +54,8 @@ class Wikitext(ductmodels.DuctModel):
         if self.blob.markup_language == 'ductus-html5':
             html = HTML(self.text)
             #TODO: define our own set of acceptable tags/attributes in settings.py
-            sanitizer = HTMLSanitizer(safe_attrs=HTMLSanitizer.SAFE_ATTRS | set(['data-gentics-aloha-repository', 'data-gentics-aloha-object-id']))
+            friendly_attrs = set(['data-gentics-aloha-repository', 'data-gentics-aloha-object-id', 'data-macro-name', 'data-tags', 'contenteditable'])
+            sanitizer = HTMLSanitizer(safe_attrs=HTMLSanitizer.SAFE_ATTRS | friendly_attrs)
             safe_html = html | sanitizer
             if html.render() != safe_html.render():
                 raise ValidationError(u'invalid html content')
