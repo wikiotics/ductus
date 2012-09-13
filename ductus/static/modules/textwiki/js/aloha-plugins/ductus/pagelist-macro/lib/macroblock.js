@@ -8,12 +8,11 @@ define([
         title: 'PageListMacro',
 
         init: function(element, postProcessFn) {
-            var that = this;
-
-            postProcessFn();
+            this.update(element, postProcessFn);
         },
 
         update: function(element, postProcessFn) {
+            jQuery(element).attr('macro-marker-text', 'PageList macro: ' + element.attr('data-tags'));
             postProcessFn();
         }
     });

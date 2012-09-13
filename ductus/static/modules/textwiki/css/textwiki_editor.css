@@ -34,5 +34,5 @@ div.ductus-macro {
     background-color: gray;
 }
 div.ductus-macro:before {
-    content: "Macro placeholder";
+    content: attr(macro-marker-text);
 }
