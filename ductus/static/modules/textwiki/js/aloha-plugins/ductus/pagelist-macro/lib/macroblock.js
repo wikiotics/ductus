@@ -9,13 +9,11 @@ define([
 
         init: function(element, postProcessFn) {
             var that = this;
-            window.console.log('pagelist macro block init');
 
             postProcessFn();
         },
 
         update: function(element, postProcessFn) {
-            window.console.log('pagelist macro block update');
             postProcessFn();
         }
     });
