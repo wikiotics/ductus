@@ -35,6 +35,7 @@ define([
                 });
                 BlockManager.bind('block-activate', function (blocks) {
                     that._currentBlock = blocks[0];
+                    Aloha.jQuery('#aloha-attribute-field-PageListTags').autocomplete('option', 'minLength', 1000); // this practically disables autocomplete
                     that._tagField.setValue(that._currentBlock.attr('tags'));
                     that._tagField.foreground();
                 });
