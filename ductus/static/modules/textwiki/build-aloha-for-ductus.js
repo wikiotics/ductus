@@ -200,6 +200,9 @@
 		"listenforcer/css": "../plugins/extra/listenforcer/css",
 		"listenforcer/nls": "../plugins/extra/listenforcer/nls",
 		"listenforcer/res": "../plugins/extra/listenforcer/res",
+
+        // ductus additional plugins
+        "pagelist-macro": "../plugins/ductus/pagelist-macro/lib",
     },
 
     //Configure CommonJS packages. See http://requirejs.org/docs/api.html#packages
@@ -317,6 +320,7 @@
 				//"horizontalruler/horizontalruler-plugin",
 				//"undo/undo-plugin",
 				"paste/paste-plugin",
+                "pagelist-macro/pagelist-macro-plugin",
 			],
         },
 
