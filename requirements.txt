@@ -16,7 +16,7 @@ Pygments==1.5
 python-magic==0.4.3
 flickrapi==1.4.2
 recaptcha-client==1.0.6
-pytz==2012d
+pytz==2012f
 pymongo==2.3
 pytest==2.2.4
 selenium==2.25.0
