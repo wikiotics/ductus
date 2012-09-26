@@ -183,7 +183,7 @@ def process_macros(html_input):
         except KeyError:
             pass    # macros are simply <div> tags in the input, fail silently if we don't know how to process them
 
-    return etree.tostring(source)
+    return mark_safe(etree.tostring(source))
 
 __title_re = re.compile(r'^\s*=+\s*(.*?)\s*=*\s*$', re.MULTILINE | re.UNICODE)
 
