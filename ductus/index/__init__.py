@@ -65,7 +65,7 @@ def search_pages(**kwargs):
     query = {}
     query["current_wikipages"] = {"$not": {"$size": 0}}
     for key in kwargs:
-        if key == 'tags':
+        if key == 'tags' and kwargs[key]:
             query["tags"] = {"$all": kwargs[key]}
         if key == 'pagename':
             query['current_wikipages']['$regex'] = kwargs[key]
