@@ -1,0 +1,28 @@
+.search-toolbar .search-button {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 0.5em 2em;
+}
+.search-results .result-item {
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius; 5px;
+    display: block;
+    margin: 0.5em;
+    padding: 0.5em;
+}
+.search-results .result-item .tag {
+    border: 1px solid #ddd;
+    margin: 0.5em;
+}
+.tag-toggle {
+    background: #ddd;
+    display: inline-block;
+    margin: 0.2em;
+    padding: 0.5em;
+}
+.tag-toggle.selected {
+    background: blue;
+}
