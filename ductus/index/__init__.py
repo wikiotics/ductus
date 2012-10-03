@@ -75,7 +75,7 @@ def search_pages(**kwargs):
         query = {'$and': [query]}
 
     # perform the search
-    pages = collection.find(query, {"current_wikipages": 1}).sort("current_wikipages")
+    pages = collection.find(query, {"current_wikipages": 1, "tags": 1}).sort("current_wikipages")
     results = []
     for page in pages:
         absolute_pagename = page["current_wikipages"][0]
@@ -91,6 +91,7 @@ def search_pages(**kwargs):
             results.append({
                 "absolute_pagename": absolute_pagename,
                 "path": path,
+                "tags": page["tags"],
             })
 
     return results
