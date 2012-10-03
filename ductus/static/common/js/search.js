@@ -42,6 +42,7 @@ $(function () {
             });
             this.append(item);
         }
+        taglist.sort();
         return this;
     };
 
