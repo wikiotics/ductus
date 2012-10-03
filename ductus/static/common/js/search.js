@@ -77,18 +77,32 @@ $(function () {
                     // display new search results and update the clickable list of tags
                     if (data.length > 0) {
                         $('div.search-results').clear_search_results().append_search_results(data);
-                        update_search_toolbar();
+                        update_search_toolbar(params);
                     }
                 }
             });
         }
     }
 
-    function update_search_toolbar() {
+    function update_search_toolbar(params) {
         // create a list of clickable tag buttons from the list of tags returned by AJAX query
+        // params: the parameters used for the latest AJAX query
+        var stat = '';
         $.each(taglist, function(i, tag) {
             toggle = $('<span>' + tag + '</span>').make_tag_toggle(true).appendTo('.refine-by-tag');
         });
+        // update search status text
+        stat = gettext('Showing results for: ');
+        if (params['pagename']) {
+            stat += gettext('page name containing "') + params['pagename'] + '" ';
+            if (params['tag']) {
+                stat += 'and ';
+            }
+        }
+        if (params['tag']) {
+            stat += gettext('tagged with: ') + params['tag'];
+        }
+        $('.search-status').text(stat);
     }
 
     $.fn.make_tag_toggle = function(selected) {
