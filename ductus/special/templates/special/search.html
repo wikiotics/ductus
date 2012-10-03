@@ -1,19 +1,28 @@
 {% extends "ductus_base.html" %}
 {% load title %}
 {% load i18n %}
+{% load static %}
+{% load staticfiles %}
 
 {% block title %}
 {{ block.super }}
 {% title "Search" %}
 {% endblock %}
 
+{% block js %}
+<script type="text/javascript" src="{% static "ductus/common/js/search.js" %}"></script>
+{% endblock %}
+
 {% block content %}
 {% if target_language_code %}
 <h3>{% blocktrans %}{{ target_language_description }} lessons{% endblocktrans %}</h3>
 {% endif %}
-<ul>
-{% for result in results %}
-  <li><a href="{{ result.path }}">{{ result.absolute_pagename }}</a></li>
-{% endfor %}
-</ul>
+
+<div class="search-toolbar">
+    <input class="search-text" placeholder="Search for..." />
+    <span class="search-button">Search</span>
+    <span>Showing results for: pages with name containing %s and tagged: [list], teaching [lang]</span>
+    <div class="refine-by-tag">Show only results with tags:</div>
+</div>
+<div class="search-results"></div>
 {% endblock %}
