@@ -34,7 +34,7 @@ $(function () {
         for (i = 0; i < res_length; i++) {
             item = $('<div class="result-item"><a href="' + results[i].path + '">' + results[i].absolute_pagename + '</a></div>');
             $.each(results[i].tags, function(i, tag) {
-                item.append('<span class="tag">' + tag + '</span>');
+                item.append('<span class="tag">' + tag + '</span>').addClass('tag-' + tag.replace(':', '_'));
                 // collect all tags used by the results
                 if ($.inArray(tag, taglist) < 0) {
                     taglist.push(tag);
@@ -111,11 +111,14 @@ $(function () {
             selected = false;
         }
         $(this).addClass('tag-toggle').click(function() {
-            if ($(this).hasClass('selected')) {
-                $(this).removeClass('selected');
-            } else {
-                $(this).addClass('selected');
-            }
+            $(this).toggleClass('selected');
+            var selected = $('.tag-toggle.selected');
+            // show all results...
+            $('.result-item').css('display', 'block');
+            // ...except the ones not matching the selected tags
+            selected.each(function(i, tag_elt) {
+                $('.result-item:not(.tag-' + $(tag_elt).text().replace(':', '_') + ')').css('display', 'none');
+            });
         });
         return this;
     };
