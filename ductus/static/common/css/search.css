@@ -6,7 +6,7 @@
     padding: 0.5em 2em;
 }
 .search-toolbar .search-status {
-    display: inline-block;
+    display: block;
     margin: 0.5em 0;
 }
 .search-results .result-item {
