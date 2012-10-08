@@ -89,6 +89,7 @@ $(function () {
         // create a list of clickable tag buttons from the list of tags returned by AJAX query
         // params: the parameters used for the latest AJAX query
         var stat = '';
+        $('.refine-by-tag').children().remove();
         $.each(taglist, function(i, tag) {
             toggle = $('<span>' + tag + '</span>').make_tag_toggle(true).appendTo('.refine-by-tag');
         });
