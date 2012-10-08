@@ -130,6 +130,12 @@ $(function () {
         $('.search-button').click(function() {
             do_search(get_search_params());
         });
+        // run the search when user hits "enter" (if input not empty)
+        $('.search-text').bind('keyup', function(e) {
+            if (e.keyCode == 13 && $(this).val() != '') {
+                do_search(get_search_params());
+            }
+        });
     }
 
     // TODO: load params from url
