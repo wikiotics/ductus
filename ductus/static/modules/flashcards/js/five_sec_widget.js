@@ -417,7 +417,7 @@ $(function() {
     };
 
     // start widget according to url parameter
-    if (urlParams['type'] == 'record') {
+    if (typeof(urlParams['type']) === 'string' && urlParams['type'] == 'record') {
         var fsw = new RecordFSWidget();
     } else {
         // default to the subtitle widget

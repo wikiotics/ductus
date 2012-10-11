@@ -70,12 +70,24 @@ $(function () {
 var urlParams = {};
 (function () {
     var e,
+        param,
         a = /\+/g,  // Regex for replacing addition symbol with a space
         r = /([^&=]+)=?([^&]*)/g,
         d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
         q = window.location.search.substring(1);
 
-    while (e = r.exec(q))
-        urlParams[d(e[1])] = d(e[2]);
+    while (e = r.exec(q)) {
+        param = d(e[1]);
+        type = typeof(urlParams[param]);
+        // each param is either a string or an array of strings
+        if (type === 'undefined') {
+            urlParams[param] = d(e[2]);
+        } else {
+            if (type === 'string') {
+                urlParams[param] = [urlParams[param]];
+            }
+            urlParams[param].push(d(e[2]));
+        }
+    }
 })();
 
