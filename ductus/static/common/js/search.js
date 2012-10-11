@@ -68,12 +68,13 @@ $(function () {
 
     function do_search(params) {
         // actually perform the search with given parameters
-
+        // params is an object describing search parameters (not serialised)
         // TODO: validate params
         if (!$.isEmptyObject(params)) {
             $.ajax({
                 url: 'ajax/search-pages',
                 data: params,
+                traditional: true,  // allow multiple values for a param to be serialised properly (http://api.jquery.com/jQuery.param/)
                 success: function(data, textStatus, jqXHR) {
                     // display new search results and update the clickable list of tags
                     if (data.length > 0) {
