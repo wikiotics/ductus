@@ -56,13 +56,10 @@ $(function () {
         if (text != '') {
             params['pagename'] = text;
         }
-        $('.tag-list > .selected').each(function(i, tag_elt) {
-            tags.push($(tag_elt).attr('data-tag-name'));
+        $('.tag-toggle.selected').each(function(i, tag_elt) {
+            tags.push($(tag_elt).text());
         });
-        if (tags.length) {
-            tags = tags.join('&tag=');
-            params['tag'] = tags;
-        }
+        params['tag'] = tags;
         return params;
     }
 
