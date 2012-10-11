@@ -49,6 +49,7 @@ def search_pages(**kwargs):
         {
         tags: a list of tag values like: ['tag1', 'target-language:en']. This is assumed to be valid tags, no checking is performed in this function!
         pagename: a string to (partially) match in the page urls/names
+        notags: a special argument that searches for pages with no tags.
         }
     """
 
@@ -70,6 +71,10 @@ def search_pages(**kwargs):
         if key == 'pagename':
             query['current_wikipages']['$regex'] = kwargs[key]
             query['current_wikipages']['$options'] = 'i'
+        if key == 'notags':
+            # special search feature to report all pages without tags
+            query["tags"] = {"$size": 0}
+            break
 
     if len(query) > 1:
         query = {'$and': [query]}

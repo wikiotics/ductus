@@ -109,6 +109,12 @@ def ajax_search_pages(request, pagename):
         params = {}
         params['pagename'] = request.GET.get('pagename', '')
         params['tags'] = request.GET.getlist('tag', '')
+
+        # special search feature to report all pages without tags
+        if 'notags' in request.GET:
+            params['notags'] = 1
+            del params['tags']  # just to be extra sure
+
         rv = {}
         try:
             urls = search_pages(**params)

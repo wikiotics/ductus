@@ -127,35 +127,6 @@ def search(request, pagename):
         raise Http404("indexing database is not available")
     collection = indexing_db.urn_index
 
-    # construct the mongodb query
-    query = {}
-    if 'tag' in request.GET:
-        query["tags"] = {"$all": request.GET.getlist('tag')}
-
-    if not query:
-        # fixme: we should prompt the user for what they want to search
-        raise Http404
-
-    # perform the search
-    query["current_wikipages"] = {"$not": {"$size": 0}}
-    pages = collection.find(query, {"current_wikipages": 1})
-    results = []
-    for page in pages:
-        absolute_pagename = page["current_wikipages"][0]
-        prefix, pagename = split_pagename(absolute_pagename)
-        try:
-            wns = registered_namespaces[prefix]
-        except KeyError:
-            # for some reason there's a prefix we don't know about.  move
-            # along.
-            pass
-        else:
-            path = "/%s/%s" % (prefix, wns.path_func(pagename))
-            results.append({
-                "absolute_pagename": absolute_pagename,
-                "path": path,
-            })
-
     # figure out target language (if given).
     # fixme: this probably doesn't belong here
     target_language_tags = [tag for tag in request.GET.getlist('tag')
@@ -174,7 +145,6 @@ def search(request, pagename):
     return render_to_response('special/search.html', {
         'target_language_code': target_language_code,
         'target_language_description': target_language_description,
-        'results': results,
     }, RequestContext(request))
 
 class SpecialPageNamespace(BaseWikiNamespace):
