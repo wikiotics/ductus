@@ -7,7 +7,7 @@
 # build aloha.js
 cd ../ductus/static/modules/textwiki
 # remove the build directory
-rm -r aloha
+rm -rf aloha
 mkdir -p aloha/plugins
 # copy our own plugins
 cp -R js/aloha-plugins/* aloha/plugins
