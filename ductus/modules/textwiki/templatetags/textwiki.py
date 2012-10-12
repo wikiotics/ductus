@@ -122,7 +122,7 @@ def creole(value, default_prefix=None):
             'bodied_macros': __bodied_macros,
             'non_bodied_macros': __non_bodied_macros,
         }
-        creole2html = Parser(create_dialect(creole11_base, **parser_kwargs))
+        creole2html = Parser(create_dialect(creole11_base, **parser_kwargs), encoding=None)
 
         return mark_safe(creole2html(value))
 
