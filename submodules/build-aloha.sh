@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # build aloha from the sources in the git submodule.
 # to run this script you need node.js installed.
 # (apt-get install nodejs for debian/ubuntu, for other systems http://nodejs.org)
