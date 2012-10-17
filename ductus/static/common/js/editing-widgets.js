@@ -294,7 +294,7 @@ PictureModelWidget.prototype.popup_settings = {
         'display': function() { return true; },
         'callback': function(target) {
             // copy the blueprint for pasting in another cell
-            window.Clipboard.copy({
+            window.ductus_Clipboard.copy({
                 resource: {
                     fqn: PictureModelWidget.prototype.fqn,
                     _picture_source: target._picture_widget._picture_source,
@@ -697,7 +697,7 @@ AudioWidget.prototype.popup_settings = {
         'callback': function(target) {
             // copy the blueprint for pasting in another cell
             //window.global_copy_paste_buffer = $.extend(true, {
-            window.Clipboard.copy($.extend(true, {
+            window.ductus_Clipboard.copy($.extend(true, {
                 resource: {
                     fqn: AudioWidget.prototype.fqn
                 }
