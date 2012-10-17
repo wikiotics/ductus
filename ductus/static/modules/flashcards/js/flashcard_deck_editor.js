@@ -75,7 +75,7 @@ $(function () {
                     return JSON.parse(window.localStorage.getItem('copy_paste_buffer'));
                 },
                 isempty: function() {
-                    return !this.paste();
+                    return (window.localStorage.getItem('copy_paste_buffer') === null);
                 }
             }
         } else {
