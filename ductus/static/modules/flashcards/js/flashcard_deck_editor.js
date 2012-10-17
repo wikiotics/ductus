@@ -72,7 +72,19 @@ $(function () {
                     window.localStorage.setItem('copy_paste_buffer', JSON.stringify(content));
                 },
                 paste: function() {
-                    return JSON.parse(window.localStorage.getItem('copy_paste_buffer'));
+                    var r = JSON.parse(window.localStorage.getItem('copy_paste_buffer'));
+                    // JSON.stringify() in copy won't serialise methods.
+                    // http://stackoverflow.com/questions/2010892/storing-objects-in-html5-localstorage offers a solution,
+                    // but it is implementation dependent, hence unreliable.
+                    // since the problem only affects (not yet uploaded) pictures, as a temporary solution, we rebuild the prototype
+                    if (r.resource.fqn == PictureModelWidget.prototype.fqn && (typeof r.resource._picture_source.urn == 'undefined')) {
+                        if (r.resource._picture_source.flickr_photo) {
+                            r.resource._picture_source.attempt_upload = FlickrPictureSource.prototype.attempt_upload;
+                            r.resource._picture_source.clone = FlickrPictureSource.prototype.clone;
+                            r.resource._picture_source.get_images = FlickrPictureSource.prototype.get_images;
+                        }
+                    }
+                    return r;
                 },
                 isempty: function() {
                     return (window.localStorage.getItem('copy_paste_buffer') === null);
