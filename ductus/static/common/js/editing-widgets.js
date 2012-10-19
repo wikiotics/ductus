@@ -200,7 +200,7 @@ FlickrPictureSource.prototype.attempt_upload = function (upload_success_cb, erro
             _this.status_elt.append($('<span class="error"></span>').text(errors[i]));
         }
         _this._upload_in_progress = false;
-        if (error_cb) error_cb(gettext('error uploading audio'));
+        if (error_cb) error_cb(gettext('error uploading picture'));
     }
     $.ajax({
         url: '/new/picture',
