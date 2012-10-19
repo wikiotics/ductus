@@ -91,6 +91,10 @@
 .ductus_PictureWidget {
     position: relative;
 }
+.ductus_PictureModelWidget img {
+    max-height: 100px;
+    max-width:  100px;
+}
 .ductus_PictureSearchWidget form {
     border-bottom: 1px solid #D3D3D3;
     margin-bottom: 0.5em;
