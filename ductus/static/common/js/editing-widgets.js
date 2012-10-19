@@ -307,6 +307,9 @@ function PictureModelWidget(picture) {
     var picture_source = null;
     if (picture.href)
         picture_source = new UrnPictureSource(picture.href);
+    else if (picture.resource._file) {
+        picture_source = new LocalFilePictureSource(picture.resource._file);
+    }
     else if (picture.resource && picture.resource._picture_source)
         picture_source = picture.resource._picture_source.clone();
     assert(function () { return !!picture_source; });
@@ -338,7 +341,7 @@ PictureModelWidget.prototype.edit_ui_widget = function () {
 };
 PictureModelWidget.prototype.get_outstanding_presave_steps = function () {
     // make sure the image is uploaded to server before saving the blueprint
-    // to limit transfer to/from the client, we simply POST the url of the picture to the server
+    // to limit transfer to/from the client for flickr pictures, we simply POST the url of the picture to the server
     // and get a urn in return.
 
     // only perform a presave action if we need to
@@ -346,11 +349,16 @@ PictureModelWidget.prototype.get_outstanding_presave_steps = function () {
         var pm_widget = this;
         return [function (success_cb, error_cb) { return pm_widget.attempt_upload(success_cb, error_cb); }];
     }
+    // handle local files
+    if (this._picture_widget._picture_source.file) {
+        var pm_widget = this;
+        return [function (success_cb, error_cb) { return pm_widget.attempt_upload(success_cb, error_cb); }];
+    }
     // picture is already on the server
     return [];
 };
 PictureModelWidget.prototype.attempt_upload = function (success_cb, error_cb) {
-    // send a relevant reference to the server to trigger picture upload
+    // send a relevant reference to the server to trigger picture upload of flickr file
     if (this._picture_widget._picture_source.flickr_photo) {
         var pm_widget = this;
         var flickr_success_cb = function(urn) {
@@ -358,6 +366,16 @@ PictureModelWidget.prototype.attempt_upload = function (success_cb, error_cb) {
             if (success_cb) { success_cb(); }
         };
         this._picture_widget._picture_source.attempt_upload(flickr_success_cb, error_cb);
+    }
+    // if we have a local file, upload it
+    if (this._picture_widget._picture_source.file) {
+        var pm_widget = this;
+        var local_upload_success_cb = function(urn) {
+            pm_widget._set_from_urn(urn);
+            //TODO: do we need to delete the file explicitly?
+            if (success_cb) { success_cb(); }
+        };
+        this._picture_widget._picture_source.attempt_upload(local_upload_success_cb, error_cb);
     }
 };
 PictureModelWidget.prototype._set_from_urn = function (urn) {
@@ -558,7 +576,12 @@ function PictureSearchWidget(initial_query_data) {
                 '<input type="radio" name="sort" value="date-posted-desc"/>' + gettext('Recent') +
                 '<input type="radio" name="sort" value="interestingness-desc"/>' + gettext('Interesting') +
                 '<input type="radio" name="sort" value="relevance" checked/>' + gettext('Relevant') +
-            '</form></div>');
+            '</form>' +
+            '<span class="ductus_file_upload_wrapper">' +
+            '<input type="file" accept="image/*" />' +
+            '<span class="ductus_file_upload_button">' + gettext('or upload a file...') + '</span>' +
+            '</span>' +
+            '</div>');
     if (DUCTUS_FLICKR_GROUP_ID) {
         $(this.elt).find("form").append('<div><input type="checkbox" name="group" value="' + DUCTUS_FLICKR_GROUP_ID + '"/> ' + gettext('Restrict to project\'s Flickr group') + '</div>');
     }
@@ -629,6 +652,13 @@ function PictureSearchWidget(initial_query_data) {
         return false;
     });
     this.elt.append(search_results_elt);
+    var input = this.elt.find('.ductus_file_upload_wrapper > input');
+    input.change(function () {
+        var file = this.files[0];
+        this_.elt.trigger("ductus_element_selected", [{
+            resource: { fqn: PictureModelWidget.prototype.fqn, _file: file }
+        }]);
+    });
 }
 PictureSearchWidget.prototype = chain_clone(Widget.prototype);
 PictureSearchWidget.prototype.destroy = function () {
