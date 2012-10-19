@@ -37,7 +37,7 @@ def new_picture(request):
         return flickr_search_view(request)
 
     if request.method == 'POST':
-        form = PictureImportForm(request.POST)
+        form = PictureImportForm(request.POST, request.FILES)
         if form.is_valid():
             save_context = BlueprintSaveContext.from_request(request)
             urn = form.save(save_context)
