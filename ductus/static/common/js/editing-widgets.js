@@ -169,6 +169,89 @@ UrnPictureSource.prototype.clone = function () {
     return this;
 };
 
+function LocalFilePictureSource(file) {
+    // a picture source used when uploading a local file
+    // it is first kept as data:url and actually pushed to the server
+    // as a presave action
+    this.file = file;
+}
+LocalFilePictureSource.prototype.get_images = function () {
+    // return a data:url for the picture
+    var img,
+        createURL,
+        url;
+    img = document.createElement('img');
+    if (window.URL) {
+        // firefox errors if we try to assign the function to a var, strange...
+        img.src = window.URL.createObjectURL(this.file);
+    } else {
+        img.src = window.webkitURL.createObjectURL(this.file);
+    }
+    return {
+        '100x100': img.src
+    };
+};
+LocalFilePictureSource.prototype.clone = function () {
+    return this;
+}
+LocalFilePictureSource.prototype.attempt_upload = function (upload_success_cb, error_cb) {
+    // upload the picture to the server as a presave action using an XHR call
+    var file = this.file;
+    if (!file) {
+        // no file selected, so this should not have been called
+        if (error_cb) error_cb();
+        return;
+    }
+    if (this._upload_in_progress) {
+        // note: no callback will be called... FIXME
+        return;
+    }
+    var _this = this;
+    this._upload_in_progress = true;
+    function handle_upload_errors(errors) {
+        for (var i = 0; i < errors.length; ++i) {
+            console.log(errors[i]);
+        }
+        _this._upload_in_progress = false;
+        if (error_cb) error_cb(gettext('error uploading picture'));
+    }
+    $.ductusFileUpload({
+        url: '/new/picture',
+        onLoad: function (e, files, index, xhr) {
+            if (xhr.status != 200) {
+                handle_upload_errors(['http status ' + xhr.status]);
+                return;
+            }
+            var data;
+            try {
+                data = $.parseJSON(xhr.responseText);
+            } catch (error) {
+                handle_upload_errors();
+                return;
+            }
+            if (data.errors) {
+                var key, errors = [];
+                for (key in data.errors) {
+                    errors.push(data.errors[key]);
+                }
+                handle_upload_errors(errors);
+                return;
+            }
+            _this._upload_in_progress = false;
+            if (upload_success_cb) upload_success_cb(data['urn']);
+        },
+        onProgress: function (e, files, index, xhr) {
+                        var percent = parseInt(100 * e.loaded / e.total, 10);
+                        console.log('upload progress %', percent);
+                    },
+        onError: function (e, files, index, xhr) {
+                     handle_upload_errors();
+                 },
+        onAbort: function (e, files, index, xhr) {
+                     handle_upload_errors();
+                 }
+    }).handleFiles([file]);
+}
 function FlickrPictureSource(flickr_photo) {
     this.flickr_photo = flickr_photo;
 }
