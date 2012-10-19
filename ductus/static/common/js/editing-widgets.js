@@ -272,7 +272,7 @@ PictureModelWidget.prototype.attempt_upload = function (success_cb, error_cb) {
         var pm_widget = this;
         var flickr_success_cb = function(urn) {
             pm_widget._set_from_urn(urn);
-            if (success_cb) { success_cb() }
+            if (success_cb) { success_cb(); }
         };
         this._picture_widget._picture_source.attempt_upload(flickr_success_cb, error_cb);
     }
