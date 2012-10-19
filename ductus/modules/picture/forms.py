@@ -108,6 +108,18 @@ class PictureImportForm(forms.Form):
         else:
             return u''
 
+    def clean(self):
+        """make sure the client provided either a uri or a file to upload but not both"""
+        data = super(PictureImportForm, self).clean()
+        uri = data.get('uri')
+        file = data.get('file')
+        if uri and file:
+            raise forms.ValidationError(_("Please provide either a flickr uri or a file to upload, not both."))
+        if uri == '' and file is None:
+            raise forms.ValidationError(_("Please provide either a flickr uri or a file to upload."))
+
+        return data
+
     def save(self, save_context):
         if self.cleaned_data['uri'] != '':
             # either we have a uri (like a flickr picture)
