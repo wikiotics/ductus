@@ -21,7 +21,7 @@ from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view, register_mediacache_view
 from ductus.decorators import unvarying
 from ductus.wiki.mediacache import mediacache_redirect
-from ductus.modules.picture.ductmodels import Picture
+from ductus.modules.picture.ductmodels import Picture, allowed_picture_types
 
 from cStringIO import StringIO
 
@@ -59,6 +59,7 @@ def view_picture(request):
         if picture.rotation:
             thumbnail_str += '_' + picture.rotation
 
+    #TODO: we probably shouldn't convert png images to jpeg...
     return mediacache_redirect(request, picture.blob.href, 'image/jpeg',
                                thumbnail_str, picture)
 
@@ -77,8 +78,7 @@ def adjust_orientation_from_exif(image):
 def mediacache_picture(blob_urn, mime_type, additional_args, picture):
     from PIL import Image, ImageFile
 
-    # for now this code assumes all pictures are jpegs
-    assert picture.blob.mime_type == 'image/jpeg'
+    assert picture.blob.mime_type in allowed_picture_types
 
     if picture.blob.href != blob_urn:
         return None

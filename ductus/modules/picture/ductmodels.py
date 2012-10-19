@@ -16,6 +16,8 @@
 
 from ductus.resource import ductmodels, register_ductmodel
 
+allowed_picture_types = ['image/jpeg', 'image/png']
+
 class OptionalTextElement(ductmodels.TextElement):
     optional = True
 
@@ -46,7 +48,7 @@ def rotation_validator(v):
 @register_ductmodel
 class Picture(ductmodels.DuctModel):
     ns = 'http://wikiotics.org/ns/2009/picture'
-    blob = ductmodels.TypedBlobElement(allowed_mime_types=['image/jpeg'])
+    blob = ductmodels.TypedBlobElement(allowed_mime_types=allowed_picture_types)
     credit = CreditElement()
     rotation = ductmodels.Attribute(optional=True, blank_is_null=True,
                                 validator=rotation_validator)
