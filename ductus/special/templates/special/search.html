@@ -19,10 +19,10 @@
 {% endif %}
 
 <div class="search-toolbar">
-    <input class="search-text" placeholder="Search for..." />
-    <span class="search-button">Search</span>
+    <input class="search-text" placeholder="{% trans "Search for..." %}" />
+    <span class="search-button">{% trans "Search" %}</span>
     <span class="search-status"></span>
-    <div class="refine-by-tag">Show only results with tags:</div>
+    <div class="refine-by-tag">{% trans "Show only results with tags:" %}</div>
 </div>
 <div class="search-results"></div>
 {% endblock %}
