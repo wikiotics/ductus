@@ -26,7 +26,8 @@
     display: inline-block;
     margin: 0.2em;
     padding: 0.5em;
+    cursor: pointer;
 }
 .tag-toggle.selected {
-    background: blue;
+    background: #ccf;
 }
