@@ -77,6 +77,8 @@ $(function () {
                     if (data.length > 0) {
                         $('div.search-results').clear_search_results().append_search_results(data);
                         update_search_toolbar(params);
+                    } else {
+                        $('div.search-results').clear_search_results().append('<span class="no-results">' + gettext('No results found') + '</span>');
                     }
                 }
             });

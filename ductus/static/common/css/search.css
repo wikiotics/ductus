@@ -31,3 +31,8 @@
 .tag-toggle.selected {
     background: #ccf;
 }
+.no-results {
+    display: block;
+    font-size: 150%;
+    margin: 2em;
+}
