@@ -658,6 +658,7 @@ function PictureSearchWidget(initial_query_data) {
         this_.elt.trigger("ductus_element_selected", [{
             resource: { fqn: PictureModelWidget.prototype.fqn, _file: file }
         }]);
+        $(this_.elt).dialog('close');
     });
 }
 PictureSearchWidget.prototype = chain_clone(Widget.prototype);
