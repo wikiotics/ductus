@@ -46,6 +46,10 @@ class PictureFileField(forms.FileField):
 
     def clean(self, data, initial=None):
         rv = super(PictureFileField, self).clean(data, initial)
+        if data is None:
+            # this happens with flickr pictures, see https://code.ductus.us/ticket/187
+            return rv
+
         # make sure the blob is small enough to fit in the ResourceDatabase
         # without raising SizeTooLargeError
         max_blob_size = get_resource_database().max_blob_size
