@@ -182,6 +182,9 @@ h6 {
 .ductus_save_notice {
     color: #a00;
 }
+.pic_search_pager a {
+    cursor: pointer;
+}
 /*!
  * loading.svg icon from https://raw.github.com/firebug/firebug/master/extension/skin/classic/loading.svg
 Software License Agreement (BSD License)
