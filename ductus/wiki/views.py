@@ -30,6 +30,7 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.conf import settings
 
+from ductus.index import update_index_on_save
 from ductus.resource import get_resource_database, UnexpectedHeader
 from ductus.resource.ductmodels import DuctModel
 from ductus.wiki import registered_views, registered_creation_views, SuccessfulEditRedirect, resolve_urn, is_legal_wiki_pagename, user_has_edit_permission, user_has_unlink_permission
@@ -211,7 +212,6 @@ def handle_blueprint_post(request, expected_model=DuctModel):
         return HttpTextResponseBadRequest(u"validation failed")
 
     # edit successful: update the index
-    from ductus.index import update_index_on_save
     try:
         # try to get the parent urn from the blueprint, as it is already in memory
         parent_urn = blueprint['resource']['@patch']
@@ -618,6 +618,8 @@ def view_unlink_wikipage(request):
     if request.method == 'POST':
         revision = construct_wiki_revision(request.ductus.wiki_page, "", request)
         revision.save()
+        update_index_on_save('urn:%s' % request.ductus.wiki_revision.urn, [])
+
         return render_to_response('wiki/unlink_deleted.html', {
         }, RequestContext(request))
 
