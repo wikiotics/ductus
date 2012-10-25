@@ -126,7 +126,7 @@ def verify(collection, urn, current_wikipages_list, force_update=False):
     """Updates a urn's indexing info and returns the set of its recursive links.
 
     `collection`: the mongo collection to use as returned by ``get_indexing_mongo_database()``.
-    `urn`: the urn to update the index for.
+    `urn`: the urn to update the index for, starting with "urn:".
     `wikipages_url_list` is the sorted list of urls pointing to `urn`.
     `force_update`: set to True to update the index even if `urn` is already in the index (defaults to ``False``).
     """
@@ -183,8 +183,8 @@ def update_index_on_save(urn, url, parent_urn=None):
     Update the index for the specified urn (to be used when saving a blueprint), and for its parents (if any, i.e: if modifying an existing wikipage).
     Note that this function assumes a single url is linked to the urn, which is true only for wiki edits. Do not call this function for maintenance purposes.
 
-    `urn` is the urn of the newly saved blueprint (ie: the latest revision).
-    `url` is the url under which the urn is saved.
+    `urn` is the urn of the newly saved blueprint (ie: the latest revision). Must start with 'urn:'.
+    `url` is an array of urls under which the urn is saved. Empty array means delete the page ("unlink" it, the urn remains in the index).
     `parent_urn` is the urn to the parent of `urn` (optional).
     """
     indexing_db = get_indexing_mongo_database()
@@ -192,6 +192,6 @@ def update_index_on_save(urn, url, parent_urn=None):
         raise Exception
     collection = indexing_db.urn_index
 
-    verify(collection, urn, [url])
+    verify(collection, urn, url, force_update=(url==[]))
     if parent_urn:
         verify(collection, parent_urn, [], force_update=True)
