@@ -39,7 +39,7 @@ from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view
 from ductus.wiki.subviews import subview
 from ductus.decorators import unvarying
-from ductus.utils.http import query_string_not_found, render_json_response, ImmediateResponse
+from ductus.utils.http import query_string_not_found, render_json_response, ImmediateResponse, StreamingHttpResponse
 import ductus
 
 logger = logging.getLogger(__name__)
@@ -83,8 +83,7 @@ def main_document_view(request, urn=None, wiki_page=None, wiki_revision=None):
             data_iterator = resource_database[urn]
         except KeyError:
             raise Http404
-        response = HttpResponse(list(data_iterator), # see django #6527
-                                content_type='application/octet-stream')
+        response = StreamingHttpResponse(data_iterator, content_type='application/octet-stream')
         response["ETag"] = etag
         return response
 
@@ -508,8 +507,8 @@ def view_xml(request):
     """
 
     urn = request.ductus.resource.urn
-    return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
-                        content_type='application/xml; charset=utf-8')
+    return StreamingHttpResponse(get_resource_database().get_xml(urn),
+                                 content_type='application/xml; charset=utf-8')
 
 @register_view(None, 'xml_as_text')
 @unvarying
@@ -518,8 +517,8 @@ def view_xml_as_text(request):
     """
 
     urn = request.ductus.resource.urn
-    return HttpResponse(list(get_resource_database().get_xml(urn)), # see django #6527
-                        content_type='text/plain; charset=utf-8')
+    return StreamingHttpResponse(get_resource_database().get_xml(urn),
+                                 content_type='text/plain; charset=utf-8')
 
 def urn_linkify(html, query_string=''):
     """linkifies URNs

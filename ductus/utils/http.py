@@ -38,3 +38,12 @@ class ImmediateResponse(Exception):
         elif args or kwargs:
             raise TypeError("too many arguments")
         self.response = response
+
+# django #6527 workaround ... see django commit 495a8b8107
+try:
+    from django.http import StreamingHttpResponse
+except ImportError:
+    # must be using Django 1.4 series
+    class StreamingHttpResponse(HttpResponse):
+        def __init__(self, streaming_content, *args, **kwargs):
+            super(StreamingHttpResponse, self).__init__(list(streaming_content), *args, **kwargs)

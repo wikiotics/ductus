@@ -23,6 +23,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 
 from ductus.resource import get_resource_database, split_urn
 from ductus.utils import iterator_to_tempfile
+from ductus.utils.http import StreamingHttpResponse
 from ductus.wiki import registered_mediacache_views
 from ductus.decorators import unvarying
 
@@ -87,7 +88,7 @@ def _mediacache_view(pathname, query_string):
     data_iterator = get(blob_urn, mime_type, additional_args)
     if data_iterator:
         # fixme: possibly log a warning if we're in deploy mode
-        response = HttpResponse(list(data_iterator), content_type=mime_type) # see django #6527
+        response = StreamingHttpResponse(data_iterator, content_type=mime_type)
         response["X-Ductus-Mediacache"] = "served"
         return response
 
@@ -140,7 +141,7 @@ def _do_mediacache_view_generate(blob_urn, mime_type, additional_args, resource)
         raise Http404("mediacache view returned None")
 
     # store to filesystem
-    data_iterator = list(data_iterator) # fixme: this is suboptimal if we ever manage to get around #6527
+    data_iterator = list(data_iterator) # fixme: this is suboptimal now that django #6527 is fixed
     if getattr(settings, "DUCTUS_MEDIACACHE_DIR"):
         # fixme: log a warning if this returns False (i.e. an error occurred)
         put(blob_urn, mime_type, additional_args, data_iterator)
