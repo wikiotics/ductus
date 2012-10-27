@@ -101,16 +101,17 @@ class PictureImportForm(forms.Form):
 
     def clean_uri(self):
         uri = self.cleaned_data['uri']
-        if uri:
-            for handler_class in self._uri_handlers:
-                if handler_class.handles(uri):
-                    handler = handler_class(uri)
-                    handler.validate()
-                    self.handler = handler
-                    return uri
-            raise forms.ValidationError(_("Unrecognized uri type"))
-        else:
+
+        if not uri:
             return u''
+
+        for handler_class in self._uri_handlers:
+            if handler_class.handles(uri):
+                handler = handler_class(uri)
+                handler.validate()
+                self.handler = handler
+                return uri
+        raise forms.ValidationError(_("Unrecognized uri type"))
 
     def clean(self):
         """make sure the client provided either a uri or a file to upload but not both"""
