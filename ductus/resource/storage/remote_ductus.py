@@ -16,14 +16,14 @@
 
 from urllib2 import urlopen, HTTPError
 
+from django.utils import six
+
 from ductus.util import iterate_file_object
 from ductus.resource.storage.untrusted import UntrustedStorageMetaclass
 from ductus.resource.storage import UnsupportedOperation
 
-class RemoteDuctusStorageBackend(object):
+class RemoteDuctusStorageBackend(six.with_metaclass(UntrustedStorageMetaclass, object)):
     """Fetches resources from a remote Ductus over HTTP"""
-
-    __metaclass__ = UntrustedStorageMetaclass
 
     def __init__(self, base_url="http://wikiotics.org/", max_resource_size=None):
         self.__base_url = base_url
