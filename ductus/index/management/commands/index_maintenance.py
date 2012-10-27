@@ -125,7 +125,7 @@ class Command(NoArgsCommand):
                 current_wikipages_map.setdefault(urn, set()).add(wikipage.name)
 
         n_attempted = n_successful = 0
-        for key in resource_database.iterkeys():
+        for key in resource_database:
             n_attempted += 1
             try:
                 verify(key)

@@ -32,8 +32,13 @@ class WrapStorageBackend(object):
     def __delitem__(self, key):
         del self.__backend[key]
 
-    def __iter__(self):
+    def iterkeys(self):
         return iter(self.__backend)
+
+    def keys(self):
+        return self.__backend.keys()
+
+    __iter__ = iterkeys
 
     def __len__(self):
         return len(self.__backend)

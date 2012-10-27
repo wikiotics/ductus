@@ -100,7 +100,10 @@ class LocalStorageBackend(object):
             return cnt
 
     def keys(self):
-        return list(self.iterkeys())
+        if six.PY3:
+            return self.iterkeys()
+        else:
+            return list(self.iterkeys())
 
     def iterkeys(self):
         hash_types = six.next(os.walk(self.__storage_directory))[1]

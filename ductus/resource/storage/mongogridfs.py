@@ -17,6 +17,8 @@
 # Note: We do not import gridfs in the global namespace of this module to
 # prevent ImportError's when it is not installed
 
+from django.utils import six
+
 from ductus.util import iterate_file_object
 
 class GridfsStorageBackend(object):
@@ -54,11 +56,15 @@ class GridfsStorageBackend(object):
         self.fs.delete(self.__get_file_object(key)._id)
 
     def keys(self):
-        return self.fs.list()
+        if six.PY3:
+            return self.iterkeys()
+        else:
+            return self.fs.list()
 
-    iterkeys = keys
+    def iterkeys(self):
+        return iter(self.fs.list())
 
     __iter__ = iterkeys
 
     def __len__(self):
-        return len(self.keys())
+        return len(self.fs.list())

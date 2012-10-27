@@ -1,3 +1,5 @@
+from django.utils import six
+
 class NullStorageBackend(object):
     """Pointless storage backend.  Always contains nothing.
 
@@ -14,7 +16,10 @@ class NullStorageBackend(object):
     def __delitem__(self, key):
         raise KeyError(key)
     def keys(self):
-        return []
+        if six.PY3:
+            return iter([])
+        else:
+            return []
     def iterkeys(self):
         return iter([])
     __iter__ = iterkeys

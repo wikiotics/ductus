@@ -16,6 +16,7 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import six
 
 from ductus.special.views import register_special_page
 from ductus.util.bcp47 import language_tag_to_description
@@ -41,7 +42,7 @@ def otics_front_page(request, pagename=None):
 
     total_lesson_count = sum(a for a in languages.values())
     language_tag_cloud = []
-    for lang_code, count in sorted(languages.iteritems()):
+    for lang_code, count in sorted(six.iteritems(languages)):
         if count < 2:
             # XXX: until the tag cloud is fixed, don't display languages with
             # only one lesson

@@ -16,6 +16,8 @@
 
 import os
 
+from django.utils import six
+
 from ductus.util import iterate_file_then_delete, iterator_to_tempfile
 from ductus.resource.storage import UnsupportedOperation
 
@@ -67,7 +69,7 @@ class UnionStorageBackend(object):
     def __delitem__(self, key):
         raise UnsupportedOperation("Unsupported")
 
-    def keys(self):
+    def _keys(self):
         # Sadly, this seems like the only way to do it.
         all_keys = set()
         for backend in self.__backends:
@@ -75,13 +77,19 @@ class UnionStorageBackend(object):
                 all_keys.update(backend.keys())
             except UnsupportedOperation:
                 pass
-        return list(all_keys)
+        return all_keys
+
+    def keys(self):
+        if six.PY3:
+            return iter(self._keys())
+        else:
+            return list(self._keys())
 
     def iterkeys(self):
-        return iter(self.keys())
+        return iter(self._keys())
 
     __iter__ = iterkeys
 
     def __len__(self):
         # Horrible, horrible!
-        return len(self.keys())
+        return len(self._keys())

@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils import six
+
 class TagCloudElement(object):
     """An element that will be placed in a tag cloud
     """
@@ -24,7 +26,7 @@ class TagCloudElement(object):
             self.label = label
         if href is not None:
             self.href = href
-        for k, v in kwargs.iteritems():
+        for k, v in six.iteritems(kwargs):
             setattr(self, k, v)
 
 class TagCloudElementProxy(object):

@@ -37,7 +37,7 @@ def __get_dict_of_possible_module_variables(module_variable_dict):
     if not module_variable_dict:
         return None
     rv = {}
-    for key, value in module_variable_dict.iteritems():
+    for key, value in six.iteritems(module_variable_dict):
         if isinstance(value, six.string_types):
             mod_name, junk, var_name = value.rpartition('.')
             rv[key] = getattr(import_module(mod_name), var_name)
@@ -82,7 +82,7 @@ def __prepare_global_data_structures():
     __interwiki_links_base_urls = {}
     __interwiki_links_path_funcs = {}
     __interwiki_links_class_funcs = {}
-    for wns in registered_namespaces.itervalues():
+    for wns in six.itervalues(registered_namespaces):
         __interwiki_links_base_urls[wns.prefix] = u'/%s/' % wns.prefix
         __interwiki_links_path_funcs[wns.prefix] = (wns.path_func, create_image_path_func(wns.path_func))
         __interwiki_links_class_funcs[wns.prefix] = __wiki_links_class_func(wns.prefix)

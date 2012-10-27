@@ -36,8 +36,13 @@ class SafeStorageBackend(object):
         if self.error_on_delete:
             raise UnsupportedOperation("Deleting resources is not allowed.")
 
-    def __iter__(self):
+    def iterkeys(self):
         return iter(self.__backend)
+
+    def keys(self):
+        return self.__backend.keys()
+
+    __iter__ = iterkeys
 
     def __len__(self):
         return len(self.__backend)

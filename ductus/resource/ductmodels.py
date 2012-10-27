@@ -120,17 +120,17 @@ class ElementMetaclass(type):
         # Precalculate a few things
         cls._required_attributes = {
             name_
-            for name_, attribute in cls.attributes.iteritems()
+            for name_, attribute in six.iteritems(cls.attributes)
             if not getattr(attribute, "optional", False)
         }
         cls._required_subelements = {
             name_
-            for name_, subelement in cls.subelements.iteritems()
+            for name_, subelement in six.iteritems(cls.subelements)
             if not getattr(subelement, "optional", False)
         }
         cls._attributes_by_fqn = {
             (attribute.fqn or name_): name_
-            for name_, attribute in cls.attributes.iteritems()
+            for name_, attribute in six.iteritems(cls.attributes)
         }
 
         super(ElementMetaclass, cls).__init__(name, bases, attrs)
@@ -289,7 +289,7 @@ class Element(six.with_metaclass(ElementMetaclass, object)):
     def _populate_attributes_from_xml(self, xml_node, ns):
         used_attributes = set()
         attributes_by_fqn = self._attributes_by_fqn
-        for attr, value in xml_node.attrib.iteritems():
+        for attr, value in six.iteritems(xml_node.attrib):
             try:
                 name = attributes_by_fqn[attr]
             except KeyError:

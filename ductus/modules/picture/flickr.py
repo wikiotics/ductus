@@ -19,6 +19,7 @@ import json
 
 import flickrapi
 from django.conf import settings
+from django.utils import six
 
 class FlickrJSON(flickrapi.FlickrAPI):
     """FlickrAPI with parsed JSON as the default format"""
@@ -92,7 +93,7 @@ class FlickrPhoto(object):
             self.dict["owner_id"] = self.dict["owner"]
 
         # add list of urls for convenience
-        for k, v in url_format_map.iteritems():
+        for k, v in six.iteritems(url_format_map):
             try:
                 self.dict[k + "_url"] = v % self.dict
             except KeyError:
