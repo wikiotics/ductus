@@ -44,4 +44,4 @@ def fetch_language_subtag_registry(url=None):
 
 if __name__ == '__main__':
     from sys import argv
-    print fetch_language_subtag_registry(argv[1] if (len(argv) > 1) else None)
+    print(fetch_language_subtag_registry(argv[1] if (len(argv) > 1) else None))

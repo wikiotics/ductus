@@ -50,11 +50,11 @@ if "READTHEDOCS" in os.environ:
 #
 # XXX: it seems like a bad idea to execute code in a file called conf.py, but
 # that's what we do anyway.
-print "running apidoc"
+print("running apidoc")
 from sphinx.apidoc import main
 arguments = ['sphinx-apidoc', '-f', '-o', './', '../ductus/']
 main(arguments)
-print "done with apidoc"
+print("done with apidoc")
 
 # =============================================================================
 # If extensions (or modules to document with autodoc) are in another directory,

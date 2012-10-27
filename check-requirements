@@ -29,7 +29,7 @@ def main():
         package, installed_version = m.group(1), m.group(2)
         latest_version = get_pypi_version(package)
         if latest_version != installed_version:
-            print "{0:40}{1:20}{2:20}".format(package, installed_version, latest_version)
+            print("{0:40}{1:20}{2:20}".format(package, installed_version, latest_version))
             upgrade_needed = True
     sys.exit(1 if upgrade_needed else 0)
 
