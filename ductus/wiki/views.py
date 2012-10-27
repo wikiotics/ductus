@@ -59,8 +59,8 @@ class DuctusRequestInfo(object):
         self.wiki_revision = wiki_revision
 
 def __handle_etag(request, key, weak=True):
-    from django.utils.hashcompat import md5_constructor
-    etag = '"%s"' % md5_constructor(repr(key)).hexdigest()
+    import hashlib
+    etag = '"%s"' % hashlib.md5(repr(key)).hexdigest()
     if weak: # use a "weak entity tag" since byte equality is not guaranteed
         etag = 'W/' + etag
     if etag == request.META.get('HTTP_IF_NONE_MATCH', None):
