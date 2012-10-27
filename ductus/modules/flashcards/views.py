@@ -329,7 +329,6 @@ def fsw_get_flashcard(request, extra_tags, prompt_side, answer_side):
         # get the language to search for
         language = request.GET.get('language', getattr(settings, "FIVE_SEC_WIDGET_DEFAULT_LANGUAGE", 'en'))
         search_tags = ['target-language:' + language] + extra_tags
-        print search_tags
         # get a list of pages tagged as we want
         try:
             url_list = search_pages(tags=search_tags)
