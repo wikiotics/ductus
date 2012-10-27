@@ -23,6 +23,7 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import iri_to_uri
 from django.utils.http import urlquote
 from django.utils.importlib import import_module
+from django.utils import six
 from django.conf import settings
 
 from ductus.wiki.models import WikiPage
@@ -37,7 +38,7 @@ def __get_dict_of_possible_module_variables(module_variable_dict):
         return None
     rv = {}
     for key, value in module_variable_dict.iteritems():
-        if isinstance(value, basestring):
+        if isinstance(value, six.string_types):
             mod_name, junk, var_name = value.rpartition('.')
             rv[key] = getattr(import_module(mod_name), var_name)
         else:

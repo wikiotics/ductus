@@ -24,6 +24,7 @@ from lxml import etree
 from django.conf import settings
 from django.utils.datastructures import SortedDict
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils import six
 
 from ductus.license import is_license_compatibility_satisfied
 from ductus.util import create_property, is_punctuation
@@ -80,7 +81,7 @@ class ElementMetaclass(type):
             def fget(s):
                 return s._attribute_data[name]
             def fset(s, v):
-                if not isinstance(v, basestring):
+                if not isinstance(v, six.string_types):
                     raise ValidationError
                 obj.validate(v)
                 s._attribute_data[name] = v
@@ -324,7 +325,7 @@ class TextElement(Element):
         def fget(self):
             return self._text
         def fset(self, v):
-            if not isinstance(v, basestring):
+            if not isinstance(v, six.string_types):
                 raise TypeError
             self._text = v
         def fdel(self):
@@ -804,12 +805,12 @@ def blueprint_expects_list(blueprint):
     return blueprint
 
 def blueprint_expects_string(blueprint):
-    if not isinstance(blueprint, basestring):
+    if not isinstance(blueprint, six.string_types):
         raise BlueprintTypeError("expected string, got %s" % type(blueprint).__name__, blueprint)
     return blueprint
 
 def blueprint_cast_to_string(blueprint):
-    if isinstance(blueprint, basestring):
+    if isinstance(blueprint, six.string_types):
         return blueprint
     if isinstance(blueprint, int):
         return u'%d' % blueprint

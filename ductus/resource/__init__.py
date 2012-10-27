@@ -21,6 +21,8 @@ import os
 
 from lxml import etree
 
+from django.utils import six
+
 from ductus.util import iterator_to_tempfile, create_property, sequence_contains_only
 
 hash_name = "sha384"
@@ -118,7 +120,7 @@ class ResourceDatabase(object):
 
     @staticmethod
     def is_valid_urn(key):
-        if isinstance(key, basestring):
+        if isinstance(key, six.string_types):
             try:
                 urn_str, hash_type, digest = key.split(':')
             except ValueError:
@@ -327,7 +329,7 @@ def split_urn(urn):
     Returns (hash_type, digest) as a tuple.
     """
 
-    if not isinstance(urn, basestring):
+    if not isinstance(urn, six.string_types):
         raise UnsupportedURN(urn)
 
     urn_split = urn.split(':')
