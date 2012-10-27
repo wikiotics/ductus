@@ -41,5 +41,5 @@ class DuctusDebugMiddleware(object):
     def process_response(self, request, response):
         if request.is_ajax():
             if response.status_code in (400, 403):
-                logger.error(response.content)
+                logger.error(response.content.decode("ascii"))
         return response
