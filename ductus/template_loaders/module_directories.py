@@ -55,7 +55,7 @@ app_template_dirs = []
 for app in settings.DUCTUS_INSTALLED_MODULES:
     try:
         mod = import_module(app)
-    except ImportError, e:
+    except ImportError as e:
         raise ImproperlyConfigured('ImportError %s: %s' % (app, e.args[0]))
     template_dir = os.path.join(os.path.dirname(mod.__file__), 'templates')
     if os.path.isdir(template_dir):

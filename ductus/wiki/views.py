@@ -197,9 +197,9 @@ def handle_blueprint_post(request, expected_model=DuctModel):
     save_context = BlueprintSaveContext.from_request(request)
     try:
         urn = expected_model.save_blueprint(blueprint, save_context)
-    except BlueprintError, e:
+    except BlueprintError as e:
         return HttpTextResponseBadRequest(str(e))
-    except ValidationError, e:
+    except ValidationError as e:
         logger.debug("validation failed: %s", e)
         if settings.DEBUG:
             import sys
