@@ -23,6 +23,7 @@ from lxml import etree
 
 from django.conf import settings
 from django.utils.datastructures import SortedDict
+from django.utils.encoding import python_2_unicode_compatible
 
 from ductus.license import is_license_compatibility_satisfied
 from ductus.util import create_property, is_punctuation
@@ -39,6 +40,7 @@ class ValidationError(Exception):
 class DuctModelMismatchError(Exception):
     pass
 
+@python_2_unicode_compatible
 class BlueprintError(Exception):
     def __init__(self, value, blueprint):
         self.value = value

@@ -17,13 +17,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core import exceptions
-from django.utils.encoding import iri_to_uri
+from django.utils.encoding import iri_to_uri, python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.utils.http import urlquote
 
 from ductus.resource import get_resource_database
 from ductus.wiki.namespaces import split_pagename
 
+@python_2_unicode_compatible
 class WikiPage(models.Model):
     name = models.CharField(max_length=512)
 
@@ -39,12 +40,13 @@ class WikiPage(models.Model):
         except IndexError:
             return None
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def split_pagename(self):
         return split_pagename(self.name)
 
+@python_2_unicode_compatible
 class WikiRevision(models.Model):
     page = models.ForeignKey(WikiPage)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -81,5 +83,5 @@ class WikiRevision(models.Model):
             return None
         return u'%s?oldid=%d' % (self.page.get_absolute_url(), self.id)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s (%s)' % (unicode(self.page), self.timestamp)
