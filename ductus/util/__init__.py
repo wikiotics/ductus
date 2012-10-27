@@ -18,6 +18,8 @@ from contextlib import contextmanager
 from tempfile import mkstemp
 import os
 
+from django.utils import six
+
 BLOCK_SIZE = 8192
 
 def iterate_file_object(file_object):
@@ -60,17 +62,20 @@ def iterate_file_then_delete(filename, delete_func=_default_delete_func):
             data_iterator = iterate_file(filename)
             yield # see comment below
             while True:
-                data = data_iterator.next()
+                data = six.next(data_iterator)
                 yield data
         finally:
             del data_iterator
             delete_func(filename)
 
     retval = gen()
-    retval.next() # Execute the generator until the first yield statement.
-                  # This elaborate scheme is necessary so the "finally" block
-                  # is always executed, even if the iterator is
-                  # garbage-collected before it is used.
+
+    # Execute the generator until the first yield statement.
+    # This elaborate scheme is necessary so the "finally" block
+    # is always executed, even if the iterator is
+    # garbage-collected before it is used.
+    six.next(retval)
+
     return retval
 
 def iterator_to_tempfile(data_iterator, **kwargs):

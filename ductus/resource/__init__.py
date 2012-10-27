@@ -54,7 +54,7 @@ class UnsupportedURN(ValueError):
 def check_resource_size(data_iterator, max_resource_size):
     cumulative_size = 0
     while True:
-        data = data_iterator.next()
+        data = six.next(data_iterator)
         cumulative_size += len(data)
         if cumulative_size > max_resource_size:
             raise SizeTooLargeError("Resource is greater than limit of %d bytes." % max_resource_size)
@@ -62,7 +62,7 @@ def check_resource_size(data_iterator, max_resource_size):
 
 def calculate_hash(data_iterator, hash_obj):
     while True:
-        data = data_iterator.next()
+        data = six.next(data_iterator)
         hash_obj.update(data)
         yield data
 
@@ -280,7 +280,7 @@ def determine_header(data_iterator, replace_header=True):
 
     try:
         while (b'\0' not in buf and len(buf) < 256):
-            buf += data_iterator.next()
+            buf += six.next(data_iterator)
     except StopIteration:
         data_iterator = iter(())
 

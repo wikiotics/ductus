@@ -16,6 +16,7 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import six
 
 from ductus.util.http import query_string_not_found
 from ductus.wiki.decorators import register_view, register_mediacache_view
@@ -49,8 +50,8 @@ def view_picture(request):
             return query_string_not_found(request)
 
         try:
-            thumbnail_size = iter(s for s in __allowed_thumbnail_sizes
-                                  if s <= (max_width, max_height)).next()
+            thumbnail_size = six.next(iter(s for s in __allowed_thumbnail_sizes
+                                           if s <= (max_width, max_height)))
         except StopIteration:
             # refuse to make a thumbnail this small
             return query_string_not_found(request)

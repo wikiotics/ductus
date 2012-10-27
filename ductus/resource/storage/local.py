@@ -17,6 +17,8 @@
 import os
 from shutil import copyfile
 
+from django.utils import six
+
 from ductus.resource import split_urn, UnsupportedURN
 from ductus.util import iterate_file, BLOCK_SIZE
 
@@ -92,7 +94,7 @@ class LocalStorageBackend(object):
         cnt = 0
         try:
             while True:
-                i.next()
+                six.next(i)
                 cnt += 1
         except StopIteration:
             return cnt
@@ -101,7 +103,7 @@ class LocalStorageBackend(object):
         return list(self.iterkeys())
 
     def iterkeys(self):
-        hash_types = os.walk(self.__storage_directory).next()[1]
+        hash_types = six.next(os.walk(self.__storage_directory))[1]
         for hash_type in hash_types:
             walker = os.walk(os.path.join(self.__storage_directory, hash_type))
             for dirpath, dirnames, filenames in walker:
