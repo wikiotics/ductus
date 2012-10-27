@@ -20,8 +20,8 @@ from types import FunctionType
 from django.http import Http404
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-from django.views.generic.list_detail import object_list
 
+from ductus.special.object_list import object_list
 from ductus.wiki.models import WikiRevision
 from ductus.wiki.namespaces import BaseWikiNamespace, registered_namespaces, split_pagename
 
