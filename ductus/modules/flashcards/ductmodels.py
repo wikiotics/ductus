@@ -14,11 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.six.moves import xrange
+
 from ductus.resource import ductmodels, register_ductmodel
 
 # we import other models explicitly (until DuctModel supports interfaces)
 from ductus.modules.picture.ductmodels import Picture
 from ductus.modules.audio.ductmodels import Audio
+
 @register_ductmodel
 class Phrase(ductmodels.BaseDuctModel):
     ns = 'http://wikiotics.org/ns/2011/phrase'

@@ -24,6 +24,7 @@ from django.core.cache import cache
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponse, Http404
 from django.conf import settings
+from django.utils.six.moves import xrange
 
 from ductus.resource import get_resource_database
 from ductus.resource.ductmodels import tag_value_attribute_validator, ValidationError

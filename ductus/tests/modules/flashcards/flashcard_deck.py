@@ -40,7 +40,7 @@ class FlashcardDeckTests(JSTestCase):
         button = button[0]
         rows = self.selenium.find_elements_by_class_name('ductus_Flashcard')
         assert len(rows) == 1
-        for i in xrange(6):
+        for i in range(6):
             button.click()
             rows = self.selenium.find_elements_by_class_name('ductus_Flashcard')
             assert len(rows) == i + 2
