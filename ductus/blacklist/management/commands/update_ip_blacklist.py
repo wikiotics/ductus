@@ -24,7 +24,7 @@ from socket import inet_aton
 from django.conf import settings
 from django.core.management.base import NoArgsCommand
 
-from ductus.util import iterator_to_tempfile
+from ductus.utils import iterator_to_tempfile
 
 class Command(NoArgsCommand):
     help = "download banned ip addresses and save to DUCTUS_BLACKLIST_FILE."

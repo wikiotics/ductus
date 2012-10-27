@@ -19,7 +19,7 @@ import os
 from django.utils import six
 
 from ductus.resource import check_resource_size, calculate_hash, hash_name, hash_algorithm, hash_encode
-from ductus.util import iterator_to_tempfile, iterate_file_then_delete
+from ductus.utils import iterator_to_tempfile, iterate_file_then_delete
 from ductus.resource.storage.noop import WrapStorageBackend
 
 def _wrap_getitem(original_getitem):

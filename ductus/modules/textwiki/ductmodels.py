@@ -18,7 +18,7 @@ from django.conf import settings
 
 from ductus.resource import ductmodels, register_ductmodel
 from ductus.resource.ductmodels import ValidationError
-from ductus.util import create_property
+from ductus.utils import create_property
 from genshi.filters import HTMLSanitizer
 from genshi.input import HTML
 

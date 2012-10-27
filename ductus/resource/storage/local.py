@@ -20,7 +20,7 @@ from shutil import copyfile
 from django.utils import six
 
 from ductus.resource import split_urn, UnsupportedURN
-from ductus.util import iterate_file, BLOCK_SIZE
+from ductus.utils import iterate_file, BLOCK_SIZE
 
 class LocalStorageBackend(object):
     """Local storage backend.

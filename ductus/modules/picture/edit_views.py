@@ -25,7 +25,7 @@ from django.utils.translation import ugettext_lazy
 
 from ductus.wiki import SuccessfulEditRedirect
 from ductus.wiki.decorators import register_creation_view, register_view
-from ductus.util.http import render_json_response
+from ductus.utils.http import render_json_response
 from ductus.resource.ductmodels import BlueprintSaveContext
 from ductus.modules.picture.ductmodels import Picture
 from ductus.modules.picture.flickr import flickr, FlickrPhoto, license_map, url_format_map, valid_sort_methods, FlickrUriHandler

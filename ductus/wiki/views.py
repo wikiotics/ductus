@@ -39,7 +39,7 @@ from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view
 from ductus.wiki.subviews import subview
 from ductus.decorators import unvarying
-from ductus.util.http import query_string_not_found, render_json_response, ImmediateResponse
+from ductus.utils.http import query_string_not_found, render_json_response, ImmediateResponse
 import ductus
 
 logger = logging.getLogger(__name__)

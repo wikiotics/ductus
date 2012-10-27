@@ -19,9 +19,9 @@ from django.template import RequestContext
 from django.utils import six
 
 from ductus.special.views import register_special_page
-from ductus.util.bcp47 import language_tag_to_description
-from ductus.util.tag_cloud import TagCloudElement, prepare_tag_cloud
-from ductus.util.http import render_json_response
+from ductus.utils.bcp47 import language_tag_to_description
+from ductus.utils.tag_cloud import TagCloudElement, prepare_tag_cloud
+from ductus.utils.http import render_json_response
 
 def otics_front_page(request, pagename=None):
     from ductus.index import get_indexing_mongo_database

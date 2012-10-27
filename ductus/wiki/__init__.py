@@ -22,7 +22,7 @@ from django.conf import settings
 
 from ductus.resource import ResourceDatabase, UnsupportedURN, get_resource_database
 from ductus.wiki.namespaces import registered_namespaces
-from ductus.util.bcp47 import language_tag_to_description
+from ductus.utils.bcp47 import language_tag_to_description
 
 __whitespace_re = re.compile(r'\s', re.UNICODE)
 

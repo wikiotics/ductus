@@ -17,7 +17,7 @@
 import os
 import logging
 
-from ductus.util import iterate_file_then_delete, iterator_to_tempfile
+from ductus.utils import iterate_file_then_delete, iterator_to_tempfile
 
 logger = logging.getLogger(__name__)
 

@@ -110,7 +110,7 @@ for __pagename in __django_specialpages:
 def preview_textwiki(request, pagename):
     """Return HTML rendered from Creole markup sent via AJAX request"""
 
-    from ductus.util.http import render_json_response
+    from ductus.utils.http import render_json_response
     if request.method == 'POST':
         from ductus.modules.textwiki.templatetags.textwiki import creole
         markup = request.POST.get('text', '')
@@ -135,7 +135,7 @@ def search(request, pagename):
     target_language_description = None
     if target_language_tags:
         target_language_code = target_language_tags[0].partition(':')[2]
-        from ductus.util.bcp47 import language_tag_to_description
+        from ductus.utils.bcp47 import language_tag_to_description
         try:
             target_language_description = language_tag_to_description(target_language_code)
         except KeyError:

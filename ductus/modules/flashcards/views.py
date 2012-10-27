@@ -36,8 +36,8 @@ from ductus.index import search_pages, IndexingError
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
-from ductus.util.http import query_string_not_found, render_json_response
-from ductus.util.bcp47 import language_tag_to_description
+from ductus.utils.http import query_string_not_found, render_json_response
+from ductus.utils.bcp47 import language_tag_to_description
 from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction, StoryBookInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
 from ductus.modules.flashcards import registered_interaction_views

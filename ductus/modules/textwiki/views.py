@@ -30,7 +30,7 @@ from ductus.wiki.namespaces import registered_namespaces, split_pagename, WikiPr
 from ductus.wiki.views import handle_blueprint_post
 from ductus.modules.textwiki.ductmodels import Wikitext   # FIXME: drop useless class
 from ductus.modules.textwiki.templatetags.textwiki import creole
-from ductus.util.bcp47 import language_tag_to_description
+from ductus.utils.bcp47 import language_tag_to_description
 
 recaptcha = None
 if hasattr(settings, "RECAPTCHA_PRIVATE_KEY"):
@@ -95,7 +95,7 @@ new_textwiki = edit_textwiki
 # this should be in index/views.py
 from ductus.special.views import register_special_page
 from ductus.index import search_pages, IndexingError
-from ductus.util.http import query_string_not_found, render_json_response
+from ductus.utils.http import query_string_not_found, render_json_response
 from django.http import Http404
 
 @register_special_page('ajax/search-pages')

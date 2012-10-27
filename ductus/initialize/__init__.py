@@ -18,7 +18,7 @@ from django.conf import settings
 from django.utils.importlib import import_module
 
 from ductus.resource import ResourceDatabase
-from ductus.util import ignore
+from ductus.utils import ignore
 
 def _create_resource_database():
     """Initialize ResourceDatabase using DUCTUS_STORAGE_BACKEND"""

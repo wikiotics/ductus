@@ -27,7 +27,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils import six
 
 from ductus.license import is_license_compatibility_satisfied
-from ductus.util import create_property, is_punctuation
+from ductus.utils import create_property, is_punctuation
 from ductus.resource import register_ductmodel, get_resource_database, _registered_ductmodels
 
 # fixme: we could just not "follow" parents instead of excluding them.  If we

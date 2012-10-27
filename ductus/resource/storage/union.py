@@ -18,7 +18,7 @@ import os
 
 from django.utils import six
 
-from ductus.util import iterate_file_then_delete, iterator_to_tempfile
+from ductus.utils import iterate_file_then_delete, iterator_to_tempfile
 from ductus.resource.storage import UnsupportedOperation
 
 class UnionStorageBackend(object):

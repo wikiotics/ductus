@@ -19,7 +19,7 @@ from django.utils.http import urlquote
 from django.http import HttpRequest
 
 from ductus.wiki import SuccessfulEditRedirect
-from ductus.util.http import render_json_response, ImmediateResponse
+from ductus.utils.http import render_json_response, ImmediateResponse
 
 class DuctusCommonMiddleware(object):
     "Utility middleware for common Ductus tricks"

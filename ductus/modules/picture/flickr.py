@@ -118,7 +118,7 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 
 from ductus.modules.picture.forms import PictureImportForm
 from ductus.modules.picture.ductmodels import Picture
-from ductus.util import iterate_file_object
+from ductus.utils import iterate_file_object
 
 @PictureImportForm.register_uri_handler
 class FlickrUriHandler(object):

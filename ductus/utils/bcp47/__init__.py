@@ -17,7 +17,7 @@
 """Utilities relating to BCP 47 (currently RFC 5646)
 """
 
-from ductus.util.bcp47.data import subtag_database
+from ductus.utils.bcp47.data import subtag_database
 
 def language_tag_to_description(tag):
     """Converts a bcp47 tag to a description

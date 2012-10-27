@@ -23,7 +23,7 @@ from lxml import etree
 
 from django.utils import six
 
-from ductus.util import iterator_to_tempfile, create_property, sequence_contains_only
+from ductus.utils import iterator_to_tempfile, create_property, sequence_contains_only
 
 hash_name = "sha384"
 hash_encode = base64.urlsafe_b64encode
@@ -228,7 +228,7 @@ class ResourceDatabase(object):
 
     def get_xml(self, urn):
         # as a stopgap measure, look in cache for the xml data
-        from ductus.util.cache import cache_compressed
+        from ductus.utils.cache import cache_compressed
         cache_key = "xml-urn:" + urn
         cached_resource = cache_compressed.get(cache_key)
         if cached_resource is not None:

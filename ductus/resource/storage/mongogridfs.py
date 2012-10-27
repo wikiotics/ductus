@@ -19,7 +19,7 @@
 
 from django.utils import six
 
-from ductus.util import iterate_file_object
+from ductus.utils import iterate_file_object
 
 class GridfsStorageBackend(object):
     def __init__(self, db, collection_name="storage"):

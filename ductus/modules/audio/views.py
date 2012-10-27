@@ -35,8 +35,8 @@ from ductus.wiki.mediacache import mediacache_redirect, mime_to_ext, resolve_rel
 from ductus.decorators import unvarying
 from ductus.modules.audio.ductmodels import Audio
 from ductus.modules.audio.forms import AudioImportForm
-from ductus.util.http import render_json_response
-from ductus.util import iterator_to_tempfile, iterate_file_then_delete
+from ductus.utils.http import render_json_response
+from ductus.utils import iterator_to_tempfile, iterate_file_then_delete
 
 AUDIO_CONVERSION_COMMANDS = getattr(settings, "AUDIO_CONVERSION_COMMANDS", None) or {}
 
