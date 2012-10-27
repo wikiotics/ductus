@@ -1,4 +1,4 @@
-<!DOCTYPE html>{% load i18n %}{% load title %}{% load license_name %}{% load static %}{% load staticfiles %}{% load compress %}
+<!DOCTYPE html>{% load i18n %}{% load title %}{% load license_name %}{% load static %}{% load staticfiles %}{% load compress %}{% load url from future %}
 {% spaceless %}
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
@@ -13,7 +13,7 @@
     {# include local (site-specific) css #}
     {% endcompress %}
     {% block css %}{% endblock %}
-    <script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
+    <script type="text/javascript" src="{% url "django.views.i18n.javascript_catalog" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-1.8.2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-ui-1.8.22.custom.min.js" %}"></script>
     {% compress js %}
@@ -49,12 +49,12 @@
                 <ul class="ductus_login_status_header">
 {% if user.is_authenticated %}
                   <li><a href="{{ user.get_absolute_url }}">{{ user.username }}</a>
-                    &mdash; <a href="{% url ductus.user.views.logout %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
+                    &mdash; <a href="{% url "ductus.user.views.logout" %}" style="white-space: nowrap;">{% trans "Log out" %}</a></li>
 {% else %}
                   {% block login_button %}
-                    <li><a href="{% url ductus.user.views.user_creation %}" style="white-space: nowrap;">{% trans "Register" %}</a></li>
+                    <li><a href="{% url "ductus.user.views.user_creation" %}" style="white-space: nowrap;">{% trans "Register" %}</a></li>
                     <li>|</li>
-                    <li><a href="{% url ductus.user.views.login %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
+                    <li><a href="{% url "ductus.user.views.login" %}?next={{ request.escaped_full_path|urlencode }}" style="white-space: nowrap;">{% trans "Log in" %}</a></li>
                   {% endblock %}
 {% endif %}
                 </ul>
@@ -95,7 +95,7 @@
             <div class="ductus_wrap4">
               {% block language_selector %}
               <hr/>
-              <form action="{% url django.views.i18n.set_language %}" method="post">{% csrf_token %}
+              <form action="{% url "django.views.i18n.set_language" %}" method="post">{% csrf_token %}
                 <p>
                   {% trans "Your language:" %}
                   <input name="next" type="hidden" value="{{ request.escaped_full_path }}" />

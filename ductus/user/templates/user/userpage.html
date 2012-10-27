@@ -1,5 +1,6 @@
 {% extends "ductus_base.html" %}
 {% load i18n %}
+{% load url from future %}
 
 {% block content %}
 <p>{% blocktrans with name=userpage_user.username %}This is the user page of {{ name }}{% endblocktrans %}.
@@ -12,7 +13,7 @@
 </ul>
 
 {% ifequal userpage_user user %}
-<div><a href="{% url ductus.user.views.account_settings %}">{% trans "Edit my account settings" %}</a></div>
+<div><a href="{% url "ductus.user.views.account_settings" %}">{% trans "Edit my account settings" %}</a></div>
 {% endifequal %}
 
 {% endblock %}

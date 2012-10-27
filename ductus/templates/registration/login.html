@@ -1,5 +1,6 @@
 {% extends "ductus_base.html" %}
 {% load i18n %}
+{% load url from future %}
 
 {% block login_button %}{% endblock %}
 
@@ -15,13 +16,13 @@
 <form method="post" action="{{ request.path }}">{% csrf_token %}
 <table>
 <tr><td><label for="id_username">{% trans "Username" %}:</label></td><td>{{ form.username }}</td></tr>
-<tr><td><label for="id_password">{% trans "Password" %}:</label></td><td>{{ form.password }} {% url django.contrib.auth.views.password_reset as password_reset_url %}{% blocktrans %}<a href="{{ password_reset_url }}">Forget your password</a>?{% endblocktrans %}</td></tr>
+<tr><td><label for="id_password">{% trans "Password" %}:</label></td><td>{{ form.password }} {% url "django.contrib.auth.views.password_reset" as password_reset_url %}{% blocktrans %}<a href="{{ password_reset_url }}">Forget your password</a>?{% endblocktrans %}</td></tr>
 </table>
 <input type="submit" value="{% trans "Log in" %}" />
-{% url ductus.user.views.logout as logout_url %}
+{% url "ductus.user.views.logout" as logout_url %}
 {% ifnotequal next logout_url %}{% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}{% endifnotequal %}
 </form>
-{% url ductus.user.views.user_creation as user_creation_url %}
+{% url "ductus.user.views.user_creation" as user_creation_url %}
 <p>{% blocktrans %}Need to <a href="{{ user_creation_url }}">create an account</a>?{% endblocktrans %}</p>
 {% endblock %}
 
