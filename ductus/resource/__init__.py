@@ -120,19 +120,23 @@ class ResourceDatabase(object):
 
     @staticmethod
     def is_valid_urn(key):
-        if isinstance(key, six.string_types):
-            try:
-                urn_str, hash_type, digest = key.split(':')
-            except ValueError:
-                return False
-            if urn_str == 'urn' and hash_type == hash_name:
-                try:
-                    decoded = hash_decode(digest.encode("ascii"))
-                    if len(decoded) == hash_digest_size:
-                        return True
-                except (TypeError, UnicodeEncodeError):
-                    return False
-        return False
+        if not isinstance(key, six.string_types):
+            return False
+
+        try:
+            urn_str, hash_type, digest = key.split(':')
+        except ValueError:
+            return False
+
+        if not (urn_str == 'urn' and hash_type == hash_name):
+            return False
+
+        try:
+            decoded = hash_decode(digest.encode("ascii"))
+        except (TypeError, UnicodeEncodeError):
+            return False
+        else:
+            return bool(len(decoded) == hash_digest_size)
 
     def store(self, data_iterator, urn=None):
         """data_iterator is an iterator that returns all data.
