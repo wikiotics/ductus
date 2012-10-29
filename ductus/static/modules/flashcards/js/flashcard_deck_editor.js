@@ -119,6 +119,7 @@ $(function () {
         span = this.elt.find('span');
         this.input.bind('input', function() {
             span.text(this_.input.val());
+            $('#ductus_PopupWidget').data('widget_object').position();
         });
         span.text(this_.input.val());
         this.elt.addClass('active');
