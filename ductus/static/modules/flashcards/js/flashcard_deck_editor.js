@@ -106,12 +106,22 @@ $(function () {
     })();
 
     function PhraseWidget(phrase) {
+        var span, this_ = this;
         ModelWidget.call(this, phrase, '<div class="ductus_PhraseWidget"></div>');
 
-        this.input = $('<input/>');
+        // see http://www.alistapart.com/articles/expanding-text-areas-made-elegant/
+        // for details on the auto expanding textarea
+        this.mirror = $('<pre><span></span><br></pre>');
+        this.input = $('<textarea />');
         if (phrase)
             this.input.val(phrase.resource.phrase.text);
-        this.elt.append(this.input);
+        this.elt.append(this.mirror).append(this.input);
+        span = this.elt.find('span');
+        this.input.bind('input', function() {
+            span.text(this_.input.val());
+        });
+        span.text(this_.input.val());
+        this.elt.addClass('active');
 
         this.record_initial_inner_blueprint();
     }

@@ -182,6 +182,46 @@ h6 {
 .ductus_save_notice {
     color: #a00;
 }
+.ductus_PhraseWidget {
+    position: relative;
+}
+/* setup the autoexpanding textarea for PhraseWidgets */
+textarea, pre {
+    border: 0;
+    margin: 0;
+    outline: 0;
+    padding: 0;
+}
+.ductus_PhraseWidget > textarea,
+.ductus_PhraseWidget > pre {
+    font: 400 13px/16px helvetica, arial, sans-serif;
+    padding: 5px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+.ductus_PhraseWidget > textarea {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+}
+.ductus_PhraseWidget.active > textarea {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    resize: none;
+}
+.ductus_PhraseWidget > pre {
+    display: none;
+}
+.ductus_PhraseWidget.active > pre {
+    display: block;
+    visibility: hidden;
+}
+/* end of PhraseWidget textareas */
 .pic_search_pager a {
     cursor: pointer;
 }
