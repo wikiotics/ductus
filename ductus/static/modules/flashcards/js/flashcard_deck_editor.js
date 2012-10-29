@@ -884,10 +884,10 @@ $(function () {
         var this_ = this;
         this.hide_popup();
 
-        var leftw = this.elt.find('#ductus_Popupleft');
-        var rightw = this.elt.find('#ductus_Popupright');
-        var topw = this.elt.find('#ductus_Popuptop');
-        var bottomw = this.elt.find('#ductus_Popupbottom');
+        this.leftw = this.elt.find('#ductus_Popupleft');
+        this.rightw = this.elt.find('#ductus_Popupright');
+        this.topw = this.elt.find('#ductus_Popuptop');
+        this.bottomw = this.elt.find('#ductus_Popupbottom');
 
         this.elt.show();
         // determine which widget was clicked
@@ -918,6 +918,17 @@ $(function () {
             });
         }
 
+        this.position();
+
+        $(document).bind('keypress keyup', function(event) {
+            if (event.keyCode == 27) {
+                this_.hide_popup();
+                $(document).unbind('keypress keyup');
+            }
+        });
+    };
+    PopupWidget.prototype.position = function() {
+
         // if a row was clicked, make the popup display around the row header
         // if a cell was clicked, make sure we do not hide any parts of it
         var positioning_elt = this.calling_widget.elt;
@@ -927,33 +938,27 @@ $(function () {
             positioning_elt = this.calling_widget.elt.closest('td');
         }
         // position popup buttons around the clicked widget
-        leftw.position({
+        this.leftw.position({
             "my": "right center",
             "at": "left center",
             "of": positioning_elt
         });
-        rightw.position({
+        this.rightw.position({
             "my": "left center",
             "at": "right center",
             "of": positioning_elt
         });
-        topw.position({
+        this.topw.position({
             "my": "center bottom",
             "at": "center top",
             "of": positioning_elt,
             "collision": "none"
         });
-        bottomw.position({
+        this.bottomw.position({
             "my": "center top",
             "at": "center bottom",
             "of": positioning_elt,
             "collision": "none"
-        });
-        $(document).bind('keypress keyup', function(event) {
-            if (event.keyCode == 27) {
-                this_.hide_popup();
-                $(document).unbind('keypress keyup');
-            }
         });
     };
 
