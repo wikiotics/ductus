@@ -103,6 +103,16 @@ def search_pages(**kwargs):
 
     return results
 
+def get_list_of_target_lang_codes():
+    """return the list of all language codes used as target-language tags in lessons"""
+    indexing_db = get_indexing_mongo_database()
+    if indexing_db is None:
+        raise IndexingError("indexing database is not available")
+    collection = indexing_db.urn_index
+
+    tags = filter(lambda tag: tag.startswith('target-language:'), collection.distinct('tags'))
+    return [tag.split(':')[1] for tag in tags]
+
 def perform_upsert(collection, urn, obj, ignore=None):
     """Update/insert the index document for a `urn` in mongo.
 
