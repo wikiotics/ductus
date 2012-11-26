@@ -21,7 +21,9 @@ from django.http import Http404
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 
+from ductus.index import get_list_of_target_lang_codes
 from ductus.special.object_list import object_list
+from ductus.utils.bcp47 import language_tag_to_description
 from ductus.wiki.models import WikiRevision
 from ductus.wiki.namespaces import BaseWikiNamespace, registered_namespaces, split_pagename
 
@@ -93,6 +95,25 @@ def user_count(request, pagename):
         "{0} have returned in the past week.".format(User.objects.filter(last_login__gte=week_ago).count()),
     ]
     return HttpResponse("\n".join(statements), content_type="text/plain")
+
+@register_special_page
+def list_target_languages(request, pagename):
+    """display a page listing all languages found in the target-language tags of all lessons"""
+    codes = get_list_of_target_lang_codes()
+
+    langs = []
+    for code in codes:
+        try:
+            name = language_tag_to_description(code)
+        except KeyError:
+            pass    # silently ignore broken tags
+        else:
+            langs.append({'code': code, 'name': name})
+    langs = sorted(langs, key=lambda l: l['name'])
+
+    return render_to_response('special/list_target_languages.html', {
+        'languages': langs,
+    }, RequestContext(request))
 
 __django_specialpages = (
     'create_account',

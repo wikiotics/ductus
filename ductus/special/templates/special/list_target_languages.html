@@ -1,0 +1,16 @@
+{% extends "ductus_base.html" %}
+{% load title %}
+{% load i18n %}
+
+{% block title %}
+{{ block.super }}
+{% title "All languages" %}
+{% endblock %}
+
+{% block content %}
+<ul>
+{% for lang in languages %}
+<li><a href="/special/search?tag=target-language:{{ lang.code }}">{{ lang.name }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
