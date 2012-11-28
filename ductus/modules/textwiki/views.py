@@ -46,27 +46,6 @@ def view_textwiki(request):
         'markup_language': request.ductus.resource.blob.markup_language,
     }, context_instance=RequestContext(request))
 
-_natural_language_choices = [('', ugettext_lazy('Unspecified'))]
-_natural_language_choices.extend((code, ugettext_lazy(language_tag_to_description(code)))
-                                 for code in settings.DUCTUS_NATURAL_LANGUAGES)
-
-LogMessageField = partial(forms.CharField, max_length=400, required=False)
-
-class WikiEditForm(forms.Form):
-    textarea_attrs = {'cols': '80', 'rows': '30'}
-    text = forms.CharField(widget=forms.Textarea(attrs=textarea_attrs))
-    natural_language = forms.ChoiceField(required=False, choices=_natural_language_choices)
-    log_message = LogMessageField()
-
-def add_author_and_log_message(request, resource):
-    if request.user.is_authenticated():
-        resource.common.author.text = request.user.username
-        if getattr(settings, "DUCTUS_SITE_DOMAIN", None):
-            resource.common.author.href = 'http://%s%s' % (settings.DUCTUS_SITE_DOMAIN, request.user.get_absolute_url())
-    else:
-        resource.common.author.text = request.remote_addr
-    resource.common.log_message.text = request.POST.get('log_message', '')
-
 @register_creation_view(Wikitext, description=ugettext_lazy('a "regular" text-based wiki page, using wiki-creole as markup'))
 @register_view(Wikitext, 'edit')
 def edit_textwiki(request):
