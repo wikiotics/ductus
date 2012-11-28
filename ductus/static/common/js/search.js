@@ -52,7 +52,7 @@ $(function () {
         var params = {},
             text,
             tags = [];
-        text = $('input.search-text').val();
+        text = $('input.search-text').val().replace(' ', '_');
         if (text != '') {
             params['pagename'] = text;
         }
