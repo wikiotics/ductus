@@ -591,7 +591,20 @@ $(function () {
         this.pretype = 'empty';    // store the fqn of a "predefined type" if it is the same in the whole column, null otherwise
     }
     FlashcardColumn.prototype = chain_clone(Widget.prototype);
+    FlashcardColumn.prototype.delete_column = function () {
+        // delete the column, along with all wrapped content
 
+        var col_index = this.th.index() + 1;
+        // remove all wrapped content first
+        var cells = this.fcd.table.find("td:nth-child(" + col_index + ")");
+        cells.children().each(function (i) {
+            $(this).data("widget_object").reset();
+        });
+        cells.remove();
+        // remove the column header
+        this.fcd.table.find("th:nth-child(" + col_index + ")").remove();
+        this.fcd.columns.splice(col_index, 1);
+    };
     // define popup callbacks to handle clicks on a column header
     FlashcardColumn.prototype.popup_settings = {
         'left': {
@@ -603,9 +616,9 @@ $(function () {
         },
         'bottom': {
             'html': gettext('delete column'),
-            'display': function() { return false; },
-            'callback': function() {
-                console.log('would delete column now');
+            'display': function() { return true; },
+            'callback': function(column) {
+                column.delete_column();
             }
         }
     };
