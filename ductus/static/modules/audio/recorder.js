@@ -217,6 +217,18 @@ Wami.prototype.handle_upload_success = function(data) {
             }
     );
 };
+Wami.prototype.makeDataURIfromRecording = function() {
+    // turn the recorded audio into a data:URI and attach it to the audio element
+    this.audioBytes = this.getBase64AudioData();
+    var a = document.createElement('audio');
+    a.src = 'data:audio/x-wav;base64,' + this.audioBytes;
+    online_recorder.hideSpinner();
+    online_recorder.elt.parent().trigger('ductus_element_selected',
+            { href: a.src,
+              resource: { fqn: AudioWidget.prototype.fqn }
+            }
+    );
+};
 Wami.prototype.uploadRecordedFile = function(url) {
 	this.base64audioBytes = this.getBase64AudioData();
 	var crlf = '\r\n';

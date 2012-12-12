@@ -675,8 +675,15 @@ function AudioWidget(audio) {
     this.control_elt = this.elt.find('.control');
     this.status_elt = this.elt.find('.status');
     if (audio.href) {
-        this._set_state_remote_urn(audio.href);
+        if (audio.href.slice(0, 5) == 'data:') {
+            // recorded audio
+            this._set_state_data_uri(audio);
+        } else {
+            // file previously saved to server
+            this._set_state_remote_urn(audio.href);
+        }
     } else if (audio.resource && audio.resource._file) {
+        // this happens when uploading a local file from disk
         this._set_state_localfile(audio.resource._file);
     }
 
@@ -704,6 +711,18 @@ AudioWidget.prototype._reset = function () {
     this.status_elt.empty();
     this._urn = undefined;
     this.file = null;
+};
+AudioWidget.prototype._set_state_data_uri = function (res) {
+    // set the widget to use a dara:uri (from recorder) which will need to be uploaded later
+    this._reset();
+    var data = window.atob(res.href.split(',')[1]);
+    var length = data.length;
+    var uInt8Array = new Uint8Array(length);
+    for (var i = 0; i < length; ++i) {
+        uInt8Array[i] = data.charCodeAt(i);
+    }
+    this.file = new Blob([uInt8Array], {'type': 'audio/x-wav'});    //TODO: get the type from the base64 string
+    this._append_audio_control(res.href);
 };
 AudioWidget.prototype._set_state_localfile = function (file) {
     // i.e. the user has selected a local file but has not yet uploaded it.
@@ -1263,7 +1282,7 @@ OnlineRecorder.prototype.zoomError = function() {
     alert(gettext('Your browser may be zoomed too far out to show the Flash security settings panel.  Zoom in, and refresh.'));
 };
 OnlineRecorder.prototype.uploadAudio = function() {
-    this.Wami.uploadRecordedFile('/new/audio');
+    this.Wami.makeDataURIfromRecording();
 };
 /**
  * These methods are called on clicks from the GUI.
