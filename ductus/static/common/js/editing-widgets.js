@@ -674,6 +674,7 @@ function AudioWidget(audio) {
 
     this.control_elt = this.elt.find('.control');
     this.status_elt = this.elt.find('.status');
+    this._reset();
     if (audio.href) {
         if (audio.href.slice(0, 5) == 'data:') {
             // recorded audio
@@ -714,7 +715,6 @@ AudioWidget.prototype._reset = function () {
 };
 AudioWidget.prototype._set_state_data_uri = function (res) {
     // set the widget to use a dara:uri (from recorder) which will need to be uploaded later
-    this._reset();
     var data = window.atob(res.href.split(',')[1]);
     var length = data.length;
     var uInt8Array = new Uint8Array(length);
@@ -727,7 +727,6 @@ AudioWidget.prototype._set_state_data_uri = function (res) {
 AudioWidget.prototype._set_state_localfile = function (file) {
     // i.e. the user has selected a local file but has not yet uploaded it.
     // we'd like to preview it if possible.
-    this._reset();
     this.file = file;
     if (file.type !== 'audio/ogg') {
         this.status_elt.append($('<span class="error"></span>').text(gettext('Warning: expected audio/ogg, but selected file is of type') + ' ' + file.type));
@@ -745,7 +744,6 @@ AudioWidget.prototype._set_state_localfile = function (file) {
     reader.readAsDataURL(file);
 };
 AudioWidget.prototype._set_state_remote_urn = function (urn) {
-    this._reset();
     this._urn = urn;
     this._append_audio_control(resolve_urn(urn) + '?view=audio');
 };
