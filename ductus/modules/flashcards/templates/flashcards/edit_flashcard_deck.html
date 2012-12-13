@@ -30,6 +30,15 @@ var writable_directories = {{ writable_directories|jsonize }};
 <script type="text/javascript" src="{% static "ductus/common/js/swfobject-2.2.min.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/modules/audio/recorder.js" %}"></script>
 {% endcompress %}
+{% compress js %}
+<script type="text/javascript" src="{% static "ductus/common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/audio_player.js" %}"></script>
+{% endcompress %}
+{% compress js inline %}
+<script type="text/javascript">
+var available_audio_formats = {{ available_audio_formats|jsonize }};
+</script>
+{% endcompress %}
 {% endblock %}
 
 {% block body_classes %}ductus_wide{% endblock %}
