@@ -799,7 +799,9 @@ AudioWidget.prototype.attempt_upload = function (success_cb, error_cb) {
                 handle_upload_errors(errors);
                 return;
             }
-            _this._set_state_remote_urn(data.urn);
+            // prevent the file from being uploaded again, but we keep the data:URL so the user can still listen to it
+            _this.file = null;
+            _this._urn = data.urn;
             _this._upload_in_progress = false;
             if (success_cb) success_cb();
         },
