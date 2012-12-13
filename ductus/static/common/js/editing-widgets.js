@@ -717,11 +717,17 @@ AudioWidget.prototype._set_state_data_uri = function (res) {
     // set the widget to use a dara:uri (from recorder) which will need to be uploaded later
     var data = window.atob(res.href.split(',')[1]);
     var length = data.length;
-    var uInt8Array = new Uint8Array(length);
+    var buffer = new ArrayBuffer(length);   // TODO: remove this useless buffer once the chromium issue below is fixed
+    var uInt8Array = new Uint8Array(buffer);
     for (var i = 0; i < length; ++i) {
         uInt8Array[i] = data.charCodeAt(i);
     }
     this.file = new Blob([uInt8Array], {'type': 'audio/x-wav'});    //TODO: get the type from the base64 string
+    if (this.file.size < 25) {
+        // temp fix around a chromium issue, this Blob() constructor is deprecated
+        // see http://stackoverflow.com/questions/13841562/dataurl-to-blob-issue-with-chromium
+        this.file = new Blob([buffer], {'type': 'audio/x-wav'});    //TODO: get the type from the base64 string
+    }
     this._append_audio_control(res.href);
 };
 AudioWidget.prototype._set_state_localfile = function (file) {
