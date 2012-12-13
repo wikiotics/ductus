@@ -681,7 +681,7 @@ function AudioWidget(audio) {
             this._set_state_data_uri(audio);
         } else {
             // file previously saved to server
-            this._set_state_remote_urn(audio.href);
+            this._set_state_remote_urn(audio);
         }
     } else if (audio.resource && audio.resource._file) {
         // this happens when uploading a local file from disk
@@ -728,7 +728,7 @@ AudioWidget.prototype._set_state_data_uri = function (res) {
         // see http://stackoverflow.com/questions/13841562/dataurl-to-blob-issue-with-chromium
         this.file = new Blob([buffer], {'type': 'audio/x-wav'});    //TODO: get the type from the base64 string
     }
-    this._append_audio_control(res.href);
+    this._append_audio_control(res);
 };
 AudioWidget.prototype._set_state_localfile = function (file) {
     // i.e. the user has selected a local file but has not yet uploaded it.
@@ -749,9 +749,9 @@ AudioWidget.prototype._set_state_localfile = function (file) {
     };
     reader.readAsDataURL(file);
 };
-AudioWidget.prototype._set_state_remote_urn = function (urn) {
-    this._urn = urn;
-    this._append_audio_control(resolve_urn(urn) + '?view=audio');
+AudioWidget.prototype._set_state_remote_urn = function (resource) {
+    this._urn = resource.href;
+    this._append_audio_control(resource);
 };
 AudioWidget.prototype.attempt_upload = function (success_cb, error_cb) {
     var file = this.file;
@@ -817,10 +817,14 @@ AudioWidget.prototype.attempt_upload = function (success_cb, error_cb) {
                  }
     }).handleFiles([file]);
 };
-AudioWidget.prototype._append_audio_control = function (src) {
-    var html5_audio_element = $('<audio controls preload="none"></audio>');
-    html5_audio_element.attr('src', src);
-    this.control_elt.append(html5_audio_element);
+AudioWidget.prototype._append_audio_control = function (resource) {
+    var play_button = $('<div class="ductus_audio ui-button ui-state-default ui-button-text-icon-primary ui-corner-all"></div>');
+    play_button.append('<span class="ui-button-icon-primary ui-icon ui-icon-play"></span>')
+            .append('<span class="ui-button-text">' + gettext('play') + '</span>')
+            .click(function() {
+                    jplayer_play(resource);
+            });
+    this.control_elt.append(play_button);
 };
 // content of popup menu when clicking on an audio widget
 // null will disable the corresponding submenu
