@@ -1,7 +1,8 @@
 var filetype_map = {
     "audio/mp4": "m4a",
     "audio/ogg": "oga",
-    "audio/webm": "webma"
+    "audio/webm": "webma",
+    "audio/x-wav": "wav"
 };
 
 var jplayer_play = (function ($) {
@@ -44,14 +45,21 @@ var jplayer_play = (function ($) {
     }
 
     function jplayer_play(resource_json) {
-        var mime_type = resource_json.resource.blob.mime_type;
-        var available_conversions = available_audio_formats[mime_type];
-        var media_map = {};
-        media_map[filetype_map[mime_type]] = resolve_mediacache_url(resource_json);
-        if (available_conversions) {
-            for (var i = 0; i < available_conversions.length; ++i) {
-                var filetype = filetype_map[available_conversions[i]];
-                media_map[filetype] = resolve_mediacache_url(resource_json, available_conversions[i]);
+        if (resource_json.href.slice(0, 5) == 'data:') {
+            // it's a local file from recorder stored in data:url
+            var media_map = {'wav': resource_json.href};
+            var mime_type = 'audio/x-wav';
+        } else {
+            // all other cases
+            var mime_type = resource_json.resource.blob.mime_type;
+            var available_conversions = available_audio_formats[mime_type];
+            var media_map = {};
+            media_map[filetype_map[mime_type]] = resolve_mediacache_url(resource_json);
+            if (available_conversions) {
+                for (var i = 0; i < available_conversions.length; ++i) {
+                    var filetype = filetype_map[available_conversions[i]];
+                    media_map[filetype] = resolve_mediacache_url(resource_json, available_conversions[i]);
+                }
             }
         }
 
