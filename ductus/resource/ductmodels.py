@@ -582,7 +582,7 @@ class TypedBlobElement(BlobElement):
     def validate(self, strict=True):
         super(TypedBlobElement, self).validate(strict)
         if self.mime_type not in self.allowed_mime_types:
-            raise ValidationError("not an allowed mime type")
+            raise ValidationError("not an allowed mime type: {}".format(self.mime_type))
 
 class TextBlobElement(BlobElement):
     def output_json_dict(self):
