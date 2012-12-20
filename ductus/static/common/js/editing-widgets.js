@@ -1009,11 +1009,16 @@ function SaveDestinationChooserWidget (original_pagename, suggested_pagename, wi
             select.append(option);
         }
         if (!directory_selected) {
+            // blank lesson, or saved in user or group space
             select.prepend($('<option disabled selected></option>'));
+            // OR (see ticket 193) the lesson was previously saved, which forced a target-language tag on it
+            // let's set the language here based on the tag value.
+            select.val(window.ductus_target_language_value + ':');
+
         }
         select.bind('change keyup keypress', function () {
-            lns_div.find("input").attr("checked", "checked");
             this_._destination_changed();
+            this_._force_target_language_tag($(select).val().split(':')[0]);
         });
         lns_div.append('<span class="quiet">' + interpolate(gettext('Choose the language to be taught.  Anyone will be able to edit %(pagetype) in place.'), pagetype, true) + '</span>');
     }
@@ -1036,6 +1041,13 @@ function SaveDestinationChooserWidget (original_pagename, suggested_pagename, wi
     this._destination_changed();
 }
 SaveDestinationChooserWidget.prototype = chain_clone(Widget.prototype);
+SaveDestinationChooserWidget.prototype._force_target_language_tag = function (lang_code) {
+    // force the target language tag to the same as the language chosen here.
+    // We need this language set regardless of saving location, so we don't force the location when the selector is changed
+    // see https://code.ductus.us/ticket/193 for details
+    $('#target_lang_tag select').val(lang_code);
+
+};
 SaveDestinationChooserWidget.prototype._destination_changed = function () {
     var destination = this.get_destination();
     this._destination_display.text(destination ? destination.get_fqpagename() : "");
@@ -1348,6 +1360,10 @@ function TaggingWidget(tags, fcdw) {
                 this.source_lang = tags.array[i].value.substr(16);
             } else if (subtag == 'target-language:') {
                 this.target_lang = tags.array[i].value.substr(16);
+                // we set a global value for the SaveDestinationChooser widget selector to know what the language is,
+                // since the $() selector doesn't work until the widget is appended to the page
+                // this is only for a temp fix of bug 193, see ticket for details.
+                window.ductus_target_language_value = this.target_lang;
             } else {
                 t = tags.array[i].value;
                 tokenized_tags.push({id: t, name: t});
