@@ -12,6 +12,9 @@ set -e
 #DEV_MODE=1
 
 # build aloha.js
+AE_BASE=../../../../submodules/Aloha-Editor
+AE_SRC=$AE_BASE/src
+
 cd ../ductus/static/modules/textwiki
 # remove the build directory
 rm -rf aloha
@@ -20,8 +23,8 @@ mkdir -p aloha/plugins
 if [ $DEV_MODE ]; then
     # DevMode, just copy files, so writing code/testing is simplified
     echo "(not) building aloha JS for development"
-    cp -R ../../../../submodules/Aloha-Editor/src/lib aloha/lib
-    cp -R ../../../../submodules/Aloha-Editor/src/plugins aloha/
+    cp -R $AE_SRC/lib aloha/lib
+    cp -R $AE_SRC/plugins aloha/
     # these are our own files, most likely to be amended, hardlink them so aloha finds them, and git stays happy :)
     # note that this overwrites any aloha stock files, which mimicks the production setup
     cp -flR js/aloha-plugins/* aloha/plugins
@@ -29,7 +32,7 @@ else
     # copy our own plugins, and build aloha into a single file
     echo "building aloha JS for production"
     cp -R js/aloha-plugins/* aloha/plugins
-    node ../../../../submodules/Aloha-Editor/build/r.js -o ./build-aloha-for-ductus.js
+    node $AE_BASE/build/r.js -o ./build-aloha-for-ductus.js
 fi
 
 # compile aloha.css
@@ -37,12 +40,12 @@ fi
 # to prevent problems when deploying code with Django's manage.py collectstatic that would look for files that do not exist.
 if [ $DEV_MODE ]; then
     echo "copying css files"
-    cp -R ../../../../submodules/Aloha-Editor/src/css aloha
-    cp -R ../../../../submodules/Aloha-Editor/src/img aloha
+    cp -R $AE_SRC/css aloha
+    cp -R $AE_SRC/img aloha
 else
     mkdir -p aloha/css
     cp aloha-css-for-ductus.css_template aloha/css/aloha-css-for-ductus.css
-    node ../../../../submodules/Aloha-Editor/build/r.js -o cssIn=aloha/css/aloha-css-for-ductus.css out=aloha/css/aloha.css optimizeCss=standard
+    node $AE_BASE/build/r.js -o cssIn=aloha/css/aloha-css-for-ductus.css out=aloha/css/aloha.css optimizeCss=standard
     # remove original css files after compiling them into aloha.css so they don't trigger errors in the django collectstatic stage
     echo "removing CSS source files"
     rm aloha/css/aloha-*
