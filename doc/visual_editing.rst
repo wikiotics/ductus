@@ -64,3 +64,10 @@ $ cp aloha-css-for-ductus.css aloha/css
 $ node ../../../../submodules/Aloha-Editor/build/r.js -o cssIn=aloha/css/aloha-css-for-ductus.css out=aloha/css/aloha.css optimizeCss=standard
 
 Note that the javascript build process will overwrite the `aloha` directory, so you need to copy the css file again after (re)building JS.
+
+Developing aloha on ductus
+--------------------------
+
+The build script mentioned above has a ``DEV_MODE`` option which can be uncommented to allow for easier development/debugging, as it will prevent combining all aloha files together, so that there is no need for compiling after each modification of the source code.
+
+To use it, uncomment the ``DEV_MODE`` line and run the build script.
