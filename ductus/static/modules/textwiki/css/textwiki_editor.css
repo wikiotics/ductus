@@ -31,6 +31,12 @@
 .aloha-ui-toolbar {
     position: static !important;
 }
+.aloha-table-cell-editable {
+    min-width: 3em;
+}
+.aloha-table td {
+    border: 1px solid #B0B0B0;
+}
 div.ductus-macro {
     background-color: gray;
 }
