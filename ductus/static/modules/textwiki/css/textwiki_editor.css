@@ -17,6 +17,9 @@
     background: white;
     border: 1px solid #D3D3D3;
 }
+#target_lang_tag {
+    display: none;
+}
 #textwiki-editor {
     background: #ddd;
     margin-top: 2em;
