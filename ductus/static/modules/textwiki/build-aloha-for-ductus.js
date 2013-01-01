@@ -203,6 +203,7 @@
 
         // ductus additional plugins
         "pagelist-macro": "../plugins/ductus/pagelist-macro/lib",
+        "linklist-repo": "../plugins/ductus/linklist-repo/lib"
     },
 
     //Configure CommonJS packages. See http://requirejs.org/docs/api.html#packages
@@ -321,6 +322,7 @@
 				//"undo/undo-plugin",
 				"paste/paste-plugin",
                 "pagelist-macro/pagelist-macro-plugin",
+                "linklist-repo/linklist-repo-plugin",
 			],
         },
 
