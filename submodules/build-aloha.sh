@@ -8,8 +8,18 @@ set -e
 
 # for development, it's easier to NOT build aloha, and just let require.js do it's job live
 # it means slowler loading times, but much easier development, as there is no need to recompile after every change :)
-# to switch to "dev mode", just uncomment the line below
-#DEV_MODE=1
+# to switch to "dev mode", call the script with "-d" option.
+while getopts ":d" opt; do
+  case $opt in
+    d)
+      DEV_MODE=1
+      ;;
+    \?)
+      echo "Usage: $0 [-d] where -d runs the build in developer mode (see docs)" >&2
+      exit 1
+      ;;
+  esac
+done
 
 # build aloha.js
 AE_BASE=../../../../submodules/Aloha-Editor

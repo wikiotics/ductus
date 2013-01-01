@@ -68,6 +68,6 @@ Note that the javascript build process will overwrite the `aloha` directory, so 
 Developing aloha on ductus
 --------------------------
 
-The build script mentioned above has a ``DEV_MODE`` option which can be uncommented to allow for easier development/debugging, as it will prevent combining all aloha files together, so that there is no need for compiling after each modification of the source code.
+The build script mentioned above has a ``DEV_MODE`` option which can be used to allow for easier development/debugging, as it will prevent combining all aloha files together, so that there is no need for compiling after each modification of the source code.
 
-To use it, uncomment the ``DEV_MODE`` line and run the build script.
+To use it, run the build script with the `-d` option.
