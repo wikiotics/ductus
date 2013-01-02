@@ -57,6 +57,16 @@ Patches can either be uploaded to the corresponding ticket on trac, or a develop
 
 If using git, never ever ever commit unrelated changes in the same changeset.  Each commit should be one logical change.  And it should attempt to break nothing and to introduce no additional brokenness.  The same is true for patches submitted to trac.
 
+If a commit fixes a ticket, the summary should be formatted as follows:
+
+    Fixed #25.  Users can now enter their email addresses.
+
+If a commit references a ticket but does not fix it, the summary should formatted as so:
+
+    [#203] Add border to table cells in editor and widen them.
+
+This will allow the referenced ticket to be clickable at http://code.ductus.us.
+
 Documentation for ductus
 ------------------------
 
