@@ -94,7 +94,6 @@ def ajax_search_pages(request, pagename):
             params['notags'] = 1
             del params['tags']  # just to be extra sure
 
-        rv = {}
         urls = search_pages(**params)
 
         return render_json_response(urls)
