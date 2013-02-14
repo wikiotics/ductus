@@ -95,9 +95,6 @@ def ajax_search_pages(request, pagename):
             del params['tags']  # just to be extra sure
 
         rv = {}
-        try:
-            urls = search_pages(**params)
-        except IndexingError:
-            raise Http404('indexing error')
+        urls = search_pages(**params)
 
         return render_json_response(urls)

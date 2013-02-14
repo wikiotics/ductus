@@ -330,10 +330,7 @@ def fsw_get_flashcard(request, extra_tags, prompt_side, answer_side):
         language = request.GET.get('language', getattr(settings, "FIVE_SEC_WIDGET_DEFAULT_LANGUAGE", 'en'))
         search_tags = ['target-language:' + language] + extra_tags
         # get a list of pages tagged as we want
-        try:
-            url_list = search_pages(tags=search_tags)
-        except IndexingError:
-            raise Http404('Indexing error, contact the site administrator')
+        url_list = search_pages(tags=search_tags)
 
         if url_list != []:
             #url_list = [url for url in url_list if url.split(':')[0] == language]
