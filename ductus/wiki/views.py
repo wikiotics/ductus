@@ -39,7 +39,7 @@ from ductus.wiki.models import WikiPage, WikiRevision
 from ductus.wiki.decorators import register_view
 from ductus.wiki.subviews import subview
 from ductus.decorators import unvarying
-from ductus.utils.http import query_string_not_found, render_json_response, ImmediateResponse, StreamingHttpResponse
+from ductus.utils.http import query_string_not_found, render_json_response, ImmediateResponse, StreamingHttpResponse, HttpTextResponseBadRequest
 import ductus
 
 logger = logging.getLogger(__name__)
@@ -180,10 +180,6 @@ def _handle_successful_wikiedit(request, response, page):
 def handle_blueprint_post(request, expected_model=DuctModel):
     # this is not a view, but rather a function that is meant to be called by
     # views.  should be put such functions somewhere else?
-    from functools import partial
-    from django.http import HttpResponseBadRequest
-    HttpTextResponseBadRequest = partial(HttpResponseBadRequest,
-                                         content_type="text/plain; charset=utf-8")
 
     from ductus.resource.ductmodels import BlueprintSaveContext, BlueprintError, ValidationError
 

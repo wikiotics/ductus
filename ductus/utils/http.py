@@ -15,9 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+from functools import partial
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import RequestContext, loader
+
+HttpTextResponseBadRequest = partial(HttpResponseBadRequest,
+                                     content_type="text/plain; charset=utf-8")
 
 def render_json_response(d):
     """Returns a HttpResponse with a json representation of the passed object"""
