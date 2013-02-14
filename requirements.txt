@@ -13,12 +13,12 @@ Creoleparser==0.7.4
 Django==1.4.3
 django_compressor==1.2
 Genshi==0.6
-Pygments==1.5
+Pygments==1.6
 python-magic==0.4.3
 flickrapi==1.4.2
 recaptcha-client==1.0.6
 pytz==2012j
-pymongo==2.4.1
+pymongo==2.4.2
 pytest==2.3.4
 selenium==2.29.0
 Sphinx==1.1.3
