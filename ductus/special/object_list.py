@@ -13,8 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 def object_list(request, queryset, paginate_by=None, page=None,
         allow_empty=True, template_name=None, template_loader=loader,
-        extra_context=None, context_processors=None, template_object_name='object',
-        mimetype=None):
+        extra_context=None, context_processors=None, template_object_name='object'):
     """
     Generic list of objects.
 
@@ -91,4 +90,4 @@ def object_list(request, queryset, paginate_by=None, page=None,
         model = queryset.model
         template_name = "%s/%s_list.html" % (model._meta.app_label, model._meta.object_name.lower())
     t = template_loader.get_template(template_name)
-    return HttpResponse(t.render(c), mimetype=mimetype)
+    return HttpResponse(t.render(c))
