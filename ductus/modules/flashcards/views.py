@@ -36,7 +36,7 @@ from ductus.index import search_pages, IndexingError
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
-from ductus.utils.http import query_string_not_found, render_json_response
+from ductus.utils.http import query_string_not_found, render_json_response, HttpTextResponseBadRequest
 from ductus.utils.bcp47 import language_tag_to_description
 from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction, StoryBookInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
@@ -325,46 +325,48 @@ def fsw_get_flashcard(request, extra_tags, prompt_side, answer_side):
     prompt_side: the index (0 based) of the side to use as prompt (which cannot be empty)
     answer_side: the index (0 based) of the side that must be empty
     """
-    if request.method == 'GET':
-        # get the language to search for
-        language = request.GET.get('language', getattr(settings, "FIVE_SEC_WIDGET_DEFAULT_LANGUAGE", 'en'))
-        search_tags = ['target-language:' + language] + extra_tags
-        # get a list of pages tagged as we want
-        url_list = search_pages(tags=search_tags)
+    if request.method != 'GET':
+        raise HttpTextResponseBadRequest('only GET is allowed')
 
-        if url_list != []:
-            #url_list = [url for url in url_list if url.split(':')[0] == language]
-            # pick a randomly chosen flashcard that has no text transcript in side[0]
-            resource_database = get_resource_database()
-            while True:
-                url = url_list[random.randint(0, len(url_list) - 1)]
-                try:
-                    page = WikiPage.objects.get(name=url['absolute_pagename'])
-                except WikiPage.DoesNotExist:
-                    url_list.remove(url)
-                    if len(url_list) > 0:
-                        continue
-                    else:
-                        raise Http404('wikipage does not exist: ' + url['path'])
+    # get the language to search for
+    language = request.GET.get('language', getattr(settings, "FIVE_SEC_WIDGET_DEFAULT_LANGUAGE", 'en'))
+    search_tags = ['target-language:' + language] + extra_tags
+    # get a list of pages tagged as we want
+    url_list = search_pages(tags=search_tags)
 
-                revision = page.get_latest_revision()
-                urn = 'urn:' + revision.urn
-                fcd = resource_database.get_resource_object(urn)
-                card_index = random.randint(0, len(fcd.cards.array) - 1)
-                fc = fcd.cards.array[card_index].get()
-                prompt = fc.sides.array[prompt_side].get()
-                answer = fc.sides.array[answer_side].get()
-                if prompt and not answer:
-                    break
-
-            resource = resource_json(fc)
-            # temporary hack for FSI: add the URL this flashcard is taken from
-            tmp_resource = json.loads(resource)
-            tmp_resource['fsi_url'] = url['absolute_pagename']
-            tmp_resource['fsi_index'] = card_index
-            return render_json_response(tmp_resource)
-
+    if not url_list:
         raise Http404('No material available for this language')
+
+    #url_list = [url for url in url_list if url.split(':')[0] == language]
+    # pick a randomly chosen flashcard that has no text transcript in side[0]
+    resource_database = get_resource_database()
+    while True:
+        url = url_list[random.randint(0, len(url_list) - 1)]
+        try:
+            page = WikiPage.objects.get(name=url['absolute_pagename'])
+        except WikiPage.DoesNotExist:
+            url_list.remove(url)
+            if len(url_list) > 0:
+                continue
+            else:
+                raise Http404('wikipage does not exist: ' + url['path'])
+
+        revision = page.get_latest_revision()
+        urn = 'urn:' + revision.urn
+        fcd = resource_database.get_resource_object(urn)
+        card_index = random.randint(0, len(fcd.cards.array) - 1)
+        fc = fcd.cards.array[card_index].get()
+        prompt = fc.sides.array[prompt_side].get()
+        answer = fc.sides.array[answer_side].get()
+        if prompt and not answer:
+            break
+
+    resource = resource_json(fc)
+    # temporary hack for FSI: add the URL this flashcard is taken from
+    tmp_resource = json.loads(resource)
+    tmp_resource['fsi_url'] = url['absolute_pagename']
+    tmp_resource['fsi_index'] = card_index
+    return render_json_response(tmp_resource)
 
 @never_cache
 def fsw_get_audio_to_subtitle(request):
