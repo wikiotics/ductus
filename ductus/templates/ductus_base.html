@@ -18,11 +18,11 @@
     {% block css %}{% endblock %}
 
     <script type="text/javascript" src="{% url "django.views.i18n.javascript_catalog" %}"></script>
+    {% compress js %}
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-1.8.2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/underscore-1.4.4.min.js" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/backbone-1.0.0.min.js" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-ui-1.8.22.custom.min.js" %}"></script>
-    {% compress js %}
     <script type="text/javascript" src="{% static "ductus/common/js/json2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/base.js" %}"></script>
     {% endcompress %}
