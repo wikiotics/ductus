@@ -20,18 +20,18 @@ var DUCTUS_FLICKR_GROUP_ID = {{ DUCTUS_FLICKR_GROUP_ID|jsonize }};
 var writable_directories = {{ writable_directories|jsonize }};
 </script>
 {% compress js %}
-<script type="text/javascript" src="{% static "ductus/common/js/jquery.blockUI.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jquery.blockUI.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/jquery.tokeninput.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/editing-widgets.js" %}"></script>
 {% endcompress %}
 {% compress js %}
 <script type="text/javascript" src="{% static "ductus/common/js/jquery.fileupload.modified.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/modules/flashcards/js/flashcard_deck_editor.js" %}"></script>
-<script type="text/javascript" src="{% static "ductus/common/js/swfobject-2.2.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/swfobject-2.2.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/modules/audio/recorder.js" %}"></script>
 {% endcompress %}
 {% compress js %}
-<script type="text/javascript" src="{% static "ductus/common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.min.js" %}"></script>
+<script type="text/javascript" src="{% static "ductus/common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/audio_player.js" %}"></script>
 {% endcompress %}
 {% compress js inline %}
