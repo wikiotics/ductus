@@ -5,14 +5,18 @@
     <meta charset="utf-8"/>
     <title>{% block title %}{% title ductus_site_name %}{% endblock %}{% for title in title_list reversed %}{{ title }}{% if not forloop.last %} - {% endif %}{% endfor %}</title>
     <meta name="HandheldFriendly" content="True"/>
+
+    {# https://developers.google.com/speed/docs/best-practices/rtt#PutStylesBeforeScripts #}
     {% compress css %}
     <link type="text/css" href="{% static "ductus/common/css/normalize.css" %}" rel="stylesheet"/>
     <link type="text/css" href="{% static "ductus/common/css/smoothness/jquery-ui-1.8.22.custom.css" %}" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/common/css/base.css" %}" />
     <link rel="stylesheet" type="text/css" media="screen, projection" href="{% static "ductus/common/css/search.css" %}" />
-    {# include local (site-specific) css #}
     {% endcompress %}
+
+    {# include local (site-specific) css #}
     {% block css %}{% endblock %}
+
     <script type="text/javascript" src="{% url "django.views.i18n.javascript_catalog" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-1.8.2.min.js" %}"></script>
     <script type="text/javascript" src="{% static "ductus/common/js/jquery-ui-1.8.22.custom.min.js" %}"></script>
@@ -21,7 +25,7 @@
     <script type="text/javascript" src="{% static "ductus/common/js/base.js" %}"></script>
     {% endcompress %}
     <!--[if IE]>
-      {% compress js %} 
+      {% compress js %}
       <script type="text/javascript" src="{% static "ductus/common/js/respond.min.js" %}"></script>
       {% endcompress %}
     <![endif]-->
@@ -33,6 +37,7 @@
       var RecaptchaOptions = {'theme': 'white', 'lang': '{{ LANGUAGE_CODE|slice:':2' }}'};
       {% block javascript %}{% endblock %}
     </script>
+
 {% if rss_url %}
     <link rel="alternate" type="application/rss+xml" title="{{ title_list|last }}" href="{{ rss_url }}"/>
 {% endif %}
