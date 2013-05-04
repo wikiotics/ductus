@@ -17,8 +17,8 @@ Install base dependencies
 To get started, install:
 
  * Python 2.7.x
- * lxml
- * Python Imaging Library ("PIL")
+ * build dependencies of lxml (libxml2-dev, libxslt-dev)
+ * build dependencies of Pillow (a "friendly fork" of the Python Imaging Library) -- see https://github.com/python-imaging/Pillow#build-from-source
  * virtualenv
  * pip
 
@@ -47,9 +47,7 @@ Install python required and optional dependencies
 
 `virtualenv` allows us to set up a virtual python environment where we can install the specific versions of packages known to work with Ductus.  To set up the environment, run the command::
 
-$ virtualenv --system-site-packages ductusenv
-
-If this fails, saying ``virtualenv: error: no such option: --system-site-packages``, then you must be using a version of virtualenv older than 1.7.  There is nothing to fear: simply remove this flag and run `virtualenv ductusenv`, as including system site packages was the default behavior in versions before 1.7 anyway.
+$ virtualenv --no-site-packages ductusenv
 
 If you care enough to make `git-status` ignore the `ductusenv` directory, run::
 
