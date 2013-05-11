@@ -977,7 +977,7 @@ function SaveDestinationChooserWidget (original_pagename, suggested_pagename, wi
         if (dir[0] === initial_directory_selection) {
             div.find("#" + id).attr("checked", true);
         }
-        div.append('<span class="quiet">' + interpolate(gettext('Only you will be able to edit %(pagetype) in place, but others can make improvements and save them elsewhere.'), pagetype, true) + '</span>');
+        div.append('<span class="quiet">' + interpolate(gettext('Only you will be able to edit %(pagetype)s in place, but others can make improvements and save them elsewhere.'), {pagetype: pagetype}, true) + '</span>');
     }
     for (i = 0; i < directories.group.length; ++i) {
         var dir = directories.group[i];
@@ -988,7 +988,7 @@ function SaveDestinationChooserWidget (original_pagename, suggested_pagename, wi
         if (dir[0] === initial_directory_selection) {
             div.find("#" + id).attr("checked", true);
         }
-        div.append('<span class="quiet">' + interpolate(gettext('Only group members will be able to edit %(pagetype) in place.'), pagetype, true) + '</span>');
+        div.append('<span class="quiet">' + interpolate(gettext('Only group members will be able to edit %(pagetype)s in place.'), {pagetype: pagetype}, true) + '</span>');
     }
     if (directories.language_namespace) {
         var select = $('<select></select>');
@@ -1020,7 +1020,7 @@ function SaveDestinationChooserWidget (original_pagename, suggested_pagename, wi
             this_._destination_changed();
             this_._force_target_language_tag($(select).val().split(':')[0]);
         });
-        lns_div.append('<span class="quiet">' + interpolate(gettext('Choose the language to be taught.  Anyone will be able to edit %(pagetype) in place.'), pagetype, true) + '</span>');
+        lns_div.append('<span class="quiet">' + interpolate(gettext('Choose the language to be taught.  Anyone will be able to edit %(pagetype)s in place.'), {pagetype: pagetype}, true) + '</span>');
     }
     this.elt.find("input[name='grp']").change(function () {
         this_._destination_changed();
