@@ -36,7 +36,7 @@ from ductus.index import search_pages, IndexingError
 from ductus.wiki.decorators import register_creation_view, register_view, register_mediacache_view
 from ductus.wiki import get_writable_directories_for_user
 from ductus.wiki.views import handle_blueprint_post
-from ductus.utils.http import query_string_not_found, render_json_response, HttpTextResponseBadRequest
+from ductus.utils.http import query_string_not_found, render_json_response, HttpTextResponseBadRequest, ImmediateResponse
 from ductus.utils.bcp47 import language_tag_to_description
 from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction, StoryBookInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
@@ -326,7 +326,7 @@ def fsw_get_flashcard(request, extra_tags, prompt_side, answer_side):
     answer_side: the index (0 based) of the side that must be empty
     """
     if request.method != 'GET':
-        raise HttpTextResponseBadRequest('only GET is allowed')
+        raise ImmediateResponse(HttpTextResponseBadRequest('only GET is allowed'))
 
     # get the language to search for
     language = request.GET.get('language', getattr(settings, "FIVE_SEC_WIDGET_DEFAULT_LANGUAGE", 'en'))

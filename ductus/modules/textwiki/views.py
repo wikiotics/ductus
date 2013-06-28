@@ -74,7 +74,7 @@ new_textwiki = edit_textwiki
 # this should be in index/views.py
 from ductus.special.views import register_special_page
 from ductus.index import search_pages, IndexingError
-from ductus.utils.http import query_string_not_found, render_json_response, HttpTextResponseBadRequest
+from ductus.utils.http import query_string_not_found, render_json_response, HttpTextResponseBadRequest, ImmediateResponse
 from django.http import Http404
 
 @register_special_page('ajax/search-pages')
@@ -85,7 +85,7 @@ def ajax_search_pages(request, pagename):
     """
     # TODO: limit the number of results returned
     if request.method != 'GET':
-        raise HttpTextResponseBadRequest('only GET is allowed')
+        raise ImmediateResponse(HttpTextResponseBadRequest('only GET is allowed'))
 
     params = {}
     params['pagename'] = request.GET.get('pagename', '')
