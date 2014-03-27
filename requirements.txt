@@ -17,10 +17,10 @@ Pygments==1.6
 python-magic==0.4.6
 flickrapi==1.4.2
 recaptcha-client==1.0.6
-pytz==2013.9
+pytz==2014.2
 pymongo==2.6.3
 pytest==2.5.2
-selenium==2.39.0
-Sphinx==1.2.1
-Pillow==2.3.0
-lxml==3.3.1
+selenium==2.40.0
+Sphinx==1.2.2
+Pillow==2.3.1
+lxml==3.3.3
