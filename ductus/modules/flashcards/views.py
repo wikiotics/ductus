@@ -41,7 +41,7 @@ from ductus.utils.bcp47 import language_tag_to_description
 from ductus.modules.flashcards.ductmodels import FlashcardDeck, Flashcard, ChoiceInteraction, AudioLessonInteraction, StoryBookInteraction
 from ductus.modules.flashcards.decorators import register_interaction_view
 from ductus.modules.flashcards import registered_interaction_views
-from ductus.modules.audio.views import get_joined_audio_mediacache_url, mediacache_cat_audio
+from ductus.modules.audio.views import get_joined_audio_mediacache_url, mediacache_cat_audio, available_audio_formats
 
 def choice_flashcard_template(headings, prompt, answer):
     deck = FlashcardDeck()
@@ -163,6 +163,7 @@ def edit_flashcard_deck(request):
     return render_to_response('flashcards/edit_flashcard_deck.html', {
         'writable_directories': get_writable_directories_for_user(request.user),
         'resource_or_template': resource_or_template,
+        'available_audio_formats': available_audio_formats,
     }, RequestContext(request))
 
 @register_view(FlashcardDeck)
@@ -206,7 +207,8 @@ def choice(request, interaction):
     return render_to_response('flashcards/choice.html', {
         'prompt_columns': [int(a) for a in interaction.prompt.split(',')],
         'answer_column': int(interaction.answer),
-        'target_language': get_target_language_from_tags(request)
+        'target_language': get_target_language_from_tags(request),
+        'available_audio_formats': available_audio_formats,
     }, RequestContext(request))
 
 @register_interaction_view(StoryBookInteraction)
@@ -215,7 +217,8 @@ def storybook(request, interaction):
     Display a flashcard deck that includes a StoryBook Interaction
     """
     return render_to_response('flashcards/storybook.html', {
-        'target_language': get_target_language_from_tags(request)
+        'target_language': get_target_language_from_tags(request),
+        'available_audio_formats': available_audio_formats,
     }, RequestContext(request))
 
 def _get_audio_urns_in_column(flashcard_deck, column):
@@ -240,6 +243,7 @@ def podcast(request, interaction):
     return render_to_response('flashcards/audio_lesson.html', {
         'podcast_webm_relative_url': podcast_webm_relative_url,
         'podcast_m4a_relative_url': podcast_m4a_relative_url,
+        'available_audio_formats': available_audio_formats,
     }, RequestContext(request))
 
 @register_mediacache_view(FlashcardDeck)
