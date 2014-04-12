@@ -276,7 +276,7 @@ FlickrPictureSource.prototype.attempt_upload = function (upload_success_cb, erro
         if (error_cb) error_cb();
         return;
     }
-    var fps = this;
+    var _this = this;
     this._upload_in_progress = true;
     function handle_upload_errors(errors) {
         for (var i = 0; i < errors.length; ++i) {
@@ -289,7 +289,7 @@ FlickrPictureSource.prototype.attempt_upload = function (upload_success_cb, erro
         url: '/new/picture',
         type: 'POST',
         dataType: 'json',
-        data: {'uri': fps.flickr_photo.page_url },
+        data: {'uri': _this.flickr_photo.page_url },
         success: function(data) {
             upload_success_cb(data.urn);
         },
