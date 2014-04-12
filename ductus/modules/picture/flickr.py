@@ -57,7 +57,7 @@ def lazy_memoize(f):
         return rv.v
     return _memoize
 
-license_map = lazy_memoize(lambda: dict([(x['id'], x['url']) for x in flickr.photos_licenses_getInfo()["licenses"]["license"] if x['url'] in settings.DUCTUS_ALLOWED_LICENSES]))
+license_map = lazy_memoize(lambda: dict([(x['id'], x['url'].replace('https://', 'http://')) for x in flickr.photos_licenses_getInfo()["licenses"]["license"] if x['url'].replace('https://', 'http://') in settings.DUCTUS_ALLOWED_LICENSES]))
 
 valid_sort_methods = {
     'date-posted-desc': 'Newest',
