@@ -291,7 +291,13 @@ FlickrPictureSource.prototype.attempt_upload = function (upload_success_cb, erro
         dataType: 'json',
         data: {'uri': _this.flickr_photo.page_url },
         success: function(data) {
-            upload_success_cb(data.urn);
+            if (data.urn) {
+                upload_success_cb(data.urn);
+            } else {
+                if (error_cb) {
+                    error_cb(JSON.stringify(data.errors));
+                }
+            }
         },
         error: function() {
             if (error_cb) { error_cb(); }
