@@ -365,8 +365,9 @@ PictureModelWidget.prototype.get_outstanding_presave_steps = function () {
 };
 PictureModelWidget.prototype.attempt_upload = function (success_cb, error_cb) {
     // send a relevant reference to the server to trigger picture upload of flickr file
+    var pm_widget;
     if (this._picture_widget._picture_source.flickr_photo) {
-        var pm_widget = this;
+        pm_widget = this;
         var flickr_success_cb = function(urn) {
             pm_widget._set_from_urn(urn);
             if (success_cb) { success_cb(); }
@@ -375,7 +376,7 @@ PictureModelWidget.prototype.attempt_upload = function (success_cb, error_cb) {
     }
     // if we have a local file, upload it
     if (this._picture_widget._picture_source.file) {
-        var pm_widget = this;
+        pm_widget = this;
         var local_upload_success_cb = function(urn) {
             pm_widget._set_from_urn(urn);
             //TODO: do we need to delete the file explicitly?
