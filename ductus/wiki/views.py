@@ -488,6 +488,13 @@ def view_copy_resource(request):
         'writable_directories': get_writable_directories_for_user(request.user),
     }, RequestContext(request))
 
+@register_view(None, 'resource_json')
+def view_json(request):
+    urn = request.ductus.resource.urn
+    resource = get_resource_database().get_resource_object(urn)
+    json_text = json.dumps(resource.output_json_dict())
+    return HttpResponse(json_text, content_type='application/json; charset=utf-8')
+
 if settings.DEBUG:
     @register_view(None, 'DEBUG_json')
     def view_json(request):
