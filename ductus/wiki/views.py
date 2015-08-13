@@ -495,6 +495,14 @@ def view_json(request):
     json_text = json.dumps(resource.output_json_dict())
     return HttpResponse(json_text, content_type='application/json; charset=utf-8')
 
+@register_view(None, 'resource_jsonp')
+def view_jsonp(request):
+    urn = request.ductus.resource.urn
+    resource = get_resource_database().get_resource_object(urn)
+    json_text = json.dumps(resource.output_json_dict())
+    jsonp_text = "callback({});".format(json_text)
+    return HttpResponse(jsonp_text, content_type='application/javascript; charset=utf-8')
+
 if settings.DEBUG:
     @register_view(None, 'DEBUG_json')
     def view_json(request):
