@@ -7,18 +7,13 @@
 
 {% block css %}
 {{ block.super }}
-{% compress css %}
 <link type="text/css" href="{% static "ductus/modules/flashcards/css/static_view.css" %}" rel="stylesheet"/>
-{% endcompress %}
 {% endblock %}
 
 {% block js %}
 {{ block.super }}
-{% compress js %}
 <script type="text/javascript" src="{% static "ductus/common/js/jQuery.jPlayer.2.1.0/jquery.jplayer.js" %}"></script>
 <script type="text/javascript" src="{% static "ductus/common/js/audio_player.js" %}"></script>
-{% endcompress %}
-{% compress js inline %}
 <script type="text/javascript">
 var available_audio_formats = {{ available_audio_formats|jsonize }};
 $(function() {
@@ -37,7 +32,6 @@ $(function() {
     });
 });
 </script>
-{% endcompress %}
 {% endblock %}
 
 {% block content %}
