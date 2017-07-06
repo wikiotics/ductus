@@ -110,7 +110,7 @@ def get_list_of_target_lang_codes():
         raise IndexingError("indexing database is not available")
     collection = indexing_db.urn_index
 
-    tags = filter(lambda tag: tag.startswith('target-language:'), collection.distinct('tags'))
+    tags = filter(lambda tag: tag is not None and tag.startswith('target-language:'), collection.distinct('tags'))
     return [tag.split(':')[1] for tag in tags]
 
 def perform_upsert(collection, urn, obj, ignore=None):

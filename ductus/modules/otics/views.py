@@ -31,7 +31,7 @@ def otics_front_page(request, pagename=None):
     if indexing_db is not None:
         collection = indexing_db.urn_index
         relevant_pages = collection.find({
-            "tags": {"$regex": ["^target-language:"]},
+            "tags": {"$regex": "^target-language:"},
             "current_wikipages": {"$not": {"$size": 0}},
         }, {"tags": 1})
         for page in relevant_pages:
