@@ -44,7 +44,8 @@ function max_lte(n, array) {
 
 var resource_displayer = {
     '{http://wikiotics.org/ns/2009/picture}picture': function (resource) {
-        var src = resolve_urn(resource.href) + '?view=image&max_size=250,250';
+        var rotstr = resource.resource.rotation ? "_" + resource.resource.rotation : "";
+        var src = resolve_mediacache_url(resource, 'image/jpeg', "250_250" + rotstr);
         return $('<div class="picture"></div>').append($('<img alt=""/>').attr('src', src));
     },
     '{http://wikiotics.org/ns/2011/phrase}phrase': function (resource) {
