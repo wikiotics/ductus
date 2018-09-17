@@ -22,5 +22,12 @@ pymongo==3.4.0
 pytest==2.5.2
 selenium==2.40.0
 Sphinx==1.2.2
-Pillow==2.3.1
-lxml==3.3.3
+
+# You probably don't want to bother compiling PIL and lxml, so the
+# following lines are commented out.  But the relevant versions used
+# are included here for completeness.  Probably any versions of these
+# packages that come with a recent distribution of GNU/Linux will
+# work.
+
+#Pillow==2.3.1
+#lxml==3.3.3
