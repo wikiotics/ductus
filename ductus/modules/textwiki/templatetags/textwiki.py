@@ -93,6 +93,9 @@ def __prepare_global_data_structures():
         __non_bodied_macros = dict(internal_non_bodied_macros)
         if CREOLEPARSER_NON_BODIED_MACROS:
             __non_bodied_macros.update(CREOLEPARSER_NON_BODIED_MACROS)
+    __interwiki_links_base_urls['DjangoBug'] = 'http://code.djangoproject.com/ticket/'
+    __interwiki_links_base_urls['UbuntuBug'] = 'https://bugs.launchpad.net/ubuntu/+bug/'
+    __interwiki_links_base_urls['enWP'] = 'http://en.wikipedia.org/wiki/'
 
 @register.filter
 @stringfilter
@@ -120,8 +123,8 @@ def creole(value, default_prefix=None):
             'interwiki_links_class_funcs': __interwiki_links_class_funcs,
             'external_links_class': 'external',
             'disable_external_content': True,
-            'bodied_macros': __bodied_macros,
-            'non_bodied_macros': __non_bodied_macros,
+            #'bodied_macros': __bodied_macros,
+            #'non_bodied_macros': __non_bodied_macros,
         }
         creole2html = Parser(create_dialect(creole11_base, **parser_kwargs), encoding=None)
 
