@@ -219,8 +219,12 @@ class Element(six.with_metaclass(ElementMetaclass, object)):
         # we should probably just output the blank string for null attributes, output null elements, etc
         for name, subelement in self.subelements.items():
             # fixme: should we really be testing is_null_xml_element here?
-            if not getattr(self, name).is_null_xml_element() and not name in exclude:
-                rv[name] = getattr(self, name).output_json_dict()
+            if not getattr(self, name).is_null_xml_element():
+                if name in exclude:
+                    assert name == 'parents'
+                    rv['parents'] = [r.href for r in self.parents.array]
+                else:
+                    rv[name] = getattr(self, name).output_json_dict()
         for name, attribute in self.attributes.items():
             if not (attribute.optional and attribute.blank_is_null and not self._attribute_data[name]):
                 rv[name] = self._attribute_data[name]
